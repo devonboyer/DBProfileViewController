@@ -1,0 +1,12 @@
+source 'https://github.com/CocoaPods/Specs.git'
+use_frameworks!
+
+target 'DBProfileViewController_Example', :exclusive => true do
+  pod "DBProfileViewController", :path => "../"
+end
+
+target 'DBProfileViewController_Tests', :exclusive => true do
+  pod "DBProfileViewController", :path => "../"
+
+  
+end
