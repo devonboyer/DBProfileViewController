@@ -8,6 +8,8 @@
 
 @import UIKit;
 
-@interface DBViewController : UIViewController
+#import "DBProfileViewController.h"
+
+@interface DBViewController : DBProfileViewController
 
 @end
