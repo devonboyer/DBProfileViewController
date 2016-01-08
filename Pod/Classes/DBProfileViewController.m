@@ -14,9 +14,11 @@
 static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewControllerContentOffsetKVOContext;
 
 @interface DBProfileViewController ()
+{
+    BOOL hasAppeared;
+}
 
-// FIXME: Is using a UINavigationController too hacky?
-@property (nonatomic, strong) UINavigationController *contentContainerViewController;
+@property (nonatomic, strong) UIViewController *contentContainerViewController;
 @property (nonatomic, strong) DBProfileSegmentedControlContainerView *segmentedControlContainerView;
 
 @property (nonatomic, strong) NSLayoutConstraint *detailsViewTopConstraint;
@@ -73,7 +75,7 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
     _profileImageView = [[UIImageView alloc] init];
     _coverImageView = [[UIImageView alloc] init];
     
-    _contentContainerViewController = [[UINavigationController alloc] init];
+    _contentContainerViewController = [[UIViewController alloc] init];
 }
 
 - (void)dealloc {
@@ -118,8 +120,6 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
     // Configuration
     [self configureDefaultAppearance];
     [self configureContentViewControllers];
-    
-    self.contentContainerViewController.navigationBarHidden = YES;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -127,6 +127,14 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
     
     if ([self.contentViewControllerTitles count] > 0) {
         [self setVisibleContentViewControllerAtIndex:0 animated:NO];
+    }
+}
+
+- (void)viewDidLayoutSubviews {
+    [super viewDidLayoutSubviews];
+    if (!hasAppeared) {
+        [self configureContentViewControllers];
+        hasAppeared = YES;
     }
 }
 
@@ -201,10 +209,12 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
 }
 
 - (void)removeContentViewControllerAtIndex:(NSUInteger)index {
-    [self.mutableContentViewControllers removeObjectAtIndex:index];
-    [self.mutableContentViewControllerTitles removeObjectAtIndex:index];
+    if (index < [self numberOfContentViewControllers]) {
+        [self.mutableContentViewControllers removeObjectAtIndex:index];
+        [self.mutableContentViewControllerTitles removeObjectAtIndex:index];
     
-    [self configureContentViewControllers];
+        [self configureContentViewControllers];
+    }
 }
 
 - (void)setVisibleContentViewControllerAtIndex:(NSUInteger)index animated:(BOOL)animated {
@@ -213,18 +223,39 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
         [self endObservingContentOffsetForScrollView:tableView];
     }
     
-    UITableViewController *visibleViewController = self.contentViewControllers[index];
-    [self.contentContainerViewController setViewControllers:@[visibleViewController] animated:animated];
-    _visibleContentViewController = visibleViewController;
+    UITableViewController *visibleContentViewController = self.contentViewControllers[index];
+    
+    // Remove previous view controller from container
+    [self removeViewControllerFromContainer:visibleContentViewController];
+    
+    _visibleContentViewController = visibleContentViewController;
+    
+    // Add visible view controller to container
+    [self addViewControllerToContainer:self.visibleContentViewController];
+
     [self.contentSegmentedControl setSelectedSegmentIndex:index];
-    [self configureVisibleViewController:visibleViewController];
+    [self configureVisibleViewController:visibleContentViewController];
 }
 
 - (NSString *)titleForContentViewControllerAtIndex:(NSUInteger)index {
     return [self.mutableContentViewControllerTitles objectAtIndex:index];
 }
 
+#pragma mark - Refreshing Data
+
+- (void)startRefreshing {
+    // override in subclass
+}
+
+- (void)endRefreshing {
+    [self.refreshControl endRefreshing];
+}
+
 #pragma mark - Private
+
+- (NSInteger)numberOfContentViewControllers {
+    return [self.contentViewControllers count];
+}
 
 - (void)configureVisibleViewController:(UITableViewController *)visibleViewController {
     UITableView *tableView = visibleViewController.tableView;
@@ -258,7 +289,7 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
     
     [self.contentSegmentedControl removeAllSegments];
     
-    NSInteger numberOfSegments = [self.contentViewControllerTitles count];
+    NSInteger numberOfSegments = [self numberOfContentViewControllers];
     CGFloat segmentWidth = (CGRectGetWidth(self.view.bounds) * 0.8) / numberOfSegments;
     
     NSInteger index = 0;
@@ -289,14 +320,17 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
     self.detailsViewTopConstraint.constant = -topInset;
 }
 
-#pragma mark - Refreshing Data
-
-- (void)startRefreshing {
-    // override in subclass
+- (void)addViewControllerToContainer:(UIViewController *)viewController {
+    [self.contentContainerViewController addChildViewController:viewController];
+    [self.contentContainerViewController.view addSubview:viewController.view];
+    viewController.view.frame = self.contentContainerViewController.view.frame;
+    [viewController didMoveToParentViewController:self];
 }
 
-- (void)endRefreshing {
-    [self.refreshControl endRefreshing];
+- (void)removeViewControllerFromContainer:(UIViewController *)viewController {
+    [viewController willMoveToParentViewController:nil];
+    [viewController.view removeFromSuperview];
+    [viewController removeFromParentViewController];
 }
 
 #pragma mark - KVO
@@ -323,7 +357,7 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
         
         // FIXME: This math is close but not correct
         CGFloat top = scrollView.contentOffset.y + scrollView.contentInset.top;
-        CGFloat topInset = CGRectGetHeight(self.detailsView.frame) - CGRectGetHeight(self.segmentedControlContainerView.frame) + 4;
+        CGFloat topInset = CGRectGetHeight(self.detailsView.frame) - [self.topLayoutGuide length];
         self.contentSegmentedControlContainerViewTopConstraint.constant = (top > topInset) ? top - topInset : 0;
     }
 }
