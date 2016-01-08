@@ -8,7 +8,7 @@
 
 #import "DBViewController.h"
 
-@interface DBViewController ()
+@interface DBViewController () <UITableViewDataSource, UITableViewDelegate>
 
 @end
 
@@ -22,9 +22,24 @@
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(add)];
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Remove" style:UIBarButtonItemStylePlain target:self action:@selector(remove)];
     
-    [self addContentViewController:[[UITableViewController alloc] init] withTitle:@"Followers"];
-    [self addContentViewController:[[UITableViewController alloc] init] withTitle:@"Photos"];
-    [self addContentViewController:[[UITableViewController alloc] init] withTitle:@"Likes"];
+    UITableViewController *followers = [[UITableViewController alloc] init];
+    [followers.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"Cell"];
+    followers.tableView.dataSource = self;
+    followers.tableView.delegate = self;
+    
+    UITableViewController *photos = [[UITableViewController alloc] init];
+    [photos.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"Cell"];
+    photos.tableView.dataSource = self;
+    photos.tableView.delegate = self;
+    
+    UITableViewController *likes = [[UITableViewController alloc] init];
+    [likes.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"Cell"];
+    likes.tableView.dataSource = self;
+    likes.tableView.delegate = self;
+
+    [self addContentViewController:followers withTitle:@"Followers"];
+    [self addContentViewController:photos withTitle:@"Photos"];
+    [self addContentViewController:likes withTitle:@"Likes"];
 }
 
 - (void)didReceiveMemoryWarning
@@ -36,11 +51,27 @@
 #pragma mark - Actions
 
 - (void)add {
-    [self addContentViewController:[[UITableViewController alloc] init] withTitle:@"Segment"];
+    UITableViewController *tbvc = [[UITableViewController alloc] init];
+    [tbvc.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"Cell"];
+    tbvc.tableView.dataSource = self;
+    tbvc.tableView.delegate = self;
+    
+    [self addContentViewController:tbvc withTitle:@"Segment"];
 }
 
 - (void)remove {
     [self removeContentViewControllerAtIndex:0];
+}
+
+#pragma mark - UITableViewDataSource
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return 30;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
+    return cell;
 }
 
 @end

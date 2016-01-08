@@ -142,6 +142,12 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
     [super updateViewConstraints];
 }
 
+#pragma mark - Rotation
+
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
+    [self configureContentViewControllers];
+}
+
 #pragma makr - Getters
 
 - (UISegmentedControl *)contentSegmentedControl {
@@ -280,6 +286,9 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
     
     // Begin observing contentOffset
     [self beginObservingContentOffsetForScrollView:tableView];
+    
+    // Reset the content offset
+    [tableView setContentOffset:CGPointMake(0, -tableView.contentInset.top)];
 }
 
 - (void)configureContentViewControllers {
@@ -301,7 +310,7 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
     
     // Set the selected segment index
     if (numberOfSegments > 0) {
-        if (selectedSegmentIndex == UISegmentedControlNoSegment) {
+        if (selectedSegmentIndex == UISegmentedControlNoSegment || selectedSegmentIndex >= [self numberOfContentViewControllers]) {
             [self setVisibleContentViewControllerAtIndex:0 animated:YES];
         } else {
             [self setVisibleContentViewControllerAtIndex:selectedSegmentIndex animated:YES];
@@ -316,6 +325,7 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
     UIEdgeInsets contentInset = scrollView.contentInset;
     contentInset.top = topInset;
     scrollView.contentInset = contentInset;
+    scrollView.scrollIndicatorInsets = contentInset;
     
     self.detailsViewTopConstraint.constant = -topInset;
 }
@@ -354,8 +364,6 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context {
     if ([keyPath isEqualToString:@"contentOffset"] && context == DBProfileViewControllerContentOffsetKVOContext) {
         UIScrollView *scrollView = (UIScrollView *)object;
-        
-        // FIXME: This math is close but not correct
         CGFloat top = scrollView.contentOffset.y + scrollView.contentInset.top;
         CGFloat topInset = CGRectGetHeight(self.detailsView.frame) - [self.topLayoutGuide length];
         self.contentSegmentedControlContainerViewTopConstraint.constant = (top > topInset) ? top - topInset : 0;
