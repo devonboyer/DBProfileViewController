@@ -10,6 +10,19 @@
 
 @class DBProfileDetailsView;
 
+extern const CGFloat DBProfileViewControllerCoverImageDefaultHeight;
+
+typedef NS_ENUM(NSInteger, DBProfileCoverImageStyle) {
+    DBProfileCoverImageStyleNone,
+    DBProfileCoverImageStyleDefault,
+    DBProfileCoverImageStyleStretch,
+};
+
+typedef NS_ENUM(NSInteger, DBProfileImageAlignment) {
+    DBProfileImageAlignmentLeft,
+    DBProfileImageAlignmentCenter
+};
+
 @interface DBProfileViewController : UIViewController
 
 ///----------------------------------------------
@@ -18,17 +31,27 @@
 
 - (instancetype)initWithContentViewControllers:(NSArray *)viewControllers titles:(NSArray *)titles;
 
-@property (nonatomic, strong, readonly) UISegmentedControl *contentSegmentedControl;
 @property (nonatomic, strong) DBProfileDetailsView *detailsView;
 
+///----------------------------------------------
+/// @name Configuring Cover Image
+///---------------------------------------------
+
 @property (nonatomic, strong, readonly) UIImageView *coverImageView;
+@property (nonatomic, assign) DBProfileCoverImageStyle coverImageStyle;
+
+///----------------------------------------------
+/// @name Configuring Profile Image
+///---------------------------------------------
+
 @property (nonatomic, strong, readonly) UIImageView *profileImageView;
-@property (nonatomic, strong, readonly) UIRefreshControl *refreshControl;
+@property (nonatomic, assign) DBProfileImageAlignment profileImageAlignment;
 
 ///----------------------------------------------
 /// @name Managing Content View Controllers
 ///----------------------------------------------
 
+@property (nonatomic, strong, readonly) UISegmentedControl *contentSegmentedControl;
 @property (nonatomic, strong, readonly) NSArray *contentViewControllers;
 @property (nonatomic, strong, readonly) UIViewController *visibleContentViewController;
 
@@ -42,6 +65,8 @@
 ///----------------------------------------------
 /// @name Refreshing Data
 ///----------------------------------------------
+
+@property (nonatomic, strong, readonly) UIRefreshControl *refreshControl;
 
 - (void)startRefreshing;
 - (void)endRefreshing;

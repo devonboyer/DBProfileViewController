@@ -40,6 +40,9 @@
     [self addContentViewController:followers withTitle:@"Followers"];
     [self addContentViewController:photos withTitle:@"Photos"];
     [self addContentViewController:likes withTitle:@"Likes"];
+    
+    self.coverImageView.image = [UIImage imageNamed:@"cookies.jpg"];
+    self.profileImageView.image = [UIImage imageNamed:@"cookies.jpg"];
 }
 
 - (void)didReceiveMemoryWarning
