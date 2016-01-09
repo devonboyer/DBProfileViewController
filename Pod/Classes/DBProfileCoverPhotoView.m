@@ -7,6 +7,7 @@
 //
 
 #import "DBProfileCoverPhotoView.h"
+#import "DBProfileNavigationBar.h"
 
 @implementation DBProfileCoverPhotoView
 

@@ -20,6 +20,7 @@ static const CGFloat DBProfileViewControllerPullToRefreshDistance = 80;
 static const CGFloat DBProfileViewControllerProfilePictureSizeDefault = 72.0;
 static const CGFloat DBProfileViewControllerProfilePictureSizeLarge = 82.0;
 static const CGFloat DBProfileViewControllerProfilePictureLeftRightMargin = 15.0;
+static const CGFloat DBProfileViewControllerCoverPhotoMimicsNavigationBarHeight = 64.0;
 
 static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewControllerContentOffsetKVOContext;
 
@@ -149,6 +150,8 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
         [self setVisibleContentViewControllerAtIndex:0 animated:NO];
     }
     
+    [self.view setNeedsLayout];
+    [self.view layoutIfNeeded];
 }
 
 - (void)viewDidLayoutSubviews {
@@ -246,15 +249,15 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
 
 #pragma mark - Setters
 
-- (void)setProfilePictureInset:(UIEdgeInsets)profilePictureInset {
-    if (UIEdgeInsetsEqualToEdgeInsets(_profilePictureInset, profilePictureInset)) return;
-    _profilePictureInset = profilePictureInset;
-    [self updateViewConstraints];
-}
-
 - (void)setCoverPhotoStyle:(DBProfileCoverPhotoStyle)coverPhotoStyle {
     if (_coverPhotoStyle == coverPhotoStyle) return;
     _coverPhotoStyle = coverPhotoStyle;
+    [self updateViewConstraints];
+}
+
+- (void)setProfilePictureInset:(UIEdgeInsets)profilePictureInset {
+    if (UIEdgeInsetsEqualToEdgeInsets(_profilePictureInset, profilePictureInset)) return;
+    _profilePictureInset = profilePictureInset;
     [self updateViewConstraints];
 }
 
@@ -273,16 +276,14 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
 - (void)setDetailsView:(DBProfileDetailsView *)detailsView {
     NSAssert(detailsView, @"detailsView cannot be nil");
     _detailsView = detailsView;
-    
-    // re-configure visible view controller
     [self configureVisibleViewController:self.visibleContentViewController];
 }
 
 #pragma mark - Defaults
 
 - (void)configureDefaultAppearance {
-    
     self.coverPhotoStyle = DBProfileCoverPhotoStyleStretch;
+    self.coverPhotoMimicsNavigationBar = YES;
     self.profilePictureAlignment = DBProfilePictureAlignmentLeft;
     self.profilePictureSize = DBProfilePictureSizeDefault;
     self.profilePictureInset = UIEdgeInsetsMake(0, DBProfileViewControllerProfilePictureLeftRightMargin, 72/2.0 - 10, 0);
@@ -418,11 +419,11 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
     [self.profilePictureView setTranslatesAutoresizingMaskIntoConstraints:NO];
     [self.segmentedControlView setTranslatesAutoresizingMaskIntoConstraints:NO];
     
-    [scrollView addSubview:self.coverPhotoView];
     [scrollView addSubview:self.detailsView];
-    [scrollView addSubview:self.profilePictureView];
     [scrollView addSubview:self.segmentedControlView];
-    
+    [scrollView addSubview:self.coverPhotoView];
+    [scrollView addSubview:self.profilePictureView];
+
     [self configureCoverPhotoViewLayoutConstraints];
     [self configureDetailsViewLayoutConstraints];
     [self configureProfilePictureViewLayoutConstraints];
@@ -471,14 +472,19 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
 }
 
 - (void)adjustContentInsetForScrollView:(UIScrollView *)scrollView {
-    CGFloat topInset = CGRectGetHeight(self.detailsView.frame) + CGRectGetHeight(self.segmentedControlView.frame) + self.coverPhotoViewHeightConstraint.constant + [self.topLayoutGuide length];
+    // Adjust top inset of scrollView to account for for segmented control, details view, and cover photo
+    CGFloat topInset = CGRectGetHeight(self.segmentedControlView.frame) + CGRectGetHeight(self.detailsView.frame)  + self.coverPhotoViewHeightConstraint.constant + [self.topLayoutGuide length];
     
-    // FIXME: Overwrites original content inset of scrollView
     UIEdgeInsets contentInset = scrollView.contentInset;
     contentInset.top = topInset;
     scrollView.contentInset = contentInset;
     
+    // Set top constraint for cover photo to counteract top inset of the scroll view
     self.coverPhotoViewTopConstraint.constant = -topInset + [self.topLayoutGuide length];
+    
+    // Set top constraint for details view to counteract top inset of the scroll view
+    topInset -= self.coverPhotoViewHeightConstraint.constant;
+    self.detailsViewTopConstraint.constant = -topInset + [self.topLayoutGuide length];
 }
 
 - (void)addViewControllerToContainer:(UIViewController *)viewController {
@@ -517,11 +523,8 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
     
     if ([keyPath isEqualToString:@"contentOffset"] && context == DBProfileViewControllerContentOffsetKVOContext) {
         UIScrollView *scrollView = (UIScrollView *)object;
-        
         CGFloat top = scrollView.contentOffset.y + scrollView.contentInset.top;
-        CGFloat topInset = CGRectGetHeight(self.detailsView.frame) + CGRectGetHeight(self.coverPhotoView.frame);
-        self.segmentedControlViewTopConstraint.constant = (top > topInset) ? top - topInset : 0;
-        
+
         // Cover photo animations
         if (self.coverPhotoStyle == DBProfileCoverPhotoStyleStretch) {
             CGFloat delta = -top;
@@ -533,20 +536,26 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
             }
         }
         
-//        /*********/
-//        
-//        if (top > 86) {
-//            CGFloat coverPhotoTopInset = CGRectGetHeight(self.detailsView.frame) + CGRectGetHeight(self.segmentedControlView.frame) + self.coverPhotoViewHeightConstraint.constant + [self.topLayoutGuide length];
-//            
-//            UIEdgeInsets contentInset = scrollView.contentInset;
-//            contentInset.top = coverPhotoTopInset;
-//            scrollView.contentInset = contentInset;
-//            
-//            self.coverPhotoViewTopConstraint.constant = -coverPhotoTopInset + [self.topLayoutGuide length] + (top - 86);
-//            NSLog(@"%@", @(top));
-//        }
-//        
-//        /*********/
+        // Sticky cover photo to "mimic" navigation bar
+        if (self.coverPhotoMimicsNavigationBar) {
+            CGFloat height = self.coverPhotoViewHeightConstraint.constant - DBProfileViewControllerCoverPhotoMimicsNavigationBarHeight + [self.topLayoutGuide length];
+            if (top > height) {
+                CGFloat coverPhotoTopInset = CGRectGetHeight(self.detailsView.frame) + CGRectGetHeight(self.segmentedControlView.frame) + self.coverPhotoViewHeightConstraint.constant + [self.topLayoutGuide length];
+                
+                self.coverPhotoViewTopConstraint.constant = -coverPhotoTopInset + [self.topLayoutGuide length] + (top - height);
+                
+                [scrollView insertSubview:self.profilePictureView belowSubview:self.coverPhotoView];
+            } else {
+                [scrollView insertSubview:self.coverPhotoView belowSubview:self.profilePictureView];
+            }
+        }
+        
+        // Sticky segmented control
+        CGFloat topInset = CGRectGetHeight(self.detailsView.frame) + CGRectGetHeight(self.coverPhotoView.frame);
+        if (self.coverPhotoMimicsNavigationBar) {
+            topInset -= (DBProfileViewControllerCoverPhotoMimicsNavigationBarHeight - [self.topLayoutGuide length]);
+        }
+        self.segmentedControlViewTopConstraint.constant = (top > topInset) ? top - topInset : 0;
         
         // Pull-To-Refresh animations
         if (scrollView.isDragging && !self.refreshing && top < -DBProfileViewControllerPullToRefreshDistance) {
@@ -595,7 +604,7 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
     [superview addConstraint:[NSLayoutConstraint constraintWithItem:self.detailsView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:superview attribute:NSLayoutAttributeLeft multiplier:1 constant:0]];
     [superview addConstraint:[NSLayoutConstraint constraintWithItem:self.detailsView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:superview attribute:NSLayoutAttributeWidth multiplier:1 constant:0]];
     
-    self.detailsViewTopConstraint = [NSLayoutConstraint constraintWithItem:self.detailsView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.coverPhotoView attribute:NSLayoutAttributeBottom multiplier:1 constant:0];
+    self.detailsViewTopConstraint = [NSLayoutConstraint constraintWithItem:self.detailsView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:superview attribute:NSLayoutAttributeTop multiplier:1 constant:0];
     [superview addConstraint:self.detailsViewTopConstraint];
 }
 
@@ -639,7 +648,7 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
     [superview addConstraint:self.profilePictureViewCenterXConstraint];
 
     // Top
-    self.profilePictureViewTopConstraint = [NSLayoutConstraint constraintWithItem:self.profilePictureView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.coverPhotoView attribute:NSLayoutAttributeBottom multiplier:1 constant:0];
+    self.profilePictureViewTopConstraint = [NSLayoutConstraint constraintWithItem:self.profilePictureView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.detailsView attribute:NSLayoutAttributeTop multiplier:1 constant:0];
     [superview addConstraint:self.profilePictureViewTopConstraint];
     
     [NSLayoutConstraint deactivateConstraints:@[self.profilePictureViewLeftConstraint, self.profilePictureViewRightConstraint, self.profilePictureViewCenterXConstraint]];

@@ -65,7 +65,7 @@ typedef NS_ENUM(NSInteger, DBProfilePictureSize) {
 
 @property (nonatomic, strong, readonly) DBProfileCoverPhotoView *coverPhotoView;
 @property (nonatomic, assign) DBProfileCoverPhotoStyle coverPhotoStyle;
-@property (nonatomic, assign) BOOL coverPhotoMimicsNavigationBar; // TODO
+@property (nonatomic, assign) BOOL coverPhotoMimicsNavigationBar; // mutually exclusive with DBProfileCoverPhotoStyleNone
 
 - (void)setCoverPhoto:(UIImage *)image;
 

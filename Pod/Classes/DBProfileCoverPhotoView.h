@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
+@class DBProfileNavigationBar;
+
 @interface DBProfileCoverPhotoView : UIView
 
 @property (nonatomic, strong, readonly) UIImageView *imageView;
