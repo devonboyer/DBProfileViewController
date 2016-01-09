@@ -24,11 +24,12 @@
 - (void)_commonInit {
     _imageView = [[UIImageView alloc] init];
     _activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
-    
+
     [self.imageView setTranslatesAutoresizingMaskIntoConstraints:NO];
     [self.activityIndicator setTranslatesAutoresizingMaskIntoConstraints:NO];
 
     [self addSubview:self.imageView];
+
     [self addSubview:self.activityIndicator];
 
     [self configureImageViewLayoutConstraints];
