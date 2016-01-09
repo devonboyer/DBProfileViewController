@@ -285,7 +285,7 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
     self.coverPhotoStyle = DBProfileCoverPhotoStyleStretch;
     self.profilePictureAlignment = DBProfilePictureAlignmentLeft;
     self.profilePictureSize = DBProfilePictureSizeDefault;
-    self.profilePictureInset = UIEdgeInsetsMake(0, 15, 72/2.0 - 10, 0);
+    self.profilePictureInset = UIEdgeInsetsMake(0, DBProfileViewControllerProfilePictureLeftRightMargin, 72/2.0 - 10, 0);
     
     self.detailsView.backgroundColor = [UIColor whiteColor];
     self.segmentedControlView.backgroundColor = [UIColor whiteColor];
@@ -608,7 +608,7 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
     [superview addConstraint:self.profilePictureViewWidthConstraint];
     
     // Left
-    self.profilePictureViewLeftConstraint = [NSLayoutConstraint constraintWithItem:self.profilePictureView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:superview attribute:NSLayoutAttributeLeft multiplier:1 constant:DBProfileViewControllerProfilePictureLeftRightMargin];
+    self.profilePictureViewLeftConstraint = [NSLayoutConstraint constraintWithItem:self.profilePictureView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:superview attribute:NSLayoutAttributeLeft multiplier:1 constant:0];
     self.profilePictureViewLeftConstraint.priority = UILayoutPriorityDefaultLow;
     [superview addConstraint:self.profilePictureViewLeftConstraint];
 

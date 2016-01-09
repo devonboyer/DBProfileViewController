@@ -65,6 +65,7 @@ typedef NS_ENUM(NSInteger, DBProfilePictureSize) {
 
 @property (nonatomic, strong, readonly) DBProfileCoverPhotoView *coverPhotoView;
 @property (nonatomic, assign) DBProfileCoverPhotoStyle coverPhotoStyle;
+@property (nonatomic, assign) BOOL coverPhotoMimicsNavigationBar; // TODO
 
 - (void)setCoverPhoto:(UIImage *)image;
 
@@ -75,8 +76,6 @@ typedef NS_ENUM(NSInteger, DBProfilePictureSize) {
 @property (nonatomic, strong, readonly) DBProfilePictureView *profilePictureView;
 @property (nonatomic, assign) DBProfilePictureAlignment profilePictureAlignment;
 @property (nonatomic, assign) DBProfilePictureSize profilePictureSize;
-
-// works with profilePictureAlignment for finer adjustments
 @property (nonatomic, assign) UIEdgeInsets profilePictureInset;
 
 - (void)setProfilePicture:(UIImage *)image;
