@@ -10,4 +10,8 @@
 
 @interface DBProfileDetailsView : UIView
 
+@property (nonatomic, strong, readonly) UILabel *nameLabel;
+@property (nonatomic, strong, readonly) UILabel *usernameLabel;
+@property (nonatomic, strong, readonly) UILabel *descriptionLabel;
+
 @end

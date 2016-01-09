@@ -21,6 +21,7 @@
 		6003F5B2195388D20070C39A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F591195388D20070C39A /* UIKit.framework */; };
 		6003F5BA195388D20070C39A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6003F5B8195388D20070C39A /* InfoPlist.strings */; };
 		6003F5BC195388D20070C39A /* Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6003F5BB195388D20070C39A /* Tests.m */; };
+		675B0F6F1C40882C000AADC6 /* profile-picture.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 675B0F6E1C40882C000AADC6 /* profile-picture.jpg */; };
 		675D5BA01C3FCB72009E44CE /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 675D5B9F1C3FCB72009E44CE /* Launch Screen.storyboard */; };
 		675D5BA21C3FDCCC009E44CE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 675D5BA11C3FDCCC009E44CE /* Main.storyboard */; };
 		675D5BB21C4007B1009E44CE /* cookies.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 675D5BB11C4007B1009E44CE /* cookies.jpg */; };
@@ -59,6 +60,7 @@
 		6003F5B9195388D20070C39A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		6003F5BB195388D20070C39A /* Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Tests.m; sourceTree = "<group>"; };
 		606FC2411953D9B200FFA9A0 /* Tests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Tests-Prefix.pch"; sourceTree = "<group>"; };
+		675B0F6E1C40882C000AADC6 /* profile-picture.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "profile-picture.jpg"; sourceTree = "<group>"; };
 		675D5B9F1C3FCB72009E44CE /* Launch Screen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 		675D5BA11C3FDCCC009E44CE /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		675D5BB11C4007B1009E44CE /* cookies.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = cookies.jpg; sourceTree = "<group>"; };
@@ -140,6 +142,7 @@
 				675D5B9F1C3FCB72009E44CE /* Launch Screen.storyboard */,
 				6003F5A5195388D20070C39A /* DBViewController.h */,
 				6003F5A6195388D20070C39A /* DBViewController.m */,
+				675B0F6E1C40882C000AADC6 /* profile-picture.jpg */,
 				675D5BB11C4007B1009E44CE /* cookies.jpg */,
 				6003F5A8195388D20070C39A /* Images.xcassets */,
 				6003F594195388D20070C39A /* Supporting Files */,
@@ -286,6 +289,7 @@
 				675D5BA01C3FCB72009E44CE /* Launch Screen.storyboard in Resources */,
 				675D5BB21C4007B1009E44CE /* cookies.jpg in Resources */,
 				6003F598195388D20070C39A /* InfoPlist.strings in Resources */,
+				675B0F6F1C40882C000AADC6 /* profile-picture.jpg in Resources */,
 				675D5BA21C3FDCCC009E44CE /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

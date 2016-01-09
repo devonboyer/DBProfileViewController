@@ -9,6 +9,7 @@
 @import UIKit;
 
 #import "DBProfileViewController.h"
+#import "DBProfilePictureView.h"
 
 @interface DBViewController : DBProfileViewController
 

@@ -70,6 +70,8 @@
     
     self.topBorderView.backgroundColor = borderColor;
     self.bottomBorderView.backgroundColor = borderColor;
+    
+    self.topBorderView.hidden = YES;
 }
 
 #pragma mark - Auto Layout
