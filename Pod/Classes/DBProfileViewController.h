@@ -8,13 +8,15 @@
 
 #import <UIKit/UIKit.h>
 
+@protocol DBProfileContentViewController;
+
 @class DBProfileDetailsView;
-@class DBProfilePictureView;
 @class DBProfileCoverPhotoView;
+@class DBProfilePictureView;
 @class DBProfileViewController;
 
-extern const CGFloat DBProfileViewControllerCoverImageDefaultHeight;
-extern const CGFloat DBProfileViewControllerProfileImageLeftRightMargin;
+extern const CGFloat DBProfileViewControllerCoverPhotoDefaultHeight;
+extern const CGFloat DBProfileViewControllerProfilePictureLeftRightMargin;
 extern const CGFloat DBProfileViewControllerPullToRefreshDistance;
 
 typedef NS_ENUM(NSInteger, DBProfileCoverPhotoStyle) {
@@ -27,20 +29,6 @@ typedef NS_ENUM(NSInteger, DBProfilePictureAlignment) {
     DBProfilePictureAlignmentLeft,
     DBProfilePictureAlignmentCenter
 };
-
-///------------------------------------------------
-/// @name DBProfileViewControllerContentPresenting
-///------------------------------------------------
-
-@protocol DBProfileViewControllerContentPresenting <NSObject>
-@property (nonatomic, strong,readonly) UIScrollView *scrollView;
-@end
-
-@interface UITableViewController (DBProfileViewController) <DBProfileViewControllerContentPresenting>
-@end
-
-@interface UICollectionViewController (DBProfileViewController) <DBProfileViewControllerContentPresenting>
-@end
 
 ///------------------------------------------------
 /// @name DBProfileViewControllerDelegate
@@ -83,12 +71,11 @@ typedef NS_ENUM(NSInteger, DBProfilePictureAlignment) {
 /// @name Managing Content View Controllers
 ///----------------------------------------------
 
-@property (nonatomic, strong, readonly) UISegmentedControl *contentSegmentedControl;
 @property (nonatomic, strong, readonly) NSArray *contentViewControllers;
-@property (nonatomic, strong, readonly) UIViewController<DBProfileViewControllerContentPresenting> *visibleContentViewController;
+@property (nonatomic, strong, readonly) UIViewController<DBProfileContentViewController> *visibleContentViewController;
 
-- (void)addContentViewController:(UIViewController<DBProfileViewControllerContentPresenting> *)viewController withTitle:(NSString *)title;
-- (void)addContentViewController:(UIViewController<DBProfileViewControllerContentPresenting> *)viewController atIndex:(NSUInteger)index withTitle:(NSString *)title;
+- (void)addContentViewController:(UIViewController<DBProfileContentViewController> *)viewController withTitle:(NSString *)title;
+- (void)addContentViewController:(UIViewController<DBProfileContentViewController> *)viewController atIndex:(NSUInteger)index withTitle:(NSString *)title;
 - (void)removeContentViewControllerAtIndex:(NSUInteger)index;
 - (void)setVisibleContentViewControllerAtIndex:(NSUInteger)index animated:(BOOL)animated;
 

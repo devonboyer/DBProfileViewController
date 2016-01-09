@@ -1,21 +1,21 @@
 //
-//  DBProfileSegmentedControlContainerView.m
+//  DBProfileSegmentedControlView.m
 //  Pods
 //
 //  Created by Devon Boyer on 2016-01-08.
 //
 //
 
-#import "DBProfileSegmentedControlContainerView.h"
+#import "DBProfileSegmentedControlView.h"
 
-@interface DBProfileSegmentedControlContainerView ()
+@interface DBProfileSegmentedControlView ()
 
 @property (nonatomic, strong) UIView *topBorderView;
 @property (nonatomic, strong) UIView *bottomBorderView;
 
 @end
 
-@implementation DBProfileSegmentedControlContainerView
+@implementation DBProfileSegmentedControlView
 
 #pragma mark - Initialization
 

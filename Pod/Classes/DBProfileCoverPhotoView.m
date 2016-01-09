@@ -49,10 +49,19 @@
 
 - (void)startRefreshing {
     [self.activityIndicator startAnimating];
+    
+    self.activityIndicator.alpha = 0;
+    [UIView animateWithDuration:0.2 animations:^{
+        self.activityIndicator.alpha = 1;
+    }];
 }
 
 - (void)endRefreshing {
-    [self.activityIndicator stopAnimating];
+    [UIView animateWithDuration:0.2 animations:^{
+        self.activityIndicator.alpha = 0;
+    } completion:^(BOOL finished) {
+        [self.activityIndicator stopAnimating];
+    }];
 }
 
 #pragma mark - Auto Layout

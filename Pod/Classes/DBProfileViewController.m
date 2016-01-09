@@ -11,23 +11,12 @@
 #import "DBProfileDetailsView.h"
 #import "DBProfilePictureView.h"
 #import "DBProfileCoverPhotoView.h"
-#import "DBProfileSegmentedControlContainerView.h"
+#import "DBProfileSegmentedControlView.h"
+#import "DBProfileContentViewController.h"
 
-const CGFloat DBProfileViewControllerCoverImageDefaultHeight = 130.0;
-const CGFloat DBProfileViewControllerProfileImageLeftRightMargin = 15.0;
+const CGFloat DBProfileViewControllerCoverPhotoDefaultHeight = 130.0;
+const CGFloat DBProfileViewControllerProfilePictureLeftRightMargin = 15.0;
 const CGFloat DBProfileViewControllerPullToRefreshDistance = 80;
-
-@implementation UITableViewController (DBProfileViewControllerContentPresenting)
-- (UIScrollView *)scrollView {
-    return self.tableView;
-}
-@end
-
-@implementation UICollectionViewController (DBProfileViewControllerContentPresenting)
-- (UIScrollView *)scrollView {
-    return self.collectionView;
-}
-@end
 
 static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewControllerContentOffsetKVOContext;
 
@@ -39,7 +28,7 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
 @property (nonatomic, getter=isRefreshing) BOOL refreshing;
 
 @property (nonatomic, strong) UIViewController *contentContainerViewController;
-@property (nonatomic, strong) DBProfileSegmentedControlContainerView *segmentedControlContainerView;
+@property (nonatomic, strong) DBProfileSegmentedControlView *segmentedControlView;
 
 @property (nonatomic, strong) NSMutableArray *mutableContentViewControllers;
 @property (nonatomic, strong) NSMutableArray *mutableContentViewControllerTitles;
@@ -53,7 +42,7 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
 @property (nonatomic, strong) NSLayoutConstraint *profilePictureViewCenterYConstraint;
 
 @property (nonatomic, strong) NSLayoutConstraint *detailsViewTopConstraint;
-@property (nonatomic, strong) NSLayoutConstraint *contentSegmentedControlContainerViewTopConstraint;
+@property (nonatomic, strong) NSLayoutConstraint *segmentedControlViewTopConstraint;
 
 @end
 
@@ -97,7 +86,7 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
 }
 
 - (void)_commonInit {
-    _segmentedControlContainerView = [[DBProfileSegmentedControlContainerView alloc] init];
+    _segmentedControlView = [[DBProfileSegmentedControlView alloc] init];
     _detailsView = [[DBProfileDetailsView alloc] init];
     
     _profilePictureView = [[DBProfilePictureView alloc] init];
@@ -132,7 +121,7 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
     [super viewDidLoad];
     
     // Actions
-    [self.contentSegmentedControl addTarget:self action:@selector(changeContent) forControlEvents:UIControlEventValueChanged];
+    [self.segmentedControlView.segmentedControl addTarget:self action:@selector(changeContent) forControlEvents:UIControlEventValueChanged];
     
     // Configuration
     [self configureDefaultAppearance];
@@ -165,7 +154,7 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
             break;
         case DBProfileCoverPhotoStyleDefault:
         case DBProfileCoverPhotoStyleStretch:
-            self.coverPhotoViewHeightConstraint.constant = DBProfileViewControllerCoverImageDefaultHeight;
+            self.coverPhotoViewHeightConstraint.constant = DBProfileViewControllerCoverPhotoDefaultHeight;
             self.coverPhotoView.hidden = NO;
             break;
         default:
@@ -197,10 +186,6 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
 }
 
 #pragma makr - Getters
-
-- (UISegmentedControl *)contentSegmentedControl {
-    return self.segmentedControlContainerView.segmentedControl;
-}
 
 - (NSArray *)contentViewControllers {
     return (NSArray *)self.mutableContentViewControllers;
@@ -239,7 +224,7 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
 #pragma mark - Actions
 
 - (void)changeContent {
-    NSUInteger selectedIndex = [self.contentSegmentedControl selectedSegmentIndex];
+    NSUInteger selectedIndex = [self.segmentedControlView.segmentedControl selectedSegmentIndex];
     [self setVisibleContentViewControllerAtIndex:selectedIndex animated:NO];
 }
 
@@ -251,8 +236,8 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
     self.profilePictureAlignment = DBProfilePictureAlignmentLeft;
     
     self.detailsView.backgroundColor = [UIColor whiteColor];
-    self.segmentedControlContainerView.backgroundColor = [UIColor whiteColor];
-    self.segmentedControlContainerView.segmentedControl.tintColor = [UIColor grayColor];
+    self.segmentedControlView.backgroundColor = [UIColor whiteColor];
+    self.segmentedControlView.segmentedControl.tintColor = [UIColor grayColor];
     
     self.coverPhotoView.contentMode = UIViewContentModeScaleAspectFill;
     self.coverPhotoView.clipsToBounds = YES;
@@ -263,7 +248,7 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
 
 #pragma mark - Managing Content View Controllers
 
-- (void)addContentViewController:(UIViewController<DBProfileViewControllerContentPresenting> *)viewController withTitle:(NSString *)title {
+- (void)addContentViewController:(UIViewController<DBProfileContentViewController> *)viewController withTitle:(NSString *)title {
     NSAssert([title length] > 0, @"content view controllers must have a title");
     NSAssert(viewController, @"content view controller cannot be nil");
     
@@ -273,7 +258,7 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
     [self configureContentViewControllers];
 }
 
-- (void)addContentViewController:(UIViewController<DBProfileViewControllerContentPresenting> *)viewController atIndex:(NSUInteger)index withTitle:(NSString *)title {
+- (void)addContentViewController:(UIViewController<DBProfileContentViewController> *)viewController atIndex:(NSUInteger)index withTitle:(NSString *)title {
     NSAssert([title length] > 0, @"content view controllers must have a title");
     NSAssert(viewController, @"content view controller cannot be nil");
     
@@ -301,14 +286,14 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
     // Remove previous view controller from container
     [self removeViewControllerFromContainer:self.visibleContentViewController];
     
-    UIViewController<DBProfileViewControllerContentPresenting> *visibleContentViewController = self.contentViewControllers[index];
+    UIViewController<DBProfileContentViewController> *visibleContentViewController = self.contentViewControllers[index];
     
     // Add visible view controller to container
     [self addViewControllerToContainer:visibleContentViewController];
     
     _visibleContentViewController = visibleContentViewController;
 
-    [self.contentSegmentedControl setSelectedSegmentIndex:index];
+    [self.segmentedControlView.segmentedControl setSelectedSegmentIndex:index];
     [self configureVisibleViewController:visibleContentViewController];
 }
 
@@ -332,28 +317,28 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
     return [self.contentViewControllers count];
 }
 
-- (void)configureVisibleViewController:(UIViewController<DBProfileViewControllerContentPresenting> *)visibleViewController {
+- (void)configureVisibleViewController:(UIViewController<DBProfileContentViewController> *)visibleViewController {
     UIScrollView *scrollView = [visibleViewController scrollView];
     
     [self.coverPhotoView removeFromSuperview];
     [self.detailsView removeFromSuperview];
     [self.profilePictureView removeFromSuperview];
-    [self.segmentedControlContainerView removeFromSuperview];
+    [self.segmentedControlView removeFromSuperview];
     
     [self.coverPhotoView setTranslatesAutoresizingMaskIntoConstraints:NO];
     [self.detailsView setTranslatesAutoresizingMaskIntoConstraints:NO];
     [self.profilePictureView setTranslatesAutoresizingMaskIntoConstraints:NO];
-    [self.segmentedControlContainerView setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [self.segmentedControlView setTranslatesAutoresizingMaskIntoConstraints:NO];
     
     [scrollView addSubview:self.coverPhotoView];
     [scrollView addSubview:self.detailsView];
     [scrollView addSubview:self.profilePictureView];
-    [scrollView addSubview:self.segmentedControlContainerView];
+    [scrollView addSubview:self.segmentedControlView];
     
     [self configureCoverPhotoViewLayoutConstraints];
     [self configureDetailsViewLayoutConstraints];
     [self configureProfilePictureViewLayoutConstraints];
-    [self configureSegmentedControlContainerViewLayoutConstraints];
+    [self configureSegmentedControlViewLayoutConstraints];
     
     [scrollView layoutIfNeeded];
     [scrollView setNeedsLayout];
@@ -373,17 +358,17 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
 - (void)configureContentViewControllers {
     
     // Keep track of the previously selected segment index
-    NSInteger selectedSegmentIndex = self.contentSegmentedControl.selectedSegmentIndex;
+    NSInteger selectedSegmentIndex = self.segmentedControlView.segmentedControl.selectedSegmentIndex;
     
-    [self.contentSegmentedControl removeAllSegments];
+    [self.segmentedControlView.segmentedControl removeAllSegments];
     
     NSInteger numberOfSegments = [self numberOfContentViewControllers];
     CGFloat segmentWidth = (CGRectGetWidth(self.view.bounds) * 0.8) / numberOfSegments;
     
     NSInteger index = 0;
     for (NSString *title in self.contentViewControllerTitles) {
-        [self.contentSegmentedControl insertSegmentWithTitle:title atIndex:index animated:NO];
-        [self.contentSegmentedControl setWidth:segmentWidth forSegmentAtIndex:index];
+        [self.segmentedControlView.segmentedControl insertSegmentWithTitle:title atIndex:index animated:NO];
+        [self.segmentedControlView.segmentedControl setWidth:segmentWidth forSegmentAtIndex:index];
         index++;
     }
     
@@ -398,7 +383,7 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
 }
 
 - (void)adjustContentInsetForScrollView:(UIScrollView *)scrollView {
-    CGFloat topInset = CGRectGetHeight(self.detailsView.frame) + CGRectGetHeight(self.segmentedControlContainerView.frame) + self.coverPhotoViewHeightConstraint.constant + [self.topLayoutGuide length];
+    CGFloat topInset = CGRectGetHeight(self.detailsView.frame) + CGRectGetHeight(self.segmentedControlView.frame) + self.coverPhotoViewHeightConstraint.constant + [self.topLayoutGuide length];
     
     // FIXME: Overwrites original content inset of scrollView
     UIEdgeInsets contentInset = scrollView.contentInset;
@@ -446,14 +431,14 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
         UIScrollView *scrollView = (UIScrollView *)object;
         CGFloat top = scrollView.contentOffset.y + scrollView.contentInset.top;
         CGFloat topInset = CGRectGetHeight(self.detailsView.frame) + CGRectGetHeight(self.coverPhotoView.frame);
-        self.contentSegmentedControlContainerViewTopConstraint.constant = (top > topInset) ? top - topInset : 0;
+        self.segmentedControlViewTopConstraint.constant = (top > topInset) ? top - topInset : 0;
         
         // Cover photo animations
         if (self.coverPhotoStyle == DBProfileCoverPhotoStyleStretch) {
             CGFloat delta = -top;
             if (top < 0) {
                 self.coverPhotoViewTopConstraint.constant = -(scrollView.contentInset.top - [self.topLayoutGuide length]) - delta;
-                self.coverPhotoViewHeightConstraint.constant = MAX(DBProfileViewControllerCoverImageDefaultHeight, DBProfileViewControllerCoverImageDefaultHeight + delta);
+                self.coverPhotoViewHeightConstraint.constant = MAX(DBProfileViewControllerCoverPhotoDefaultHeight, DBProfileViewControllerCoverPhotoDefaultHeight + delta);
             } else {
                 [self adjustContentInsetForScrollView:scrollView];
             }
@@ -489,14 +474,14 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
     [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.contentContainerViewController.view attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeBottom multiplier:1 constant:0]];
 }
 
-- (void)configureSegmentedControlContainerViewLayoutConstraints {
-    UIView *superview = self.segmentedControlContainerView.superview;
+- (void)configureSegmentedControlViewLayoutConstraints {
+    UIView *superview = self.segmentedControlView.superview;
     NSAssert(superview, @"");
     
-    self.contentSegmentedControlContainerViewTopConstraint = [NSLayoutConstraint constraintWithItem:self.segmentedControlContainerView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.detailsView attribute:NSLayoutAttributeBottom multiplier:1 constant:0];
-    [superview addConstraint:self.contentSegmentedControlContainerViewTopConstraint];
-    [superview addConstraint:[NSLayoutConstraint constraintWithItem:self.segmentedControlContainerView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:superview attribute:NSLayoutAttributeLeft multiplier:1 constant:0]];
-    [superview addConstraint:[NSLayoutConstraint constraintWithItem:self.segmentedControlContainerView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:superview attribute:NSLayoutAttributeWidth multiplier:1 constant:0]];
+    self.segmentedControlViewTopConstraint = [NSLayoutConstraint constraintWithItem:self.segmentedControlView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.detailsView attribute:NSLayoutAttributeBottom multiplier:1 constant:0];
+    [superview addConstraint:self.segmentedControlViewTopConstraint];
+    [superview addConstraint:[NSLayoutConstraint constraintWithItem:self.segmentedControlView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:superview attribute:NSLayoutAttributeLeft multiplier:1 constant:0]];
+    [superview addConstraint:[NSLayoutConstraint constraintWithItem:self.segmentedControlView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:superview attribute:NSLayoutAttributeWidth multiplier:1 constant:0]];
 }
 
 - (void)configureDetailsViewLayoutConstraints {
@@ -534,7 +519,7 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
     self.profilePictureViewCenterYConstraint = [NSLayoutConstraint constraintWithItem:self.profilePictureView attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self.coverPhotoView attribute:NSLayoutAttributeBottom multiplier:1 constant:10];
     [superview addConstraint:self.profilePictureViewCenterYConstraint];
     
-    self.profilePictureViewLeftConstraint = [NSLayoutConstraint constraintWithItem:self.profilePictureView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:superview attribute:NSLayoutAttributeLeft multiplier:1 constant:DBProfileViewControllerProfileImageLeftRightMargin];
+    self.profilePictureViewLeftConstraint = [NSLayoutConstraint constraintWithItem:self.profilePictureView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:superview attribute:NSLayoutAttributeLeft multiplier:1 constant:DBProfileViewControllerProfilePictureLeftRightMargin];
     self.profilePictureViewCenterXConstraint = [NSLayoutConstraint constraintWithItem:self.profilePictureView attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:superview attribute:NSLayoutAttributeCenterX multiplier:1 constant:0];
     
     [NSLayoutConstraint deactivateConstraints:@[self.profilePictureViewLeftConstraint, self.profilePictureViewCenterXConstraint]];

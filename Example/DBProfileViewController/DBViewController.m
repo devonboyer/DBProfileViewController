@@ -7,6 +7,7 @@
 //
 
 #import "DBViewController.h"
+#import "UITableViewController+DBProfileContentViewController.h"
 
 @interface DBViewController () <UITableViewDataSource, UITableViewDelegate>
 
