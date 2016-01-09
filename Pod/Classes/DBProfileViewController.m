@@ -517,6 +517,7 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
     
     if ([keyPath isEqualToString:@"contentOffset"] && context == DBProfileViewControllerContentOffsetKVOContext) {
         UIScrollView *scrollView = (UIScrollView *)object;
+        
         CGFloat top = scrollView.contentOffset.y + scrollView.contentInset.top;
         CGFloat topInset = CGRectGetHeight(self.detailsView.frame) + CGRectGetHeight(self.coverPhotoView.frame);
         self.segmentedControlViewTopConstraint.constant = (top > topInset) ? top - topInset : 0;
@@ -531,6 +532,21 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
                 [self adjustContentInsetForScrollView:scrollView];
             }
         }
+        
+//        /*********/
+//        
+//        if (top > 86) {
+//            CGFloat coverPhotoTopInset = CGRectGetHeight(self.detailsView.frame) + CGRectGetHeight(self.segmentedControlView.frame) + self.coverPhotoViewHeightConstraint.constant + [self.topLayoutGuide length];
+//            
+//            UIEdgeInsets contentInset = scrollView.contentInset;
+//            contentInset.top = coverPhotoTopInset;
+//            scrollView.contentInset = contentInset;
+//            
+//            self.coverPhotoViewTopConstraint.constant = -coverPhotoTopInset + [self.topLayoutGuide length] + (top - 86);
+//            NSLog(@"%@", @(top));
+//        }
+//        
+//        /*********/
         
         // Pull-To-Refresh animations
         if (scrollView.isDragging && !self.refreshing && top < -DBProfileViewControllerPullToRefreshDistance) {
