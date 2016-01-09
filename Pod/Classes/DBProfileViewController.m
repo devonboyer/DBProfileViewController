@@ -14,9 +14,11 @@
 #import "DBProfileSegmentedControlView.h"
 #import "DBProfileContentViewController.h"
 
-const CGFloat DBProfileViewControllerCoverPhotoDefaultHeight = 130.0;
-const CGFloat DBProfileViewControllerProfilePictureLeftRightMargin = 15.0;
-const CGFloat DBProfileViewControllerPullToRefreshDistance = 80;
+static const CGFloat DBProfileViewControllerCoverPhotoDefaultHeight = 130.0;
+static const CGFloat DBProfileViewControllerPullToRefreshDistance = 80;
+static const CGFloat DBProfileViewControllerProfilePictureSizeDefault = 72.0;
+static const CGFloat DBProfileViewControllerProfilePictureSizeLarge = 82.0;
+static const CGFloat DBProfileViewControllerProfilePictureLeftRightMargin = 15.0;
 
 static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewControllerContentOffsetKVOContext;
 
@@ -34,15 +36,19 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
 @property (nonatomic, strong) NSMutableArray *mutableContentViewControllerTitles;
 
 // Constraints
+@property (nonatomic, strong) NSLayoutConstraint *segmentedControlViewTopConstraint;
+@property (nonatomic, strong) NSLayoutConstraint *detailsViewTopConstraint;
 @property (nonatomic, strong) NSLayoutConstraint *coverPhotoViewTopConstraint;
 @property (nonatomic, strong) NSLayoutConstraint *coverPhotoViewHeightConstraint;
-
 @property (nonatomic, strong) NSLayoutConstraint *profilePictureViewLeftConstraint;
+@property (nonatomic, strong) NSLayoutConstraint *profilePictureViewRightConstraint;
 @property (nonatomic, strong) NSLayoutConstraint *profilePictureViewCenterXConstraint;
 @property (nonatomic, strong) NSLayoutConstraint *profilePictureViewCenterYConstraint;
+@property (nonatomic, strong) NSLayoutConstraint *profilePictureViewWidthConstraint;
 
-@property (nonatomic, strong) NSLayoutConstraint *detailsViewTopConstraint;
-@property (nonatomic, strong) NSLayoutConstraint *segmentedControlViewTopConstraint;
+// Gestures
+@property (nonatomic, strong) UITapGestureRecognizer *coverPhotoTapGestureRecognizer;
+@property (nonatomic, strong) UITapGestureRecognizer *profilePictureTapGestureRecognizer;
 
 @end
 
@@ -93,6 +99,9 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
     _coverPhotoView = [[DBProfileCoverPhotoView alloc] init];
     
     _contentContainerViewController = [[UIViewController alloc] init];
+    
+    _profilePictureTapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapProfilePicture)];
+    _coverPhotoTapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapCoverPhoto)];
 }
 
 - (void)dealloc {
@@ -115,6 +124,10 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
 
     // Auto Layout
     [self configureContentContainerViewControllerLayoutConstraints];
+    
+    // Gestures
+    [self.profilePictureView addGestureRecognizer:self.profilePictureTapGestureRecognizer];
+    [self.coverPhotoView addGestureRecognizer:self.coverPhotoTapGestureRecognizer];
 }
 
 - (void)viewDidLoad {
@@ -165,15 +178,32 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
         switch (self.profilePictureAlignment) {
             case DBProfilePictureAlignmentLeft:
                 [NSLayoutConstraint activateConstraints:@[self.profilePictureViewLeftConstraint]];
-                [NSLayoutConstraint deactivateConstraints:@[self.profilePictureViewCenterXConstraint]];
+                [NSLayoutConstraint deactivateConstraints:@[self.profilePictureViewRightConstraint, self.profilePictureViewCenterXConstraint]];
+                break;
+            case DBProfilePictureAlignmentRight:
+                [NSLayoutConstraint activateConstraints:@[self.profilePictureViewRightConstraint]];
+                [NSLayoutConstraint deactivateConstraints:@[self.profilePictureViewLeftConstraint, self.profilePictureViewCenterXConstraint]];
                 break;
             case DBProfilePictureAlignmentCenter:
                 [NSLayoutConstraint activateConstraints:@[self.profilePictureViewCenterXConstraint]];
-                [NSLayoutConstraint deactivateConstraints:@[self.profilePictureViewLeftConstraint]];
+                [NSLayoutConstraint deactivateConstraints:@[self.profilePictureViewLeftConstraint, self.profilePictureViewRightConstraint]];
                 break;
             default:
                 break;
         }
+    }
+    
+    switch (self.profilePictureSize) {
+        case DBProfilePictureSizeDefault:
+            self.profilePictureViewWidthConstraint.constant = DBProfileViewControllerProfilePictureSizeDefault;
+            self.profilePictureViewRightConstraint.constant = CGRectGetWidth(self.view.bounds) - DBProfileViewControllerProfilePictureSizeDefault - DBProfileViewControllerProfilePictureLeftRightMargin;
+            break;
+        case DBProfilePictureSizeLarge:
+            self.profilePictureViewWidthConstraint.constant = DBProfileViewControllerProfilePictureSizeLarge;
+            self.profilePictureViewRightConstraint.constant = CGRectGetWidth(self.view.bounds) - DBProfileViewControllerProfilePictureSizeLarge - DBProfileViewControllerProfilePictureLeftRightMargin;
+            break;
+        default:
+            break;
     }
     
     [super updateViewConstraints];
@@ -211,14 +241,46 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
 
 #pragma mark - Setters
 
-- (void)setCoverPhototyle:(DBProfileCoverPhotoStyle)coverPhotoStyle {
+- (void)setCoverPhotoStyle:(DBProfileCoverPhotoStyle)coverPhotoStyle {
+    if (_coverPhotoStyle == coverPhotoStyle) return;
     _coverPhotoStyle = coverPhotoStyle;
     [self updateViewConstraints];
 }
 
 - (void)setProfilePictureAlignment:(DBProfilePictureAlignment)profilePictureAlignment {
+    if (_profilePictureAlignment == profilePictureAlignment) return;
     _profilePictureAlignment = profilePictureAlignment;
     [self updateViewConstraints];
+}
+
+- (void)setProfilePictureSize:(DBProfilePictureSize)profilePictureSize {
+    if (_profilePictureSize == profilePictureSize) return;
+    _profilePictureSize = profilePictureSize;
+    [self updateViewConstraints];
+}
+
+- (void)setDetailsView:(DBProfileDetailsView *)detailsView {
+    NSAssert(detailsView, @"detailsView cannot be nil");
+    _detailsView = detailsView;
+    
+    // re-configure visible view controller
+    [self configureVisibleViewController:self.visibleContentViewController];
+}
+
+#pragma mark - Defaults
+
+- (void)configureDefaultAppearance {
+    
+    self.coverPhotoStyle = DBProfileCoverPhotoStyleStretch;
+    self.profilePictureAlignment = DBProfilePictureAlignmentLeft;
+    self.profilePictureSize = DBProfilePictureSizeDefault;
+    
+    self.detailsView.backgroundColor = [UIColor whiteColor];
+    self.segmentedControlView.backgroundColor = [UIColor whiteColor];
+    self.segmentedControlView.segmentedControl.tintColor = [UIColor grayColor];
+    
+    self.coverPhotoView.contentMode = UIViewContentModeScaleAspectFill;
+    self.coverPhotoView.clipsToBounds = YES;
 }
 
 #pragma mark - Actions
@@ -228,22 +290,46 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
     [self setVisibleContentViewControllerAtIndex:selectedIndex animated:NO];
 }
 
-#pragma mark - Defaults
+- (void)didTapProfilePicture {
+    if ([self.delegate respondsToSelector:@selector(profileViewController:didSelectProfilePicture:)]) {
+        [self.delegate profileViewController:self didSelectProfilePicture:self.profilePictureView.imageView];
+    }
+}
 
-- (void)configureDefaultAppearance {
-    
-    self.coverPhotoStyle = DBProfileCoverPhotoStyleStretch;
-    self.profilePictureAlignment = DBProfilePictureAlignmentLeft;
-    
-    self.detailsView.backgroundColor = [UIColor whiteColor];
-    self.segmentedControlView.backgroundColor = [UIColor whiteColor];
-    self.segmentedControlView.segmentedControl.tintColor = [UIColor grayColor];
-    
-    self.coverPhotoView.contentMode = UIViewContentModeScaleAspectFill;
-    self.coverPhotoView.clipsToBounds = YES;
-    
-    self.profilePictureView.imageView.image = [UIImage imageNamed:@"profile-picture.jpg"];
-    self.coverPhotoView.imageView.image = [UIImage imageNamed:@"cookies.jpg"];
+- (void)didTapCoverPhoto {
+    if ([self.delegate respondsToSelector:@selector(profileViewController:didSelectProfilePicture:)]) {
+        [self.delegate profileViewController:self didSelectProfilePicture:self.coverPhotoView.imageView];
+    }
+}
+
+#pragma mark - Configuring Cover Photo
+
+- (void)setCoverPhoto:(UIImage *)image {
+    self.coverPhotoView.imageView.image = image;
+}
+
+#pragma mark - Configuring Profile Picture
+
+- (void)setProfilePicture:(UIImage *)image {
+    self.profilePictureView.imageView.image = image;
+}
+
+#pragma mark - Refreshing Data
+
+- (void)startRefreshing {
+    if ([self.delegate respondsToSelector:@selector(profileViewControllerDidStartRefreshing:)]) {
+        [self.delegate profileViewControllerDidStartRefreshing:self];
+    }
+}
+
+- (void)_startRefreshing {
+    self.refreshing = YES;
+    [self.coverPhotoView startRefreshing];
+}
+
+- (void)endRefreshing {
+    self.refreshing = NO;
+    [self.coverPhotoView endRefreshing];
 }
 
 #pragma mark - Managing Content View Controllers
@@ -301,16 +387,6 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
     return [self.mutableContentViewControllerTitles objectAtIndex:index];
 }
 
-#pragma mark - Refreshing Data
-
-- (void)startRefreshing {
-    [self.coverPhotoView startRefreshing];
-}
-
-- (void)endRefreshing {
-    [self.coverPhotoView endRefreshing];
-}
-
 #pragma mark - Private
 
 - (NSInteger)numberOfContentViewControllers {
@@ -340,8 +416,8 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
     [self configureProfilePictureViewLayoutConstraints];
     [self configureSegmentedControlViewLayoutConstraints];
     
-    [scrollView layoutIfNeeded];
     [scrollView setNeedsLayout];
+    [scrollView layoutIfNeeded];
     
     [self updateViewConstraints];
     
@@ -447,14 +523,11 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
         // Pull-To-Refresh animations
         if (scrollView.isDragging && !self.refreshing && top < -DBProfileViewControllerPullToRefreshDistance) {
             self.refreshing = YES;
-            [self startRefreshing];
+            [self _startRefreshing];
         }
         
         if (!scrollView.isDragging && self.refreshing) {
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                self.refreshing = NO;
-                [self endRefreshing];
-            });
+            [self startRefreshing];
         }
         
         // Profile picture animations
@@ -476,7 +549,7 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
 
 - (void)configureSegmentedControlViewLayoutConstraints {
     UIView *superview = self.segmentedControlView.superview;
-    NSAssert(superview, @"");
+    NSAssert(superview, @"segmented control view must be added to a content view controller");
     
     self.segmentedControlViewTopConstraint = [NSLayoutConstraint constraintWithItem:self.segmentedControlView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.detailsView attribute:NSLayoutAttributeBottom multiplier:1 constant:0];
     [superview addConstraint:self.segmentedControlViewTopConstraint];
@@ -486,7 +559,7 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
 
 - (void)configureDetailsViewLayoutConstraints {
     UIView *superview = self.detailsView.superview;
-    NSAssert(superview, @"");
+    NSAssert(superview, @"details view must be added to a content view controller");
     
     [superview addConstraint:[NSLayoutConstraint constraintWithItem:self.detailsView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:superview attribute:NSLayoutAttributeLeft multiplier:1 constant:0]];
     [superview addConstraint:[NSLayoutConstraint constraintWithItem:self.detailsView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:superview attribute:NSLayoutAttributeWidth multiplier:1 constant:0]];
@@ -497,7 +570,7 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
 
 - (void)configureCoverPhotoViewLayoutConstraints {
     UIView *superview = self.coverPhotoView.superview;
-    NSAssert(superview, @"");
+    NSAssert(superview, @"cover photo must be added to a content view controller");
     
     [superview addConstraint:[NSLayoutConstraint constraintWithItem:self.coverPhotoView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:superview attribute:NSLayoutAttributeLeft multiplier:1 constant:0]];
     [superview addConstraint:[NSLayoutConstraint constraintWithItem:self.coverPhotoView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:superview attribute:NSLayoutAttributeWidth multiplier:1 constant:0]];
@@ -511,21 +584,34 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
 
 - (void)configureProfilePictureViewLayoutConstraints {
     UIView *superview = self.profilePictureView.superview;
-    NSAssert(superview, @"");
+    NSAssert(superview, @"profile picture must be added to a content view controller");
     
-    [superview addConstraint:[NSLayoutConstraint constraintWithItem:self.profilePictureView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:72]];
     [superview addConstraint:[NSLayoutConstraint constraintWithItem:self.profilePictureView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:self.profilePictureView attribute:NSLayoutAttributeWidth multiplier:1 constant:0]];
     
+    // Width
+    self.profilePictureViewWidthConstraint = [NSLayoutConstraint constraintWithItem:self.profilePictureView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:0];
+    [superview addConstraint:self.profilePictureViewWidthConstraint];
+    
+    // Left
+    self.profilePictureViewLeftConstraint = [NSLayoutConstraint constraintWithItem:self.profilePictureView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:superview attribute:NSLayoutAttributeLeft multiplier:1 constant:DBProfileViewControllerProfilePictureLeftRightMargin];
+    self.profilePictureViewLeftConstraint.priority = UILayoutPriorityDefaultLow;
+    [superview addConstraint:self.profilePictureViewLeftConstraint];
+
+    // Right
+    self.profilePictureViewRightConstraint = [NSLayoutConstraint constraintWithItem:self.profilePictureView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:superview attribute:NSLayoutAttributeLeft multiplier:1 constant:0];
+    self.profilePictureViewRightConstraint.priority = UILayoutPriorityDefaultLow;
+    [superview addConstraint:self.profilePictureViewRightConstraint];
+
+    // CenterX
+    self.profilePictureViewCenterXConstraint = [NSLayoutConstraint constraintWithItem:self.profilePictureView attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:superview attribute:NSLayoutAttributeCenterX multiplier:1 constant:0];
+    self.profilePictureViewCenterXConstraint.priority = UILayoutPriorityDefaultLow;
+    [superview addConstraint:self.profilePictureViewCenterXConstraint];
+
+    // CenterY
     self.profilePictureViewCenterYConstraint = [NSLayoutConstraint constraintWithItem:self.profilePictureView attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self.coverPhotoView attribute:NSLayoutAttributeBottom multiplier:1 constant:10];
     [superview addConstraint:self.profilePictureViewCenterYConstraint];
     
-    self.profilePictureViewLeftConstraint = [NSLayoutConstraint constraintWithItem:self.profilePictureView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:superview attribute:NSLayoutAttributeLeft multiplier:1 constant:DBProfileViewControllerProfilePictureLeftRightMargin];
-    self.profilePictureViewCenterXConstraint = [NSLayoutConstraint constraintWithItem:self.profilePictureView attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:superview attribute:NSLayoutAttributeCenterX multiplier:1 constant:0];
-    
-    [NSLayoutConstraint deactivateConstraints:@[self.profilePictureViewLeftConstraint, self.profilePictureViewCenterXConstraint]];
-    
-    [superview addConstraint:self.profilePictureViewLeftConstraint];
-    [superview addConstraint:self.profilePictureViewCenterXConstraint];
+    [NSLayoutConstraint deactivateConstraints:@[self.profilePictureViewLeftConstraint, self.profilePictureViewRightConstraint, self.profilePictureViewCenterXConstraint]];
 }
 
 @end

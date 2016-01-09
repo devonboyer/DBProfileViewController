@@ -31,6 +31,30 @@
     [self configureDefaultAppearance];
 }
 
+#pragma mark - Setters
+
+- (void)setStyle:(DBProfilePictureStyle)style {
+    _style = style;
+    [self layoutSubviews];
+}
+
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    
+    switch (self.style) {
+        case DBProfilePictureStyleRound:
+            self.layer.cornerRadius = CGRectGetWidth(self.bounds) / 2;
+            self.imageView.layer.cornerRadius = CGRectGetWidth(self.imageView.frame) / 2;
+            break;
+        case DBProfilePictureStyleRoundedRect:
+            self.layer.cornerRadius = 8;
+            self.imageView.layer.cornerRadius = 6;
+            break;
+        default:
+            break;
+    }
+}
+
 #pragma mark - Defaults
 
 - (void)configureDefaultAppearance {
@@ -41,6 +65,8 @@
     self.imageView.contentMode = UIViewContentModeScaleAspectFill;
     self.imageView.clipsToBounds = YES;
     self.imageView.layer.cornerRadius = 6;
+    
+    self.style = DBProfilePictureStyleRoundedRect;
 }
 
 #pragma mark - Auto Layout

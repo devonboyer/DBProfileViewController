@@ -15,10 +15,6 @@
 @class DBProfilePictureView;
 @class DBProfileViewController;
 
-extern const CGFloat DBProfileViewControllerCoverPhotoDefaultHeight;
-extern const CGFloat DBProfileViewControllerProfilePictureLeftRightMargin;
-extern const CGFloat DBProfileViewControllerPullToRefreshDistance;
-
 typedef NS_ENUM(NSInteger, DBProfileCoverPhotoStyle) {
     DBProfileCoverPhotoStyleNone,
     DBProfileCoverPhotoStyleDefault,
@@ -27,7 +23,13 @@ typedef NS_ENUM(NSInteger, DBProfileCoverPhotoStyle) {
 
 typedef NS_ENUM(NSInteger, DBProfilePictureAlignment) {
     DBProfilePictureAlignmentLeft,
-    DBProfilePictureAlignmentCenter
+    DBProfilePictureAlignmentRight,
+    DBProfilePictureAlignmentCenter,
+};
+
+typedef NS_ENUM(NSInteger, DBProfilePictureSize) {
+    DBProfilePictureSizeDefault,
+    DBProfilePictureSizeLarge,
 };
 
 ///------------------------------------------------
@@ -51,21 +53,30 @@ typedef NS_ENUM(NSInteger, DBProfilePictureAlignment) {
 
 @property (nonatomic, strong) id<DBProfileViewControllerDelegate> delegate;
 
+///---------------------------------------------
+/// @name Configuring Profile Details
+///---------------------------------------------
+
 @property (nonatomic, strong) DBProfileDetailsView *detailsView;
 
-///----------------------------------------------
+///---------------------------------------------
 /// @name Configuring Cover Photo
 ///---------------------------------------------
 
 @property (nonatomic, strong, readonly) DBProfileCoverPhotoView *coverPhotoView;
 @property (nonatomic, assign) DBProfileCoverPhotoStyle coverPhotoStyle;
 
-///----------------------------------------------
+- (void)setCoverPhoto:(UIImage *)image;
+
+///---------------------------------------------
 /// @name Configuring Profile Picture
 ///---------------------------------------------
 
 @property (nonatomic, strong, readonly) DBProfilePictureView *profilePictureView;
 @property (nonatomic, assign) DBProfilePictureAlignment profilePictureAlignment;
+@property (nonatomic, assign) DBProfilePictureSize profilePictureSize;
+
+- (void)setProfilePicture:(UIImage *)image;
 
 ///----------------------------------------------
 /// @name Managing Content View Controllers

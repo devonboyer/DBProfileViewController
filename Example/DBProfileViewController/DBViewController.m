@@ -9,7 +9,7 @@
 #import "DBViewController.h"
 #import "UITableViewController+DBProfileContentViewController.h"
 
-@interface DBViewController () <UITableViewDataSource, UITableViewDelegate>
+@interface DBViewController () <UITableViewDataSource, UITableViewDelegate, DBProfileViewControllerDelegate>
 
 @end
 
@@ -19,6 +19,8 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
+    
+    self.delegate = self;
     
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(add)];
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Remove" style:UIBarButtonItemStylePlain target:self action:@selector(remove)];
@@ -41,6 +43,9 @@
     [self addContentViewController:followers withTitle:@"Followers"];
     [self addContentViewController:photos withTitle:@"Photos"];
     [self addContentViewController:likes withTitle:@"Likes"];
+    
+    [self setCoverPhoto:[UIImage imageNamed:@"cookies.jpg"]];
+    [self setProfilePicture:[UIImage imageNamed:@"profile-picture.jpg"]];
 }
 
 - (void)didReceiveMemoryWarning
@@ -73,6 +78,14 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
     return cell;
+}
+
+#pragma mark - DBProfileViewControllerDelegate
+
+- (void)profileViewControllerDidStartRefreshing:(DBProfileViewController *)viewController {
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self endRefreshing];
+    });
 }
 
 @end
