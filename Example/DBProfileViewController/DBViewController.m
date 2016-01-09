@@ -46,7 +46,7 @@
     [self addContentViewController:photos withTitle:@"Photos"];
     [self addContentViewController:likes withTitle:@"Likes"];
     
-    [self setCoverPhoto:[UIImage imageNamed:@"cookies.jpg"]];
+    [self setCoverPhoto:[UIImage imageNamed:@"cover-photo.png"]];
     [self setProfilePicture:[UIImage imageNamed:@"profile-picture.jpg"]];
 }
 
@@ -79,6 +79,7 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
+    cell.textLabel.text = @"Devon Boyer";
     return cell;
 }
 

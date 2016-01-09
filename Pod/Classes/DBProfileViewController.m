@@ -258,6 +258,11 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
     return _mutableContentViewControllerTitles;
 }
 
+- (CGFloat)segmentWidth {
+    NSInteger numberOfSegments = [self numberOfContentViewControllers];
+    return (CGRectGetWidth(self.view.bounds) * 0.8) / numberOfSegments;
+}
+
 #pragma mark - Setters
 
 - (void)setCoverPhotoStyle:(DBProfileCoverPhotoStyle)coverPhotoStyle {
@@ -462,18 +467,15 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
     
     [self.segmentedControlView.segmentedControl removeAllSegments];
     
-    NSInteger numberOfSegments = [self numberOfContentViewControllers];
-    CGFloat segmentWidth = (CGRectGetWidth(self.view.bounds) * 0.8) / numberOfSegments;
-    
     NSInteger index = 0;
     for (NSString *title in self.contentViewControllerTitles) {
         [self.segmentedControlView.segmentedControl insertSegmentWithTitle:title atIndex:index animated:NO];
-        [self.segmentedControlView.segmentedControl setWidth:segmentWidth forSegmentAtIndex:index];
+        [self.segmentedControlView.segmentedControl setWidth:[self segmentWidth] forSegmentAtIndex:index];
         index++;
     }
     
     // Set the selected segment index
-    if (numberOfSegments > 0) {
+    if ([self numberOfContentViewControllers] > 0) {
         if (selectedSegmentIndex == UISegmentedControlNoSegment || selectedSegmentIndex >= [self numberOfContentViewControllers]) {
             [self setVisibleContentViewControllerAtIndex:0 animated:YES];
         } else {
@@ -484,7 +486,7 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
 
 - (void)adjustContentInsetForScrollView:(UIScrollView *)scrollView {
     // Adjust top inset of scrollView to account for for segmented control, details view, and cover photo
-    CGFloat topInset = CGRectGetHeight(self.segmentedControlView.frame) + CGRectGetHeight(self.detailsView.frame)  + self.coverPhotoViewHeightConstraint.constant;
+    CGFloat topInset = CGRectGetHeight(self.segmentedControlView.frame) + CGRectGetHeight(self.detailsView.frame) + self.coverPhotoViewHeightConstraint.constant;
     
     UIEdgeInsets contentInset = scrollView.contentInset;
     contentInset.top = self.automaticallyAdjustsScrollViewInsets ? topInset + [self.topLayoutGuide length] : topInset;
@@ -541,7 +543,7 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
     if ([keyPath isEqualToString:@"contentOffset"] && context == DBProfileViewControllerContentOffsetKVOContext) {
         UIScrollView *scrollView = (UIScrollView *)object;
         CGFloat top = scrollView.contentOffset.y + scrollView.contentInset.top;
-
+        
         // Cover photo animations
         if (self.coverPhotoStyle == DBProfileCoverPhotoStyleStretch) {
             CGFloat delta = -top;
@@ -552,6 +554,8 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
                     self.coverPhotoViewTopConstraint.constant = -scrollView.contentInset.top - delta;
                 }
                 self.coverPhotoViewHeightConstraint.constant = MAX(DBProfileViewControllerCoverPhotoDefaultHeight, DBProfileViewControllerCoverPhotoDefaultHeight + delta);
+            } else {
+                [self adjustContentInsetForScrollView:scrollView];
             }
         }
         
@@ -564,7 +568,7 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
             }
             if (top > height) {
                 CGFloat topInset = CGRectGetHeight(self.detailsView.frame) + CGRectGetHeight(self.segmentedControlView.frame) + self.coverPhotoViewHeightConstraint.constant;
-                self.coverPhotoViewTopConstraint.constant = -topInset + (top - height);
+                self.coverPhotoViewTopConstraint.constant = MAX(-topInset + (top - height), -topInset);
                 
                 [scrollView insertSubview:self.profilePictureView belowSubview:self.coverPhotoView];
             } else {
@@ -594,10 +598,14 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
         
         // Profile picture animations
         CGFloat percent = 0;
+        CGFloat coverPhotoHeight = self.coverPhotoViewHeightConstraint.constant;
+        if (self.coverPhotoMimicsNavigationBar) {
+            coverPhotoHeight -= DBProfileViewControllerCoverPhotoMimicsNavigationBarHeight;
+        }
         if (self.automaticallyAdjustsScrollViewInsets) {
-            percent = MIN(1, top / self.coverPhotoViewHeightConstraint.constant);
+            percent = MIN(1, top / coverPhotoHeight);
         } else {
-            percent = MIN(1, top / (self.coverPhotoViewHeightConstraint.constant - [self.topLayoutGuide length]));
+            percent = MIN(1, top / (coverPhotoHeight - [self.topLayoutGuide length]));
         }
         CGFloat scale = MIN(1 - percent * 0.3, 1);
         self.profilePictureView.transform = CGAffineTransformMakeScale(scale, scale);
