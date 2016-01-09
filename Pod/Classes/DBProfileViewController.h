@@ -76,6 +76,9 @@ typedef NS_ENUM(NSInteger, DBProfilePictureSize) {
 @property (nonatomic, assign) DBProfilePictureAlignment profilePictureAlignment;
 @property (nonatomic, assign) DBProfilePictureSize profilePictureSize;
 
+// works with profilePictureAlignment for finer adjustments
+@property (nonatomic, assign) UIEdgeInsets profilePictureInset;
+
 - (void)setProfilePicture:(UIImage *)image;
 
 ///----------------------------------------------

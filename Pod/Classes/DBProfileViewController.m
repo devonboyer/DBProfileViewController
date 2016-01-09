@@ -14,6 +14,7 @@
 #import "DBProfileSegmentedControlView.h"
 #import "DBProfileContentViewController.h"
 
+// Constants
 static const CGFloat DBProfileViewControllerCoverPhotoDefaultHeight = 130.0;
 static const CGFloat DBProfileViewControllerPullToRefreshDistance = 80;
 static const CGFloat DBProfileViewControllerProfilePictureSizeDefault = 72.0;
@@ -43,7 +44,7 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
 @property (nonatomic, strong) NSLayoutConstraint *profilePictureViewLeftConstraint;
 @property (nonatomic, strong) NSLayoutConstraint *profilePictureViewRightConstraint;
 @property (nonatomic, strong) NSLayoutConstraint *profilePictureViewCenterXConstraint;
-@property (nonatomic, strong) NSLayoutConstraint *profilePictureViewCenterYConstraint;
+@property (nonatomic, strong) NSLayoutConstraint *profilePictureViewTopConstraint;
 @property (nonatomic, strong) NSLayoutConstraint *profilePictureViewWidthConstraint;
 
 // Gestures
@@ -206,6 +207,10 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
             break;
     }
     
+    // Profile picture inset
+    self.profilePictureViewLeftConstraint.constant = self.profilePictureInset.left - self.profilePictureInset.right;
+    self.profilePictureViewTopConstraint.constant = self.profilePictureInset.top - self.profilePictureInset.bottom;
+    
     [super updateViewConstraints];
 }
 
@@ -241,6 +246,12 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
 
 #pragma mark - Setters
 
+- (void)setProfilePictureInset:(UIEdgeInsets)profilePictureInset {
+    if (UIEdgeInsetsEqualToEdgeInsets(_profilePictureInset, profilePictureInset)) return;
+    _profilePictureInset = profilePictureInset;
+    [self updateViewConstraints];
+}
+
 - (void)setCoverPhotoStyle:(DBProfileCoverPhotoStyle)coverPhotoStyle {
     if (_coverPhotoStyle == coverPhotoStyle) return;
     _coverPhotoStyle = coverPhotoStyle;
@@ -274,6 +285,7 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
     self.coverPhotoStyle = DBProfileCoverPhotoStyleStretch;
     self.profilePictureAlignment = DBProfilePictureAlignmentLeft;
     self.profilePictureSize = DBProfilePictureSizeDefault;
+    self.profilePictureInset = UIEdgeInsetsMake(0, 15, 72/2.0 - 10, 0);
     
     self.detailsView.backgroundColor = [UIColor whiteColor];
     self.segmentedControlView.backgroundColor = [UIColor whiteColor];
@@ -534,7 +546,10 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
         CGFloat percent = MIN(1, top / (self.coverPhotoViewHeightConstraint.constant - [self.topLayoutGuide length]));
         CGFloat scale = MIN(1 - percent * 0.3, 1);
         self.profilePictureView.transform = CGAffineTransformMakeScale(scale, scale);
-        self.profilePictureViewCenterYConstraint.constant = MAX((CGRectGetHeight(self.profilePictureView.frame) / 2) * percent, 10);
+        
+        // FIXME: This is a disgusting calculation...
+        CGFloat inset = -(self.profilePictureInset.top - self.profilePictureInset.bottom);
+        self.profilePictureViewTopConstraint.constant = MAX(MIN(-inset + (inset * percent * 0.7), -inset * 0.3), -inset);
     }
 }
 
@@ -607,9 +622,9 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
     self.profilePictureViewCenterXConstraint.priority = UILayoutPriorityDefaultLow;
     [superview addConstraint:self.profilePictureViewCenterXConstraint];
 
-    // CenterY
-    self.profilePictureViewCenterYConstraint = [NSLayoutConstraint constraintWithItem:self.profilePictureView attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self.coverPhotoView attribute:NSLayoutAttributeBottom multiplier:1 constant:10];
-    [superview addConstraint:self.profilePictureViewCenterYConstraint];
+    // Top
+    self.profilePictureViewTopConstraint = [NSLayoutConstraint constraintWithItem:self.profilePictureView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.coverPhotoView attribute:NSLayoutAttributeBottom multiplier:1 constant:0];
+    [superview addConstraint:self.profilePictureViewTopConstraint];
     
     [NSLayoutConstraint deactivateConstraints:@[self.profilePictureViewLeftConstraint, self.profilePictureViewRightConstraint, self.profilePictureViewCenterXConstraint]];
 }
