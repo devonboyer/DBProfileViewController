@@ -110,7 +110,7 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
 
 - (void)dealloc {
     if (self.visibleContentViewController) {
-        UIScrollView *scrollView = [self.visibleContentViewController scrollView];
+        UIScrollView *scrollView = [self.visibleContentViewController contentScrollView];
         [self endObservingContentOffsetForScrollView:scrollView];
     }
 }
@@ -396,7 +396,7 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
 
 - (void)setVisibleContentViewControllerAtIndex:(NSUInteger)index animated:(BOOL)animated {
     if (self.visibleContentViewController) {
-        UIScrollView *scrollView = [self.visibleContentViewController scrollView];
+        UIScrollView *scrollView = [self.visibleContentViewController contentScrollView];
         [self endObservingContentOffsetForScrollView:scrollView];
     }
     
@@ -425,7 +425,7 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
 }
 
 - (void)configureVisibleViewController:(UIViewController<DBProfileContentViewController> *)visibleViewController {
-    UIScrollView *scrollView = [visibleViewController scrollView];
+    UIScrollView *scrollView = [visibleViewController contentScrollView];
     
     [self.coverPhotoView removeFromSuperview];
     [self.detailsView removeFromSuperview];
@@ -582,14 +582,14 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
         }
         
         // Sticky segmented control
-        CGFloat topInset = CGRectGetHeight(self.detailsView.frame) + CGRectGetHeight(self.coverPhotoView.frame);
+        CGFloat segmentedControlOffset = CGRectGetHeight(self.detailsView.frame) + CGRectGetHeight(self.coverPhotoView.frame);
         if (self.coverPhotoMimicsNavigationBar) {
-            topInset -= DBProfileViewControllerCoverPhotoMimicsNavigationBarHeight;
+            segmentedControlOffset -= DBProfileViewControllerCoverPhotoMimicsNavigationBarHeight;
             if (self.automaticallyAdjustsScrollViewInsets) {
-                topInset += [self.topLayoutGuide length];
+                segmentedControlOffset += [self.topLayoutGuide length];
             }
         }
-        self.segmentedControlViewTopConstraint.constant = (top > topInset) ? top - topInset : 0;
+        self.segmentedControlViewTopConstraint.constant = (top > segmentedControlOffset) ? top - segmentedControlOffset : 0;
         
         // Pull-To-Refresh animations
         if (scrollView.isDragging && !self.refreshing && top < -DBProfileViewControllerPullToRefreshDistance) {

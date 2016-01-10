@@ -10,6 +10,6 @@
 
 @protocol DBProfileContentViewController <NSObject>
 
-@property (nonatomic, strong,readonly) UIScrollView *scrollView;
+@property (nonatomic, strong,readonly) UIScrollView *contentScrollView;
 
 @end

@@ -7,10 +7,12 @@
 //
 
 #import "DBViewController.h"
-#import "UITableViewController+DBProfileContentViewController.h"
 
-@interface DBViewController () <UITableViewDataSource, UITableViewDelegate, DBProfileViewControllerDelegate>
+#import "DBFollowersTableViewController.h"
+#import "DBPhotosTableViewController.h"
+#import "DBLikesTableViewController.h"
 
+@interface DBViewController () <DBProfileViewControllerDelegate>
 @end
 
 @implementation DBViewController
@@ -24,27 +26,11 @@
         
     self.delegate = self;
     
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(add)];
-    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Remove" style:UIBarButtonItemStylePlain target:self action:@selector(remove)];
-    
-    UITableViewController *followers = [[UITableViewController alloc] init];
-    [followers.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"Cell"];
-    followers.tableView.dataSource = self;
-    followers.tableView.delegate = self;
-    
-    UITableViewController *photos = [[UITableViewController alloc] init];
-    [photos.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"Cell"];
-    photos.tableView.dataSource = self;
-    photos.tableView.delegate = self;
-    
-    UITableViewController *likes = [[UITableViewController alloc] init];
-    [likes.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"Cell"];
-    likes.tableView.dataSource = self;
-    likes.tableView.delegate = self;
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Search" style:UIBarButtonItemStylePlain target:self action:@selector(search)];
 
-    [self addContentViewController:followers withTitle:@"Followers"];
-    [self addContentViewController:photos withTitle:@"Photos"];
-    [self addContentViewController:likes withTitle:@"Likes"];
+    [self addContentViewController:[[DBFollowersTableViewController alloc] init] withTitle:@"Followers"];
+    [self addContentViewController:[[DBPhotosTableViewController alloc] init] withTitle:@"Photos"];
+    [self addContentViewController:[[DBLikesTableViewController alloc] init] withTitle:@"Likes"];
     
     [self setCoverPhoto:[UIImage imageNamed:@"cover-photo.png"]];
     [self setProfilePicture:[UIImage imageNamed:@"profile-picture.jpg"]];
@@ -58,33 +44,7 @@
 
 #pragma mark - Actions
 
-- (void)add {
-    UITableViewController *tbvc = [[UITableViewController alloc] init];
-    [tbvc.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"Cell"];
-    tbvc.tableView.dataSource = self;
-    tbvc.tableView.delegate = self;
-    
-    [self addContentViewController:tbvc withTitle:@"Segment"];
-}
-
-- (void)remove {
-    [self removeContentViewControllerAtIndex:0];
-}
-
-#pragma mark - UITableViewDataSource
-
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 30;
-}
-
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
-    cell.textLabel.text = @"Devon Boyer";
-    return cell;
-}
-
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return 80;
+- (void)search {
 }
 
 #pragma mark - DBProfileViewControllerDelegate
