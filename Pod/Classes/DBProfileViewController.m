@@ -157,7 +157,7 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
     [self resetNavigationBarHeight];
     
     if ([self numberOfContentViewControllers] > 0 && !_hasAppeared) {
-        [self setVisibleContentViewControllerAtIndex:0 animated:NO];
+        [self setVisibleContentViewControllerAtIndex:0];
     }
     
     [self.view setNeedsLayout];
@@ -319,7 +319,8 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
     self.coverPhotoMimicsNavigationBar = YES;
     self.profilePictureAlignment = DBProfilePictureAlignmentLeft;
     self.profilePictureSize = DBProfilePictureSizeDefault;
-    self.profilePictureInset = UIEdgeInsetsMake(0, DBProfileViewControllerProfilePictureLeftRightMargin, 72/2.0 - 10, 0);
+    self.profilePictureInset = UIEdgeInsetsMake(0, DBProfileViewControllerProfilePictureLeftRightMargin, DBProfileViewControllerCoverPhotoDefaultHeight/2.0 - 10, 0);
+    self.allowsPullToRefresh = YES;
     
     self.detailsView.backgroundColor = [UIColor whiteColor];
     self.segmentedControlView.backgroundColor = [UIColor whiteColor];
@@ -333,7 +334,7 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
 
 - (void)changeContent {
     NSUInteger selectedIndex = [self.segmentedControlView.segmentedControl selectedSegmentIndex];
-    [self setVisibleContentViewControllerAtIndex:selectedIndex animated:NO];
+    [self setVisibleContentViewControllerAtIndex:selectedIndex];
 }
 
 - (void)didTapProfilePicture {
@@ -350,36 +351,28 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
 
 #pragma mark - Configuring Cover Photo
 
-- (void)setCoverPhoto:(UIImage *)image {
+- (void)setCoverPhoto:(UIImage *)image animated:(BOOL)animated {
     self.coverPhotoView.imageView.image = image;
+    
+    if (animated) {
+        self.coverPhotoView.imageView.alpha = 0;
+        [UIView animateWithDuration: 0.3 animations:^{
+            self.coverPhotoView.imageView.alpha = 1;
+        }];
+    }
 }
 
 #pragma mark - Configuring Profile Picture
 
-- (void)setProfilePicture:(UIImage *)image {
+- (void)setProfilePicture:(UIImage *)image animated:(BOOL)animated {
     self.profilePictureView.imageView.image = image;
-}
 
-#pragma mark - Refreshing Data
-
-- (void)startRefreshing {
-    self.refreshing = YES;
-    if ([self.delegate respondsToSelector:@selector(profileViewControllerDidStartRefreshing:)]) {
-        [self.delegate profileViewControllerDidStartRefreshing:self];
+    if (animated) {
+        self.profilePictureView.imageView.alpha = 0;
+        [UIView animateWithDuration: 0.3 animations:^{
+            self.profilePictureView.imageView.alpha = 1;
+        }];
     }
-}
-
-- (void)endRefreshing {
-    self.refreshing = NO;
-    [self endRefreshAnimations];
-}
-
-- (void)startRefreshAnimations {
-    [self.coverPhotoView startRefreshing];
-}
-
-- (void)endRefreshAnimations {
-    [self.coverPhotoView endRefreshing];
 }
 
 #pragma mark - Managing Content View Controllers
@@ -394,7 +387,7 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
     [self configureContentViewControllers];
 }
 
-- (void)addContentViewController:(UIViewController<DBProfileContentViewController> *)viewController atIndex:(NSUInteger)index withTitle:(NSString *)title {
+- (void)addContentViewController:(UIViewController<DBProfileContentViewController> *)viewController withTitle:(NSString *)title atIndex:(NSUInteger)index {
     NSAssert([title length] > 0, @"content view controllers must have a title");
     NSAssert(viewController, @"content view controller cannot be nil");
     
@@ -413,7 +406,7 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
     }
 }
 
-- (void)setVisibleContentViewControllerAtIndex:(NSUInteger)index animated:(BOOL)animated {
+- (void)setVisibleContentViewControllerAtIndex:(NSUInteger)index {
     if (self.visibleContentViewController) {
         UIScrollView *scrollView = [self.visibleContentViewController contentScrollView];
         [self endObservingContentOffsetForScrollView:scrollView];
@@ -433,9 +426,42 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
     [self configureVisibleViewController:visibleContentViewController];
 }
 
+#pragma mark - Getting Content View Controller Information
+
+- (NSUInteger)selectedContentViewControllerIndex {
+    return [self.segmentedControlView.segmentedControl selectedSegmentIndex];
+}
+
 - (NSString *)titleForContentViewControllerAtIndex:(NSUInteger)index {
     return [self.mutableContentViewControllerTitles objectAtIndex:index];
 }
+
+- (NSUInteger)indexForContentViewControllerWithTitle:(NSString *)title {
+    return [self.mutableContentViewControllerTitles indexOfObject:title];
+}
+
+#pragma mark - Refreshing Data
+
+- (void)startRefreshing {
+    self.refreshing = YES;
+    if ([self.delegate respondsToSelector:@selector(profileViewControllerDidPullToRefresh:)]) {
+        [self.delegate profileViewControllerDidPullToRefresh:self];
+    }
+}
+
+- (void)endRefreshing {
+    self.refreshing = NO;
+    [self endRefreshAnimations];
+}
+
+- (void)startRefreshAnimations {
+    [self.coverPhotoView startRefreshing];
+}
+
+- (void)endRefreshAnimations {
+    [self.coverPhotoView endRefreshing];
+}
+
 
 #pragma mark - Private
 
@@ -498,9 +524,9 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
     // Set the selected segment index
     if ([self numberOfContentViewControllers] > 0) {
         if (selectedSegmentIndex == UISegmentedControlNoSegment || selectedSegmentIndex >= [self numberOfContentViewControllers]) {
-            [self setVisibleContentViewControllerAtIndex:0 animated:YES];
+            [self setVisibleContentViewControllerAtIndex:0];
         } else {
-            [self setVisibleContentViewControllerAtIndex:selectedSegmentIndex animated:YES];
+            [self setVisibleContentViewControllerAtIndex:selectedSegmentIndex];
         }
     }
 }
@@ -616,13 +642,15 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
         }
         self.segmentedControlViewTopConstraint.constant = (top > segmentedControlOffset) ? top - segmentedControlOffset : 0;
         
-        // Pull-To-Refresh animations
-        if (scrollView.isDragging && top < 0) {
-            [self startRefreshAnimations];
-        } else if (!scrollView.isDragging && !self.refreshing && top < -DBProfileViewControllerPullToRefreshDistance) {
-            [self startRefreshing];
-        } else if (!scrollView.isDragging && !self.refreshing && self.coverPhotoView.activityIndicator.isAnimating) {
-            [self endRefreshAnimations];
+        if (self.allowsPullToRefresh) {
+            // Pull-To-Refresh animations
+            if (scrollView.isDragging && top < 0) {
+                [self startRefreshAnimations];
+            } else if (!scrollView.isDragging && !self.refreshing && top < -DBProfileViewControllerPullToRefreshDistance) {
+                [self startRefreshing];
+            } else if (!scrollView.isDragging && !self.refreshing && self.coverPhotoView.activityIndicator.isAnimating) {
+                [self endRefreshAnimations];
+            }
         }
         
         // Profile picture animations

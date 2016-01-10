@@ -40,7 +40,7 @@ typedef NS_ENUM(NSInteger, DBProfilePictureSize) {
 @optional
 - (void)profileViewController:(DBProfileViewController *)viewController didSelectProfilePicture:(UIImageView *)imageView;
 - (void)profileViewController:(DBProfileViewController *)viewController didSelectCoverPhoto:(UIImageView *)imageView;
-- (void)profileViewControllerDidStartRefreshing:(DBProfileViewController *)viewController;
+- (void)profileViewControllerDidPullToRefresh:(DBProfileViewController *)viewController;
 @end
 
 @interface DBProfileViewController : UIViewController
@@ -65,9 +65,9 @@ typedef NS_ENUM(NSInteger, DBProfilePictureSize) {
 
 @property (nonatomic, strong, readonly) DBProfileCoverPhotoView *coverPhotoView;
 @property (nonatomic, assign) DBProfileCoverPhotoStyle coverPhotoStyle;
-@property (nonatomic, assign) BOOL coverPhotoMimicsNavigationBar; // mutually exclusive with DBProfileCoverPhotoStyleNone
+@property (nonatomic, assign) BOOL coverPhotoMimicsNavigationBar;
 
-- (void)setCoverPhoto:(UIImage *)image;
+- (void)setCoverPhoto:(UIImage *)image animated:(BOOL)animated;
 
 ///---------------------------------------------
 /// @name Configuring Profile Picture
@@ -78,29 +78,41 @@ typedef NS_ENUM(NSInteger, DBProfilePictureSize) {
 @property (nonatomic, assign) DBProfilePictureSize profilePictureSize;
 @property (nonatomic, assign) UIEdgeInsets profilePictureInset;
 
-- (void)setProfilePicture:(UIImage *)image;
+- (void)setProfilePicture:(UIImage *)image animated:(BOOL)animated;
 
 ///----------------------------------------------
 /// @name Managing Content View Controllers
 ///----------------------------------------------
 
 @property (nonatomic, strong, readonly) NSArray *contentViewControllers;
-@property (nonatomic, strong, readonly) UIViewController<DBProfileContentViewController> *visibleContentViewController;
 
-- (void)addContentViewController:(UIViewController<DBProfileContentViewController> *)viewController withTitle:(NSString *)title;
-- (void)addContentViewController:(UIViewController<DBProfileContentViewController> *)viewController atIndex:(NSUInteger)index withTitle:(NSString *)title;
+- (void)addContentViewController:(UIViewController<DBProfileContentViewController> *)viewController
+                       withTitle:(NSString *)title;
+
+- (void)addContentViewController:(UIViewController<DBProfileContentViewController> *)viewController
+                       withTitle:(NSString *)title
+                         atIndex:(NSUInteger)index;
+
 - (void)removeContentViewControllerAtIndex:(NSUInteger)index;
-- (void)setVisibleContentViewControllerAtIndex:(NSUInteger)index animated:(BOOL)animated;
+- (void)setVisibleContentViewControllerAtIndex:(NSUInteger)index;
+
+///--------------------------------------------------
+/// @name Getting Content View Controller Information
+///--------------------------------------------------
+
+@property (nonatomic, strong, readonly) UIViewController<DBProfileContentViewController> *visibleContentViewController;
+@property (nonatomic, assign, readonly) NSUInteger selectedContentViewControllerIndex;
 
 - (NSString *)titleForContentViewControllerAtIndex:(NSUInteger)index;
+- (NSUInteger)indexForContentViewControllerWithTitle:(NSString *)title;
 
 ///----------------------------------------------
 /// @name Refreshing Data
 ///----------------------------------------------
 
-@property (nonatomic, readonly, getter=isRefreshing) BOOL refreshing;
+@property (nonatomic, assign, readonly, getter=isRefreshing) BOOL refreshing;
+@property (nonatomic, assign) BOOL allowsPullToRefresh;
 
-- (void)startRefreshing;
 - (void)endRefreshing;
 
 @end

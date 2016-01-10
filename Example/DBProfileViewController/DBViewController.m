@@ -33,8 +33,8 @@
     [self addContentViewController:[[DBPhotosTableViewController alloc] init] withTitle:@"Photos"];
     [self addContentViewController:[[DBLikesTableViewController alloc] init] withTitle:@"Likes"];
         
-    [self setCoverPhoto:[UIImage imageNamed:@"cover-photo.png"]];
-    [self setProfilePicture:[UIImage imageNamed:@"profile-picture.jpg"]];
+    [self setCoverPhoto:[UIImage imageNamed:@"cover-photo.png"] animated:NO];
+    [self setProfilePicture:[UIImage imageNamed:@"profile-picture.jpg"] animated:NO];
 }
 
 - (void)didReceiveMemoryWarning
@@ -53,7 +53,7 @@
 
 #pragma mark - DBProfileViewControllerDelegate
 
-- (void)profileViewControllerDidStartRefreshing:(DBProfileViewController *)viewController {
+- (void)profileViewControllerDidPullToRefresh:(DBProfileViewController *)viewController {
     NSLog(@"Network Call");
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [self endRefreshing];
