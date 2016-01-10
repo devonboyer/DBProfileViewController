@@ -11,7 +11,7 @@
 #import "DBProfileDetailsView.h"
 #import "DBProfilePictureView.h"
 #import "DBProfileCoverPhotoView.h"
-#import "DBProfileNavigationBar.h"
+#import "DBProfileTitleView.h"
 #import "DBProfileSegmentedControlView.h"
 #import "DBProfileContentViewController.h"
 
@@ -25,12 +25,11 @@ static const CGFloat DBProfileViewControllerCoverPhotoMimicsNavigationBarHeight 
 
 static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewControllerContentOffsetKVOContext;
 
-@interface DBProfileViewController () <UINavigationBarDelegate>
+@interface DBProfileViewController ()
 {
     BOOL hasAppeared;
 }
-
-@property (nonatomic, strong) DBProfileNavigationBar *coverPhotoNavigationBar;
+@property (nonatomic, strong) DBProfileTitleView *titleView;
 
 @property (nonatomic, getter=isRefreshing) BOOL refreshing;
 
@@ -101,10 +100,9 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
     _detailsView = [[DBProfileDetailsView alloc] init];
     _profilePictureView = [[DBProfilePictureView alloc] init];
     _coverPhotoView = [[DBProfileCoverPhotoView alloc] init];
+    _titleView = [[DBProfileTitleView alloc] init];
     
     _contentContainerViewController = [[UIViewController alloc] init];
-    _coverPhotoNavigationBar = [[DBProfileNavigationBar alloc] init];
-    self.coverPhotoNavigationBar.delegate = self;
 
     _profilePictureTapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapProfilePicture)];
     _coverPhotoTapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapCoverPhoto)];
@@ -122,21 +120,17 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
 - (void)loadView {
     [super loadView];
     
-    self.coverPhotoNavigationBar.hidden = YES;
+    self.titleView.frame = CGRectMake(0, 0, 200, 50);
+    self.navigationItem.titleView = self.titleView;
     
     [self addChildViewController:self.contentContainerViewController];
     [self.view addSubview:self.contentContainerViewController.view];
     [self.contentContainerViewController didMoveToParentViewController:self];
-    
-    [self.coverPhotoNavigationBar setItems:@[self.navigationItem]];
-    [self.view addSubview:self.coverPhotoNavigationBar];
 
-    [self.coverPhotoNavigationBar setTranslatesAutoresizingMaskIntoConstraints:NO];
     [self.contentContainerViewController.view setTranslatesAutoresizingMaskIntoConstraints:NO];
 
     // Auto Layout
     [self configureContentContainerViewControllerLayoutConstraints];
-    [self configureCoverPhotoNavigationBarLayoutConstraints];
     
     // Gestures
     [self.profilePictureView addGestureRecognizer:self.profilePictureTapGestureRecognizer];
@@ -145,6 +139,10 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    [self.navigationController.navigationBar setBackgroundImage:[UIImage new] forBarMetrics:UIBarMetricsDefault];
+    [self.navigationController.navigationBar setTranslucent:YES];
+    [self.navigationController.navigationBar setShadowImage:[UIImage new]];
     
     // Actions
     [self.segmentedControlView.segmentedControl addTarget:self action:@selector(changeContent) forControlEvents:UIControlEventValueChanged];
@@ -513,12 +511,6 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
     [viewController removeFromParentViewController];
 }
 
-#pragma mark - UINavigationBarDelegate
-
-- (UIBarPosition)positionForBar:(id<UIBarPositioning>)bar {
-    return UIBarPositionTopAttached;
-}
-
 #pragma mark - KVO
 
 - (void)beginObservingContentOffsetForScrollView:(UIScrollView *)scrollView {
@@ -557,6 +549,15 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
             } else {
                 [self adjustContentInsetForScrollView:scrollView];
             }
+        }
+        
+        // Cover photo blur effect
+        if (top < 0) {
+            CGFloat pullToRefreshPercent = fabs(top) / 10;
+            self.coverPhotoView.blurView.alpha = pullToRefreshPercent;
+        } else {
+            CGFloat pullToRefreshPercent = fabs(top) / 60;
+            self.coverPhotoView.blurView.alpha = pullToRefreshPercent;
         }
         
         // Sticky cover photo to "mimic" navigation bar
@@ -610,19 +611,19 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
         CGFloat scale = MIN(1 - percent * 0.3, 1);
         self.profilePictureView.transform = CGAffineTransformMakeScale(scale, scale);
         
-        // FIXME: This is a disgusting calculation...
-        CGFloat inset = -(self.profilePictureInset.top - self.profilePictureInset.bottom);
-        self.profilePictureViewTopConstraint.constant = MAX(MIN(-inset + (inset * percent * 0.7), -inset * 0.3), -inset);
+        CGFloat profilePictureOffset = self.profilePictureInset.bottom + self.profilePictureInset.top;
+        self.profilePictureViewTopConstraint.constant = MAX(MIN(-profilePictureOffset + (profilePictureOffset * percent * 0.7), -profilePictureOffset * 0.3), -profilePictureOffset);
+        
+        // Title view animations
+        CGFloat titleViewOffset = ((self.coverPhotoViewHeightConstraint.constant - DBProfileViewControllerCoverPhotoMimicsNavigationBarHeight) + (DBProfileViewControllerProfilePictureSizeDefault - self.profilePictureInset.top + self.profilePictureInset.bottom)) + 4;
+        CGFloat titleViewOffsetPercent = 1 - top / titleViewOffset;
+        [self.navigationController.navigationBar setTitleVerticalPositionAdjustment:MAX(titleViewOffset * titleViewOffsetPercent, 0)
+                                                                      forBarMetrics:UIBarMetricsDefault];
+
     }
 }
 
 #pragma mark - Auto Layout
-
-- (void)configureCoverPhotoNavigationBarLayoutConstraints {
-    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.coverPhotoNavigationBar attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:[self topLayoutGuide] attribute:NSLayoutAttributeBottom multiplier:1 constant:0]];
-    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.coverPhotoNavigationBar attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeLeft multiplier:1 constant:0]];
-    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.coverPhotoNavigationBar attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeRight multiplier:1 constant:0]];
-}
 
 - (void)configureContentContainerViewControllerLayoutConstraints {
     [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.contentContainerViewController.view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeTop multiplier:1 constant:0]];

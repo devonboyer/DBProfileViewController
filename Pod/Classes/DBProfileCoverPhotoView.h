@@ -12,6 +12,7 @@
 @interface DBProfileCoverPhotoView : UIView
 
 @property (nonatomic, strong, readonly) UIImageView *imageView;
+@property (nonatomic, strong, readonly) UIView *blurView;
 @property (nonatomic, strong, readonly) UIActivityIndicatorView *activityIndicator;
 
 - (void)startRefreshing;

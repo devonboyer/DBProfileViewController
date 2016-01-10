@@ -7,7 +7,11 @@
 //
 
 #import "DBProfileCoverPhotoView.h"
-#import "DBProfileNavigationBar.h"
+
+@interface DBProfileCoverPhotoView ()
+@property (nonatomic, strong) UIVisualEffectView *visualEffectView;
+@property (nonatomic, strong) UIView *overlayView;
+@end
 
 @implementation DBProfileCoverPhotoView
 
@@ -23,15 +27,29 @@
 
 - (void)_commonInit {
     _imageView = [[UIImageView alloc] init];
+    _overlayView = [[UIView alloc] init];
+    _blurView = [[UIView alloc] init];
+    _visualEffectView = [[UIVisualEffectView alloc] initWithEffect:[UIBlurEffect effectWithStyle:UIBlurEffectStyleLight]];
     _activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
 
+    self.blurView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    self.blurView.frame = self.imageView.frame;
+    [self.imageView addSubview:self.blurView];
+    
+    self.overlayView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    self.overlayView.frame = self.imageView.frame;
+    [self.imageView addSubview:self.overlayView];
+    
+    self.visualEffectView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    self.visualEffectView.frame = self.blurView.frame;
+    [self.blurView addSubview:self.visualEffectView];
+    
     [self.imageView setTranslatesAutoresizingMaskIntoConstraints:NO];
     [self.activityIndicator setTranslatesAutoresizingMaskIntoConstraints:NO];
 
     [self addSubview:self.imageView];
-
     [self addSubview:self.activityIndicator];
-
+    
     [self configureImageViewLayoutConstraints];
     [self configureActivityIndicatorLayoutConstraints];
     [self configureDefaultAppearance];
@@ -45,6 +63,11 @@
     
     self.imageView.contentMode = UIViewContentModeScaleAspectFill;
     self.imageView.clipsToBounds = YES;
+    
+    self.blurView.alpha = 0;
+    
+    self.overlayView.backgroundColor = [UIColor blackColor];
+    self.overlayView.alpha = 0.15;
 }
 
 #pragma mark - Refresh
