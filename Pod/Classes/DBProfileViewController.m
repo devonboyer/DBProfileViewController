@@ -133,8 +133,11 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
     [self configureContentContainerViewControllerLayoutConstraints];
     
     // Gestures
-    [self.profilePictureView addGestureRecognizer:self.profilePictureTapGestureRecognizer];
     [self.coverPhotoView addGestureRecognizer:self.coverPhotoTapGestureRecognizer];
+    self.coverPhotoView.userInteractionEnabled = YES;
+    
+    [self.profilePictureView addGestureRecognizer:self.profilePictureTapGestureRecognizer];
+    self.profilePictureView.userInteractionEnabled = YES;
 }
 
 - (void)viewDidLoad {
@@ -143,6 +146,7 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
     [self.navigationController.navigationBar setBackgroundImage:[UIImage new] forBarMetrics:UIBarMetricsDefault];
     [self.navigationController.navigationBar setTranslucent:YES];
     [self.navigationController.navigationBar setShadowImage:[UIImage new]];
+    self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
     
     // Actions
     [self.segmentedControlView.segmentedControl addTarget:self action:@selector(changeContent) forControlEvents:UIControlEventValueChanged];
@@ -598,21 +602,22 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
         }
         
         // Profile picture animations
-        CGFloat percent = 0;
-        CGFloat coverPhotoHeight = self.coverPhotoViewHeightConstraint.constant;
+        CGFloat coverPhotoOffset = self.coverPhotoViewHeightConstraint.constant;
+        CGFloat coverPhotoOffsetPercent = 0;
         if (self.coverPhotoMimicsNavigationBar) {
-            coverPhotoHeight -= DBProfileViewControllerCoverPhotoMimicsNavigationBarHeight;
+            coverPhotoOffset -= DBProfileViewControllerCoverPhotoMimicsNavigationBarHeight;
         }
         if (self.automaticallyAdjustsScrollViewInsets) {
-            percent = MIN(1, top / coverPhotoHeight);
+            coverPhotoOffsetPercent = MIN(1, top / (coverPhotoOffset - [self.topLayoutGuide length]));
         } else {
-            percent = MIN(1, top / (coverPhotoHeight - [self.topLayoutGuide length]));
+            coverPhotoOffsetPercent = MIN(1, top / coverPhotoOffset);
         }
-        CGFloat scale = MIN(1 - percent * 0.3, 1);
-        self.profilePictureView.transform = CGAffineTransformMakeScale(scale, scale);
+
+        CGFloat profilePictureScale = MIN(1 - coverPhotoOffsetPercent * 0.3, 1);
+        self.profilePictureView.transform = CGAffineTransformMakeScale(profilePictureScale, profilePictureScale);
         
         CGFloat profilePictureOffset = self.profilePictureInset.bottom + self.profilePictureInset.top;
-        self.profilePictureViewTopConstraint.constant = MAX(MIN(-profilePictureOffset + (profilePictureOffset * percent * 0.7), -profilePictureOffset * 0.3), -profilePictureOffset);
+        self.profilePictureViewTopConstraint.constant = MAX(MIN(-profilePictureOffset + (profilePictureOffset * coverPhotoOffsetPercent * 0.7), -profilePictureOffset * 0.3), -profilePictureOffset);
         
         // Title view animations
         CGFloat titleViewOffset = ((self.coverPhotoViewHeightConstraint.constant - DBProfileViewControllerCoverPhotoMimicsNavigationBarHeight) + (DBProfileViewControllerProfilePictureSizeDefault - self.profilePictureInset.top + self.profilePictureInset.bottom)) + 4;
