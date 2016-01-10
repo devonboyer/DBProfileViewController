@@ -32,13 +32,13 @@
     _visualEffectView = [[UIVisualEffectView alloc] initWithEffect:[UIBlurEffect effectWithStyle:UIBlurEffectStyleLight]];
     _activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
 
-    self.blurView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    self.blurView.frame = self.imageView.frame;
-    [self.imageView addSubview:self.blurView];
-    
     self.overlayView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.overlayView.frame = self.imageView.frame;
     [self.imageView addSubview:self.overlayView];
+    
+    self.blurView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    self.blurView.frame = self.imageView.frame;
+    [self.imageView addSubview:self.blurView];
     
     self.visualEffectView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.visualEffectView.frame = self.blurView.frame;
@@ -75,18 +75,19 @@
 - (void)startRefreshing {
     [self.activityIndicator startAnimating];
     
-    self.activityIndicator.alpha = 0;
-    [UIView animateWithDuration:0.2 animations:^{
-        self.activityIndicator.alpha = 1;
-    }];
+//    self.activityIndicator.alpha = 0;
+//    [UIView animateWithDuration:0.2 animations:^{
+//        self.activityIndicator.alpha = 1;
+//    }];
 }
 
 - (void)endRefreshing {
-    [UIView animateWithDuration:0.2 animations:^{
-        self.activityIndicator.alpha = 0;
-    } completion:^(BOOL finished) {
-        [self.activityIndicator stopAnimating];
-    }];
+    [self.activityIndicator stopAnimating];
+
+//    [UIView animateWithDuration:0.2 animations:^{
+//        self.activityIndicator.alpha = 0;
+//    } completion:^(BOOL finished) {
+//    }];
 }
 
 #pragma mark - Auto Layout
