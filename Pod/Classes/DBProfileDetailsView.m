@@ -46,16 +46,23 @@
     [self configureDefaultAppearance];
 }
 
+#pragma mark - Overrides
+
+- (void)tintColorDidChange {
+    [super tintColorDidChange];
+    self.nameLabel.textColor = self.tintColor;
+    self.usernameLabel.textColor = [self.tintColor colorWithAlphaComponent:0.54];
+    self.descriptionLabel.textColor = [self.tintColor colorWithAlphaComponent:0.72];
+}
+
 #pragma mark - Defaults
 
 - (void)configureDefaultAppearance {
+    self.tintColor = [UIColor colorWithRed:33/255.0 green:37/255.0 blue:42/255.0 alpha:1];
+    
     self.nameLabel.font = [UIFont boldSystemFontOfSize:20];
     self.usernameLabel.font = [UIFont systemFontOfSize:14];
     self.descriptionLabel.font = [UIFont systemFontOfSize:16];
-    
-    self.nameLabel.textColor = [UIColor colorWithRed:33/255.0 green:37/255.0 blue:42/255.0 alpha:1];
-    self.usernameLabel.textColor = [UIColor colorWithRed:135/255.0 green:153/255.0 blue:166/255.0 alpha:1];
-    self.descriptionLabel.textColor = [UIColor colorWithRed:73/255.0 green:77/255.0 blue:80/255.0 alpha:1];
 
     self.nameLabel.text = @"Devon Boyer";
     self.usernameLabel.text = @"@devboyer";

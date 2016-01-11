@@ -8,6 +8,12 @@
 
 #import "DBProfilePictureView.h"
 
+@interface DBProfilePictureView ()
+
+@property (nonatomic, strong) NSLayoutConstraint *imageViewWidthConstraint;
+
+@end
+
 @implementation DBProfilePictureView
 
 #pragma mark - Initialization
@@ -31,6 +37,13 @@
     [self configureDefaultAppearance];
 }
 
+#pragma - Overrides
+
+- (void)updateConstraints {
+    self.imageViewWidthConstraint.constant = -2*self.borderWidth;
+    [super updateConstraints];
+}
+
 #pragma mark - Setters
 
 - (void)setStyle:(DBProfilePictureStyle)style {
@@ -41,6 +54,7 @@
 - (void)layoutSubviews {
     [super layoutSubviews];
     
+    self.hidden = NO;
     switch (self.style) {
         case DBProfilePictureStyleRound:
             self.layer.cornerRadius = CGRectGetWidth(self.bounds) / 2;
@@ -50,9 +64,17 @@
             self.layer.cornerRadius = 8;
             self.imageView.layer.cornerRadius = 6;
             break;
+        case DBProfilePictureStyleNone:
+            self.hidden = YES;
+            break;
         default:
             break;
     }
+}
+
+- (void)setBorderWidth:(CGFloat)borderWidth {
+    _borderWidth = borderWidth;
+    [self updateConstraints];
 }
 
 #pragma mark - Defaults
@@ -67,6 +89,7 @@
     self.imageView.layer.cornerRadius = 6;
     
     self.style = DBProfilePictureStyleRoundedRect;
+    self.borderWidth = 4;
 }
 
 #pragma mark - Auto Layout
@@ -74,8 +97,9 @@
 - (void)configureImageViewLayoutConstraints {
     [self addConstraint:[NSLayoutConstraint constraintWithItem:self.imageView attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterX multiplier:1 constant:0]];
     [self addConstraint:[NSLayoutConstraint constraintWithItem:self.imageView attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.imageView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeWidth multiplier:0.9 constant:0]];
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.imageView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeHeight multiplier:0.9 constant:0]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.imageView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:self.imageView attribute:NSLayoutAttributeWidth multiplier:1 constant:0]];
+    self.imageViewWidthConstraint = [NSLayoutConstraint constraintWithItem:self.imageView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeWidth multiplier:1 constant:0];
+    [self addConstraint:self.imageViewWidthConstraint];
 }
 
 @end

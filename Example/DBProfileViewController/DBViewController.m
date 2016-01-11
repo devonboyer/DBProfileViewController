@@ -11,6 +11,7 @@
 #import "DBFollowersTableViewController.h"
 #import "DBPhotosTableViewController.h"
 #import "DBLikesTableViewController.h"
+#import "DBProfileDetailsView.h"
 
 @interface DBViewController () <DBProfileViewControllerDelegate>
 @end
@@ -34,6 +35,8 @@
         
     [self setCoverPhoto:[UIImage imageNamed:@"backdrop.png"] animated:NO];
     [self setProfilePicture:[UIImage imageNamed:@"profile-picture.jpg"] animated:NO];
+    
+    self.detailsView.tintColor = [UIColor whiteColor];
 }
 
 - (void)didReceiveMemoryWarning

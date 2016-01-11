@@ -19,7 +19,7 @@
  @abstract The `DBProfileCoverPhotoStyle` defines the types of styles for the cover photo.
  */
 typedef NS_ENUM(NSInteger, DBProfileCoverPhotoStyle) {
-    /* @abstract Specifys that no cover photo will be displayed. */
+    /* @abstract Specifys that no cover photo should be displayed. */
     DBProfileCoverPhotoStyleNone, // Bugged still since so many properties depend on a cover photo
     /* @abstract Specifys the default cover photo style. */
     DBProfileCoverPhotoStyleDefault,
@@ -27,6 +27,16 @@ typedef NS_ENUM(NSInteger, DBProfileCoverPhotoStyle) {
     DBProfileCoverPhotoStyleStretch,
     /* @abstract Specifys that the cover photo should extend beneath the details view. */
     DBProfileCoverPhotoStyleBackdrop,
+};
+
+/**
+ @abstract The `DBProfilePictureSize` defines the size of the the profile picture.
+ */
+typedef NS_ENUM(NSInteger, DBProfilePictureSize) {
+    /* @abstract Specifys that the profile picture should be the default size. */
+    DBProfilePictureSizeDefault,
+    /* @abstract Specifys that the profile picture should be large size. */
+    DBProfilePictureSizeLarge,
 };
 
 /**
@@ -39,16 +49,6 @@ typedef NS_ENUM(NSInteger, DBProfilePictureAlignment) {
     DBProfilePictureAlignmentRight,
     /* @abstract Specifys that the profile picture should be center aligned. */
     DBProfilePictureAlignmentCenter,
-};
-
-/**
- @abstract The `DBProfilePictureSize` defines the size of the the profile picture.
- */
-typedef NS_ENUM(NSInteger, DBProfilePictureSize) {
-    /* @abstract Specifys that the profile picture should be the default size. */
-    DBProfilePictureSizeDefault,
-    /* @abstract Specifys that the profile picture should be large size. */
-    DBProfilePictureSizeLarge,
 };
 
 ///------------------------------------------------
