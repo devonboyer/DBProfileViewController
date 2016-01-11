@@ -12,13 +12,9 @@
  @abstract The `DBProfilePictureStyle` defines the types of styles for the profile picture.
  */
 typedef NS_ENUM(NSInteger, DBProfilePictureStyle) {
-    /**
-     @abstract Specifys that no profile picture should be cropped to a circle.
-     */
+    /* @abstract Specifys that no profile picture should be cropped to a circle. */
     DBProfilePictureStyleRound,
-    /**
-     @abstract Specifys that no profile picture should be cropped to a rounded rect.
-     */
+    /* @abstract Specifys that no profile picture should be cropped to a rounded rect. */
     DBProfilePictureStyleRoundedRect,
 };
 

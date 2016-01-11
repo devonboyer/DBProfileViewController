@@ -58,7 +58,7 @@
 #pragma mark - Defaults
 
 - (void)configureDefaultAppearance {
-    self.backgroundColor = [UIColor whiteColor];
+    self.backgroundColor = [UIColor clearColor];
     self.clipsToBounds = YES;
     
     self.imageView.contentMode = UIViewContentModeScaleAspectFill;

@@ -21,6 +21,7 @@
 		6003F5B2195388D20070C39A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F591195388D20070C39A /* UIKit.framework */; };
 		6003F5BA195388D20070C39A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6003F5B8195388D20070C39A /* InfoPlist.strings */; };
 		6003F5BC195388D20070C39A /* Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6003F5BB195388D20070C39A /* Tests.m */; };
+		672EF5A91C4401B60035567E /* backdrop.png in Resources */ = {isa = PBXBuildFile; fileRef = 672EF5A81C4401B60035567E /* backdrop.png */; };
 		675B0F6F1C40882C000AADC6 /* profile-picture.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 675B0F6E1C40882C000AADC6 /* profile-picture.jpg */; };
 		675B0F8B1C429199000AADC6 /* cover-photo.png in Resources */ = {isa = PBXBuildFile; fileRef = 675B0F8A1C429199000AADC6 /* cover-photo.png */; };
 		675B0F921C42A1C4000AADC6 /* DBFollowersTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 675B0F911C42A1C4000AADC6 /* DBFollowersTableViewController.m */; };
@@ -63,6 +64,7 @@
 		6003F5B9195388D20070C39A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		6003F5BB195388D20070C39A /* Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Tests.m; sourceTree = "<group>"; };
 		606FC2411953D9B200FFA9A0 /* Tests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Tests-Prefix.pch"; sourceTree = "<group>"; };
+		672EF5A81C4401B60035567E /* backdrop.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = backdrop.png; sourceTree = "<group>"; };
 		675B0F6E1C40882C000AADC6 /* profile-picture.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "profile-picture.jpg"; sourceTree = "<group>"; };
 		675B0F8A1C429199000AADC6 /* cover-photo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "cover-photo.png"; sourceTree = "<group>"; };
 		675B0F901C42A1C4000AADC6 /* DBFollowersTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBFollowersTableViewController.h; sourceTree = "<group>"; };
@@ -157,6 +159,7 @@
 				675B0F971C42A1E0000AADC6 /* DBLikesTableViewController.m */,
 				6003F5A5195388D20070C39A /* DBViewController.h */,
 				6003F5A6195388D20070C39A /* DBViewController.m */,
+				672EF5A81C4401B60035567E /* backdrop.png */,
 				675B0F8A1C429199000AADC6 /* cover-photo.png */,
 				675B0F6E1C40882C000AADC6 /* profile-picture.jpg */,
 				6003F5A8195388D20070C39A /* Images.xcassets */,
@@ -305,6 +308,7 @@
 				675B0F8B1C429199000AADC6 /* cover-photo.png in Resources */,
 				6003F598195388D20070C39A /* InfoPlist.strings in Resources */,
 				675B0F6F1C40882C000AADC6 /* profile-picture.jpg in Resources */,
+				672EF5A91C4401B60035567E /* backdrop.png in Resources */,
 				675D5BA21C3FDCCC009E44CE /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
