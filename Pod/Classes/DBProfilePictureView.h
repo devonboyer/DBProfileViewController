@@ -32,7 +32,7 @@ typedef NS_ENUM(NSInteger, DBProfilePictureStyle) {
 @property (nonatomic, strong, readonly) UIImageView *imageView;
 
 /*!
- @abstract The border for the profile picture.
+ @abstract The border width for the profile picture.
  */
 @property (nonatomic, assign) CGFloat borderWidth;
 

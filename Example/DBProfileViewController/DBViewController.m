@@ -36,7 +36,19 @@
     [self setCoverPhoto:[UIImage imageNamed:@"backdrop.png"] animated:NO];
     [self setProfilePicture:[UIImage imageNamed:@"profile-picture.jpg"] animated:NO];
     
+    self.profilePictureInset = UIEdgeInsetsMake(0, 15, 0, 0);
+    
+    // Configure details
     self.detailsView.tintColor = [UIColor whiteColor];
+    self.detailsView.nameLabel.font = [UIFont boldSystemFontOfSize:40];
+    self.detailsView.descriptionLabel.font = [UIFont systemFontOfSize:18];
+    self.detailsView.editProfileButton.hidden = YES;
+    self.detailsView.nameLabel.text = @"Goals and\nGarter Snakes";
+    self.detailsView.usernameLabel.text = nil;
+    self.detailsView.descriptionLabel.text = @"A super awesome blog post about goals and garter snakes.";
+    
+    self.title = @"Goals and Garter Snakes";
+    self.subtitle = @"30 Likes";
 }
 
 - (void)didReceiveMemoryWarning

@@ -25,7 +25,11 @@ typedef NS_ENUM(NSInteger, DBProfileCoverPhotoStyle) {
     DBProfileCoverPhotoStyleDefault,
     /* @abstract Specifys that the cover photo should stretch with the scroll view. */
     DBProfileCoverPhotoStyleStretch,
-    /* @abstract Specifys that the cover photo should extend beneath the details view. */
+    /**
+     @abstract Specifys that the cover photo should extend beneath the details view.
+     @discussion This style allows the details view to overlay the cover photo. This style might be used for a blog post, recipe or news article (This style is my favourite! Give it a try!)
+     @warning This style requires that CGRectGetHeight(coverPhotoView.frame) >= CGRectGetHeight(detailsView.frame).
+     */
     DBProfileCoverPhotoStyleBackdrop,
 };
 
@@ -86,6 +90,8 @@ typedef NS_ENUM(NSInteger, DBProfilePictureAlignment) {
  @abstract The object that acts as the view controller's delegate.
  */
 @property (nonatomic, strong) id<DBProfileViewControllerDelegate> delegate;
+
+@property (nonatomic, copy) NSString *subtitle;
 
 ///---------------------------------------------
 /// @name Configuring Profile Details

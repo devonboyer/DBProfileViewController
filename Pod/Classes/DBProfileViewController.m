@@ -176,6 +176,8 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
     }
 }
 
+#pragma mark - Overrides
+
 - (void)updateViewConstraints {
     
     switch (self.coverPhotoStyle) {
@@ -357,6 +359,18 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
     if ([self.delegate respondsToSelector:@selector(profileViewController:didSelectProfilePicture:)]) {
         [self.delegate profileViewController:self didSelectProfilePicture:self.coverPhotoView.imageView];
     }
+}
+
+#pragma mark - Titles
+
+- (void)setTitle:(NSString *)title {
+    [super setTitle:title];
+    self.titleView.titleLabel.text = title;
+}
+
+- (void)setSubtitle:(NSString *)subtitle {
+    _subtitle = subtitle;
+    self.titleView.subtitleLabel.text = subtitle;
 }
 
 #pragma mark - Configuring Cover Photo
@@ -711,8 +725,8 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
         
         switch (self.coverPhotoStyle) {
             case DBProfileCoverPhotoStyleBackdrop:
-                self.profilePictureView.alpha = 1 - coverPhotoOffsetPercent * 2;
-                self.detailsView.alpha = 1 - coverPhotoOffsetPercent * 2;
+                self.profilePictureView.alpha = 1 - coverPhotoOffsetPercent * 1.6;
+                self.detailsView.alpha = 1 - coverPhotoOffsetPercent * 1.6;
                 break;
             default: {
                 CGFloat profilePictureScale = MIN(1 - coverPhotoOffsetPercent * 0.3, 1);
