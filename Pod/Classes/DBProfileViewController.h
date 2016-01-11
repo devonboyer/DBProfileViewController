@@ -31,6 +31,11 @@ typedef NS_ENUM(NSInteger, DBProfileCoverPhotoStyle) {
      @abstract Specifys that the cover photo should stretch with the scroll view.
      */
     DBProfileCoverPhotoStyleStretch,
+    
+    /**
+     @abstract Specifys that the cover photo should extend beneath the details view.
+     */
+    DBProfileCoverPhotoStyleBackdrop,
 };
 
 /**
