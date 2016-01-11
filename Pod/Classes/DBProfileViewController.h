@@ -33,14 +33,35 @@ typedef NS_ENUM(NSInteger, DBProfileCoverPhotoStyle) {
     DBProfileCoverPhotoStyleStretch,
 };
 
+/**
+ @abstract The `DBProfilePictureAlignment` defines the alignment of the the profile picture.
+ */
 typedef NS_ENUM(NSInteger, DBProfilePictureAlignment) {
+    /**
+     @abstract Specifys that the profile picture should be left aligned.
+     */
     DBProfilePictureAlignmentLeft,
+    /**
+     @abstract Specifys that the profile picture should be right aligned.
+     */
     DBProfilePictureAlignmentRight,
+    /**
+     @abstract Specifys that the profile picture should be center aligned.
+     */
     DBProfilePictureAlignmentCenter,
 };
 
+/**
+ @abstract The `DBProfilePictureSize` defines the size of the the profile picture.
+ */
 typedef NS_ENUM(NSInteger, DBProfilePictureSize) {
+    /**
+     @abstract Specifys that the profile picture should be the default size.
+     */
     DBProfilePictureSizeDefault,
+    /**
+     @abstract Specifys that the profile picture should be large size.
+     */
     DBProfilePictureSizeLarge,
 };
 
@@ -231,6 +252,7 @@ typedef NS_ENUM(NSInteger, DBProfilePictureSize) {
 
 /*!
  @abstract YES to enable pull-to-refresh, NO otherwise.
+  @discussion The default is YES.
  @warning `DBProfileCoverPhotoStyleNone` is mutually exclusive with `allowsPullToRefresh`
  */
 @property (nonatomic, assign) BOOL allowsPullToRefresh;

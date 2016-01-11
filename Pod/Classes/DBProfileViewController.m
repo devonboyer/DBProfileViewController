@@ -275,6 +275,9 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
 #pragma mark - Setters
 
 - (void)setCoverPhotoStyle:(DBProfileCoverPhotoStyle)coverPhotoStyle {
+    if (coverPhotoStyle == DBProfileCoverPhotoStyleNone) {
+        NSAssert(!self.coverPhotoMimicsNavigationBar || !self.allowsPullToRefresh, @"`DBProfileCoverPhotoStyleNone` is mutually exclusive with `coverPhotoMimicsNavigationBar` and `allowsPullToRefresh`");
+    }
     if (_coverPhotoStyle == coverPhotoStyle) return;
     _coverPhotoStyle = coverPhotoStyle;
     [self updateViewConstraints];
@@ -299,8 +302,18 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
 }
 
 - (void)setCoverPhotoMimicsNavigationBar:(BOOL)coverPhotoMimicsNavigationBar {
+    if (coverPhotoMimicsNavigationBar) {
+        NSAssert(self.coverPhotoStyle != DBProfileCoverPhotoStyleNone, @"`DBProfileCoverPhotoStyleNone` is mutually exclusive with `coverPhotoMimicsNavigationBar` and `allowsPullToRefresh`");
+    }
     _coverPhotoMimicsNavigationBar = coverPhotoMimicsNavigationBar;
     self.titleView.hidden = !coverPhotoMimicsNavigationBar;
+}
+
+- (void)setAllowsPullToRefresh:(BOOL)allowsPullToRefresh {
+    if (allowsPullToRefresh) {
+        NSAssert(self.coverPhotoStyle != DBProfileCoverPhotoStyleNone, @"`DBProfileCoverPhotoStyleNone` is mutually exclusive with `coverPhotoMimicsNavigationBar` and `allowsPullToRefresh`");
+    }
+    _allowsPullToRefresh = allowsPullToRefresh;
 }
 
 - (void)setDetailsView:(DBProfileDetailsView *)detailsView {
