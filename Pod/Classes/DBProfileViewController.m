@@ -21,13 +21,13 @@ static const CGFloat DBProfileViewControllerPullToRefreshDistance = 80;
 static const CGFloat DBProfileViewControllerProfilePictureSizeDefault = 72.0;
 static const CGFloat DBProfileViewControllerProfilePictureSizeLarge = 82.0;
 static const CGFloat DBProfileViewControllerProfilePictureLeftRightMargin = 15.0;
+static const CGFloat DBProfileViewControllerCoverPhotoMimicsNavigationBarHeight = 64.0;
 
 static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewControllerContentOffsetKVOContext;
 
 @interface DBProfileViewController ()
 {
     BOOL _hasAppeared;
-    CGFloat _navigationBarHeight; // cache height when using coverPhotoMimicsNavigationBar
 }
 
 @property (nonatomic, getter=isRefreshing) BOOL refreshing;
@@ -154,8 +154,6 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
-    [self resetNavigationBarHeight];
-    
     if ([self numberOfContentViewControllers] > 0 && !_hasAppeared) {
         [self setVisibleContentViewControllerAtIndex:0];
     }
@@ -242,7 +240,6 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
 #pragma mark - Rotation
 
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
-    [self resetNavigationBarHeight];
     [self configureContentViewControllers];
 }
 
@@ -319,7 +316,7 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
     self.coverPhotoMimicsNavigationBar = YES;
     self.profilePictureAlignment = DBProfilePictureAlignmentLeft;
     self.profilePictureSize = DBProfilePictureSizeDefault;
-    self.profilePictureInset = UIEdgeInsetsMake(0, DBProfileViewControllerProfilePictureLeftRightMargin, DBProfileViewControllerCoverPhotoDefaultHeight/2.0 - 10, 0);
+    self.profilePictureInset = UIEdgeInsetsMake(0, DBProfileViewControllerProfilePictureLeftRightMargin, DBProfileViewControllerProfilePictureSizeDefault/2.0 - 10, 0);
     self.allowsPullToRefresh = YES;
     
     self.detailsView.backgroundColor = [UIColor whiteColor];
@@ -351,8 +348,8 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
 
 #pragma mark - Configuring Cover Photo
 
-- (void)setCoverPhoto:(UIImage *)image animated:(BOOL)animated {
-    self.coverPhotoView.imageView.image = image;
+- (void)setCoverPhoto:(UIImage *)coverPhoto animated:(BOOL)animated {
+    self.coverPhotoView.imageView.image = coverPhoto;
     
     if (animated) {
         self.coverPhotoView.imageView.alpha = 0;
@@ -364,8 +361,8 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
 
 #pragma mark - Configuring Profile Picture
 
-- (void)setProfilePicture:(UIImage *)image animated:(BOOL)animated {
-    self.profilePictureView.imageView.image = image;
+- (void)setProfilePicture:(UIImage *)profilePicture animated:(BOOL)animated {
+    self.profilePictureView.imageView.image = profilePicture;
 
     if (animated) {
         self.profilePictureView.imageView.alpha = 0;
@@ -428,7 +425,7 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
 
 #pragma mark - Getting Content View Controller Information
 
-- (NSUInteger)selectedContentViewControllerIndex {
+- (NSUInteger)visibleContentViewControllerIndex {
     return [self.segmentedControlView.segmentedControl selectedSegmentIndex];
 }
 
@@ -560,13 +557,6 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
     [viewController removeFromParentViewController];
 }
 
-- (void)resetNavigationBarHeight {
-    _navigationBarHeight = CGRectGetHeight(self.navigationController.navigationBar.frame);
-    if (![UIApplication sharedApplication].statusBarHidden) {
-        _navigationBarHeight += CGRectGetHeight([UIApplication sharedApplication].statusBarFrame);
-    }
-}
-
 #pragma mark - KVO
 
 - (void)beginObservingContentOffsetForScrollView:(UIScrollView *)scrollView {
@@ -593,18 +583,26 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
         CGFloat top = scrollView.contentOffset.y + scrollView.contentInset.top;
         
         // Cover photo animations
-        if (self.coverPhotoStyle == DBProfileCoverPhotoStyleStretch) {
-            CGFloat delta = -top;
-            if (top < 0) {
-                if (self.automaticallyAdjustsScrollViewInsets) {
-                    self.coverPhotoViewTopConstraint.constant = -(scrollView.contentInset.top - [self.topLayoutGuide length]) - delta;
-                } else {
-                    self.coverPhotoViewTopConstraint.constant = -scrollView.contentInset.top - delta;
-                }
-                self.coverPhotoViewHeightConstraint.constant = MAX(DBProfileViewControllerCoverPhotoDefaultHeight, DBProfileViewControllerCoverPhotoDefaultHeight + delta);
-            } else {
+        CGFloat delta = -top;
+        switch (self.coverPhotoStyle) {
+            case DBProfileCoverPhotoStyleNone:
+            case DBProfileCoverPhotoStyleDefault:
                 [self adjustContentInsetForScrollView:scrollView];
-            }
+                break;
+            case DBProfileCoverPhotoStyleStretch:
+                if (top < 0) {
+                    if (self.automaticallyAdjustsScrollViewInsets) {
+                        self.coverPhotoViewTopConstraint.constant = -(scrollView.contentInset.top - [self.topLayoutGuide length]) - delta;
+                    } else {
+                        self.coverPhotoViewTopConstraint.constant = -scrollView.contentInset.top - delta;
+                    }
+                    self.coverPhotoViewHeightConstraint.constant = MAX(DBProfileViewControllerCoverPhotoDefaultHeight, DBProfileViewControllerCoverPhotoDefaultHeight + delta);
+                } else {
+                    [self adjustContentInsetForScrollView:scrollView];
+                }
+                break;
+            default:
+                break;
         }
 
         // Cover photo blur effect
@@ -618,7 +616,7 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
         
         // Sticky cover photo to "mimic" navigation bar
         if (self.coverPhotoMimicsNavigationBar) {
-            CGFloat height = self.coverPhotoViewHeightConstraint.constant - _navigationBarHeight;
+            CGFloat height = self.coverPhotoViewHeightConstraint.constant - DBProfileViewControllerCoverPhotoMimicsNavigationBarHeight;
             if (self.automaticallyAdjustsScrollViewInsets) {
                 height += [self.topLayoutGuide length];
             }
@@ -635,7 +633,7 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
         // Sticky segmented control
         CGFloat segmentedControlOffset = CGRectGetHeight(self.detailsView.frame) + CGRectGetHeight(self.coverPhotoView.frame);
         if (self.coverPhotoMimicsNavigationBar) {
-            segmentedControlOffset -= _navigationBarHeight;
+            segmentedControlOffset -= DBProfileViewControllerCoverPhotoMimicsNavigationBarHeight;
             if (self.automaticallyAdjustsScrollViewInsets) {
                 segmentedControlOffset += [self.topLayoutGuide length];
             }
@@ -657,7 +655,7 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
         CGFloat coverPhotoOffset = self.coverPhotoViewHeightConstraint.constant;
         CGFloat coverPhotoOffsetPercent = 0;
         if (self.coverPhotoMimicsNavigationBar) {
-            coverPhotoOffset -= _navigationBarHeight;
+            coverPhotoOffset -= DBProfileViewControllerCoverPhotoMimicsNavigationBarHeight;
         }
         if (self.automaticallyAdjustsScrollViewInsets) {
             coverPhotoOffsetPercent = MIN(1, top / (coverPhotoOffset - [self.topLayoutGuide length]));
@@ -672,12 +670,13 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
         self.profilePictureViewTopConstraint.constant = MAX(MIN(-profilePictureOffset + (profilePictureOffset * coverPhotoOffsetPercent * 0.7), -profilePictureOffset * 0.3), -profilePictureOffset);
         
         // Title view animations
-        CGFloat titleViewOffset = ((self.coverPhotoViewHeightConstraint.constant - _navigationBarHeight) + (DBProfileViewControllerProfilePictureSizeDefault - self.profilePictureInset.top + self.profilePictureInset.bottom)) + 4;
-        CGFloat titleViewOffsetPercent = 1 - top / titleViewOffset;
-        self.titleView.hidden = titleViewOffset < _navigationBarHeight;
-        [self.navigationController.navigationBar setTitleVerticalPositionAdjustment:MAX(titleViewOffset * titleViewOffsetPercent, 0)
-                                                                      forBarMetrics:UIBarMetricsDefault];
-
+        if (self.coverPhotoMimicsNavigationBar) {
+            CGFloat titleViewOffset = ((self.coverPhotoViewHeightConstraint.constant - DBProfileViewControllerCoverPhotoMimicsNavigationBarHeight) + (DBProfileViewControllerProfilePictureSizeDefault - self.profilePictureInset.top + self.profilePictureInset.bottom)) + 4;
+            CGFloat titleViewOffsetPercent = 1 - top / titleViewOffset;
+            self.titleView.hidden = top < DBProfileViewControllerCoverPhotoMimicsNavigationBarHeight;
+            [self.navigationController.navigationBar setTitleVerticalPositionAdjustment:MAX(titleViewOffset * titleViewOffsetPercent, 0)
+                                                                          forBarMetrics:UIBarMetricsDefault];
+        }
     }
 }
 
