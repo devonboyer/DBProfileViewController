@@ -72,6 +72,8 @@
     self.bottomBorderView.backgroundColor = borderColor;
     
     self.topBorderView.hidden = YES;
+    
+    self.segmentedControl.selectedSegmentIndex = UISegmentedControlNoSegment;
 }
 
 #pragma mark - Auto Layout

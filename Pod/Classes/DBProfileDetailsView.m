@@ -8,6 +8,15 @@
 
 #import "DBProfileDetailsView.h"
 
+@interface DBProfileDetailsView ()
+
+@property (nonatomic, strong) NSLayoutConstraint *contentViewTopConstraint;
+@property (nonatomic, strong) NSLayoutConstraint *contentViewBottomConstraint;
+@property (nonatomic, strong) NSLayoutConstraint *contentViewRightConstraint;
+@property (nonatomic, strong) NSLayoutConstraint *contentViewLeftConstraint;
+
+@end
+
 @implementation DBProfileDetailsView
 
 #pragma mark - Initialization
@@ -61,6 +70,21 @@
     self.descriptionLabel.textColor = [self.tintColor colorWithAlphaComponent:0.72];
 }
 
+- (void)updateConstraints {
+    self.contentViewTopConstraint.constant = self.contentInset.top;
+    self.contentViewLeftConstraint.constant = self.contentInset.left;
+    self.contentViewRightConstraint.constant = -self.contentInset.right;
+    self.contentViewBottomConstraint.constant = -self.contentInset.bottom;
+    [super updateConstraints];
+}
+
+#pragma mark - Setters
+
+- (void)setContentInset:(UIEdgeInsets)contentInset {
+    _contentInset = contentInset;
+    [self updateConstraints];
+}
+
 #pragma mark - Defaults
 
 - (void)configureDefaultAppearance {
@@ -82,19 +106,22 @@
     self.editProfileButton.layer.cornerRadius = 6;
     self.editProfileButton.layer.borderWidth = 1;
     self.editProfileButton.layer.borderColor = editProfileButtonColor.CGColor;
+    
+    self.contentInset = UIEdgeInsetsMake(82, 12, 30, 12);
 }
 
 #pragma mark - Auto Layout
 
 - (void)configureContentViewLayoutConstraints {
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.contentView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTop multiplier:1 constant:15]];
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.contentView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeLeft multiplier:1 constant:12]];
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.contentView attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeRight multiplier:1 constant:-12]];
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.contentView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeBottom multiplier:1 constant:-15]];
+    self.contentViewTopConstraint = [NSLayoutConstraint constraintWithItem:self.contentView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTop multiplier:1 constant:0];
+    self.contentViewLeftConstraint = [NSLayoutConstraint constraintWithItem:self.contentView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeLeft multiplier:1 constant:0];
+    self.contentViewRightConstraint = [NSLayoutConstraint constraintWithItem:self.contentView attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeRight multiplier:1 constant:0];
+    self.contentViewBottomConstraint = [NSLayoutConstraint constraintWithItem:self.contentView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeBottom multiplier:1 constant:0];
+    [self addConstraints:@[self.contentViewTopConstraint, self.contentViewLeftConstraint, self.contentViewRightConstraint, self.contentViewBottomConstraint]];
 }
 
 - (void)configureNameLabelLayoutConstraints {
-    [self.contentView addConstraint:[NSLayoutConstraint constraintWithItem:self.nameLabel attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.contentView attribute:NSLayoutAttributeTop multiplier:1 constant:60]];
+    [self.contentView addConstraint:[NSLayoutConstraint constraintWithItem:self.nameLabel attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.contentView attribute:NSLayoutAttributeTop multiplier:1 constant:0]];
     [self.contentView addConstraint:[NSLayoutConstraint constraintWithItem:self.nameLabel attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self.contentView attribute:NSLayoutAttributeLeft multiplier:1 constant:0]];
     [self.contentView addConstraint:[NSLayoutConstraint constraintWithItem:self.nameLabel attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self.contentView attribute:NSLayoutAttributeRight multiplier:1 constant:0]];
 }

@@ -20,4 +20,6 @@
 @property (nonatomic, strong, readonly) UILabel *descriptionLabel;
 @property (nonatomic, strong, readonly) UIButton *editProfileButton;
 
+@property (nonatomic, assign) UIEdgeInsets contentInset;
+
 @end
