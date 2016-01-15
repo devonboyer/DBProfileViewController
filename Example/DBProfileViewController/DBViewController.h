@@ -8,9 +8,9 @@
 
 @import UIKit;
 
-#import "DBProfileViewController.h"
+#import "DBBlogProfileViewController.h"
 #import "DBProfilePictureView.h"
 
-@interface DBViewController : DBProfileViewController
+@interface DBViewController : DBBlogProfileViewController
 
 @end

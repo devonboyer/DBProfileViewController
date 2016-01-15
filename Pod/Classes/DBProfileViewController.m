@@ -434,7 +434,8 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
     // Add visible view controller to container
     [self addViewControllerToContainer:visibleContentViewController];
     
-    _shouldScrollToTop = CGRectGetMinY(self.segmentedControlView.frame) == 64;
+    CGFloat topInset = CGRectGetMaxY(self.navigationView.frame) + CGRectGetHeight(self.segmentedControlView.frame);
+    _shouldScrollToTop = scrollView.contentOffset.y < -topInset;
     _contentOffset = scrollView.contentOffset;
 
     _visibleContentViewController = visibleContentViewController;
@@ -647,11 +648,15 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
 
 - (void)configureCoverPhotoViewWithScrollView:(UIScrollView *)scrollView {
     CGFloat contentOffset = scrollView.contentOffset.y + scrollView.contentInset.top;
-
+        
     switch (self.coverPhotoStyle) {
         case DBProfileCoverPhotoStyleStretch:
         case DBProfileCoverPhotoStyleBackdrop:
-            if (contentOffset < 0) self.coverPhotoViewHeightConstraint.constant = -contentOffset;
+            if (contentOffset < 0)  {
+               self.coverPhotoViewHeightConstraint.constant = -contentOffset;
+                // Prevent detailsView from scrolling off the bottom of the screen
+                self.detailsViewTopConstraint.constant = -(CGRectGetHeight(self.segmentedControlView.frame) + CGRectGetHeight(self.detailsView.frame)) + contentOffset;
+            }
             break;
         default:
             break;
@@ -659,15 +664,6 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
     
     // Blur effect
     if (contentOffset < 0) {
-        switch (self.coverPhotoStyle) {
-            case DBProfileCoverPhotoStyleBackdrop:
-                // Prevent detailsView from scrolling off the bottom of the screen
-                self.detailsViewTopConstraint.constant = -(CGRectGetHeight(self.segmentedControlView.frame) + CGRectGetHeight(self.detailsView.frame)) + contentOffset;
-                break;
-            default:
-                break;
-        }
-        
         CGFloat pullToRefreshPercent = fabs(contentOffset) / 10;
         self.coverPhotoView.blurView.alpha = pullToRefreshPercent;
     } else {
@@ -708,7 +704,7 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
 - (void)configureTitleViewWithScrollView:(UIScrollView *)scrollView {
     if (!self.coverPhotoMimicsNavigationBar) return;
     CGFloat contentOffset = scrollView.contentOffset.y + scrollView.contentInset.top;
-    CGFloat titleViewOffset = ((CGRectGetHeight(self.coverPhotoView.frame) - DBProfileViewControllerCoverPhotoMimicsNavigationBarHeight) + CGRectGetHeight(self.segmentedControlView.frame));
+    CGFloat titleViewOffset = ((CGRectGetHeight(self.coverPhotoView.frame) - CGRectGetMaxY(self.navigationView.frame)) + CGRectGetHeight(self.segmentedControlView.frame));
     // + (DBProfileViewControllerProfilePictureSizeDefault - self.profilePictureInset.top + self.profilePictureInset.bottom)) + 4;
     CGFloat titleViewOffsetPercent = 1 - contentOffset / titleViewOffset;
     
