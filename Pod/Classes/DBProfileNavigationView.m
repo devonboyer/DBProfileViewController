@@ -9,7 +9,7 @@
 #import "DBProfileNavigationView.h"
 #import "DBProfileTitleView.h"
 
-@interface DBProfileNavigationView () <UINavigationBarDelegate>
+@interface DBProfileNavigationView ()
 @end
 
 @implementation DBProfileNavigationView
@@ -34,7 +34,6 @@
     self.navigationBar.tintColor = [UIColor whiteColor];
     self.navigationBar.translucent = YES;
     self.navigationBar.clipsToBounds = YES;
-    self.navigationBar.delegate = self;
     self.navigationBar.items = @[self.navigationItem];
     [self addSubview:self.navigationBar];
     
@@ -46,12 +45,6 @@
     self.navigationItem.titleView = self.titleView;
 }
 
-#pragma mark - UINavigationBarDelegate
-
-- (UIBarPosition)positionForBar:(id<UIBarPositioning>)bar {
-    return UIBarPositionTopAttached;
-}
-
 #pragma mark - Auto Layout
 
 - (void)configureNavigationBarLayoutConstraints {
@@ -59,7 +52,6 @@
     [self addConstraint:[NSLayoutConstraint constraintWithItem:self.navigationBar attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeLeft multiplier:1 constant:0]];
     [self addConstraint:[NSLayoutConstraint constraintWithItem:self.navigationBar attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeRight multiplier:1 constant:0]];
     [self addConstraint:[NSLayoutConstraint constraintWithItem:self.navigationBar attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeBottom multiplier:1 constant:0]];
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.navigationBar attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:64]];
 }
 
 @end
