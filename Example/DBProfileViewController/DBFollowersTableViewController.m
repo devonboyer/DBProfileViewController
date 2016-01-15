@@ -13,6 +13,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    self.title = @"Followers";
+    
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"Cell"];
 }
 

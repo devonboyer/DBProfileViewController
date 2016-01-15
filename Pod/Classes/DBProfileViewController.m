@@ -37,6 +37,8 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
 @property (nonatomic, strong) NSMutableArray *mutableContentViewControllers;
 @property (nonatomic, strong) NSMutableArray *mutableContentViewControllerTitles;
 
+@property (nonatomic, strong) NSCache *contentOffsetCache;
+
 // Views
 @property (nonatomic, strong) UIViewController *contentContainerViewController;
 @property (nonatomic, strong) DBProfileSegmentedControlView *segmentedControlView;
@@ -98,17 +100,16 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
 }
 
 - (void)_commonInit {
-    // Views
     _segmentedControlView = [[DBProfileSegmentedControlView alloc] init];
     _detailsView = [[DBProfileDetailsView alloc] init];
     _profilePictureView = [[DBProfilePictureView alloc] init];
     _coverPhotoView = [[DBProfileCoverPhotoView alloc] init];
     _navigationView = [[DBProfileNavigationView alloc] init];
     _contentContainerViewController = [[UIViewController alloc] init];
-
-    // Gestures
     _profilePictureTapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapProfilePicture)];
     _coverPhotoTapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapCoverPhoto)];
+    
+    _contentOffsetCache = [[NSCache alloc] init];
 }
 
 - (void)dealloc {
@@ -211,28 +212,9 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
 
 - (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection {
     [super traitCollectionDidChange:previousTraitCollection];
-    
-    switch (self.view.traitCollection.horizontalSizeClass) {
-        case UIUserInterfaceSizeClassCompact:
-            break;
-        case UIUserInterfaceSizeClassRegular:
-            break;
-        default:
-            break;
-    }
-    
-    switch (self.view.traitCollection.verticalSizeClass) {
-        case UIUserInterfaceSizeClassCompact:
-            break;
-        case UIUserInterfaceSizeClassRegular:
-            break;
-        default:
-            break;
-    }
-    
-    [self configureContentViewControllers]; // a bit overkill
+    [self configureContentViewControllers];
     UIScrollView *scrollView = [self.visibleContentViewController contentScrollView];
-    [scrollView setContentOffset:CGPointMake(0, -scrollView.contentInset.top) animated:NO];
+    [scrollView setContentOffset:_contentOffset];
 }
 
 #pragma mark - Getters
@@ -408,6 +390,15 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
         [self endObservingContentOffsetForScrollView:scrollView];
     }
     
+
+    CGFloat topInset = CGRectGetMaxY(self.navigationView.frame) + CGRectGetHeight(self.segmentedControlView.frame);
+    _shouldScrollToTop = scrollView.contentOffset.y < -topInset;
+    _contentOffset = scrollView.contentOffset;
+    
+    // Cache content offset of disappearing scroll view
+    [self.contentOffsetCache setObject:[NSValue valueWithCGPoint:scrollView.contentOffset] forKey:self.visibleContentViewController.title];
+    
+    
     // Remove previous view controller from container
     [self removeViewControllerFromContainer:self.visibleContentViewController];
     
@@ -415,10 +406,6 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
     
     // Add visible view controller to container
     [self addViewControllerToContainer:visibleContentViewController];
-    
-    CGFloat topInset = CGRectGetMaxY(self.navigationView.frame) + CGRectGetHeight(self.segmentedControlView.frame);
-    _shouldScrollToTop = scrollView.contentOffset.y < -topInset;
-    _contentOffset = scrollView.contentOffset;
 
     _visibleContentViewController = visibleContentViewController;
 
@@ -530,13 +517,20 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
         [scrollView setContentOffset:CGPointMake(0, -scrollView.contentInset.top)];
     } else if (!_shouldScrollToTop) {
         [self resetContentOffsetForScrollView:scrollView];
+        
+        // TOOD: Check if content size is too small (not enough rows to fill the screen)
+    
+        // Restore cached content offset for scroll view
+        CGPoint contentOffset = [[self.contentOffsetCache objectForKey:visibleViewController.title] CGPointValue];
+        if (contentOffset.y > scrollView.contentOffset.y) {
+            [scrollView setContentOffset:contentOffset];
+        }
     } else {
         [scrollView setContentOffset:_contentOffset];
     }
 }
 
 - (void)configureContentViewControllers {
-    // Keep track of the previously selected segment index
     NSInteger selectedSegmentIndex = self.segmentedControlView.segmentedControl.selectedSegmentIndex;
     
     [self.segmentedControlView.segmentedControl removeAllSegments];
@@ -561,17 +555,8 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
 - (void)adjustContentInsetForScrollView:(UIScrollView *)scrollView {
     CGFloat topInset = CGRectGetHeight(self.segmentedControlView.frame) + CGRectGetHeight(self.detailsView.frame) + CGRectGetHeight(self.coverPhotoView.frame);
     
-    // Scroll view inset
     UIEdgeInsets contentInset = scrollView.contentInset;
-    
-    switch (self.coverPhotoStyle) {
-        case DBProfileCoverPhotoStyleBackdrop:
-            topInset -= CGRectGetHeight(self.detailsView.frame);
-            break;
-        default:
-            break;
-    }
-    
+    if (self.coverPhotoStyle == DBProfileCoverPhotoStyleBackdrop) topInset -= CGRectGetHeight(self.detailsView.frame);
     contentInset.top = self.automaticallyAdjustsScrollViewInsets ? topInset + [self.topLayoutGuide length] : topInset;
     scrollView.contentInset = contentInset;
 
@@ -658,21 +643,16 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
 }
 
 - (void)updateCoverPhotoViewWithContentOffset:(CGPoint)contentOffset {
-    switch (self.coverPhotoStyle) {
-        case DBProfileCoverPhotoStyleStretch:
-        case DBProfileCoverPhotoStyleBackdrop:
-            if (contentOffset.y < 0)  {
-               self.coverPhotoViewHeightConstraint.constant = -contentOffset.y;
-                // Prevent detailsView from scrolling off the bottom of the screen
+    if (contentOffset.y <= 0) {
+        switch (self.coverPhotoStyle) {
+            case DBProfileCoverPhotoStyleStretch:
+            case DBProfileCoverPhotoStyleBackdrop:
+                self.coverPhotoViewHeightConstraint.constant = -contentOffset.y;
                 self.detailsViewTopConstraint.constant = -(CGRectGetHeight(self.segmentedControlView.frame) + CGRectGetHeight(self.detailsView.frame)) + contentOffset.y;
-            }
-            break;
-        default:
-            break;
-    }
-    
-    // Blur effect
-    if (contentOffset.y < 0) {
+                break;
+            default:
+                break;
+        }
         CGFloat pullToRefreshPercent = fabs(contentOffset.y) / 10;
         self.coverPhotoView.blurView.alpha = pullToRefreshPercent;
     } else {
@@ -824,7 +804,7 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
     [scrollView addConstraints:@[self.coverPhotoViewTopConstraint]];
     
     // "Magic" constraints
-    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.coverPhotoView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:self.navigationView attribute:NSLayoutAttributeBottom multiplier:1 constant:0]];
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.coverPhotoView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:self.view attribute:NSLayoutAttributeTop multiplier:1 constant:64]];
     NSLayoutConstraint *constraint = [NSLayoutConstraint constraintWithItem:self.coverPhotoView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationLessThanOrEqual toItem:self.view attribute:NSLayoutAttributeTop multiplier:1 constant:0];
     constraint.priority = UILayoutPriorityDefaultHigh + 1;
     [self.view addConstraint:constraint];
