@@ -7,9 +7,7 @@
 //
 
 @import UIKit;
-
-#import "DBBlogProfileViewController.h"
-#import "DBProfilePictureView.h"
+@import DBProfileViewController;
 
 @interface DBViewController : DBBlogProfileViewController
 

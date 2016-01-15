@@ -151,7 +151,7 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
                                                    action:@selector(changeContent)
                                          forControlEvents:UIControlEventValueChanged];
     
-    [self configureDefaultAppearance];
+    [self configureDefaults];
     [self configureContentViewControllers];    
 }
 
@@ -191,24 +191,6 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
         [self configureContentViewControllers];
         _hasAppeared = YES;
     }
-}
-
-#pragma mark - Defaults
-
-- (void)configureDefaultAppearance {
-    self.coverPhotoStyle = DBProfileCoverPhotoStyleBackdrop;
-    self.coverPhotoMimicsNavigationBar = YES;
-    self.profilePictureAlignment = DBProfilePictureAlignmentLeft;
-    self.profilePictureSize = DBProfilePictureSizeDefault;
-    self.profilePictureInset = UIEdgeInsetsMake(0, DBProfileViewControllerProfilePictureLeftRightMargin, DBProfileViewControllerProfilePictureSizeDefault/2.0 - 10, 0);
-    self.allowsPullToRefresh = YES;
-    
-    self.segmentedControlView.backgroundColor = [UIColor whiteColor];
-    self.segmentedControlView.segmentedControl.tintColor = [UIColor grayColor];
-    
-    self.coverPhotoView.contentMode = UIViewContentModeScaleAspectFill;
-    self.coverPhotoView.clipsToBounds = YES;
-    self.coverPhotoHeightMultiplier = 1;
 }
 
 #pragma mark - Overrides
@@ -253,7 +235,7 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
     [scrollView setContentOffset:CGPointMake(0, -scrollView.contentInset.top) animated:NO];
 }
 
-#pragma makr - Getters
+#pragma mark - Getters
 
 - (NSArray *)contentViewControllers {
     return (NSArray *)self.mutableContentViewControllers;
@@ -484,17 +466,30 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
     [self.coverPhotoView endRefreshing];
 }
 
-#pragma mark - Managing Content Offset
+#pragma mark - Helpers
 
-// Sets content offset so that scroll view is scrolled to the top of the view
+- (void)configureDefaults {
+    self.coverPhotoStyle = DBProfileCoverPhotoStyleBackdrop;
+    self.coverPhotoMimicsNavigationBar = YES;
+    self.profilePictureAlignment = DBProfilePictureAlignmentLeft;
+    self.profilePictureSize = DBProfilePictureSizeDefault;
+    self.profilePictureInset = UIEdgeInsetsMake(0, DBProfileViewControllerProfilePictureLeftRightMargin, DBProfileViewControllerProfilePictureSizeDefault/2.0 - 10, 0);
+    self.allowsPullToRefresh = YES;
+    
+    self.segmentedControlView.backgroundColor = [UIColor whiteColor];
+    self.segmentedControlView.segmentedControl.tintColor = [UIColor grayColor];
+    
+    self.coverPhotoView.contentMode = UIViewContentModeScaleAspectFill;
+    self.coverPhotoView.clipsToBounds = YES;
+    self.coverPhotoHeightMultiplier = 1;
+}
+
 - (void)resetContentOffsetForScrollView:(UIScrollView *)scrollView {
     CGPoint contentOffset = scrollView.contentOffset;
     contentOffset.y = -(DBProfileViewControllerCoverPhotoMimicsNavigationBarHeight + CGRectGetHeight(self.segmentedControlView.frame));
     [scrollView setContentOffset:contentOffset];
     [scrollView flashScrollIndicators];
 }
-
-#pragma mark - Private
 
 - (void)configureVisibleViewController:(UIViewController<DBProfileContentViewController> *)visibleViewController {
     UIScrollView *scrollView = [visibleViewController contentScrollView];
@@ -632,30 +627,44 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
     
     if ([keyPath isEqualToString:@"contentOffset"] && context == DBProfileViewControllerContentOffsetKVOContext) {
         UIScrollView *scrollView = (UIScrollView *)object;
-        [self configureSubviewsWithScrollView:scrollView];
+        CGPoint contentOffset = scrollView.contentOffset;
+        contentOffset.y += scrollView.contentInset.top;
+        [self updateSubviewsWithContentOffset:contentOffset];
+        [self handlePullToRefreshWithScrollView:scrollView];
     }
 }
 
-#pragma mark - Configuring Subviews
+#pragma mark - Pull To Refresh
 
-- (void)configureSubviewsWithScrollView:(UIScrollView *)scrollView {
-    // Just scroll animations left
-    [self configureCoverPhotoViewWithScrollView:scrollView];
-    [self configurePullToRefreshWithScrollView:scrollView];
-    [self configureProfilePictureViewWithScrollView:scrollView];
-    [self configureTitleViewWithScrollView:scrollView];
+- (void)handlePullToRefreshWithScrollView:(UIScrollView *)scrollView {
+    if (!self.allowsPullToRefresh) return;
+    CGPoint contentOffset = scrollView.contentOffset;
+    contentOffset.y += scrollView.contentInset.top;
+    if (scrollView.isDragging && contentOffset.y < 0) {
+        [self startRefreshAnimations];
+    } else if (!scrollView.isDragging && !self.refreshing && contentOffset.y < -DBProfileViewControllerPullToRefreshDistance) {
+        [self startRefreshing];
+    } else if (!scrollView.isDragging && !self.refreshing && self.coverPhotoView.activityIndicator.isAnimating) {
+        [self endRefreshAnimations];
+    }
 }
 
-- (void)configureCoverPhotoViewWithScrollView:(UIScrollView *)scrollView {
-    CGFloat contentOffset = scrollView.contentOffset.y + scrollView.contentInset.top;
-        
+#pragma mark - Updating Subviews On Scroll
+
+- (void)updateSubviewsWithContentOffset:(CGPoint)contentOffset {
+    [self updateCoverPhotoViewWithContentOffset:contentOffset];
+    [self updateProfilePictureViewWithContentOffset:contentOffset];
+    [self updateTitleViewWithContentOffset:contentOffset];
+}
+
+- (void)updateCoverPhotoViewWithContentOffset:(CGPoint)contentOffset {
     switch (self.coverPhotoStyle) {
         case DBProfileCoverPhotoStyleStretch:
         case DBProfileCoverPhotoStyleBackdrop:
-            if (contentOffset < 0)  {
-               self.coverPhotoViewHeightConstraint.constant = -contentOffset;
+            if (contentOffset.y < 0)  {
+               self.coverPhotoViewHeightConstraint.constant = -contentOffset.y;
                 // Prevent detailsView from scrolling off the bottom of the screen
-                self.detailsViewTopConstraint.constant = -(CGRectGetHeight(self.segmentedControlView.frame) + CGRectGetHeight(self.detailsView.frame)) + contentOffset;
+                self.detailsViewTopConstraint.constant = -(CGRectGetHeight(self.segmentedControlView.frame) + CGRectGetHeight(self.detailsView.frame)) + contentOffset.y;
             }
             break;
         default:
@@ -663,26 +672,25 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
     }
     
     // Blur effect
-    if (contentOffset < 0) {
-        CGFloat pullToRefreshPercent = fabs(contentOffset) / 10;
+    if (contentOffset.y < 0) {
+        CGFloat pullToRefreshPercent = fabs(contentOffset.y) / 10;
         self.coverPhotoView.blurView.alpha = pullToRefreshPercent;
     } else {
-        CGFloat pullToRefreshPercent = fabs(contentOffset) / 60;
+        CGFloat pullToRefreshPercent = fabs(contentOffset.y) / 60;
         self.coverPhotoView.blurView.alpha = pullToRefreshPercent;
     }
 }
 
-- (void)configureProfilePictureViewWithScrollView:(UIScrollView *)scrollView {
-    CGFloat contentOffset = scrollView.contentOffset.y + scrollView.contentInset.top;
+- (void)updateProfilePictureViewWithContentOffset:(CGPoint)contentOffset {
     CGFloat coverPhotoOffset = CGRectGetHeight(self.coverPhotoView.frame);
     CGFloat coverPhotoOffsetPercent = 0;
     if (self.coverPhotoMimicsNavigationBar) {
         coverPhotoOffset -= DBProfileViewControllerCoverPhotoMimicsNavigationBarHeight;
     }
     if (self.automaticallyAdjustsScrollViewInsets) {
-        coverPhotoOffsetPercent = MIN(1, contentOffset / (coverPhotoOffset - [self.topLayoutGuide length]));
+        coverPhotoOffsetPercent = MIN(1, contentOffset.y / (coverPhotoOffset - [self.topLayoutGuide length]));
     } else {
-        coverPhotoOffsetPercent = MIN(1, contentOffset / coverPhotoOffset);
+        coverPhotoOffsetPercent = MIN(1, contentOffset.y / coverPhotoOffset);
     }
     
     switch (self.coverPhotoStyle) {
@@ -701,12 +709,11 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
     }
 }
 
-- (void)configureTitleViewWithScrollView:(UIScrollView *)scrollView {
+- (void)updateTitleViewWithContentOffset:(CGPoint)contentOffset {
     if (!self.coverPhotoMimicsNavigationBar) return;
-    CGFloat contentOffset = scrollView.contentOffset.y + scrollView.contentInset.top;
     CGFloat titleViewOffset = ((CGRectGetHeight(self.coverPhotoView.frame) - CGRectGetMaxY(self.navigationView.frame)) + CGRectGetHeight(self.segmentedControlView.frame));
     // + (DBProfileViewControllerProfilePictureSizeDefault - self.profilePictureInset.top + self.profilePictureInset.bottom)) + 4;
-    CGFloat titleViewOffsetPercent = 1 - contentOffset / titleViewOffset;
+    CGFloat titleViewOffsetPercent = 1 - contentOffset.y / titleViewOffset;
     
     if (self.view.traitCollection.verticalSizeClass == UIBarMetricsCompact) {
         [self.navigationView.navigationBar setTitleVerticalPositionAdjustment:MAX(titleViewOffset * titleViewOffsetPercent, -4)
@@ -717,19 +724,7 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
     }
 }
 
-- (void)configurePullToRefreshWithScrollView:(UIScrollView *)scrollView {
-    if (!self.allowsPullToRefresh) return;
-    CGFloat contentOffset = scrollView.contentOffset.y + scrollView.contentInset.top;
-    if (scrollView.isDragging && contentOffset < 0) {
-        [self startRefreshAnimations];
-    } else if (!scrollView.isDragging && !self.refreshing && contentOffset < -DBProfileViewControllerPullToRefreshDistance) {
-        [self startRefreshing];
-    } else if (!scrollView.isDragging && !self.refreshing && self.coverPhotoView.activityIndicator.isAnimating) {
-        [self endRefreshAnimations];
-    }
-}
-
-#pragma mark - Auto Layout (It's scary down here...)
+#pragma mark - Updating Constraints
 
 - (void)updateCoverPhotoViewLayoutConstraints {
     switch (self.coverPhotoStyle) {
@@ -784,6 +779,8 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
     self.profilePictureViewLeftConstraint.constant = self.profilePictureInset.left - self.profilePictureInset.right;
     self.profilePictureViewTopConstraint.constant = self.profilePictureInset.top - self.profilePictureInset.bottom;
 }
+
+#pragma mark - Configuring Constraints
 
 - (void)configureNavigationViewControllerLayoutConstraints {
     [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.navigationView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:[self topLayoutGuide] attribute:NSLayoutAttributeBottom multiplier:1 constant:0]];

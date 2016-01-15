@@ -8,6 +8,11 @@
 
 #import <DBProfileViewController/DBProfileViewController.h>
 
+/*!
+ @class DBUserProfileViewController
+ @abstract
+ @discussion
+ */
 @interface DBUserProfileViewController : DBProfileViewController
 
 @end

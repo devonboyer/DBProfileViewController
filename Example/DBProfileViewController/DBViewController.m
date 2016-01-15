@@ -7,11 +7,9 @@
 //
 
 #import "DBViewController.h"
-
 #import "DBFollowersTableViewController.h"
 #import "DBPhotosTableViewController.h"
 #import "DBLikesTableViewController.h"
-#import "DBProfileDetailsView.h"
 
 @interface DBViewController () <DBProfileViewControllerDelegate>
 @end

@@ -6,8 +6,13 @@
 //
 //
 
-#import <DBProfileViewController/DBProfileViewController.h>
+#import "DBProfileViewController.h"
 
+/*!
+ @class DBBlogProfileViewController
+ @abstract
+ @discussion
+ */
 @interface DBBlogProfileViewController : DBProfileViewController
 
 @end
