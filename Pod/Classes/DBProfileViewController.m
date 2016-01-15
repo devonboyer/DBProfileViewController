@@ -22,7 +22,11 @@ static const CGFloat DBProfileViewControllerProfilePictureSizeLarge = 82.0;
 static const CGFloat DBProfileViewControllerProfilePictureLeftRightMargin = 15.0;
 static const CGFloat DBProfileViewControllerCoverPhotoMimicsNavigationBarHeight = 64.0;
 
+static const CGFloat DBProfileViewControllerNavigationBarHeightRegular = 64.0;
+static const CGFloat DBProfileViewControllerNavigationBarHeightCompact = 44.0;
+
 static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewControllerContentOffsetKVOContext;
+static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentOffset";
 
 @interface DBProfileViewController ()
 {
@@ -53,6 +57,7 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
 @property (nonatomic, strong) NSLayoutConstraint *profilePictureViewCenterXConstraint;
 @property (nonatomic, strong) NSLayoutConstraint *profilePictureViewTopConstraint;
 @property (nonatomic, strong) NSLayoutConstraint *profilePictureViewWidthConstraint;
+@property (nonatomic, strong) NSLayoutConstraint *coverPhotoViewBottomConstraint;
 
 // Gestures
 @property (nonatomic, strong) UITapGestureRecognizer *coverPhotoTapGestureRecognizer;
@@ -212,7 +217,18 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
 
 - (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection {
     [super traitCollectionDidChange:previousTraitCollection];
+    
     [self configureContentViewControllers];
+    
+    switch (self.view.traitCollection.verticalSizeClass) {
+        case UIUserInterfaceSizeClassCompact:
+            self.coverPhotoViewBottomConstraint.constant = DBProfileViewControllerNavigationBarHeightCompact;
+            break;
+        default:
+            self.coverPhotoViewBottomConstraint.constant = DBProfileViewControllerNavigationBarHeightRegular;
+            break;
+    }
+    
     UIScrollView *scrollView = [self.visibleContentViewController contentScrollView];
     [scrollView setContentOffset:_contentOffset];
 }
@@ -594,7 +610,7 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
 - (void)beginObservingContentOffsetForScrollView:(UIScrollView *)scrollView {
     if (scrollView) {
         [scrollView addObserver:self
-                     forKeyPath:@"contentOffset"
+                     forKeyPath:DBProfileViewControllerContentOffsetKeyPath
                         options:0
                         context:&DBProfileViewControllerContentOffsetKVOContext];
     }
@@ -604,13 +620,13 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
 - (void)endObservingContentOffsetForScrollView:(UIScrollView *)scrollView {
     if (scrollView) {
         [scrollView removeObserver:self
-                        forKeyPath:@"contentOffset"];
+                        forKeyPath:DBProfileViewControllerContentOffsetKeyPath];
     }
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context {
     
-    if ([keyPath isEqualToString:@"contentOffset"] && context == DBProfileViewControllerContentOffsetKVOContext) {
+    if ([keyPath isEqualToString:DBProfileViewControllerContentOffsetKeyPath] && context == DBProfileViewControllerContentOffsetKVOContext) {
         UIScrollView *scrollView = (UIScrollView *)object;
         CGPoint contentOffset = scrollView.contentOffset;
         contentOffset.y += scrollView.contentInset.top;
@@ -804,7 +820,8 @@ static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewCon
     [scrollView addConstraints:@[self.coverPhotoViewTopConstraint]];
     
     // "Magic" constraints
-    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.coverPhotoView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:self.view attribute:NSLayoutAttributeTop multiplier:1 constant:64]];
+    self.coverPhotoViewBottomConstraint = [NSLayoutConstraint constraintWithItem:self.coverPhotoView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:self.view attribute:NSLayoutAttributeTop multiplier:1 constant:64];
+    [self.view addConstraint:self.coverPhotoViewBottomConstraint];
     NSLayoutConstraint *constraint = [NSLayoutConstraint constraintWithItem:self.coverPhotoView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationLessThanOrEqual toItem:self.view attribute:NSLayoutAttributeTop multiplier:1 constant:0];
     constraint.priority = UILayoutPriorityDefaultHigh + 1;
     [self.view addConstraint:constraint];
