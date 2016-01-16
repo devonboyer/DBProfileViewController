@@ -30,12 +30,16 @@
 }
 
 - (void)_commonInit {
-    _contentView = [[UILabel alloc] init];
+    _contentView = [[UIView alloc] init];
     _nameLabel = [[UILabel alloc] init];
     _usernameLabel = [[UILabel alloc] init];
     _descriptionLabel = [[UILabel alloc] init];
     _editProfileButton = [[UIButton alloc] init];
     
+    [self.contentView addSubview:self.nameLabel];
+    [self.contentView addSubview:self.usernameLabel];
+    [self.contentView addSubview:self.descriptionLabel];
+
     [self.contentView setTranslatesAutoresizingMaskIntoConstraints:NO];
     [self.nameLabel setTranslatesAutoresizingMaskIntoConstraints:NO];
     [self.usernameLabel setTranslatesAutoresizingMaskIntoConstraints:NO];
@@ -47,9 +51,6 @@
     self.descriptionLabel.numberOfLines = 0;
 
     [self addSubview:self.contentView];
-    [self.contentView addSubview:self.nameLabel];
-    [self.contentView addSubview:self.usernameLabel];
-    [self.contentView addSubview:self.descriptionLabel];
     [self addSubview:self.editProfileButton];
 
     [self configureContentViewLayoutConstraints];
@@ -90,13 +91,11 @@
 - (void)configureDefaultAppearance {
     self.tintColor = [UIColor colorWithRed:33/255.0 green:37/255.0 blue:42/255.0 alpha:1];
     
+    self.contentInset = UIEdgeInsetsMake(15, 15, 15, 15);
+    
     self.nameLabel.font = [UIFont boldSystemFontOfSize:20];
     self.usernameLabel.font = [UIFont systemFontOfSize:14];
     self.descriptionLabel.font = [UIFont systemFontOfSize:16];
-
-    self.nameLabel.text = @"Devon Boyer";
-    self.usernameLabel.text = @"@devboyer";
-    self.descriptionLabel.text = @"CS @UWaterloo, iOS developer with a pasion for mobile computer and great #uidesign.";
     
     UIColor *editProfileButtonColor = [UIColor colorWithRed:135/255.0 green:153/255.0 blue:166/255.0 alpha:1];
     [self.editProfileButton setTitle:@"Edit profile" forState:UIControlStateNormal];
@@ -106,8 +105,6 @@
     self.editProfileButton.layer.cornerRadius = 6;
     self.editProfileButton.layer.borderWidth = 1;
     self.editProfileButton.layer.borderColor = editProfileButtonColor.CGColor;
-    
-    self.contentInset = UIEdgeInsetsMake(82, 12, 30, 12);
 }
 
 #pragma mark - Auto Layout
@@ -133,7 +130,7 @@
 }
 
 - (void)configureDescriptionLabelLayoutConstraints {
-    [self.contentView addConstraint:[NSLayoutConstraint constraintWithItem:self.descriptionLabel attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.usernameLabel attribute:NSLayoutAttributeBottom multiplier:1 constant:12]];
+    [self.contentView addConstraint:[NSLayoutConstraint constraintWithItem:self.descriptionLabel attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.usernameLabel attribute:NSLayoutAttributeBottom multiplier:1 constant:8]];
     [self.contentView addConstraint:[NSLayoutConstraint constraintWithItem:self.descriptionLabel attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self.contentView attribute:NSLayoutAttributeLeft multiplier:1 constant:0]];
     [self.contentView addConstraint:[NSLayoutConstraint constraintWithItem:self.descriptionLabel attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self.contentView attribute:NSLayoutAttributeRight multiplier:1 constant:0]];
     [self.contentView addConstraint:[NSLayoutConstraint constraintWithItem:self.descriptionLabel attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.contentView attribute:NSLayoutAttributeBottom multiplier:1 constant:0]];

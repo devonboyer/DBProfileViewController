@@ -15,6 +15,12 @@
 @class DBProfilePictureView;
 @class DBProfileViewController;
 
+/** @abstract The size for `DBProfilePictureSizeDefault`. */
+extern const CGFloat DBProfileViewControllerProfilePictureSizeDefault;
+
+/** @abstract The size for `DBProfilePictureSizeLarge`. */
+extern const CGFloat DBProfileViewControllerProfilePictureSizeLarge;
+
 /**
  @abstract The `DBProfileCoverPhotoStyle` defines the types of styles for the cover photo.
  */
@@ -27,8 +33,7 @@ typedef NS_ENUM(NSInteger, DBProfileCoverPhotoStyle) {
     DBProfileCoverPhotoStyleStretch,
     /**
      @abstract Specifys that the cover photo should extend beneath the details view.
-     @discussion This style allows the details view to overlay the cover photo. This style might be used for a blog post, recipe or news article (This style is my favourite! Give it a try!)
-     @warning This style requires that CGRectGetHeight(coverPhotoView.frame) >= CGRectGetHeight(detailsView.frame).
+     @discussion This style allows the details view to overlay the cover photo. This style might be used for a blog post, recipe or news article.
      */
     DBProfileCoverPhotoStyleBackdrop,
 };
@@ -73,6 +78,8 @@ typedef NS_ENUM(NSInteger, DBProfilePictureAlignment) {
  @note When using `coverPhotoMimicsNavigationBar` you should set `automaticallyAdjustsScrollViewInsets` to NO. Otherwise set `automaticallyAdjustsScrollViewInsets` to YES when using a navigation controller's UINavigationBar.
  */
 @interface DBProfileViewController : UIViewController
+
+@property (nonatomic, assign) CGFloat coverPhotoHeightMultiplier;
 
 ///----------------------------------------------
 /// @name Initializing a Profile View Controller

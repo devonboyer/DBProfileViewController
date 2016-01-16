@@ -50,9 +50,6 @@
     self.subtitleLabel.textColor = [UIColor whiteColor];
     self.subtitleLabel.font = [UIFont systemFontOfSize:14];
     self.subtitleLabel.textAlignment = NSTextAlignmentCenter;
-
-    self.titleLabel.text = @"Devon Boyer";
-    self.subtitleLabel.text = @"60 Tweets";
 }
 
 #pragma mark - Auto Layout

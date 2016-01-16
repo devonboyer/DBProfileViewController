@@ -16,12 +16,12 @@
 #import "DBProfileContentViewController.h"
 
 // Constants
-static const CGFloat DBProfileViewControllerPullToRefreshDistance = 80;
-static const CGFloat DBProfileViewControllerProfilePictureSizeDefault = 72.0;
-static const CGFloat DBProfileViewControllerProfilePictureSizeLarge = 82.0;
-static const CGFloat DBProfileViewControllerProfilePictureLeftRightMargin = 15.0;
-static const CGFloat DBProfileViewControllerCoverPhotoMimicsNavigationBarHeight = 64.0;
+const CGFloat DBProfileViewControllerProfilePictureSizeDefault = 72.0;
+const CGFloat DBProfileViewControllerProfilePictureSizeLarge = 82.0;
 
+static const CGFloat DBProfileViewControllerPullToRefreshDistance = 80;
+static const CGFloat DBProfileViewControllerProfilePictureLeftRightMargin = 15.0;
+static const CGFloat DBProfileViewControllerCoverPhotoMimicsNavigationBarHeight = 64.0; // Ditch this!
 static const CGFloat DBProfileViewControllerNavigationBarHeightRegular = 64.0;
 static const CGFloat DBProfileViewControllerNavigationBarHeightCompact = 44.0;
 
@@ -34,8 +34,6 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     BOOL _shouldScrollToTop;
     CGPoint _contentOffset;
 }
-
-@property (nonatomic, assign) CGFloat coverPhotoHeightMultiplier;
 
 @property (nonatomic, getter=isRefreshing) BOOL refreshing;
 @property (nonatomic, strong) NSMutableArray *mutableContentViewControllers;
@@ -171,24 +169,10 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     [self.view setNeedsLayout];
     [self.view layoutIfNeeded];
     
-    self.navigationView.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Search" style:UIBarButtonItemStylePlain target:self action:@selector( push)];
-    
     if (self.coverPhotoMimicsNavigationBar) {
         [self.navigationController setNavigationBarHidden:YES animated:animated];
         [self.navigationController.interactivePopGestureRecognizer setDelegate:nil];
     }
-}
-
-- (void)push {
-    UIViewController *viewController = [[UIViewController alloc] init];
-    viewController.view.backgroundColor = [UIColor whiteColor];
-    [self.navigationController pushViewController:viewController animated:YES];
-}
-
-- (void)viewWillDisappear:(BOOL)animated {
-    [super viewWillDisappear:animated];
-    
-    if (self.coverPhotoMimicsNavigationBar) [self.navigationController setNavigationBarHidden:NO animated:animated];
 }
 
 - (void)viewDidLayoutSubviews {
@@ -482,7 +466,6 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     self.segmentedControlView.backgroundColor = [UIColor whiteColor];
     self.segmentedControlView.segmentedControl.tintColor = [UIColor grayColor];
     
-    self.coverPhotoView.contentMode = UIViewContentModeScaleAspectFill;
     self.coverPhotoView.clipsToBounds = YES;
     self.coverPhotoHeightMultiplier = 1;
 }
@@ -664,16 +647,14 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
             case DBProfileCoverPhotoStyleStretch:
             case DBProfileCoverPhotoStyleBackdrop:
                 self.coverPhotoViewHeightConstraint.constant = -contentOffset.y;
-                self.detailsViewTopConstraint.constant = -(CGRectGetHeight(self.segmentedControlView.frame) + CGRectGetHeight(self.detailsView.frame)) + contentOffset.y;
+                //self.detailsViewTopConstraint.constant = -(CGRectGetHeight(self.segmentedControlView.frame) + CGRectGetHeight(self.detailsView.frame)) + contentOffset.y;
                 break;
             default:
                 break;
         }
-        CGFloat pullToRefreshPercent = fabs(contentOffset.y) / 10;
-        self.coverPhotoView.blurView.alpha = pullToRefreshPercent;
+        self.coverPhotoView.blurView.alpha = fabs(contentOffset.y) / 10;
     } else {
-        CGFloat pullToRefreshPercent = fabs(contentOffset.y) / 60;
-        self.coverPhotoView.blurView.alpha = pullToRefreshPercent;
+        self.coverPhotoView.blurView.alpha = fabs(contentOffset.y) / 80;
     }
 }
 
@@ -690,10 +671,11 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     }
     
     switch (self.coverPhotoStyle) {
-        case DBProfileCoverPhotoStyleBackdrop:
-            self.profilePictureView.alpha = 1 - coverPhotoOffsetPercent * 1.6;
-            self.detailsView.alpha = 1 - coverPhotoOffsetPercent * 1.6;
+        case DBProfileCoverPhotoStyleBackdrop: {
+            CGFloat alpha = 1 - coverPhotoOffsetPercent * 1.10;
+            self.profilePictureView.alpha = self.detailsView.alpha = alpha;
             break;
+        }
         default: {
             CGFloat profilePictureScale = MIN(1 - coverPhotoOffsetPercent * 0.3, 1);
             self.profilePictureView.transform = CGAffineTransformMakeScale(profilePictureScale, profilePictureScale);

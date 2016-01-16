@@ -34,7 +34,6 @@
 
     self.overlayView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.overlayView.frame = self.imageView.frame;
-    [self.imageView addSubview:self.overlayView];
     
     self.blurView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.blurView.frame = self.imageView.frame;
@@ -43,6 +42,8 @@
     self.visualEffectView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.visualEffectView.frame = self.blurView.frame;
     [self.blurView addSubview:self.visualEffectView];
+    
+    [[self.visualEffectView contentView] addSubview:self.overlayView];
     
     [self.imageView setTranslatesAutoresizingMaskIntoConstraints:NO];
     [self.activityIndicator setTranslatesAutoresizingMaskIntoConstraints:NO];
@@ -67,7 +68,7 @@
     self.blurView.alpha = 0;
     
     self.overlayView.backgroundColor = [UIColor blackColor];
-    self.overlayView.alpha = 0.15;
+    self.overlayView.alpha = 0.2;
 }
 
 #pragma mark - Refresh
