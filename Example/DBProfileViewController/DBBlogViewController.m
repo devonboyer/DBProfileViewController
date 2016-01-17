@@ -22,13 +22,15 @@
     
     self.delegate = self;
     
-    self.coverPhotoHeightMultiplier = 1;
+    self.coverPhotoHeightMultiplier = 1.0;
     self.coverPhotoStyle = DBProfileCoverPhotoStyleBackdrop;
-    self.coverPhotoMimicsNavigationBar = YES;
     self.profilePictureAlignment = DBProfilePictureAlignmentLeft;
     self.profilePictureSize = DBProfilePictureSizeDefault;
     self.profilePictureInset = UIEdgeInsetsMake(0, 15, 0, 0);
     self.allowsPullToRefresh = NO;
+    
+    self.automaticallyAdjustsScrollViewInsets = NO;
+    self.coverPhotoMimicsNavigationBar = YES;
     
     [self addContentViewController:[[DBFollowersTableViewController alloc] init] withTitle:@"Details"];
     [self addContentViewController:[[DBPhotosTableViewController alloc] init] withTitle:@"Comments"];
@@ -38,11 +40,14 @@
     [self setProfilePicture:[UIImage imageNamed:@"profile-picture.jpg"] animated:NO];
     
     // Setup details view
-    self.detailsView.nameLabel.text = @"Goals and Garter Snakes";
+    self.detailsView.nameLabel.font = [UIFont boldSystemFontOfSize:40];
+    self.detailsView.descriptionLabel.font = [UIFont systemFontOfSize:18];
+    self.detailsView.nameLabel.text = @"Goals and\nGarter Snakes";
     self.detailsView.usernameLabel.text = nil;
     self.detailsView.descriptionLabel.text = @"A blog post about my transition from Queen's to UWaterloo.";
-    self.detailsView.contentInset = UIEdgeInsetsMake(15, 15, 15, 15);
+    self.detailsView.contentInset = UIEdgeInsetsMake(84, 15, 40, 15);
     self.detailsView.tintColor = [UIColor whiteColor];
+    self.detailsView.editProfileButton.hidden = YES;
     
     self.title = @"Goals and Garter Snakes";
     self.subtitle = @"94 Views";

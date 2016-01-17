@@ -25,7 +25,6 @@
     self.coverPhotoHeightMultiplier = 0.24;
     self.coverPhotoStyle = DBProfileCoverPhotoStyleStretch;
     self.profilePictureAlignment = DBProfilePictureAlignmentLeft;
-    self.coverPhotoMimicsNavigationBar = YES;
     self.profilePictureSize = DBProfilePictureSizeDefault;
     self.profilePictureInset = UIEdgeInsetsMake(0, 15, 72/2.0 - 10, 0);
     self.allowsPullToRefresh = YES;
@@ -54,12 +53,12 @@
     
     switch (style) {
         case DBUserProfileViewControllerStyle1:
-            self.coverPhotoMimicsNavigationBar = NO;
             self.automaticallyAdjustsScrollViewInsets = YES;
+            self.coverPhotoMimicsNavigationBar = NO;
             break;
         case DBUserProfileViewControllerStyle2:
-            self.coverPhotoMimicsNavigationBar = YES;
             self.automaticallyAdjustsScrollViewInsets = NO;
+            self.coverPhotoMimicsNavigationBar = YES;
             break;
         default:
             break;
