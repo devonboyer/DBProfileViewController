@@ -11,7 +11,7 @@
 #import "DBPhotosTableViewController.h"
 #import "DBLikesTableViewController.h"
 
-@interface DBBlogViewController ()
+@interface DBBlogViewController () <DBProfileViewControllerDelegate>
 
 @end
 
@@ -19,13 +19,16 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    self.delegate = self;
+    
     self.coverPhotoHeightMultiplier = 1;
     self.coverPhotoStyle = DBProfileCoverPhotoStyleBackdrop;
     self.coverPhotoMimicsNavigationBar = YES;
     self.profilePictureAlignment = DBProfilePictureAlignmentLeft;
     self.profilePictureSize = DBProfilePictureSizeDefault;
     self.profilePictureInset = UIEdgeInsetsMake(0, 15, 0, 0);
-    self.allowsPullToRefresh = YES;
+    self.allowsPullToRefresh = NO;
     
     [self addContentViewController:[[DBFollowersTableViewController alloc] init] withTitle:@"Details"];
     [self addContentViewController:[[DBPhotosTableViewController alloc] init] withTitle:@"Comments"];
@@ -43,6 +46,12 @@
     
     self.title = @"Goals and Garter Snakes";
     self.subtitle = @"94 Views";
+}
+
+- (void)profileViewControllerDidPullToRefresh:(DBProfileViewController *)viewController {
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self endRefreshing];
+    });
 }
 
 @end

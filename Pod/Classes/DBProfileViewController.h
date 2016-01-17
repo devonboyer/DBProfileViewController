@@ -15,11 +15,9 @@
 @class DBProfilePictureView;
 @class DBProfileViewController;
 
-/** @abstract The size for `DBProfilePictureSizeDefault`. */
 extern const CGFloat DBProfileViewControllerProfilePictureSizeDefault;
-
-/** @abstract The size for `DBProfilePictureSizeLarge`. */
 extern const CGFloat DBProfileViewControllerProfilePictureSizeLarge;
+extern const CGFloat DBProfileViewControllerPullToRefreshDistance;
 
 /**
  @abstract The `DBProfileCoverPhotoStyle` defines the types of styles for the cover photo.

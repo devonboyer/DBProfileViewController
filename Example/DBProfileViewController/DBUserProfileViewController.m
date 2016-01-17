@@ -11,7 +11,7 @@
 #import "DBPhotosTableViewController.h"
 #import "DBLikesTableViewController.h"
 
-@interface DBUserProfileViewController ()
+@interface DBUserProfileViewController () <DBProfileViewControllerDelegate>
 
 @end
 
@@ -19,10 +19,13 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    self.delegate = self;
+    
     self.coverPhotoHeightMultiplier = 0.24;
     self.coverPhotoStyle = DBProfileCoverPhotoStyleStretch;
-    self.coverPhotoMimicsNavigationBar = YES;
     self.profilePictureAlignment = DBProfilePictureAlignmentLeft;
+    self.coverPhotoMimicsNavigationBar = YES;
     self.profilePictureSize = DBProfilePictureSizeDefault;
     self.profilePictureInset = UIEdgeInsetsMake(0, 15, 72/2.0 - 10, 0);
     self.allowsPullToRefresh = YES;
@@ -42,6 +45,31 @@
     
     self.title = @"Devon Boyer";
     self.subtitle = @"@devboyer";
+    
+    [self setStyle:self.style];
+}
+
+- (void)setStyle:(DBUserProfileViewControllerStyle)style {
+    _style = style;
+    
+    switch (style) {
+        case DBUserProfileViewControllerStyle1:
+            self.coverPhotoMimicsNavigationBar = NO;
+            self.automaticallyAdjustsScrollViewInsets = YES;
+            break;
+        case DBUserProfileViewControllerStyle2:
+            self.coverPhotoMimicsNavigationBar = YES;
+            self.automaticallyAdjustsScrollViewInsets = NO;
+            break;
+        default:
+            break;
+    }
+}
+
+- (void)profileViewControllerDidPullToRefresh:(DBProfileViewController *)viewController {
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self endRefreshing];
+    });
 }
 
 @end

@@ -8,7 +8,7 @@
         <!--Navigation Controller-->
         <scene sceneID="qDI-ya-SRT">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" navigationBarHidden="YES" id="1bN-eO-l0Z" sceneMemberID="viewController">
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="1bN-eO-l0Z" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="ufe-RM-UvN">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
@@ -26,7 +26,7 @@
         <!--Demo-->
         <scene sceneID="f2M-rY-Vmy">
             <objects>
-                <viewController title="Demo" id="EuW-E1-qM5" sceneMemberID="viewController">
+                <viewController title="Demo" id="EuW-E1-qM5" customClass="DBDemoViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="B4I-v8-QDX"/>
                         <viewControllerLayoutGuide type="bottom" id="EUQ-8F-e9p"/>
@@ -35,7 +35,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Choose an example configuration for DBProfileViewController" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="La2-gB-YrA">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Choose an example configuration for DBProfileViewController" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="La2-gB-YrA">
                                 <rect key="frame" x="50" y="120" width="500" height="53"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="22"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
@@ -54,7 +54,7 @@
                                                     <color key="titleColor" red="0.14901960780000001" green="0.18823529410000001" blue="0.23529411759999999" alpha="1" colorSpace="calibratedRGB"/>
                                                 </state>
                                                 <connections>
-                                                    <segue destination="fTs-fg-o1b" kind="show" identifier="showUserProfile" id="1Mo-0Z-8js"/>
+                                                    <segue destination="fTs-fg-o1b" kind="show" identifier="showUserProfile1" id="4a8-Aa-ubk"/>
                                                 </connections>
                                             </button>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Displays a navigation bar" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="f6r-eM-Me1">
@@ -84,6 +84,9 @@
                                                 <state key="normal" title="User Profile 2">
                                                     <color key="titleColor" red="0.14901960780000001" green="0.18823529410000001" blue="0.23529411759999999" alpha="1" colorSpace="calibratedRGB"/>
                                                 </state>
+                                                <connections>
+                                                    <segue destination="fTs-fg-o1b" kind="show" identifier="showUserProfile2" id="ad5-Ad-sIr"/>
+                                                </connections>
                                             </button>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Cover photo mimics navigation bar" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JN4-JG-Cw7">
                                                 <rect key="frame" x="15" y="38" width="224" height="17"/>
@@ -175,7 +178,7 @@
                             <constraint firstItem="N0q-ji-Pxd" firstAttribute="centerX" secondItem="pXH-ah-rrt" secondAttribute="centerX" id="ejg-by-cYQ"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="IsM-C8-ZDO"/>
+                    <navigationItem key="navigationItem" title="Demo" id="IsM-C8-ZDO"/>
                     <simulatedStatusBarMetrics key="simulatedStatusBarMetrics"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="jkt-D0-fVM" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -221,4 +224,7 @@
             <point key="canvasLocation" x="247" y="1231"/>
         </scene>
     </scenes>
+    <inferredMetricsTieBreakers>
+        <segue reference="4a8-Aa-ubk"/>
+    </inferredMetricsTieBreakers>
 </document>

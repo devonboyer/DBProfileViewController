@@ -23,6 +23,7 @@
 		672EF5A91C4401B60035567E /* cover-photo-blog.png in Resources */ = {isa = PBXBuildFile; fileRef = 672EF5A81C4401B60035567E /* cover-photo-blog.png */; };
 		672EF5CF1C49E9B60035567E /* DBUserProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 672EF5CE1C49E9B60035567E /* DBUserProfileViewController.m */; };
 		672EF5D21C49E9CA0035567E /* DBBlogViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 672EF5D11C49E9CA0035567E /* DBBlogViewController.m */; };
+		672EF5D61C4B09AA0035567E /* DBDemoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 672EF5D51C4B09AA0035567E /* DBDemoViewController.m */; };
 		675B0F6F1C40882C000AADC6 /* profile-picture.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 675B0F6E1C40882C000AADC6 /* profile-picture.jpg */; };
 		675B0F8B1C429199000AADC6 /* cover-photo-user.png in Resources */ = {isa = PBXBuildFile; fileRef = 675B0F8A1C429199000AADC6 /* cover-photo-user.png */; };
 		675B0F921C42A1C4000AADC6 /* DBFollowersTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 675B0F911C42A1C4000AADC6 /* DBFollowersTableViewController.m */; };
@@ -68,6 +69,8 @@
 		672EF5CE1C49E9B60035567E /* DBUserProfileViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBUserProfileViewController.m; sourceTree = "<group>"; };
 		672EF5D01C49E9CA0035567E /* DBBlogViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBBlogViewController.h; sourceTree = "<group>"; };
 		672EF5D11C49E9CA0035567E /* DBBlogViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBBlogViewController.m; sourceTree = "<group>"; };
+		672EF5D41C4B09AA0035567E /* DBDemoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBDemoViewController.h; sourceTree = "<group>"; };
+		672EF5D51C4B09AA0035567E /* DBDemoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBDemoViewController.m; sourceTree = "<group>"; };
 		675B0F6E1C40882C000AADC6 /* profile-picture.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "profile-picture.jpg"; sourceTree = "<group>"; };
 		675B0F8A1C429199000AADC6 /* cover-photo-user.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "cover-photo-user.png"; sourceTree = "<group>"; };
 		675B0F901C42A1C4000AADC6 /* DBFollowersTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBFollowersTableViewController.h; sourceTree = "<group>"; };
@@ -154,6 +157,8 @@
 				6003F59D195388D20070C39A /* DBAppDelegate.m */,
 				675D5BA11C3FDCCC009E44CE /* Main.storyboard */,
 				675D5B9F1C3FCB72009E44CE /* Launch Screen.storyboard */,
+				672EF5D41C4B09AA0035567E /* DBDemoViewController.h */,
+				672EF5D51C4B09AA0035567E /* DBDemoViewController.m */,
 				672EF5CD1C49E9B60035567E /* DBUserProfileViewController.h */,
 				672EF5CE1C49E9B60035567E /* DBUserProfileViewController.m */,
 				672EF5D01C49E9CA0035567E /* DBBlogViewController.h */,
@@ -437,6 +442,7 @@
 				675B0F981C42A1E0000AADC6 /* DBLikesTableViewController.m in Sources */,
 				6003F59E195388D20070C39A /* DBAppDelegate.m in Sources */,
 				675B0F921C42A1C4000AADC6 /* DBFollowersTableViewController.m in Sources */,
+				672EF5D61C4B09AA0035567E /* DBDemoViewController.m in Sources */,
 				672EF5CF1C49E9B60035567E /* DBUserProfileViewController.m in Sources */,
 				672EF5D21C49E9CA0035567E /* DBBlogViewController.m in Sources */,
 				675B0F951C42A1D4000AADC6 /* DBPhotosTableViewController.m in Sources */,

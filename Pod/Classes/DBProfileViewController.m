@@ -18,9 +18,9 @@
 // Constants
 const CGFloat DBProfileViewControllerProfilePictureSizeDefault = 72.0;
 const CGFloat DBProfileViewControllerProfilePictureSizeLarge = 82.0;
+const CGFloat DBProfileViewControllerPullToRefreshDistance = 80;
 
-static const CGFloat DBProfileViewControllerPullToRefreshDistance = 80;
-static const CGFloat DBProfileViewControllerProfilePictureLeftRightMargin = 15.0;
+static const CGFloat DBProfileViewControllerProfilePictureLeftRightMargin = 15.0; // Ditch this!
 static const CGFloat DBProfileViewControllerCoverPhotoMimicsNavigationBarHeight = 64.0; // Ditch this!
 static const CGFloat DBProfileViewControllerNavigationBarHeightRegular = 64.0;
 static const CGFloat DBProfileViewControllerNavigationBarHeightCompact = 44.0;
@@ -55,7 +55,11 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
 @property (nonatomic, strong) NSLayoutConstraint *profilePictureViewCenterXConstraint;
 @property (nonatomic, strong) NSLayoutConstraint *profilePictureViewTopConstraint;
 @property (nonatomic, strong) NSLayoutConstraint *profilePictureViewWidthConstraint;
+
+// Crappy Names?
 @property (nonatomic, strong) NSLayoutConstraint *coverPhotoViewBottomConstraint;
+@property (nonatomic, strong) NSLayoutConstraint *coverPhotoViewTopLayoutGuideConstraint;
+@property (nonatomic, strong) NSLayoutConstraint *coverPhotoViewTopSuperviewConstraint;
 
 // Gestures
 @property (nonatomic, strong) UITapGestureRecognizer *coverPhotoTapGestureRecognizer;
@@ -277,7 +281,7 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
 
 - (void)setCoverPhotoMimicsNavigationBar:(BOOL)coverPhotoMimicsNavigationBar {
     if (coverPhotoMimicsNavigationBar) {
-        NSAssert(self.coverPhotoStyle != DBProfileCoverPhotoStyleNone, @"`DBProfileCoverPhotoStyleNone` is mutually exclusive with `coverPhotoMimicsNavigationBar` and `allowsPullToRefresh`");
+        //NSAssert(self.coverPhotoStyle != DBProfileCoverPhotoStyleNone, @"`DBProfileCoverPhotoStyleNone` is mutually exclusive with `coverPhotoMimicsNavigationBar` and `allowsPullToRefresh`");
     }
     _coverPhotoMimicsNavigationBar = coverPhotoMimicsNavigationBar;
     self.navigationView.hidden = !coverPhotoMimicsNavigationBar;
@@ -285,7 +289,7 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
 
 - (void)setAllowsPullToRefresh:(BOOL)allowsPullToRefresh {
     if (allowsPullToRefresh) {
-        NSAssert(self.coverPhotoStyle != DBProfileCoverPhotoStyleNone, @"`DBProfileCoverPhotoStyleNone` is mutually exclusive with `coverPhotoMimicsNavigationBar` and `allowsPullToRefresh`");
+        //NSAssert(self.coverPhotoStyle != DBProfileCoverPhotoStyleNone, @"`DBProfileCoverPhotoStyleNone` is mutually exclusive with `coverPhotoMimicsNavigationBar` and `allowsPullToRefresh`");
     }
     _allowsPullToRefresh = allowsPullToRefresh;
 }
@@ -615,6 +619,14 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
         contentOffset.y += scrollView.contentInset.top;
         [self updateSubviewsWithContentOffset:contentOffset];
         [self handlePullToRefreshWithScrollView:scrollView];
+        
+        if (self.coverPhotoMimicsNavigationBar) {
+            if (contentOffset.y < CGRectGetHeight(self.coverPhotoView.frame) - 64) {
+                [scrollView insertSubview:self.profilePictureView aboveSubview:self.coverPhotoView];
+            } else {
+                [scrollView insertSubview:self.coverPhotoView aboveSubview:self.profilePictureView];
+            }
+        }
     }
 }
 
@@ -627,8 +639,11 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     if (scrollView.isDragging && contentOffset.y < 0) {
         [self startRefreshAnimations];
     } else if (!scrollView.isDragging && !self.refreshing && contentOffset.y < -DBProfileViewControllerPullToRefreshDistance) {
-        [self startRefreshing];
-    } else if (!scrollView.isDragging && !self.refreshing && self.coverPhotoView.activityIndicator.isAnimating) {
+        [self startRefreshing]; // delegate callback
+    }
+    
+    BOOL shouldEndRefreshAnimations = !self.refreshing && self.coverPhotoView.activityIndicator.isAnimating;
+    if (!scrollView.isDragging && contentOffset.y >= 0 && shouldEndRefreshAnimations) {
         [self endRefreshAnimations];
     }
 }
@@ -718,6 +733,16 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
         default:
             break;
     }
+    
+    if (self.coverPhotoViewBottomConstraint) {
+        if (self.coverPhotoMimicsNavigationBar) {
+            [NSLayoutConstraint activateConstraints:@[self.coverPhotoViewBottomConstraint, self.coverPhotoViewTopSuperviewConstraint]];
+            [NSLayoutConstraint deactivateConstraints:@[self.coverPhotoViewTopLayoutGuideConstraint]];
+        } else {
+            [NSLayoutConstraint activateConstraints:@[ self.coverPhotoViewTopLayoutGuideConstraint]];
+            [NSLayoutConstraint deactivateConstraints:@[self.coverPhotoViewBottomConstraint, self.coverPhotoViewTopSuperviewConstraint]];
+        }
+    }
 }
 
 - (void)updateProfilePictureViewLayoutConstraints {
@@ -778,6 +803,7 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     [scrollView addConstraint:[NSLayoutConstraint constraintWithItem:self.segmentedControlView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:scrollView attribute:NSLayoutAttributeWidth multiplier:1 constant:0]];
     
     // "Magic" constraints
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.segmentedControlView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:[self topLayoutGuide] attribute:NSLayoutAttributeBottom multiplier:1 constant:0]];
     [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.segmentedControlView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:self.detailsView attribute:NSLayoutAttributeBottom multiplier:1 constant:0]];
     [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.segmentedControlView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:self.coverPhotoView attribute:NSLayoutAttributeBottom multiplier:1 constant:0]];
 }
@@ -804,9 +830,14 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     // "Magic" constraints
     self.coverPhotoViewBottomConstraint = [NSLayoutConstraint constraintWithItem:self.coverPhotoView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:self.view attribute:NSLayoutAttributeTop multiplier:1 constant:64];
     [self.view addConstraint:self.coverPhotoViewBottomConstraint];
-    NSLayoutConstraint *constraint = [NSLayoutConstraint constraintWithItem:self.coverPhotoView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationLessThanOrEqual toItem:self.view attribute:NSLayoutAttributeTop multiplier:1 constant:0];
-    constraint.priority = UILayoutPriorityDefaultHigh + 1;
-    [self.view addConstraint:constraint];
+    
+    self.coverPhotoViewTopLayoutGuideConstraint = [NSLayoutConstraint constraintWithItem:self.coverPhotoView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationLessThanOrEqual toItem:[self topLayoutGuide] attribute:NSLayoutAttributeBottom multiplier:1 constant:0];
+    self.coverPhotoViewTopLayoutGuideConstraint.priority = UILayoutPriorityDefaultHigh + 1;
+    [self.view addConstraint:self.coverPhotoViewTopLayoutGuideConstraint];
+    
+    self.coverPhotoViewTopSuperviewConstraint = [NSLayoutConstraint constraintWithItem:self.coverPhotoView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationLessThanOrEqual toItem:self.view attribute:NSLayoutAttributeTop multiplier:1 constant:0];
+    self.coverPhotoViewTopSuperviewConstraint.priority = UILayoutPriorityDefaultHigh + 1;
+    [self.view addConstraint:self.coverPhotoViewTopSuperviewConstraint];
 }
 
 - (void)configureProfilePictureViewLayoutConstraintsWithScrollView:(UIScrollView *)scrollView {

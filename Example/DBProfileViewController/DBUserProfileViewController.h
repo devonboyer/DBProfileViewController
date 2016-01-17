@@ -8,6 +8,13 @@
 
 @import DBProfileViewController;
 
+typedef NS_ENUM(NSInteger, DBUserProfileViewControllerStyle) {
+    DBUserProfileViewControllerStyle1,
+    DBUserProfileViewControllerStyle2,
+};
+
 @interface DBUserProfileViewController : DBProfileViewController
+
+@property (nonatomic, assign) DBUserProfileViewControllerStyle style;
 
 @end
