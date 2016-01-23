@@ -15,7 +15,7 @@
 #import "DBProfileNavigationView.h"
 #import "DBProfileContentViewController.h"
 
-const CGFloat DBProfileViewControllerProfilePictureSizeDefault = 72.0;
+const CGFloat DBProfileViewControllerProfilePictureSizeNormal = 72.0;
 const CGFloat DBProfileViewControllerProfilePictureSizeLarge = 82.0;
 const CGFloat DBProfileViewControllerPullToRefreshDistance = 80;
 
@@ -157,8 +157,8 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
                                                    action:@selector(segmentChanged:)
                                          forControlEvents:UIControlEventValueChanged];
     
-    [self configureContentViewControllers];
     [self configureDefaults];
+    [self configureContentViewControllers];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -177,6 +177,12 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     }
 }
 
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    
+    NSAssert([self numberOfContentViewControllers] > 0, @"`DBProfileViewController` must have at least one content view controller.");
+}
+
 - (void)viewDidLayoutSubviews {
     [super viewDidLayoutSubviews];
     if (!_hasAppeared) {
@@ -189,6 +195,21 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     [self updateCoverPhotoViewLayoutConstraints];
     [self updateProfilePictureViewLayoutConstraints];
     [super updateViewConstraints];
+}
+
+- (void)configureDefaults {
+    self.coverPhotoStyle = DBProfileCoverPhotoStyleBackdrop;
+    self.coverPhotoMimicsNavigationBar = NO;
+    self.profilePictureAlignment = DBProfilePictureAlignmentLeft;
+    self.profilePictureSize = DBProfilePictureSizeNormal;
+    self.profilePictureInset = UIEdgeInsetsMake(0, 15, DBProfileViewControllerProfilePictureSizeNormal/2.0 - 10, 0);
+    self.allowsPullToRefresh = YES;
+    
+    self.segmentedControlView.backgroundColor = [UIColor whiteColor];
+    self.segmentedControlView.segmentedControl.tintColor = [UIColor grayColor];
+    
+    self.coverPhotoView.clipsToBounds = YES;
+    self.coverPhotoHeightMultiplier = 0.24;    
 }
 
 #pragma mark - Status Bar
@@ -243,8 +264,15 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
 
 #pragma mark - Setters
 
+- (void)setCoverPhotoHeightMultiplier:(CGFloat)coverPhotoHeightMultiplier {
+    NSAssert(coverPhotoHeightMultiplier > 0 && coverPhotoHeightMultiplier <= 1, @"`coverPhotoHeightMultiplier` must be greater than 0 or less that or equal to 1.");
+    if (_coverPhotoHeightMultiplier == coverPhotoHeightMultiplier) return;
+    _coverPhotoHeightMultiplier = coverPhotoHeightMultiplier;
+    [self updateViewConstraints];
+}
+
 - (void)setCoverPhotoStyle:(DBProfileCoverPhotoStyle)coverPhotoStyle {
-    if (coverPhotoStyle == DBProfileCoverPhotoStyleNone) {
+    if (self.coverPhotoStyle == DBProfileCoverPhotoStyleNone) {
         NSAssert(!self.coverPhotoMimicsNavigationBar || !self.allowsPullToRefresh, @"`DBProfileCoverPhotoStyleNone` is mutually exclusive with `coverPhotoMimicsNavigationBar` and `allowsPullToRefresh`");
     }
     if (_coverPhotoStyle == coverPhotoStyle) return;
@@ -358,9 +386,10 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     [self.mutableContentViewControllerTitles addObject:title];
     
     [self configureContentViewControllers];
+    [self scrollVisibleContentViewControllerToTop];
 }
 
-- (void)addContentViewController:(UIViewController<DBProfileContentViewController> *)viewController withTitle:(NSString *)title atIndex:(NSUInteger)index {
+- (void)insertContentViewController:(UIViewController<DBProfileContentViewController> *)viewController withTitle:(NSString *)title atIndex:(NSUInteger)index {
     NSAssert([title length] > 0, @"content view controllers must have a title");
     NSAssert(viewController, @"content view controller cannot be nil");
     
@@ -368,14 +397,15 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     [self.mutableContentViewControllerTitles insertObject:title atIndex:index];
     
     [self configureContentViewControllers];
+    [self scrollVisibleContentViewControllerToTop];
 }
 
 - (void)removeContentViewControllerAtIndex:(NSUInteger)index {
     if (index < [self numberOfContentViewControllers]) {
         [self.mutableContentViewControllers removeObjectAtIndex:index];
         [self.mutableContentViewControllerTitles removeObjectAtIndex:index];
-    
         [self configureContentViewControllers];
+        [self scrollVisibleContentViewControllerToTop];
     }
 }
 
@@ -473,19 +503,9 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     return [[self.contentOffsetCache objectForKey:key] CGPointValue];
 }
 
-- (void)configureDefaults {
-    self.coverPhotoStyle = DBProfileCoverPhotoStyleBackdrop;
-    self.coverPhotoMimicsNavigationBar = NO;
-    self.profilePictureAlignment = DBProfilePictureAlignmentLeft;
-    self.profilePictureSize = DBProfilePictureSizeDefault;
-    self.profilePictureInset = UIEdgeInsetsMake(0, 15, DBProfileViewControllerProfilePictureSizeDefault/2.0 - 10, 0);
-    self.allowsPullToRefresh = YES;
-    
-    self.segmentedControlView.backgroundColor = [UIColor whiteColor];
-    self.segmentedControlView.segmentedControl.tintColor = [UIColor grayColor];
-    
-    self.coverPhotoView.clipsToBounds = YES;
-    self.coverPhotoHeightMultiplier = 0.24;
+- (void)scrollVisibleContentViewControllerToTop {
+    UIScrollView *scrollView = [self.visibleContentViewController contentScrollView];
+    [scrollView setContentOffset:CGPointMake(0, -scrollView.contentInset.top)];
 }
 
 - (void)resetContentOffsetForScrollView:(UIScrollView *)scrollView {
@@ -508,14 +528,20 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     [self.segmentedControlView setTranslatesAutoresizingMaskIntoConstraints:NO];
     
     [scrollView addSubview:self.detailsView];
-    [scrollView addSubview:self.segmentedControlView];
     [scrollView addSubview:self.coverPhotoView];
     [scrollView addSubview:self.profilePictureView];
-
+    
+    // Check if we need to install the segmented control
+    if ([self numberOfContentViewControllers] > 1) {
+        [scrollView addSubview:self.segmentedControlView];
+        [self configureSegmentedControlViewLayoutConstraintsWithScrollView:scrollView];
+    } else {
+        self.segmentedControlView.frame = CGRectZero;
+    }
+    
     [self configureCoverPhotoViewLayoutConstraintsWithScrollView:scrollView];
     [self configureDetailsViewLayoutConstraintsWithScrollView:scrollView];
     [self configureProfilePictureViewLayoutConstraintsWithScrollView:scrollView];
-    [self configureSegmentedControlViewLayoutConstraintsWithScrollView:scrollView];
     
     [scrollView setNeedsLayout];
     [scrollView layoutIfNeeded];
@@ -530,7 +556,7 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     
     // Reset the content offset
     if (!_hasAppeared) {
-        [scrollView setContentOffset:CGPointMake(0, -scrollView.contentInset.top)];
+        [self scrollVisibleContentViewControllerToTop];
     } else if (!_shouldScrollToTop) {
         [self resetContentOffsetForScrollView:scrollView];
         
@@ -553,7 +579,7 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     [self.segmentedControlView.segmentedControl removeAllSegments];
     
     NSInteger numberOfSegments = [self numberOfContentViewControllers];
-    CGFloat segmentWidth = (CGRectGetWidth(self.view.bounds) * 0.8) / numberOfSegments;
+    CGFloat segmentWidth = (CGRectGetWidth(self.view.bounds) * 0.9) / numberOfSegments;
     
     NSInteger index = 0;
     for (NSString *title in self.contentViewControllerTitles) {
@@ -578,6 +604,7 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     UIEdgeInsets contentInset = scrollView.contentInset;
     if (self.coverPhotoStyle == DBProfileCoverPhotoStyleBackdrop) topInset -= CGRectGetHeight(self.detailsView.frame);
     contentInset.top = (self.automaticallyAdjustsScrollViewInsets) ? topInset + [self.topLayoutGuide length] : topInset;
+    
     scrollView.contentInset = contentInset;
     
     // Cover photo inset
@@ -742,15 +769,11 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
 - (void)updateCoverPhotoViewLayoutConstraints {
     switch (self.coverPhotoStyle) {
         case DBProfileCoverPhotoStyleNone:
-            self.coverPhotoViewHeightConstraint.constant = 0;
+            // FIXME: Setting the coverPhotoHeightMultiplier to 0 will erase what it was before.
             self.coverPhotoView.hidden = YES;
             break;
-        case DBProfileCoverPhotoStyleDefault:
-        case DBProfileCoverPhotoStyleStretch:
-        case DBProfileCoverPhotoStyleBackdrop:
-            self.coverPhotoView.hidden = NO;
-            break;
         default:
+            self.coverPhotoView.hidden = NO;
             break;
     }
     
@@ -789,9 +812,9 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     }
     
     switch (self.profilePictureSize) {
-        case DBProfilePictureSizeDefault:
-            self.profilePictureViewWidthConstraint.constant = DBProfileViewControllerProfilePictureSizeDefault;
-            self.profilePictureViewRightConstraint.constant = CGRectGetWidth(self.view.bounds) - DBProfileViewControllerProfilePictureSizeDefault + self.profilePictureInset.left - self.profilePictureInset.right;
+        case DBProfilePictureSizeNormal:
+            self.profilePictureViewWidthConstraint.constant = DBProfileViewControllerProfilePictureSizeNormal;
+            self.profilePictureViewRightConstraint.constant = CGRectGetWidth(self.view.bounds) - DBProfileViewControllerProfilePictureSizeNormal + self.profilePictureInset.left - self.profilePictureInset.right;
             break;
         case DBProfilePictureSizeLarge:
             self.profilePictureViewWidthConstraint.constant = DBProfileViewControllerProfilePictureSizeLarge;
@@ -863,7 +886,7 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     [scrollView addConstraint:[NSLayoutConstraint constraintWithItem:self.profilePictureView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:self.profilePictureView attribute:NSLayoutAttributeWidth multiplier:1 constant:0]];
     
     // Customizing size
-    self.profilePictureViewWidthConstraint = [NSLayoutConstraint constraintWithItem:self.profilePictureView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:DBProfileViewControllerProfilePictureSizeDefault];
+    self.profilePictureViewWidthConstraint = [NSLayoutConstraint constraintWithItem:self.profilePictureView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:DBProfileViewControllerProfilePictureSizeNormal];
 
     // Customizing horizontal alignment
     self.profilePictureViewLeftConstraint = [NSLayoutConstraint constraintWithItem:self.profilePictureView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:scrollView attribute:NSLayoutAttributeLeft multiplier:1 constant:0];

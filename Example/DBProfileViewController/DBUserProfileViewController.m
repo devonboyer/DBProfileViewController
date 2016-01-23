@@ -25,7 +25,7 @@
     self.coverPhotoHeightMultiplier = 0.24;
     self.coverPhotoStyle = DBProfileCoverPhotoStyleStretch;
     self.profilePictureAlignment = DBProfilePictureAlignmentLeft;
-    self.profilePictureSize = DBProfilePictureSizeDefault;
+    self.profilePictureSize = DBProfilePictureSizeNormal;
     self.profilePictureInset = UIEdgeInsetsMake(0, 15, 72/2.0 - 10, 0);
     self.allowsPullToRefresh = YES;
     
@@ -37,6 +37,7 @@
     [self setProfilePicture:[UIImage imageNamed:@"profile-picture.jpg"] animated:NO];
     
     // Setup details view
+    
     self.detailsView.nameLabel.text = @"Devon Boyer";
     self.detailsView.usernameLabel.text = @"@devboyer";
     self.detailsView.descriptionLabel.text = @"CS @UWaterloo, iOS developer with a passion for mobile computing and great #uidesign.";
@@ -46,6 +47,10 @@
     self.subtitle = @"@devboyer";
     
     [self setStyle:self.style];
+    
+    UIBarButtonItem *addBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Add" style:UIBarButtonItemStylePlain target:self action:@selector(add)];
+    UIBarButtonItem *removeBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Remove" style:UIBarButtonItemStylePlain target:self action:@selector(remove)];
+    self.navigationView.navigationItem.rightBarButtonItems = @[addBarButtonItem, removeBarButtonItem];
 }
 
 - (void)setStyle:(DBUserProfileViewControllerStyle)style {
@@ -69,6 +74,14 @@
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [self endRefreshing];
     });
+}
+
+- (void)add {
+    [self addContentViewController:[[DBFollowersTableViewController alloc] init] withTitle:@"Followers"];
+}
+
+- (void)remove {
+    [self removeContentViewControllerAtIndex:0];
 }
 
 @end

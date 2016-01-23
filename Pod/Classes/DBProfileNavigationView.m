@@ -41,7 +41,6 @@
     
     [self configureNavigationBarLayoutConstraints];
     
-    self.titleView.frame = CGRectMake(0, 0, 200, 50);
     self.navigationItem.titleView = self.titleView;
 }
 

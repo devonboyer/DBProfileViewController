@@ -25,7 +25,7 @@
     self.coverPhotoHeightMultiplier = 1.0;
     self.coverPhotoStyle = DBProfileCoverPhotoStyleBackdrop;
     self.profilePictureAlignment = DBProfilePictureAlignmentLeft;
-    self.profilePictureSize = DBProfilePictureSizeDefault;
+    self.profilePictureSize = DBProfilePictureSizeNormal;
     self.profilePictureInset = UIEdgeInsetsMake(0, 15, 0, 0);
     self.allowsPullToRefresh = NO;
     
