@@ -52,8 +52,6 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
 @property (nonatomic, strong) NSLayoutConstraint *profilePictureViewCenterXConstraint;
 @property (nonatomic, strong) NSLayoutConstraint *profilePictureViewTopConstraint;
 @property (nonatomic, strong) NSLayoutConstraint *profilePictureViewWidthConstraint;
-
-// Crappy Names?
 @property (nonatomic, strong) NSLayoutConstraint *coverPhotoViewBottomConstraint;
 @property (nonatomic, strong) NSLayoutConstraint *coverPhotoViewTopLayoutGuideConstraint;
 @property (nonatomic, strong) NSLayoutConstraint *coverPhotoViewTopSuperviewConstraint;
@@ -110,10 +108,13 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     _coverPhotoView = [[DBProfileCoverPhotoView alloc] init];
     _navigationView = [[DBProfileNavigationView alloc] init];
     _contentContainerViewController = [[UIViewController alloc] init];
-    _profilePictureTapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapProfilePicture)];
-    _coverPhotoTapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapCoverPhoto)];
+    _profilePictureTapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleProfilePictureTapGesture:)];
+    _coverPhotoTapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleCoverPhotoTapGesture:)];
     
-    _contentOffsetCache = [[NSCache alloc] init];
+    NSCache *contentOffsetCache = [[NSCache alloc] init];
+    contentOffsetCache.name = @"DBProfileViewController.contentOffsetCache";
+    contentOffsetCache.countLimit = 200;
+    _contentOffsetCache = contentOffsetCache;
 }
 
 - (void)dealloc {
@@ -153,7 +154,7 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     [super viewDidLoad];
     
     [self.segmentedControlView.segmentedControl addTarget:self
-                                                   action:@selector(changeContent)
+                                                   action:@selector(segmentChanged:)
                                          forControlEvents:UIControlEventValueChanged];
     
     [self configureContentViewControllers];
@@ -183,8 +184,6 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
         _hasAppeared = YES;
     }
 }
-
-#pragma mark - Overrides
 
 - (void)updateViewConstraints {
     [self updateCoverPhotoViewLayoutConstraints];
@@ -242,11 +241,6 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     return _mutableContentViewControllerTitles;
 }
 
-- (CGFloat)segmentWidth {
-    NSInteger numberOfSegments = [self numberOfContentViewControllers];
-    return (CGRectGetWidth(self.view.bounds) * 0.8) / numberOfSegments;
-}
-
 #pragma mark - Setters
 
 - (void)setCoverPhotoStyle:(DBProfileCoverPhotoStyle)coverPhotoStyle {
@@ -302,22 +296,18 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
 
 #pragma mark - Actions
 
-- (void)changeContent {
+- (void)segmentChanged:(id)sender {
     NSInteger selectedSegmentIndex = [self.segmentedControlView.segmentedControl selectedSegmentIndex];
     [self setVisibleContentViewControllerAtIndex:selectedSegmentIndex];
     [self updateViewConstraints];
 }
 
-- (void)didTapProfilePicture {
-    if ([self.delegate respondsToSelector:@selector(profileViewController:didSelectProfilePicture:)]) {
-        [self.delegate profileViewController:self didSelectProfilePicture:self.profilePictureView.imageView];
-    }
+- (void)handleProfilePictureTapGesture:(UITapGestureRecognizer *)sender {
+    [self notifyDelegateOfProfilePictureSelection:self.profilePictureView.imageView];
 }
 
-- (void)didTapCoverPhoto {
-    if ([self.delegate respondsToSelector:@selector(profileViewController:didSelectProfilePicture:)]) {
-        [self.delegate profileViewController:self didSelectProfilePicture:self.coverPhotoView.imageView];
-    }
+- (void)handleCoverPhotoTapGesture:(UITapGestureRecognizer *)sender {
+    [self notifyDelegateOfCoverPhotoSelection:self.coverPhotoView.imageView];
 }
 
 #pragma mark - Titles
@@ -400,7 +390,7 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     _contentOffset = scrollView.contentOffset;
     
     // Cache content offset of disappearing scroll view
-    [self.contentOffsetCache setObject:[NSValue valueWithCGPoint:scrollView.contentOffset] forKey:self.visibleContentViewController.title];
+    [self cacheContentOffset:scrollView.contentOffset forKey:[self titleForVisibleContentViewController]];
     
     // Remove previous view controller from container
     [self removeViewControllerFromContainer:self.visibleContentViewController];
@@ -430,18 +420,15 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     return [self.mutableContentViewControllerTitles indexOfObject:title];
 }
 
+- (NSString *)titleForVisibleContentViewController {
+    return self.visibleContentViewController.title;
+}
+
 - (NSInteger)numberOfContentViewControllers {
     return [self.contentViewControllers count];
 }
 
 #pragma mark - Refreshing Data
-
-- (void)startRefreshing {
-    self.refreshing = YES;
-    if ([self.delegate respondsToSelector:@selector(profileViewControllerDidPullToRefresh:)]) {
-        [self.delegate profileViewControllerDidPullToRefresh:self];
-    }
-}
 
 - (void)endRefreshing {
     self.refreshing = NO;
@@ -456,7 +443,35 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     [self.coverPhotoView endRefreshing];
 }
 
+#pragma mark - Delegate
+
+- (void)notifyDelegateOfProfilePictureSelection:(UIImageView *)imageView {
+    if ([self respondsToSelector:@selector(profileViewController:didSelectProfilePicture:)]) {
+        [self.delegate profileViewController:self didSelectProfilePicture:imageView];
+    }
+}
+
+- (void)notifyDelegateOfCoverPhotoSelection:(UIImageView *)imageView {
+    if ([self respondsToSelector:@selector(profileViewController:didSelectCoverPhoto:)]) {
+        [self.delegate profileViewController:self didSelectCoverPhoto:imageView];
+    }
+}
+
+- (void)notifyDelegateOfPullToRefresh {
+    if ([self respondsToSelector:@selector(profileViewControllerDidPullToRefresh:)]) {
+        [self.delegate profileViewControllerDidPullToRefresh:self];
+    }
+}
+
 #pragma mark - Helpers
+
+- (void)cacheContentOffset:(CGPoint)contentOffset forKey:(NSString *)key {
+    [self.contentOffsetCache setObject:[NSValue valueWithCGPoint:contentOffset] forKey:key];
+}
+
+- (CGPoint)cachedContentOffsetForKey:(NSString *)key {
+    return [[self.contentOffsetCache objectForKey:key] CGPointValue];
+}
 
 - (void)configureDefaults {
     self.coverPhotoStyle = DBProfileCoverPhotoStyleBackdrop;
@@ -521,8 +536,8 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
         
         // TOOD: Check if content size is too small (not enough rows to fill the screen)
     
-        // Restore cached content offset for scroll view
-        CGPoint contentOffset = [[self.contentOffsetCache objectForKey:visibleViewController.title] CGPointValue];
+        // Restore content offset for scroll view from cache
+        CGPoint contentOffset = [self cachedContentOffsetForKey:[self titleForVisibleContentViewController]];
         if (contentOffset.y > scrollView.contentOffset.y && !self.automaticallyAdjustsScrollViewInsets) {
             [scrollView setContentOffset:contentOffset];
         }
@@ -537,15 +552,18 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     
     [self.segmentedControlView.segmentedControl removeAllSegments];
     
+    NSInteger numberOfSegments = [self numberOfContentViewControllers];
+    CGFloat segmentWidth = (CGRectGetWidth(self.view.bounds) * 0.8) / numberOfSegments;
+    
     NSInteger index = 0;
     for (NSString *title in self.contentViewControllerTitles) {
         [self.segmentedControlView.segmentedControl insertSegmentWithTitle:title atIndex:index animated:NO];
-        [self.segmentedControlView.segmentedControl setWidth:[self segmentWidth] forSegmentAtIndex:index];
+        [self.segmentedControlView.segmentedControl setWidth:segmentWidth forSegmentAtIndex:index];
         index++;
     }
     
     // Set the selected segment index
-    if ([self numberOfContentViewControllers] > 0) {
+    if (numberOfSegments > 0) {
         if (selectedSegmentIndex == UISegmentedControlNoSegment) {
             [self setVisibleContentViewControllerAtIndex:0];
         } else {
@@ -638,7 +656,8 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     if (scrollView.isDragging && contentOffset.y < 0) {
         [self startRefreshAnimations];
     } else if (!scrollView.isDragging && !self.refreshing && contentOffset.y < -DBProfileViewControllerPullToRefreshDistance) {
-        [self startRefreshing]; // delegate callback
+        self.refreshing = YES;
+        [self notifyDelegateOfPullToRefresh];
     }
     
     BOOL shouldEndRefreshAnimations = !self.refreshing && self.coverPhotoView.activityIndicator.isAnimating;
