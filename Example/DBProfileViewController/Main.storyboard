@@ -42,7 +42,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="12" translatesAutoresizingMaskIntoConstraints="NO" id="N0q-ji-Pxd">
-                                <rect key="frame" x="173" y="232" width="254" height="288"/>
+                                <rect key="frame" x="173" y="307" width="254" height="213"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2DY-tI-5di">
                                         <rect key="frame" x="0.0" y="0.0" width="254" height="63"/>
@@ -119,7 +119,7 @@
                                                     <segue destination="PXQ-73-3li" kind="show" identifier="showBlogPost" id="dmA-Us-Tu9"/>
                                                 </connections>
                                             </button>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Cover photo mimics navigation bar" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qu9-cP-kgp">
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Cover photo style &quot;backdrop&quot;" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qu9-cP-kgp">
                                                 <rect key="frame" x="15" y="38" width="224" height="17"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="0.71999999999999997" colorSpace="calibratedRGB"/>
@@ -135,37 +135,6 @@
                                             <constraint firstItem="qu9-cP-kgp" firstAttribute="top" secondItem="Psm-2P-KDx" secondAttribute="bottom" id="t7R-1k-ebl"/>
                                             <constraint firstItem="Psm-2P-KDx" firstAttribute="top" secondItem="m2Q-hQ-dZ7" secondAttribute="top" id="uW4-58-2ye"/>
                                             <constraint firstItem="Psm-2P-KDx" firstAttribute="leading" secondItem="m2Q-hQ-dZ7" secondAttribute="leading" id="xHv-af-yhr"/>
-                                        </constraints>
-                                    </view>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ZJO-FT-oWq">
-                                        <rect key="frame" x="0.0" y="225" width="254" height="63"/>
-                                        <subviews>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RvT-ay-c72">
-                                                <rect key="frame" x="0.0" y="0.0" width="254" height="38"/>
-                                                <fontDescription key="fontDescription" type="boldSystem" pointSize="21"/>
-                                                <state key="normal" title="Recipe">
-                                                    <color key="titleColor" red="0.14901960780000001" green="0.18823529410000001" blue="0.23529411759999999" alpha="1" colorSpace="calibratedRGB"/>
-                                                </state>
-                                                <connections>
-                                                    <segue destination="Pk0-hy-wOn" kind="show" identifier="showRecipe" id="sIR-lM-u25"/>
-                                                </connections>
-                                            </button>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Cover photo mimics navigation bar" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1St-cq-veh">
-                                                <rect key="frame" x="15" y="38" width="224" height="17"/>
-                                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="0.71999999999999997" colorSpace="calibratedRGB"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
-                                        </subviews>
-                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                        <constraints>
-                                            <constraint firstItem="1St-cq-veh" firstAttribute="top" secondItem="RvT-ay-c72" secondAttribute="bottom" id="8JB-2b-JB6"/>
-                                            <constraint firstItem="1St-cq-veh" firstAttribute="leading" secondItem="ZJO-FT-oWq" secondAttribute="leading" constant="15" id="FVZ-Md-dVb"/>
-                                            <constraint firstAttribute="trailing" secondItem="1St-cq-veh" secondAttribute="trailing" constant="15" id="Ra5-It-9lk"/>
-                                            <constraint firstAttribute="bottom" secondItem="1St-cq-veh" secondAttribute="bottom" constant="8" id="afw-Ex-pVF"/>
-                                            <constraint firstItem="RvT-ay-c72" firstAttribute="top" secondItem="ZJO-FT-oWq" secondAttribute="top" id="ase-S7-FYZ"/>
-                                            <constraint firstAttribute="trailing" secondItem="RvT-ay-c72" secondAttribute="trailing" id="tWz-Tf-DTQ"/>
-                                            <constraint firstItem="RvT-ay-c72" firstAttribute="leading" secondItem="ZJO-FT-oWq" secondAttribute="leading" id="vwX-oG-BEa"/>
                                         </constraints>
                                     </view>
                                 </subviews>
@@ -225,25 +194,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="m3u-Ya-kea" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="303" y="1258"/>
-        </scene>
-        <!--Recipe-->
-        <scene sceneID="aYt-mz-iXJ">
-            <objects>
-                <viewController title="Recipe" id="Pk0-hy-wOn" customClass="DBRecipeViewController" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="7bY-Zp-Ebh"/>
-                        <viewControllerLayoutGuide type="bottom" id="MAi-Ou-c2f"/>
-                    </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="58A-GC-dU5">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                    </view>
-                    <navigationItem key="navigationItem" title="Recipe" id="KqU-Iq-kQt"/>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="djy-J0-WmA" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-567" y="1718"/>
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>

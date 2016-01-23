@@ -51,6 +51,9 @@
     
     self.title = @"Goals and Garter Snakes";
     self.subtitle = @"94 Views";
+    
+    self.profilePictureSize = DBProfilePictureSizeLarge;
+    self.profilePictureView.style = DBProfilePictureStyleRound;
 }
 
 - (void)profileViewControllerDidPullToRefresh:(DBProfileViewController *)viewController {
