@@ -15,6 +15,8 @@
 #import "DBProfileNavigationView.h"
 #import "DBProfileContentViewController.h"
 
+#import <UIImageEffects/UIImage+ImageEffects.h>
+
 const CGFloat DBProfileViewControllerProfilePictureSizeNormal = 72.0;
 const CGFloat DBProfileViewControllerProfilePictureSizeLarge = 82.0;
 const CGFloat DBProfileViewControllerPullToRefreshDistance = 80;
@@ -35,7 +37,6 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
 @property (nonatomic, getter=isRefreshing) BOOL refreshing;
 @property (nonatomic, strong) NSMutableArray *mutableContentViewControllers;
 @property (nonatomic, strong) NSMutableArray *mutableContentViewControllerTitles;
-
 @property (nonatomic, strong) NSCache *contentOffsetCache;
 
 // Views
@@ -172,7 +173,7 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     [self.view layoutIfNeeded];
     
     if (self.coverPhotoMimicsNavigationBar) {
-        [self.navigationController setNavigationBarHidden:YES animated:animated];
+        [self.navigationController setNavigationBarHidden:YES animated:YES];
         [self.navigationController.interactivePopGestureRecognizer setDelegate:nil];
     }
 }
@@ -200,6 +201,7 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
 - (void)configureDefaults {
     self.coverPhotoStyle = DBProfileCoverPhotoStyleBackdrop;
     self.coverPhotoMimicsNavigationBar = NO;
+    self.coverPhotoHeightMultiplier = 0.24;
     self.profilePictureAlignment = DBProfilePictureAlignmentLeft;
     self.profilePictureSize = DBProfilePictureSizeNormal;
     self.profilePictureInset = UIEdgeInsetsMake(0, 15, DBProfileViewControllerProfilePictureSizeNormal/2.0 - 10, 0);
@@ -208,14 +210,24 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     self.segmentedControlView.backgroundColor = [UIColor whiteColor];
     self.segmentedControlView.segmentedControl.tintColor = [UIColor grayColor];
     
-    self.coverPhotoView.clipsToBounds = YES;
-    self.coverPhotoHeightMultiplier = 0.24;    
+    self.navigationView.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"back-icon"] style:UIBarButtonItemStylePlain target:self action:@selector(back:)];
 }
 
 #pragma mark - Status Bar
 
 - (UIStatusBarStyle)preferredStatusBarStyle {
     return UIStatusBarStyleLightContent;
+}
+
+#pragma mark - Rotation
+
+- (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
+    UIScrollView *scrollView = [self.visibleContentViewController contentScrollView];
+    [coordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
+        [self adjustContentInsetForScrollView:scrollView];
+    } completion:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
+        [scrollView setContentOffset:_contentOffset];
+    }];
 }
 
 #pragma mark - Size Classes
@@ -265,7 +277,7 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
 #pragma mark - Setters
 
 - (void)setCoverPhotoHeightMultiplier:(CGFloat)coverPhotoHeightMultiplier {
-    NSAssert(coverPhotoHeightMultiplier > 0 && coverPhotoHeightMultiplier <= 1, @"`coverPhotoHeightMultiplier` must be greater than 0 or less that or equal to 1.");
+    NSAssert(coverPhotoHeightMultiplier > 0 && coverPhotoHeightMultiplier <= 1, @"`coverPhotoHeightMultiplier` must be greater than 0 or less than or equal to 1.");
     if (_coverPhotoHeightMultiplier == coverPhotoHeightMultiplier) return;
     _coverPhotoHeightMultiplier = coverPhotoHeightMultiplier;
     [self updateViewConstraints];
@@ -324,6 +336,10 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
 
 #pragma mark - Actions
 
+- (void)back:(id)sender {
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
 - (void)segmentChanged:(id)sender {
     NSInteger selectedSegmentIndex = [self.segmentedControlView.segmentedControl selectedSegmentIndex];
     [self setVisibleContentViewControllerAtIndex:selectedSegmentIndex];
@@ -361,6 +377,9 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
             self.coverPhotoView.imageView.alpha = 1;
         }];
     }
+    
+    UIColor *tintColor = [UIColor colorWithWhite:1 alpha:0.0];
+    self.coverPhotoView.blurView.image = [coverPhoto applyBlurWithRadius:20 tintColor:tintColor saturationDeltaFactor:1.2 maskImage:nil];
 }
 
 #pragma mark - Configuring Profile Picture
@@ -376,7 +395,29 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     }
 }
 
-#pragma mark - Managing Content View Controllers
+#pragma mark - Accessing Content View Controllers
+
+- (NSUInteger)visibleContentViewControllerIndex {
+    return [self.segmentedControlView.segmentedControl selectedSegmentIndex];
+}
+
+- (NSString *)titleForContentViewControllerAtIndex:(NSUInteger)index {
+    return [self.mutableContentViewControllerTitles objectAtIndex:index];
+}
+
+- (NSUInteger)indexForContentViewControllerWithTitle:(NSString *)title {
+    return [self.mutableContentViewControllerTitles indexOfObject:title];
+}
+
+- (NSString *)titleForVisibleContentViewController {
+    return self.visibleContentViewController.title;
+}
+
+- (NSInteger)numberOfContentViewControllers {
+    return [self.contentViewControllers count];
+}
+
+#pragma mark - Adding and Removing Content View Controllers
 
 - (void)addContentViewController:(UIViewController<DBProfileContentViewController> *)viewController withTitle:(NSString *)title {
     NSAssert([title length] > 0, @"content view controllers must have a title");
@@ -436,29 +477,7 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     [self configureVisibleViewController:visibleContentViewController];
 }
 
-#pragma mark - Getting Content View Controller Information
-
-- (NSUInteger)visibleContentViewControllerIndex {
-    return [self.segmentedControlView.segmentedControl selectedSegmentIndex];
-}
-
-- (NSString *)titleForContentViewControllerAtIndex:(NSUInteger)index {
-    return [self.mutableContentViewControllerTitles objectAtIndex:index];
-}
-
-- (NSUInteger)indexForContentViewControllerWithTitle:(NSString *)title {
-    return [self.mutableContentViewControllerTitles indexOfObject:title];
-}
-
-- (NSString *)titleForVisibleContentViewController {
-    return self.visibleContentViewController.title;
-}
-
-- (NSInteger)numberOfContentViewControllers {
-    return [self.contentViewControllers count];
-}
-
-#pragma mark - Refreshing Data
+#pragma mark - Configuring Pull-To-Refresh
 
 - (void)endRefreshing {
     self.refreshing = NO;
@@ -578,18 +597,14 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     
     [self.segmentedControlView.segmentedControl removeAllSegments];
     
-    NSInteger numberOfSegments = [self numberOfContentViewControllers];
-    CGFloat segmentWidth = (CGRectGetWidth(self.view.bounds) * 0.9) / numberOfSegments;
-    
     NSInteger index = 0;
     for (NSString *title in self.contentViewControllerTitles) {
         [self.segmentedControlView.segmentedControl insertSegmentWithTitle:title atIndex:index animated:NO];
-        [self.segmentedControlView.segmentedControl setWidth:segmentWidth forSegmentAtIndex:index];
         index++;
     }
     
     // Set the selected segment index
-    if (numberOfSegments > 0) {
+    if ([self numberOfContentViewControllers] > 0) {
         if (selectedSegmentIndex == UISegmentedControlNoSegment) {
             [self setVisibleContentViewControllerAtIndex:0];
         } else {

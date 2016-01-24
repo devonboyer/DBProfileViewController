@@ -9,7 +9,6 @@
 #import "DBProfileCoverPhotoView.h"
 
 @interface DBProfileCoverPhotoView ()
-@property (nonatomic, strong) UIVisualEffectView *visualEffectView;
 @property (nonatomic, strong) UIView *overlayView;
 @end
 
@@ -28,8 +27,7 @@
 - (void)_commonInit {
     _imageView = [[UIImageView alloc] init];
     _overlayView = [[UIView alloc] init];
-    _blurView = [[UIView alloc] init];
-    _visualEffectView = [[UIVisualEffectView alloc] initWithEffect:[UIBlurEffect effectWithStyle:UIBlurEffectStyleLight]];
+    _blurView = [[UIImageView alloc] init];
     _activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
 
     self.overlayView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
@@ -38,12 +36,6 @@
     self.blurView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.blurView.frame = self.imageView.frame;
     [self.imageView addSubview:self.blurView];
-    
-    self.visualEffectView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    self.visualEffectView.frame = self.blurView.frame;
-    [self.blurView addSubview:self.visualEffectView];
-    
-    [[self.visualEffectView contentView] addSubview:self.overlayView];
     
     [self.imageView setTranslatesAutoresizingMaskIntoConstraints:NO];
     [self.activityIndicator setTranslatesAutoresizingMaskIntoConstraints:NO];
@@ -65,7 +57,9 @@
     self.imageView.contentMode = UIViewContentModeScaleAspectFill;
     self.imageView.clipsToBounds = YES;
     
-    self.blurView.alpha = 0;
+    self.blurView.contentMode = UIViewContentModeScaleAspectFill;
+    self.blurView.clipsToBounds = YES;
+    self.blurView.alpha = 1;
     
     self.overlayView.backgroundColor = [UIColor blackColor];
     self.overlayView.alpha = 0.2;
