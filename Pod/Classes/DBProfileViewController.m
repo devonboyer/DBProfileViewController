@@ -38,6 +38,7 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
 @property (nonatomic, strong) NSMutableArray *mutableContentViewControllers;
 @property (nonatomic, strong) NSMutableArray *mutableContentViewControllerTitles;
 @property (nonatomic, strong) NSCache *contentOffsetCache;
+@property (nonatomic, strong) NSCache *blurredImageCache;
 
 // Views
 @property (nonatomic, strong) UIViewController *contentContainerViewController;
@@ -45,6 +46,7 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
 @property (nonatomic, strong) DBProfileNavigationView *navigationView;
 
 // Constraints
+@property (nonatomic, strong) NSLayoutConstraint *segmentedControlViewTopDetailViewBottomConstraint;
 @property (nonatomic, strong) NSLayoutConstraint *detailsViewTopConstraint;
 @property (nonatomic, strong) NSLayoutConstraint *coverPhotoViewTopConstraint;
 @property (nonatomic, strong) NSLayoutConstraint *coverPhotoViewHeightConstraint;
@@ -116,9 +118,16 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     contentOffsetCache.name = @"DBProfileViewController.contentOffsetCache";
     contentOffsetCache.countLimit = 200;
     _contentOffsetCache = contentOffsetCache;
+    
+    NSCache *blurredImageCache = [[NSCache alloc] init];
+    blurredImageCache.name = @"DBProfileViewController.blurredImageCache";
+    blurredImageCache.countLimit = 200;
+    _blurredImageCache = blurredImageCache;
 }
 
 - (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    
     if (self.visibleContentViewController) {
         UIScrollView *scrollView = [self.visibleContentViewController contentScrollView];
         [self endObservingContentOffsetForScrollView:scrollView];
@@ -154,6 +163,16 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(applicationWillEnterForeground:)
+                                                 name:UIApplicationWillEnterForegroundNotification
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(applicationDidEnterBackground:)
+                                                 name:UIApplicationDidEnterBackgroundNotification
+                                               object:nil];
+    
     [self.segmentedControlView.segmentedControl addTarget:self
                                                    action:@selector(segmentChanged:)
                                          forControlEvents:UIControlEventValueChanged];
@@ -176,12 +195,16 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
         [self.navigationController setNavigationBarHidden:YES animated:YES];
         [self.navigationController.interactivePopGestureRecognizer setDelegate:nil];
     }
+    
+    [self moveSegmentedControlViewUpwardAnimated:NO];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
     NSAssert([self numberOfContentViewControllers] > 0, @"`DBProfileViewController` must have at least one content view controller.");
+    
+    [self moveSegmentedControlViewDownwardAnimated:YES];
 }
 
 - (void)viewDidLayoutSubviews {
@@ -211,6 +234,27 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     self.segmentedControlView.segmentedControl.tintColor = [UIColor grayColor];
     
     self.navigationView.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"back-icon"] style:UIBarButtonItemStylePlain target:self action:@selector(back:)];
+}
+
+#pragma mark - Animations
+
+- (void)moveSegmentedControlViewUpwardAnimated:(BOOL)animated {
+    CGFloat padding = 30;
+    CGFloat inset = CGRectGetMaxY([self.view convertRect:self.segmentedControlView.frame toView:self.view]) - CGRectGetMaxY([self.view convertRect:self.profilePictureView.frame toView:self.view]) + self.profilePictureInset.top - self.profilePictureInset.bottom - padding;
+    self.segmentedControlViewTopDetailViewBottomConstraint.constant = -inset;
+    self.detailsView.alpha = 0;
+}
+
+- (void)moveSegmentedControlViewDownwardAnimated:(BOOL)animated {
+    self.segmentedControlViewTopDetailViewBottomConstraint.constant = 0;
+    
+    [UIView animateWithDuration:animated ? 0.34 : 0.0 animations:^{
+        self.detailsView.alpha = 1;
+    }];
+    
+    [UIView animateWithDuration:animated ? 0.24 : 0.0 animations:^{
+        [self.view layoutIfNeeded];
+    }];
 }
 
 #pragma mark - Status Bar
@@ -378,8 +422,9 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
         }];
     }
     
-    UIColor *tintColor = [UIColor colorWithWhite:1 alpha:0.0];
-    self.coverPhotoView.blurView.image = [coverPhoto applyBlurWithRadius:20 tintColor:tintColor saturationDeltaFactor:1.2 maskImage:nil];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+        [self fillBlurredImageCacheWithImage:coverPhoto];
+    });
 }
 
 #pragma mark - Configuring Profile Picture
@@ -717,6 +762,9 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
 }
 
 - (void)updateCoverPhotoViewWithContentOffset:(CGPoint)contentOffset {
+    
+    CGFloat distance = CGRectGetHeight(self.coverPhotoView.frame) - CGRectGetMaxY(self.navigationView.frame);
+    
     if (contentOffset.y <= 0) {
         switch (self.coverPhotoStyle) {
             case DBProfileCoverPhotoStyleStretch:
@@ -726,10 +774,12 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
             default:
                 break;
         }
-        self.coverPhotoView.blurView.alpha = fabs(contentOffset.y) / 10;
-    } else {
-        self.coverPhotoView.blurView.alpha = fabs(contentOffset.y) / 80;
+        distance *= 0.5; // speed up blurring for pull-to-refresh
     }
+    
+    CGFloat percent = MAX(MIN(1 - (distance - fabs(contentOffset.y))/distance, 1), 0);
+    UIImage *blurredImage = [self blurredImageAt:percent];
+    if (blurredImage) self.coverPhotoView.imageView.image = blurredImage;
 }
 
 - (void)updateProfilePictureViewWithContentOffset:(CGPoint)contentOffset {
@@ -777,6 +827,18 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
         [self.navigationView.navigationBar setTitleVerticalPositionAdjustment:MAX(titleViewOffset * titleViewOffsetPercent, 0)
                                                             forBarMetrics:UIBarMetricsDefault];
     }
+}
+
+#pragma mark - Notifications
+
+- (void)applicationDidEnterBackground:(NSNotification *)notification {
+    [self.blurredImageCache removeAllObjects];
+}
+
+- (void)applicationWillEnterForeground:(NSNotification *)notification {
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+        [self fillBlurredImageCacheWithImage:self.coverPhotoView.imageView.image];
+    });
 }
 
 #pragma mark - Updating Constraints
@@ -861,8 +923,11 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
 - (void)configureSegmentedControlViewLayoutConstraintsWithScrollView:(UIScrollView *)scrollView  {
     [scrollView addConstraint:[NSLayoutConstraint constraintWithItem:self.segmentedControlView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:scrollView attribute:NSLayoutAttributeLeft multiplier:1 constant:0]];
     [scrollView addConstraint:[NSLayoutConstraint constraintWithItem:self.segmentedControlView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:scrollView attribute:NSLayoutAttributeWidth multiplier:1 constant:0]];
+    
+    self.segmentedControlViewTopDetailViewBottomConstraint = [NSLayoutConstraint constraintWithItem:self.segmentedControlView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:self.detailsView attribute:NSLayoutAttributeBottom multiplier:1 constant:0];
+    [scrollView addConstraint:self.segmentedControlViewTopDetailViewBottomConstraint];
+    
     [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.segmentedControlView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:[self topLayoutGuide] attribute:NSLayoutAttributeBottom multiplier:1 constant:0]];
-    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.segmentedControlView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:self.detailsView attribute:NSLayoutAttributeBottom multiplier:1 constant:0]];
     [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.segmentedControlView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:self.coverPhotoView attribute:NSLayoutAttributeBottom multiplier:1 constant:0]];
 }
 
@@ -919,6 +984,26 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     [scrollView addConstraints:@[self.profilePictureViewWidthConstraint, self.profilePictureViewLeftConstraint, self.profilePictureViewRightConstraint, self.profilePictureViewCenterXConstraint, self.profilePictureViewTopConstraint]];
     
     [NSLayoutConstraint deactivateConstraints:@[self.profilePictureViewLeftConstraint, self.profilePictureViewRightConstraint, self.profilePictureViewCenterXConstraint]];
+}
+
+#pragma mark - Blurring
+
+- (UIImage *)blurredImageAt:(CGFloat)percent {
+    NSNumber *keyNumber = @(round(percent * 30));
+    return [self.blurredImageCache objectForKey:keyNumber];
+}
+
+- (UIImage *)blurWithImage:(UIImage *)image andRadius:(CGFloat)radius {
+    return [image applyBlurWithRadius:radius tintColor:[UIColor colorWithWhite:1 alpha:0] saturationDeltaFactor:1 maskImage:nil];
+}
+
+- (void)fillBlurredImageCacheWithImage:(UIImage *)image {
+    NSAssert(![NSThread isMainThread], @"fillBlurredImageCacheWithImage: should not be called on main thread");
+    CGFloat maxBlurRadius = 20;
+    [self.blurredImageCache removeAllObjects];
+    for (int i = 0; i <= 30; i++) {
+        [self.blurredImageCache setObject:[self blurWithImage:image andRadius:(maxBlurRadius * i/30)] forKey:@(i)];
+    }
 }
 
 @end

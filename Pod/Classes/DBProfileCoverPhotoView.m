@@ -27,15 +27,11 @@
 - (void)_commonInit {
     _imageView = [[UIImageView alloc] init];
     _overlayView = [[UIView alloc] init];
-    _blurView = [[UIImageView alloc] init];
     _activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
-
+    
     self.overlayView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.overlayView.frame = self.imageView.frame;
-    
-    self.blurView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    self.blurView.frame = self.imageView.frame;
-    [self.imageView addSubview:self.blurView];
+    [self.imageView addSubview:self.overlayView];
     
     [self.imageView setTranslatesAutoresizingMaskIntoConstraints:NO];
     [self.activityIndicator setTranslatesAutoresizingMaskIntoConstraints:NO];
@@ -57,12 +53,8 @@
     self.imageView.contentMode = UIViewContentModeScaleAspectFill;
     self.imageView.clipsToBounds = YES;
     
-    self.blurView.contentMode = UIViewContentModeScaleAspectFill;
-    self.blurView.clipsToBounds = YES;
-    self.blurView.alpha = 1;
-    
     self.overlayView.backgroundColor = [UIColor blackColor];
-    self.overlayView.alpha = 0.2;
+    self.overlayView.alpha = 0.1;
 }
 
 #pragma mark - Refresh

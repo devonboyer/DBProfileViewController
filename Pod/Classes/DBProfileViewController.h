@@ -273,4 +273,11 @@ typedef NS_ENUM(NSInteger, DBProfilePictureAlignment) {
  */
 - (void)endRefreshing;
 
+///----------------------------------------------
+/// @name Animations
+///----------------------------------------------
+
+- (void)moveSegmentedControlViewUpwardAnimated:(BOOL)animated;
+- (void)moveSegmentedControlViewDownwardAnimated:(BOOL)animated;
+
 @end
