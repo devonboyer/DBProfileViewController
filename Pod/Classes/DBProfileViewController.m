@@ -19,8 +19,8 @@
 
 const CGFloat DBProfileViewControllerProfilePictureSizeNormal = 72.0;
 const CGFloat DBProfileViewControllerProfilePictureSizeLarge = 82.0;
-const CGFloat DBProfileViewControllerPullToRefreshDistance = 80;
 
+static const CGFloat DBProfileViewControllerPullToRefreshDistance = 80.0;
 static const CGFloat DBProfileViewControllerNavigationBarHeightRegular = 64.0;
 static const CGFloat DBProfileViewControllerNavigationBarHeightCompact = 44.0;
 
@@ -46,7 +46,6 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
 @property (nonatomic, strong) DBProfileNavigationView *navigationView;
 
 // Constraints
-@property (nonatomic, strong) NSLayoutConstraint *segmentedControlViewTopDetailViewBottomConstraint;
 @property (nonatomic, strong) NSLayoutConstraint *detailsViewTopConstraint;
 @property (nonatomic, strong) NSLayoutConstraint *coverPhotoViewTopConstraint;
 @property (nonatomic, strong) NSLayoutConstraint *coverPhotoViewHeightConstraint;
@@ -132,6 +131,12 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
         UIScrollView *scrollView = [self.visibleContentViewController contentScrollView];
         [self endObservingContentOffsetForScrollView:scrollView];
     }
+    
+    [self.blurredImageCache removeAllObjects];
+    self.blurredImageCache = nil;
+    
+    [self.contentOffsetCache removeAllObjects];
+    self.contentOffsetCache = nil;
 }
 
 #pragma mark - View Lifecycle
@@ -195,16 +200,12 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
         [self.navigationController setNavigationBarHidden:YES animated:YES];
         [self.navigationController.interactivePopGestureRecognizer setDelegate:nil];
     }
-    
-    [self moveSegmentedControlViewUpwardAnimated:NO];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
     NSAssert([self numberOfContentViewControllers] > 0, @"`DBProfileViewController` must have at least one content view controller.");
-    
-    [self moveSegmentedControlViewDownwardAnimated:YES];
 }
 
 - (void)viewDidLayoutSubviews {
@@ -224,7 +225,7 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
 - (void)configureDefaults {
     self.coverPhotoStyle = DBProfileCoverPhotoStyleBackdrop;
     self.coverPhotoMimicsNavigationBar = NO;
-    self.coverPhotoHeightMultiplier = 0.24;
+    self.coverPhotoHeightMultiplier = 0.2;
     self.profilePictureAlignment = DBProfilePictureAlignmentLeft;
     self.profilePictureSize = DBProfilePictureSizeNormal;
     self.profilePictureInset = UIEdgeInsetsMake(0, 15, DBProfileViewControllerProfilePictureSizeNormal/2.0 - 10, 0);
@@ -234,27 +235,6 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     self.segmentedControlView.segmentedControl.tintColor = [UIColor grayColor];
     
     self.navigationView.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"back-icon"] style:UIBarButtonItemStylePlain target:self action:@selector(back:)];
-}
-
-#pragma mark - Animations
-
-- (void)moveSegmentedControlViewUpwardAnimated:(BOOL)animated {
-    CGFloat padding = 30;
-    CGFloat inset = CGRectGetMaxY([self.view convertRect:self.segmentedControlView.frame toView:self.view]) - CGRectGetMaxY([self.view convertRect:self.profilePictureView.frame toView:self.view]) + self.profilePictureInset.top - self.profilePictureInset.bottom - padding;
-    self.segmentedControlViewTopDetailViewBottomConstraint.constant = -inset;
-    self.detailsView.alpha = 0;
-}
-
-- (void)moveSegmentedControlViewDownwardAnimated:(BOOL)animated {
-    self.segmentedControlViewTopDetailViewBottomConstraint.constant = 0;
-    
-    [UIView animateWithDuration:animated ? 0.34 : 0.0 animations:^{
-        self.detailsView.alpha = 1;
-    }];
-    
-    [UIView animateWithDuration:animated ? 0.24 : 0.0 animations:^{
-        [self.view layoutIfNeeded];
-    }];
 }
 
 #pragma mark - Status Bar
@@ -372,7 +352,7 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     _allowsPullToRefresh = allowsPullToRefresh;
 }
 
-- (void)setDetailsView:(DBProfileDetailsView *)detailsView {
+- (void)setDetailsView:(UIView *)detailsView {
     NSAssert(detailsView, @"detailsView cannot be nil");
     _detailsView = detailsView;
     [self configureVisibleViewController:self.visibleContentViewController];
@@ -422,7 +402,7 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
         }];
     }
     
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         [self fillBlurredImageCacheWithImage:coverPhoto];
     });
 }
@@ -836,7 +816,7 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
 }
 
 - (void)applicationWillEnterForeground:(NSNotification *)notification {
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         [self fillBlurredImageCacheWithImage:self.coverPhotoView.imageView.image];
     });
 }
@@ -922,10 +902,8 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
 
 - (void)configureSegmentedControlViewLayoutConstraintsWithScrollView:(UIScrollView *)scrollView  {
     [scrollView addConstraint:[NSLayoutConstraint constraintWithItem:self.segmentedControlView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:scrollView attribute:NSLayoutAttributeLeft multiplier:1 constant:0]];
-    [scrollView addConstraint:[NSLayoutConstraint constraintWithItem:self.segmentedControlView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:scrollView attribute:NSLayoutAttributeWidth multiplier:1 constant:0]];
-    
-    self.segmentedControlViewTopDetailViewBottomConstraint = [NSLayoutConstraint constraintWithItem:self.segmentedControlView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:self.detailsView attribute:NSLayoutAttributeBottom multiplier:1 constant:0];
-    [scrollView addConstraint:self.segmentedControlViewTopDetailViewBottomConstraint];
+    [scrollView addConstraint:[NSLayoutConstraint constraintWithItem:self.segmentedControlView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:scrollView attribute:NSLayoutAttributeWidth multiplier:1 constant:0]];    
+    [scrollView addConstraint:[NSLayoutConstraint constraintWithItem:self.segmentedControlView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:self.detailsView attribute:NSLayoutAttributeBottom multiplier:1 constant:0]];
     
     [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.segmentedControlView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:[self topLayoutGuide] attribute:NSLayoutAttributeBottom multiplier:1 constant:0]];
     [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.segmentedControlView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:self.coverPhotoView attribute:NSLayoutAttributeBottom multiplier:1 constant:0]];

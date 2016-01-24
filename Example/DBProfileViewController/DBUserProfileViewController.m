@@ -22,7 +22,6 @@
     
     self.delegate = self;
     
-    self.coverPhotoHeightMultiplier = 0.24;
     self.coverPhotoStyle = DBProfileCoverPhotoStyleStretch;
     self.profilePictureAlignment = DBProfilePictureAlignmentLeft;
     self.profilePictureSize = DBProfilePictureSizeNormal;
@@ -37,11 +36,11 @@
     [self setProfilePicture:[UIImage imageNamed:@"profile-picture.jpg"] animated:NO];
     
     // Setup details view
-    
-    self.detailsView.nameLabel.text = @"Devon Boyer";
-    self.detailsView.usernameLabel.text = @"@devboyer";
-    self.detailsView.descriptionLabel.text = @"CS @UWaterloo, iOS developer with a passion for mobile computing and great #uidesign.";
-    self.detailsView.contentInset = UIEdgeInsetsMake(60, 15, 15, 15);
+    DBProfileDetailsView *detailsView = (DBProfileDetailsView *)self.detailsView;
+    detailsView.nameLabel.text = @"Devon Boyer";
+    detailsView.usernameLabel.text = @"@devboyer";
+    detailsView.descriptionLabel.text = @"CS @UWaterloo, iOS developer with a passion for mobile computing and great #uidesign.";
+    detailsView.contentInset = UIEdgeInsetsMake(60, 15, 15, 15);
     
     self.title = @"Devon Boyer";
     self.subtitle = @"@devboyer";

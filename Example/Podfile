@@ -3,7 +3,7 @@ use_frameworks!
 
 target 'DBProfileViewController_Example', :exclusive => true do
   pod "DBProfileViewController", :path => "../"
-  pod "UIImageEffects" '~> 0.0.1'
+  pod "UIImageEffects"
 end
 
 target 'DBProfileViewController_Tests', :exclusive => true do

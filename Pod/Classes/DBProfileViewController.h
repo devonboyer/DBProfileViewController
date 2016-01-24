@@ -16,45 +16,63 @@
 @class DBProfileViewController;
 @class DBProfileNavigationView;
 
-/*
- @abstract A constant value representing the default spacing to use for the left and right edges of the toolbar content view.
+/*!
+ @abstract A constant value representing the size of the profile pictures when using `DBProfilePictureSizeNormal`.
  */
 extern const CGFloat DBProfileViewControllerProfilePictureSizeNormal;
+/*!
+ @abstract A constant value representing the size of the profile pictures when using `DBProfilePictureSizeLarge`.
+ */
 extern const CGFloat DBProfileViewControllerProfilePictureSizeLarge;
-extern const CGFloat DBProfileViewControllerPullToRefreshDistance;
 
-/**
+/*!
  @abstract The `DBProfileCoverPhotoStyle` defines the types of styles for the cover photo.
  */
 typedef NS_ENUM(NSInteger, DBProfileCoverPhotoStyle) {
     DBProfileCoverPhotoStyleNone,
-    /* @abstract Specifys the default cover photo style. */
+    /*!
+     @abstract Specifys the default cover photo style. 
+     */
     DBProfileCoverPhotoStyleDefault,
-    /* @abstract Specifys that the cover photo should stretch with the scroll view. */
+    /*!
+     @abstract Specifys that the cover photo should stretch with the scroll view.
+     */
     DBProfileCoverPhotoStyleStretch,
-    /** @abstract Specifys that the cover photo should extend beneath the details view. */
+    /*!
+     @abstract Specifys that the cover photo should extend beneath the details view.
+     */
     DBProfileCoverPhotoStyleBackdrop,
 };
 
-/**
+/*!
  @abstract The `DBProfilePictureSize` defines the size of the the profile picture.
  */
 typedef NS_ENUM(NSInteger, DBProfilePictureSize) {
-    /* @abstract Specifys that the profile picture should be the normal size. */
+    /*!
+     @abstract Specifys that the profile picture should be the normal size. 
+     */
     DBProfilePictureSizeNormal,
-    /* @abstract Specifys that the profile picture should be large size. */
+    /*!
+     @abstract Specifys that the profile picture should be large size. 
+     */
     DBProfilePictureSizeLarge,
 };
 
-/**
+/*!
  @abstract The `DBProfilePictureAlignment` defines the alignment of the the profile picture.
  */
 typedef NS_ENUM(NSInteger, DBProfilePictureAlignment) {
-    /* @abstract Specifys that the profile picture should be left aligned. */
+    /*!
+     @abstract Specifys that the profile picture should be left aligned. 
+     */
     DBProfilePictureAlignmentLeft,
-    /* @abstract Specifys that the profile picture should be right aligned. */
+    /*!
+     @abstract Specifys that the profile picture should be right aligned. 
+     */
     DBProfilePictureAlignmentRight,
-    /* @abstract Specifys that the profile picture should be center aligned. */
+    /*!
+     @abstract Specifys that the profile picture should be center aligned. 
+     */
     DBProfilePictureAlignmentCenter,
 };
 
@@ -63,26 +81,44 @@ typedef NS_ENUM(NSInteger, DBProfilePictureAlignment) {
 ///------------------------------------------------
 
 /*!
+ @protocol DBProfileViewControllerDelegate
  @abstract The `DBProfileViewControllerDelegate` protocol defines methods for interacting with a `DBProfileViewController`.
  */
 @protocol DBProfileViewControllerDelegate <NSObject>
+
 @optional
+
+/*!
+ @abstract Called after the profile picture has been selected by the user.
+ @param viewController The profile view controller where the selection was made.
+ @prarm imageView The selected image view.
+ */
 - (void)profileViewController:(DBProfileViewController *)viewController didSelectProfilePicture:(UIImageView *)imageView;
+
+/*!
+ @abstract Called after the cover photo has been selected by the user.
+ @param viewController The profile view controller where the selection was made.
+ @prarm imageView The selected image view.
+ */
 - (void)profileViewController:(DBProfileViewController *)viewController didSelectCoverPhoto:(UIImageView *)imageView;
+
+/*!
+ @abstract Called after the user has triggered a pull-to-refresh.
+ @param viewController The profile view controller that triggered a pull-to-refresh.
+ */
 - (void)profileViewControllerDidPullToRefresh:(DBProfileViewController *)viewController;
+
 @end
 
 /*!
  @class DBProfileViewController
  @abstract The `DBProfileViewController` class is a view controller that is specialized to display a profile interface.
  @discussion This class manages and displays an array of content view controllers as well as a `DBProfileCoverPhotoView`, `DBProfilePictureView` and `DBProfileDetailsView`. There are many ways to customize the cover photo, profile picture and content view controllers of the profile screen.
- @note When using `coverPhotoMimicsNavigationBar` you should set `automaticallyAdjustsScrollViewInsets` to NO. Otherwise set `automaticallyAdjustsScrollViewInsets` to YES when using a navigation controller's UINavigationBar.
  */
 @interface DBProfileViewController : UIViewController
 
-
 ///----------------------------------------------
-/// @name Initializing a Profile View Controller
+/// @name Creating a Profile View Controller
 ///----------------------------------------------
 
 /**
@@ -109,9 +145,11 @@ typedef NS_ENUM(NSInteger, DBProfilePictureAlignment) {
 @property (nonatomic, strong, readonly) DBProfileNavigationView *navigationView;
 
 /*!
- @abstract A view that is displayed under the cover photo and above the content views. This is where you might include details such as name, username, or description.
+ @abstract A view that is displayed under the cover photo and above the content view controllers.
+ @discussion The default is an instance of `DBProfileDetailsView`.
+ @warning The `detailsView` cannot be nil.
  */
-@property (nonatomic, strong) DBProfileDetailsView *detailsView;
+@property (nonatomic, strong) UIView *detailsView;
 
 ///---------------------------------------------
 /// @name Configuring Cover Photo
@@ -119,7 +157,7 @@ typedef NS_ENUM(NSInteger, DBProfilePictureAlignment) {
 
 /*!
  @abstract Specifies the height of the cover photo relative to the height of the screen.
- @discussion The default is 0.24. To hide the cover photo set the `coverPhotoStyle` to `DBProfileCoverPhotoStyleNone`.
+ @discussion The default is 0.2. To hide the cover photo set the `coverPhotoStyle` to `DBProfileCoverPhotoStyleNone`.
  @warning `coverPhotoHeightMultiplier` must be greater than 0 or less than or equal to 1.
  */
 @property (nonatomic, assign) CGFloat coverPhotoHeightMultiplier;
@@ -271,13 +309,6 @@ typedef NS_ENUM(NSInteger, DBProfilePictureAlignment) {
 /*!
  @abstract Hides the pull-to-refresh indicator if it is currently animating.
  */
-- (void)endRefreshing;
-
-///----------------------------------------------
-/// @name Animations
-///----------------------------------------------
-
-- (void)moveSegmentedControlViewUpwardAnimated:(BOOL)animated;
-- (void)moveSegmentedControlViewDownwardAnimated:(BOOL)animated;
+- (void)endRefreshing;;
 
 @end

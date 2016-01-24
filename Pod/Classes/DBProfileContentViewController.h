@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 
 /**
+ @protocol DBProfileContentViewController
  @abstract The `DBProfileContentViewController` protocol is adopted by classes that are be displayed as content view controllers of a `DBProfileViewController`.
  */
 @protocol DBProfileContentViewController <NSObject>

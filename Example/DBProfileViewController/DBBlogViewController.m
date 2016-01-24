@@ -40,14 +40,15 @@
     [self setProfilePicture:[UIImage imageNamed:@"profile-picture.jpg"] animated:NO];
     
     // Setup details view
-    self.detailsView.nameLabel.font = [UIFont boldSystemFontOfSize:40];
-    self.detailsView.descriptionLabel.font = [UIFont systemFontOfSize:18];
-    self.detailsView.nameLabel.text = @"Goals and\nGarter Snakes";
-    self.detailsView.usernameLabel.text = nil;
-    self.detailsView.descriptionLabel.text = @"A blog post about my transition from Queen's to UWaterloo.";
-    self.detailsView.contentInset = UIEdgeInsetsMake(84, 15, 40, 15);
-    self.detailsView.tintColor = [UIColor whiteColor];
-    self.detailsView.editProfileButton.hidden = YES;
+    DBProfileDetailsView *detailsView = (DBProfileDetailsView *)self.detailsView;
+    detailsView.nameLabel.font = [UIFont boldSystemFontOfSize:40];
+    detailsView.descriptionLabel.font = [UIFont systemFontOfSize:18];
+    detailsView.nameLabel.text = @"Goals and\nGarter Snakes";
+    detailsView.usernameLabel.text = nil;
+    detailsView.descriptionLabel.text = @"A blog post about my transition from Queen's to UWaterloo.";
+    detailsView.contentInset = UIEdgeInsetsMake(84, 15, 40, 15);
+    detailsView.tintColor = [UIColor whiteColor];
+    detailsView.editProfileButton.hidden = YES;
     
     self.title = @"Goals and Garter Snakes";
     self.subtitle = @"94 Views";
