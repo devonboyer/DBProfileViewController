@@ -44,8 +44,10 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
 @property (nonatomic, strong) UIViewController *contentContainerViewController;
 @property (nonatomic, strong) DBProfileSegmentedControlView *segmentedControlView;
 @property (nonatomic, strong) DBProfileNavigationView *navigationView;
+@property (nonatomic, strong) UIActivityIndicatorView *activityIndicator;
 
 // Constraints
+@property (nonatomic, strong) NSLayoutConstraint *activityIndicatorTopConstraint;
 @property (nonatomic, strong) NSLayoutConstraint *detailsViewTopConstraint;
 @property (nonatomic, strong) NSLayoutConstraint *coverPhotoViewTopConstraint;
 @property (nonatomic, strong) NSLayoutConstraint *coverPhotoViewHeightConstraint;
@@ -112,7 +114,8 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     _contentContainerViewController = [[UIViewController alloc] init];
     _profilePictureTapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleProfilePictureTapGesture:)];
     _coverPhotoTapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleCoverPhotoTapGesture:)];
-    
+    _activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
+
     NSCache *contentOffsetCache = [[NSCache alloc] init];
     contentOffsetCache.name = @"DBProfileViewController.contentOffsetCache";
     contentOffsetCache.countLimit = 200;
@@ -149,10 +152,10 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     [self.contentContainerViewController didMoveToParentViewController:self];
     
     [self.view addSubview:self.navigationView];
-    
+
     [self.contentContainerViewController.view setTranslatesAutoresizingMaskIntoConstraints:NO];
     [self.navigationView setTranslatesAutoresizingMaskIntoConstraints:NO];
-
+    
     // Auto Layout
     [self configureContentContainerViewControllerLayoutConstraints];
     [self configureNavigationViewControllerLayoutConstraints];
@@ -393,7 +396,11 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
 #pragma mark - Configuring Cover Photo
 
 - (void)setCoverPhoto:(UIImage *)coverPhoto animated:(BOOL)animated {
-    self.coverPhotoView.imageView.image = coverPhoto;
+
+    UIImage *croppedImage = [self imageByCroppingImage:coverPhoto
+                                              withSize:self.coverPhotoView.frame.size];
+    
+    self.coverPhotoView.imageView.image = croppedImage;
     
     if (animated) {
         self.coverPhotoView.imageView.alpha = 0;
@@ -402,9 +409,11 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
         }];
     }
     
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        [self fillBlurredImageCacheWithImage:coverPhoto];
-    });
+    if (croppedImage) {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            [self fillBlurredImageCacheWithImage:croppedImage];
+        });
+    }
 }
 
 #pragma mark - Configuring Profile Picture
@@ -510,11 +519,11 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
 }
 
 - (void)startRefreshAnimations {
-    [self.coverPhotoView startRefreshing];
+    [self.activityIndicator startAnimating];
 }
 
 - (void)endRefreshAnimations {
-    [self.coverPhotoView endRefreshing];
+    [self.activityIndicator stopAnimating];
 }
 
 #pragma mark - Delegate
@@ -565,15 +574,18 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     [self.detailsView removeFromSuperview];
     [self.profilePictureView removeFromSuperview];
     [self.segmentedControlView removeFromSuperview];
+    [self.activityIndicator removeFromSuperview];
     
     [self.coverPhotoView setTranslatesAutoresizingMaskIntoConstraints:NO];
     [self.detailsView setTranslatesAutoresizingMaskIntoConstraints:NO];
     [self.profilePictureView setTranslatesAutoresizingMaskIntoConstraints:NO];
     [self.segmentedControlView setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [self.activityIndicator setTranslatesAutoresizingMaskIntoConstraints:NO];
     
     [scrollView addSubview:self.detailsView];
     [scrollView addSubview:self.coverPhotoView];
     [scrollView addSubview:self.profilePictureView];
+    [scrollView addSubview:self.activityIndicator];
     
     // Check if we need to install the segmented control
     if ([self numberOfContentViewControllers] > 1) {
@@ -586,7 +598,8 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     [self configureCoverPhotoViewLayoutConstraintsWithScrollView:scrollView];
     [self configureDetailsViewLayoutConstraintsWithScrollView:scrollView];
     [self configureProfilePictureViewLayoutConstraintsWithScrollView:scrollView];
-    
+    [self configureActivityIndicatorLayoutConstraintsWithScrollView:scrollView];
+
     [scrollView setNeedsLayout];
     [scrollView layoutIfNeeded];
     
@@ -727,8 +740,9 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
         [self notifyDelegateOfPullToRefresh];
     }
     
-    BOOL shouldEndRefreshAnimations = !self.refreshing && self.coverPhotoView.activityIndicator.isAnimating;
-    if (!scrollView.isDragging && contentOffset.y >= 0 && shouldEndRefreshAnimations) {
+    BOOL shouldEndRefreshAnimations = !self.refreshing && self.activityIndicator.isAnimating;
+    if ((!scrollView.isDragging && contentOffset.y >= 0 && shouldEndRefreshAnimations) ||
+        contentOffset.y > CGRectGetHeight(self.coverPhotoView.frame) - 64) {
         [self endRefreshAnimations];
     }
 }
@@ -816,9 +830,12 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
 }
 
 - (void)applicationWillEnterForeground:(NSNotification *)notification {
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        [self fillBlurredImageCacheWithImage:self.coverPhotoView.imageView.image];
-    });
+    UIImage *coverPhoto = self.coverPhotoView.imageView.image;
+    if (coverPhoto) {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            [self fillBlurredImageCacheWithImage:coverPhoto];
+        });
+    }
 }
 
 #pragma mark - Updating Constraints
@@ -917,6 +934,11 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     [scrollView addConstraint:self.detailsViewTopConstraint];
 }
 
+- (void)configureActivityIndicatorLayoutConstraintsWithScrollView:(UIScrollView *)scrollView {
+    [scrollView addConstraint:[NSLayoutConstraint constraintWithItem:self.activityIndicator attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.coverPhotoView attribute:NSLayoutAttributeCenterX multiplier:1 constant:0]];
+    [scrollView addConstraint:[NSLayoutConstraint constraintWithItem:self.activityIndicator attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:self.coverPhotoView attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
+}
+
 - (void)configureCoverPhotoViewLayoutConstraintsWithScrollView:(UIScrollView *)scrollView {
     [scrollView addConstraint:[NSLayoutConstraint constraintWithItem:self.coverPhotoView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:scrollView attribute:NSLayoutAttributeLeft multiplier:1 constant:0]];
     [scrollView addConstraint:[NSLayoutConstraint constraintWithItem:self.coverPhotoView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:scrollView attribute:NSLayoutAttributeWidth multiplier:1 constant:0]];
@@ -977,11 +999,52 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
 
 - (void)fillBlurredImageCacheWithImage:(UIImage *)image {
     NSAssert(![NSThread isMainThread], @"fillBlurredImageCacheWithImage: should not be called on main thread");
-    CGFloat maxBlurRadius = 20;
+    CGFloat maxBlurRadius = 30;
     [self.blurredImageCache removeAllObjects];
     for (int i = 0; i <= 30; i++) {
         [self.blurredImageCache setObject:[self blurWithImage:image andRadius:(maxBlurRadius * i/30)] forKey:@(i)];
     }
+}
+
+- (UIImage *)imageByCroppingImage:(UIImage *)image withSize:(CGSize)newSize {
+    double ratio;
+    double delta;
+    CGPoint offset;
+    
+    //make a new square size, that is the resized imaged width
+    CGSize sz = CGSizeMake(newSize.width, newSize.width);
+    
+    //figure out if the picture is landscape or portrait, then
+    //calculate scale factor and offset
+    if (image.size.width > image.size.height) {
+        ratio = newSize.width / image.size.width;
+        delta = (ratio*image.size.width - ratio*image.size.height);
+        offset = CGPointMake(delta/2, 0);
+    } else {
+        ratio = newSize.width / image.size.height;
+        delta = (ratio*image.size.height - ratio*image.size.width);
+        offset = CGPointMake(0, delta/2);
+    }
+    
+    //make the final clipping rect based on the calculated values
+    CGRect clipRect = CGRectMake(-offset.x, -offset.y,
+                                 (ratio * image.size.width) + delta,
+                                 (ratio * image.size.height) + delta);
+    
+    
+    //start a new context, with scale factor 0.0 so retina displays get
+    //high quality image
+    if ([[UIScreen mainScreen] respondsToSelector:@selector(scale)]) {
+        UIGraphicsBeginImageContextWithOptions(sz, YES, 0.0);
+    } else {
+        UIGraphicsBeginImageContext(sz);
+    }
+    UIRectClip(clipRect);
+    [image drawInRect:clipRect];
+    UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    return newImage;
 }
 
 @end

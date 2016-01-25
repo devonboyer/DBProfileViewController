@@ -31,6 +31,7 @@
 		675B0F981C42A1E0000AADC6 /* DBLikesTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 675B0F971C42A1E0000AADC6 /* DBLikesTableViewController.m */; };
 		675D5BA01C3FCB72009E44CE /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 675D5B9F1C3FCB72009E44CE /* Launch Screen.storyboard */; };
 		675D5BA21C3FDCCC009E44CE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 675D5BA11C3FDCCC009E44CE /* Main.storyboard */; };
+		67C162221C55A0AC00EEA811 /* cover-photo.png in Resources */ = {isa = PBXBuildFile; fileRef = 67C162211C55A0AC00EEA811 /* cover-photo.png */; };
 		6BF96457D33B2A1824077D1C /* Pods_DBProfileViewController_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A74FB59D2E8276FE73FD3C57 /* Pods_DBProfileViewController_Tests.framework */; };
 /* End PBXBuildFile section */
 
@@ -81,6 +82,7 @@
 		675B0F971C42A1E0000AADC6 /* DBLikesTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBLikesTableViewController.m; sourceTree = "<group>"; };
 		675D5B9F1C3FCB72009E44CE /* Launch Screen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 		675D5BA11C3FDCCC009E44CE /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
+		67C162211C55A0AC00EEA811 /* cover-photo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "cover-photo.png"; sourceTree = "<group>"; };
 		762FB2E17229F4187C24A3D1 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		8E706C59695F1FFDD539460E /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		8EA72A854F72D8A6662DA9BB /* Pods-DBProfileViewController_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DBProfileViewController_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-DBProfileViewController_Tests/Pods-DBProfileViewController_Tests.release.xcconfig"; sourceTree = "<group>"; };
@@ -220,6 +222,7 @@
 		672EF5D31C49EC150035567E /* Assets */ = {
 			isa = PBXGroup;
 			children = (
+				67C162211C55A0AC00EEA811 /* cover-photo.png */,
 				672EF5A81C4401B60035567E /* cover-photo-blog.png */,
 				675B0F8A1C429199000AADC6 /* cover-photo-user.png */,
 				675B0F6E1C40882C000AADC6 /* profile-picture.jpg */,
@@ -321,6 +324,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				67C162221C55A0AC00EEA811 /* cover-photo.png in Resources */,
 				6003F5A9195388D20070C39A /* Images.xcassets in Resources */,
 				675D5BA01C3FCB72009E44CE /* Launch Screen.storyboard in Resources */,
 				675B0F8B1C429199000AADC6 /* cover-photo-user.png in Resources */,

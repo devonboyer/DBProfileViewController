@@ -6,7 +6,7 @@
 //
 //
 
-#import <UIKit/UIKit.h>
+#import <DBProfileViewController/DBBaseProfileViewController.h>
 
 @protocol DBProfileContentViewController;
 
@@ -115,7 +115,7 @@ typedef NS_ENUM(NSInteger, DBProfilePictureAlignment) {
  @abstract The `DBProfileViewController` class is a view controller that is specialized to display a profile interface.
  @discussion This class manages and displays an array of content view controllers as well as a `DBProfileCoverPhotoView`, `DBProfilePictureView` and `DBProfileDetailsView`. There are many ways to customize the cover photo, profile picture and content view controllers of the profile screen.
  */
-@interface DBProfileViewController : UIViewController
+@interface DBProfileViewController : DBBaseProfileViewController
 
 ///----------------------------------------------
 /// @name Creating a Profile View Controller

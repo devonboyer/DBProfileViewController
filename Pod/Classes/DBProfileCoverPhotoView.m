@@ -27,20 +27,16 @@
 - (void)_commonInit {
     _imageView = [[UIImageView alloc] init];
     _overlayView = [[UIView alloc] init];
-    _activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
     
     self.overlayView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.overlayView.frame = self.imageView.frame;
-    [self.imageView addSubview:self.overlayView];
+    //[self.imageView addSubview:self.overlayView];
     
     [self.imageView setTranslatesAutoresizingMaskIntoConstraints:NO];
-    [self.activityIndicator setTranslatesAutoresizingMaskIntoConstraints:NO];
 
     [self addSubview:self.imageView];
-    [self addSubview:self.activityIndicator];
     
     [self configureImageViewLayoutConstraints];
-    [self configureActivityIndicatorLayoutConstraints];
     [self configureDefaultAppearance];
 }
 
@@ -57,16 +53,6 @@
     self.overlayView.alpha = 0.1;
 }
 
-#pragma mark - Refresh
-
-- (void)startRefreshing {
-    [self.activityIndicator startAnimating];
-}
-
-- (void)endRefreshing {
-    [self.activityIndicator stopAnimating];
-}
-
 #pragma mark - Auto Layout
 
 - (void)configureImageViewLayoutConstraints {
@@ -74,11 +60,6 @@
     [self addConstraint:[NSLayoutConstraint constraintWithItem:self.imageView attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeRight multiplier:1 constant:0]];
     [self addConstraint:[NSLayoutConstraint constraintWithItem:self.imageView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTop multiplier:1 constant:0]];
     [self addConstraint:[NSLayoutConstraint constraintWithItem:self.imageView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeBottom multiplier:1 constant:0]];
-}
-
-- (void)configureActivityIndicatorLayoutConstraints {
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.activityIndicator attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterX multiplier:1 constant:0]];
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.activityIndicator attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
 }
 
 @end

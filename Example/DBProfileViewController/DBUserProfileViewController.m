@@ -32,7 +32,7 @@
     [self addContentViewController:[[DBPhotosTableViewController alloc] init] withTitle:@"Photos"];
     [self addContentViewController:[[DBLikesTableViewController alloc] init] withTitle:@"Likes"];
     
-    [self setCoverPhoto:[UIImage imageNamed:@"cover-photo-user.png"] animated:NO];
+    [self setCoverPhoto:[UIImage imageNamed:@"cover-photo.png"] animated:NO];
     [self setProfilePicture:[UIImage imageNamed:@"profile-picture.jpg"] animated:NO];
     
     // Setup details view

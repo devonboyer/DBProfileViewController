@@ -18,9 +18,5 @@
  @abstract The image view that displays the cover photo.
  */
 @property (nonatomic, strong, readonly) UIImageView *imageView;
-@property (nonatomic, strong, readonly) UIActivityIndicatorView *activityIndicator;
-
-- (void)startRefreshing;
-- (void)endRefreshing;
 
 @end
