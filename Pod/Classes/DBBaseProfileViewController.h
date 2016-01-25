@@ -13,4 +13,7 @@
  */
 @interface DBBaseProfileViewController : UIViewController
 
+// All layout constraints
+// container view controller crap
+
 @end
