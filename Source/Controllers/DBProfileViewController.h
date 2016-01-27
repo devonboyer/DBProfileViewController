@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@protocol DBProfileContentViewController;
+@protocol DBProfileContentPresenting;
 
 @class DBProfileViewController;
 @class DBProfileCoverPhotoView;
@@ -238,7 +238,7 @@ typedef NS_ENUM(NSInteger, DBProfilePictureAlignment) {
 /*!
  @abstract The content view controller that is currently visible.
  */
-@property (nonatomic, strong, readonly) UIViewController<DBProfileContentViewController> *visibleContentViewController;
+@property (nonatomic, strong, readonly) UIViewController<DBProfileContentPresenting> *visibleContentViewController;
 
 /*!
  @abstract The index of the content view controller that is currently visible.
@@ -268,7 +268,7 @@ typedef NS_ENUM(NSInteger, DBProfilePictureAlignment) {
  @param title The title of the view controller to add.
  @see DBProfileContentViewController
  */
-- (void)addContentViewController:(UIViewController<DBProfileContentViewController> *)viewController
+- (void)addContentViewController:(UIViewController<DBProfileContentPresenting> *)viewController
                        withTitle:(NSString *)title;
 
 /*!
@@ -279,7 +279,7 @@ typedef NS_ENUM(NSInteger, DBProfilePictureAlignment) {
  @param index The index at which to insert the view controller.
  @see DBProfileContentViewController
  */
-- (void)insertContentViewController:(UIViewController<DBProfileContentViewController> *)viewController
+- (void)insertContentViewController:(UIViewController<DBProfileContentPresenting> *)viewController
                           withTitle:(NSString *)title
                             atIndex:(NSUInteger)index;
 
@@ -314,6 +314,6 @@ typedef NS_ENUM(NSInteger, DBProfilePictureAlignment) {
 /*!
  @abstract Hides the pull-to-refresh indicator if it is currently animating.
  */
-- (void)endRefreshing;;
+- (void)endRefreshing;
 
 @end

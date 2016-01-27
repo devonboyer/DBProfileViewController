@@ -7,8 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "DBProfileContentViewController.h"
+@import DBProfileViewController;
 
-@interface DBPhotosTableViewController : UITableViewController <DBProfileContentViewController>
+@interface DBPhotosTableViewController : UITableViewController <DBProfileContentPresenting>
 
 @end

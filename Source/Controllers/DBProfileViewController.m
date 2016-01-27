@@ -13,7 +13,7 @@
 #import "DBProfileTitleView.h"
 #import "DBProfileSegmentedControlView.h"
 #import "DBProfileNavigationView.h"
-#import "DBProfileContentViewController.h"
+#import "DBProfileContentPresenting.h"
 #import "DBProfileImageEffects.h"
 
 #import <UIImageEffects/UIImage+ImageEffects.h>
@@ -431,7 +431,7 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
 
 #pragma mark - Adding and Removing Content View Controllers
 
-- (void)addContentViewController:(UIViewController<DBProfileContentViewController> *)viewController withTitle:(NSString *)title {
+- (void)addContentViewController:(UIViewController<DBProfileContentPresenting> *)viewController withTitle:(NSString *)title {
     NSAssert([title length] > 0, @"content view controllers must have a title");
     NSAssert(viewController, @"content view controller cannot be nil");
     
@@ -442,7 +442,7 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     [self scrollVisibleContentViewControllerToTop];
 }
 
-- (void)insertContentViewController:(UIViewController<DBProfileContentViewController> *)viewController withTitle:(NSString *)title atIndex:(NSUInteger)index {
+- (void)insertContentViewController:(UIViewController<DBProfileContentPresenting> *)viewController withTitle:(NSString *)title atIndex:(NSUInteger)index {
     NSAssert([title length] > 0, @"content view controllers must have a title");
     NSAssert(viewController, @"content view controller cannot be nil");
     
@@ -478,7 +478,7 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     // Remove previous view controller from container
     [self removeViewControllerFromContainer:self.visibleContentViewController];
     
-    UIViewController<DBProfileContentViewController> *visibleContentViewController = self.contentViewControllers[index];
+    UIViewController<DBProfileContentPresenting> *visibleContentViewController = self.contentViewControllers[index];
     
     // Add visible view controller to container
     [self addViewControllerToContainer:visibleContentViewController];
@@ -545,7 +545,7 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     [scrollView setContentOffset:contentOffset];
 }
 
-- (void)configureVisibleViewController:(UIViewController<DBProfileContentViewController> *)visibleViewController {
+- (void)configureVisibleViewController:(UIViewController<DBProfileContentPresenting> *)visibleViewController {
     UIScrollView *scrollView = [visibleViewController contentScrollView];
     
     [self.coverPhotoView removeFromSuperview];

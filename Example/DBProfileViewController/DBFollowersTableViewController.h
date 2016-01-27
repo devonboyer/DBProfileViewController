@@ -9,6 +9,6 @@
 #import <UIKit/UIKit.h>
 @import DBProfileViewController;
 
-@interface DBFollowersTableViewController : UITableViewController <DBProfileContentViewController>
+@interface DBFollowersTableViewController : UITableViewController <DBProfileContentPresenting>
 
 @end
