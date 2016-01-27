@@ -43,7 +43,7 @@
 }
 
 - (NSString *)contentSubtitle {
-    return @"@devboyer";
+    return @"12 Photos";
 }
 
 @end

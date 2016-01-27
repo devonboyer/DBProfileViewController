@@ -20,7 +20,7 @@
 - (UIScrollView *)contentScrollView;
 
 /*!
- @abstract The title displayed in a segmented control and/or navigation bar.
+ @abstract The title displayed in the segmented control.
  @warning The title cannot be nil.
  */
 - (NSString *)contentTitle;
@@ -28,7 +28,7 @@
 @optional
 
 /*!
- @abstract An optional subtitle that is displayed beneath the title in a navigation bar.
+ @abstract An optional subtitle that is displayed beneath the profile's title in a navigation bar.
  */
 - (NSString *)contentSubtitle;
 

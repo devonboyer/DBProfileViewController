@@ -20,11 +20,11 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    self.title = @"Profile";
+    self.title = @"Devon Boyer";
     
     self.delegate = self;
     
-    self.coverPhotoStyle = DBProfileCoverPhotoStyleStretch;
+    self.coverPhotoOptions = DBProfileCoverPhotoOptionStretch;
     self.profilePictureAlignment = DBProfilePictureAlignmentLeft;
     self.profilePictureSize = DBProfilePictureSizeNormal;
     self.profilePictureInset = UIEdgeInsetsMake(0, 15, 72/2.0 - 10, 0);

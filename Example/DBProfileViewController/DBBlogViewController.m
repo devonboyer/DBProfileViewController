@@ -24,8 +24,8 @@
     
     self.delegate = self;
     
+    self.coverPhotoOptions = DBProfileCoverPhotoOptionStretch | DBProfileCoverPhotoOptionExtended;
     self.coverPhotoHeightMultiplier = 1.0;
-    self.coverPhotoStyle = DBProfileCoverPhotoStyleBackdrop;
     self.profilePictureAlignment = DBProfilePictureAlignmentLeft;
     self.profilePictureSize = DBProfilePictureSizeNormal;
     self.profilePictureInset = UIEdgeInsetsMake(0, 15, 0, 0);

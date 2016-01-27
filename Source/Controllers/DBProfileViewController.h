@@ -29,19 +29,14 @@ extern const CGFloat DBProfileViewControllerProfilePictureSizeLarge;
  @abstract The `DBProfileCoverPhotoStyle` defines the types of styles for the cover photo.
  */
 typedef NS_ENUM(NSInteger, DBProfileCoverPhotoStyle) {
-    DBProfileCoverPhotoStyleNone,
-    /*!
-     @abstract Specifys the default cover photo style. 
-     */
-    DBProfileCoverPhotoStyleDefault,
-    /*!
-     @abstract Specifys that the cover photo should stretch with the scroll view.
-     */
-    DBProfileCoverPhotoStyleStretch,
-    /*!
-     @abstract Specifys that the cover photo should extend beneath the details view.
-     */
-    DBProfileCoverPhotoStyleBackdrop,
+    DBProfileCoverPhotoStyleNone, // no cover photo
+    DBProfileCoverPhotoStyleDefault, // display cover photo
+};
+
+typedef NS_OPTIONS(NSUInteger, DBProfileCoverPhotoOptions) {
+    DBProfileCoverPhotoOptionNone      = 1 << 0,
+    DBProfileCoverPhotoOptionStretch   = 1 << 1,
+    DBProfileCoverPhotoOptionExtended  = 1 << 2,
 };
 
 /*!
@@ -173,6 +168,7 @@ typedef NS_ENUM(NSInteger, DBProfilePictureAlignment) {
  @warning `DBProfileCoverPhotoStyleNone` is mutually exclusive with `coverPhotoMimicsNavigationBar` and `allowsPullToRefresh`.
  */
 @property (nonatomic, assign) DBProfileCoverPhotoStyle coverPhotoStyle;
+@property (nonatomic, assign) DBProfileCoverPhotoOptions coverPhotoOptions;
 
 /*!
  @abstract YES if the cover photo should be mimic a navigation bar when the view is scrolled, NO otherwise.

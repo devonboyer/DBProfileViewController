@@ -43,7 +43,7 @@
 }
 
 - (NSString *)contentSubtitle {
-    return @"@devboyer";
+    return @"20 Followers";
 }
 
 @end
