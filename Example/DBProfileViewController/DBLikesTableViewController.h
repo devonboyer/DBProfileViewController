@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "DBProfileContentViewController.h"
+@import DBProfileViewController;
 
 @interface DBLikesTableViewController : UITableViewController <DBProfileContentViewController>
 
