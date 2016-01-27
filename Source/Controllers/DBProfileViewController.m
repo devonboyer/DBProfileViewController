@@ -37,7 +37,6 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
 
 @property (nonatomic, getter=isRefreshing) BOOL refreshing;
 @property (nonatomic, strong) NSMutableArray *mutableContentViewControllers;
-@property (nonatomic, strong) NSMutableArray *mutableContentViewControllerTitles;
 @property (nonatomic, strong) NSCache *contentOffsetCache;
 @property (nonatomic, strong) NSCache *blurredImageCache;
 
@@ -93,12 +92,10 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     return self;
 }
 
-- (instancetype)initWithContentViewControllers:(NSArray *)viewControllers titles:(NSArray *)titles {
+- (instancetype)initWithContentViewControllers:(NSArray *)contentViewControllers {
     self = [super init];
     if (self) {
-        NSAssert([viewControllers count] == [titles count], @"content view controllers must have a title");
-        [self.mutableContentViewControllers addObjectsFromArray:viewControllers];
-        [self.mutableContentViewControllers addObjectsFromArray:titles];
+        [self.mutableContentViewControllers addObjectsFromArray:contentViewControllers];
         [self _commonInit];
     }
     return self;
@@ -262,22 +259,11 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     return (NSArray *)self.mutableContentViewControllers;
 }
 
-- (NSArray *)contentViewControllerTitles {
-    return (NSArray *)self.mutableContentViewControllerTitles;
-}
-
 - (NSMutableArray *)mutableContentViewControllers {
     if (!_mutableContentViewControllers) {
         _mutableContentViewControllers = [NSMutableArray array];
     }
     return _mutableContentViewControllers;
-}
-
-- (NSMutableArray *)mutableContentViewControllerTitles {
-    if (!_mutableContentViewControllerTitles) {
-        _mutableContentViewControllerTitles = [NSMutableArray array];
-    }
-    return _mutableContentViewControllerTitles;
 }
 
 #pragma mark - Setters
@@ -340,7 +326,7 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     [self configureVisibleViewController:self.visibleContentViewController];
 }
 
-#pragma mark - Actions
+#pragma mark - Action Responders
 
 - (void)back:(id)sender {
     [self.navigationController popViewControllerAnimated:YES];
@@ -358,18 +344,6 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
 
 - (void)handleCoverPhotoTapGesture:(UITapGestureRecognizer *)sender {
     [self notifyDelegateOfCoverPhotoSelection:self.coverPhotoView.imageView];
-}
-
-#pragma mark - Titles
-
-- (void)setTitle:(NSString *)title {
-    [super setTitle:title];
-    self.navigationView.titleView.titleLabel.text = title;
-}
-
-- (void)setSubtitle:(NSString *)subtitle {
-    _subtitle = subtitle;
-    self.navigationView.titleView.subtitleLabel.text = subtitle;
 }
 
 #pragma mark - Configuring Cover Photo
@@ -407,48 +381,20 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     }
 }
 
-#pragma mark - Accessing Content View Controllers
-
-- (NSUInteger)visibleContentViewControllerIndex {
-    return [self.segmentedControlView.segmentedControl selectedSegmentIndex];
-}
-
-- (NSString *)titleForContentViewControllerAtIndex:(NSUInteger)index {
-    return [self.mutableContentViewControllerTitles objectAtIndex:index];
-}
-
-- (NSUInteger)indexForContentViewControllerWithTitle:(NSString *)title {
-    return [self.mutableContentViewControllerTitles indexOfObject:title];
-}
-
-- (NSString *)titleForVisibleContentViewController {
-    return self.visibleContentViewController.title;
-}
-
-- (NSInteger)numberOfContentViewControllers {
-    return [self.contentViewControllers count];
-}
-
 #pragma mark - Adding and Removing Content View Controllers
 
-- (void)addContentViewController:(UIViewController<DBProfileContentPresenting> *)viewController withTitle:(NSString *)title {
-    NSAssert([title length] > 0, @"content view controllers must have a title");
-    NSAssert(viewController, @"content view controller cannot be nil");
+- (void)addContentViewController:(UIViewController<DBProfileContentPresenting> *)contentViewController {
+    NSAssert(contentViewController, @"contentViewController cannot be nil");
     
-    [self.mutableContentViewControllers addObject:viewController];
-    [self.mutableContentViewControllerTitles addObject:title];
-    
+    [self.mutableContentViewControllers addObject:contentViewController];
     [self configureContentViewControllers];
     [self scrollVisibleContentViewControllerToTop];
 }
 
-- (void)insertContentViewController:(UIViewController<DBProfileContentPresenting> *)viewController withTitle:(NSString *)title atIndex:(NSUInteger)index {
-    NSAssert([title length] > 0, @"content view controllers must have a title");
-    NSAssert(viewController, @"content view controller cannot be nil");
+- (void)insertContentViewController:(UIViewController<DBProfileContentPresenting> *)contentViewController atIndex:(NSUInteger)index {
+    NSAssert(contentViewController, @"contentViewController cannot be nil");
     
-    [self.mutableContentViewControllers insertObject:viewController atIndex:index];
-    [self.mutableContentViewControllerTitles insertObject:title atIndex:index];
-    
+    [self.mutableContentViewControllers insertObject:contentViewController atIndex:index];
     [self configureContentViewControllers];
     [self scrollVisibleContentViewControllerToTop];
 }
@@ -456,7 +402,6 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
 - (void)removeContentViewControllerAtIndex:(NSUInteger)index {
     if (index < [self numberOfContentViewControllers]) {
         [self.mutableContentViewControllers removeObjectAtIndex:index];
-        [self.mutableContentViewControllerTitles removeObjectAtIndex:index];
         [self configureContentViewControllers];
         [self scrollVisibleContentViewControllerToTop];
     }
@@ -525,6 +470,51 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
 }
 
 #pragma mark - Helpers
+
+- (NSUInteger)visibleContentViewControllerIndex {
+    return [self.segmentedControlView.segmentedControl selectedSegmentIndex];
+}
+
+- (NSInteger)numberOfContentViewControllers {
+    return [self.contentViewControllers count];
+}
+
+- (UIScrollView *)scrollViewForVisibleContentViewController {
+    NSUInteger currentlySelectedIndex = [self visibleContentViewControllerIndex];
+    return [self scrollViewForContentViewControllerAtIndex:currentlySelectedIndex];
+}
+
+- (NSString *)titleForVisibleContentViewController {
+    NSUInteger currentlySelectedIndex = [self visibleContentViewControllerIndex];
+    return [self titleForContentViewControllerAtIndex:currentlySelectedIndex];
+}
+
+- (NSString *)subtitleForVisibleContentViewController {
+    NSUInteger currentlySelectedIndex = [self visibleContentViewControllerIndex];
+    return [self subtitleForContentViewControllerAtIndex:currentlySelectedIndex];
+}
+
+- (UIScrollView *)scrollViewForContentViewControllerAtIndex:(NSUInteger)index {
+    UIViewController<DBProfileContentPresenting> *viewController;
+    return [viewController contentScrollView];
+}
+
+- (NSString *)titleForContentViewControllerAtIndex:(NSUInteger)index {
+    if (index >= [self numberOfContentViewControllers]) return nil;
+    UIViewController<DBProfileContentPresenting> *viewController = self.contentViewControllers[index];
+    NSString *contentTitle = [viewController contentTitle];
+    NSAssert(contentTitle && [contentTitle length] > 0, @"contentTitle cannot be nil");
+    return contentTitle;
+}
+
+- (NSString *)subtitleForContentViewControllerAtIndex:(NSUInteger)index {
+    if (index >= [self numberOfContentViewControllers]) return nil;
+    UIViewController<DBProfileContentPresenting> *viewController = self.contentViewControllers[index];
+    if ([viewController respondsToSelector:@selector(contentSubtitle)]) {
+        return [viewController contentSubtitle];
+    }
+    return nil;
+}
 
 - (void)cacheContentOffset:(CGPoint)contentOffset forKey:(NSString *)key {
     [self.contentOffsetCache setObject:[NSValue valueWithCGPoint:contentOffset] forKey:key];
@@ -606,6 +596,9 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
         [scrollView setContentOffset:_contentOffset];
     }
     [scrollView flashScrollIndicators];
+    
+    self.navigationView.titleView.titleLabel.text = [self titleForVisibleContentViewController];
+    self.navigationView.titleView.subtitleLabel.text = [self subtitleForVisibleContentViewController];
 }
 
 - (void)configureContentViewControllers {
@@ -613,10 +606,9 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     
     [self.segmentedControlView.segmentedControl removeAllSegments];
     
-    NSInteger index = 0;
-    for (NSString *title in self.contentViewControllerTitles) {
-        [self.segmentedControlView.segmentedControl insertSegmentWithTitle:title atIndex:index animated:NO];
-        index++;
+    for (NSInteger i = 0; i < [self numberOfContentViewControllers]; i++) {
+        NSString *title = [self titleForContentViewControllerAtIndex:i];
+        [self.segmentedControlView.segmentedControl insertSegmentWithTitle:title atIndex:i animated:NO];
     }
     
     // Set the selected segment index

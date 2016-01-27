@@ -124,20 +124,14 @@ typedef NS_ENUM(NSInteger, DBProfilePictureAlignment) {
 /**
  @abstract Creates and returns a new profile view controller.
  @param viewControllers An array of content view controllers.
- @param titles An array of titles for the associated content view controllers.
  @return A newly created profile view controller.
  */
-- (instancetype)initWithContentViewControllers:(NSArray *)viewControllers titles:(NSArray *)titles;
+- (instancetype)initWithContentViewControllers:(NSArray *)contentViewControllers;
 
 /*!
  @abstract The object that acts as the view controller's delegate.
  */
 @property (nonatomic, strong) id<DBProfileViewControllerDelegate> delegate;
-
-/*!
- @abstract The profile view controller's subtitle.
- */
-@property (nonatomic, copy) NSString *subtitle;
 
 /*!
  @abstract A view that displays a navigation bar when `coverPhotoMimicsNavigationBar` is set to YES.
@@ -245,18 +239,6 @@ typedef NS_ENUM(NSInteger, DBProfilePictureAlignment) {
  */
 @property (nonatomic, assign, readonly) NSUInteger visibleContentViewControllerIndex;
 
-/*!
- @abstract Returns the title of the view controller at the specified index.
- @param index The index of the view controller.
- */
-- (NSString *)titleForContentViewControllerAtIndex:(NSUInteger)index;
-
-/*!
- @abstract Returns the index of the view controller with the specified title.
- @param title The title of the view controller.
- */
-- (NSUInteger)indexForContentViewControllerWithTitle:(NSString *)title;
-
 ///---------------------------------------------------
 /// @name Adding and Removing Content View Controllers
 ///---------------------------------------------------
@@ -265,23 +247,18 @@ typedef NS_ENUM(NSInteger, DBProfilePictureAlignment) {
  @abstract Adds a content view controller to the profile.
  @discussion Content view controllers must conform to `DBProfileContentViewController`.
  @param viewController The view controller to add.
- @param title The title of the view controller to add.
  @see DBProfileContentViewController
  */
-- (void)addContentViewController:(UIViewController<DBProfileContentPresenting> *)viewController
-                       withTitle:(NSString *)title;
+- (void)addContentViewController:(UIViewController<DBProfileContentPresenting> *)contentViewController;
 
 /*!
  @abstract Inserts a content view controller to the profile at the specified index.
  @discussion Content view controllers must conform to `DBProfileContentViewController`.
  @param viewController The view controller to insert.
- @param title The title of the view controller to insert.
  @param index The index at which to insert the view controller.
  @see DBProfileContentViewController
  */
-- (void)insertContentViewController:(UIViewController<DBProfileContentPresenting> *)viewController
-                          withTitle:(NSString *)title
-                            atIndex:(NSUInteger)index;
+- (void)insertContentViewController:(UIViewController<DBProfileContentPresenting> *)contentViewController atIndex:(NSUInteger)index;
 
 /*!
  @abstract Removes a content view controller the profile.

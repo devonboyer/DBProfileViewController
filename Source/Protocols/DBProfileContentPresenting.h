@@ -8,15 +8,28 @@
 
 #import <Foundation/Foundation.h>
 
-/**
+/*!
  @protocol DBProfileContentPresenting
  @abstract The `DBProfileContentPresenting` protocol is adopted by classes that are be displayed as content view controllers of a `DBProfileViewController`.
  */
 @protocol DBProfileContentPresenting <NSObject>
 
-/**
+/*!
  @abstract The scroll view which will be used to track scrolling.
  */
-@property (nonatomic, strong,readonly) UIScrollView *contentScrollView;
+- (UIScrollView *)contentScrollView;
+
+/*!
+ @abstract The title displayed in a segmented control and/or navigation bar.
+ @warning The title cannot be nil.
+ */
+- (NSString *)contentTitle;
+
+@optional
+
+/*!
+ @abstract An optional subtitle that is displayed beneath the title in a navigation bar.
+ */
+- (NSString *)contentSubtitle;
 
 @end

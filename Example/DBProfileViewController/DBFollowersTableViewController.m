@@ -32,10 +32,18 @@
     return cell;
 }
 
-#pragma mark - DBProfileContentViewController
+#pragma mark - DBProfileContentPresenting
 
 - (UIScrollView *)contentScrollView {
     return self.tableView;
+}
+
+- (NSString *)contentTitle {
+    return @"Followers";
+}
+
+- (NSString *)contentSubtitle {
+    return @"@devboyer";
 }
 
 @end

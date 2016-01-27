@@ -20,6 +20,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    self.title = @"Blog";
+    
     self.delegate = self;
     
     self.coverPhotoHeightMultiplier = 1.0;
@@ -32,9 +34,9 @@
     self.automaticallyAdjustsScrollViewInsets = NO;
     self.coverPhotoMimicsNavigationBar = YES;
     
-    [self addContentViewController:[[DBFollowersTableViewController alloc] init] withTitle:@"Details"];
-    [self addContentViewController:[[DBPhotosTableViewController alloc] init] withTitle:@"Comments"];
-    [self addContentViewController:[[DBLikesTableViewController alloc] init] withTitle:@"Related"];
+    [self addContentViewController:[[DBFollowersTableViewController alloc] init]];
+    [self addContentViewController:[[DBPhotosTableViewController alloc] init]];
+    [self addContentViewController:[[DBLikesTableViewController alloc] init]];
     
     [self setCoverPhoto:[UIImage imageNamed:@"cover-photo-blog.png"] animated:NO];
     [self setProfilePicture:[UIImage imageNamed:@"profile-picture.jpg"] animated:NO];
@@ -49,9 +51,6 @@
     detailsView.contentInset = UIEdgeInsetsMake(84, 15, 40, 15);
     detailsView.tintColor = [UIColor whiteColor];
     detailsView.editProfileButton.hidden = YES;
-    
-    self.title = @"Goals and Garter Snakes";
-    self.subtitle = @"94 Views";
     
     self.profilePictureSize = DBProfilePictureSizeLarge;
     self.profilePictureView.style = DBProfilePictureStyleRound;

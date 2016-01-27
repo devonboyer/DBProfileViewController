@@ -20,6 +20,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    self.title = @"Profile";
+    
     self.delegate = self;
     
     self.coverPhotoStyle = DBProfileCoverPhotoStyleStretch;
@@ -28,9 +30,9 @@
     self.profilePictureInset = UIEdgeInsetsMake(0, 15, 72/2.0 - 10, 0);
     self.allowsPullToRefresh = YES;
     
-    [self addContentViewController:[[DBFollowersTableViewController alloc] init] withTitle:@"Followers"];
-    [self addContentViewController:[[DBPhotosTableViewController alloc] init] withTitle:@"Photos"];
-    [self addContentViewController:[[DBLikesTableViewController alloc] init] withTitle:@"Likes"];
+    [self addContentViewController:[[DBFollowersTableViewController alloc] init]];
+    [self addContentViewController:[[DBPhotosTableViewController alloc] init]];
+    [self addContentViewController:[[DBLikesTableViewController alloc] init]];
     
     [self setCoverPhoto:[UIImage imageNamed:@"cover-photo.png"] animated:NO];
     [self setProfilePicture:[UIImage imageNamed:@"profile-picture.jpg"] animated:NO];
@@ -41,10 +43,7 @@
     detailsView.usernameLabel.text = @"@devboyer";
     detailsView.descriptionLabel.text = @"CS @UWaterloo, iOS developer with a passion for mobile computing and great #uidesign.";
     detailsView.contentInset = UIEdgeInsetsMake(60, 15, 15, 15);
-    
-    self.title = @"Devon Boyer";
-    self.subtitle = @"@devboyer";
-    
+        
     [self setStyle:self.style];
     
     UIBarButtonItem *addBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Add" style:UIBarButtonItemStylePlain target:self action:@selector(add)];
@@ -76,7 +75,7 @@
 }
 
 - (void)add {
-    [self addContentViewController:[[DBFollowersTableViewController alloc] init] withTitle:@"Followers"];
+    [self addContentViewController:[[DBFollowersTableViewController alloc] init]];
 }
 
 - (void)remove {
