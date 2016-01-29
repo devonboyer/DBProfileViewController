@@ -20,6 +20,7 @@
  @abstract A constant value representing the size of the profile pictures when using `DBProfilePictureSizeNormal`.
  */
 extern const CGFloat DBProfileViewControllerProfilePictureSizeNormal;
+
 /*!
  @abstract A constant value representing the size of the profile pictures when using `DBProfilePictureSizeLarge`.
  */
@@ -241,18 +242,19 @@ typedef NS_ENUM(NSInteger, DBProfilePictureAlignment) {
 
 /*!
  @abstract Adds a content view controller to the profile.
- @discussion Content view controllers must conform to `DBProfileContentViewController`.
- @param viewController The view controller to add.
- @see DBProfileContentViewController
+ @discussion Content view controllers must conform to `DBProfileContentPresenting`.
+ @param contentViewController The view controller to add.
+ @see DBProfileContentPresenting
  */
 - (void)addContentViewController:(UIViewController<DBProfileContentPresenting> *)contentViewController;
+- (void)addContentViewControllers:(NSArray *)contentViewControllers;
 
 /*!
  @abstract Inserts a content view controller to the profile at the specified index.
- @discussion Content view controllers must conform to `DBProfileContentViewController`.
+ @discussion Content view controllers must conform to `DBProfileContentPresenting`.
  @param viewController The view controller to insert.
  @param index The index at which to insert the view controller.
- @see DBProfileContentViewController
+ @see DBProfileContentPresenting
  */
 - (void)insertContentViewController:(UIViewController<DBProfileContentPresenting> *)contentViewController atIndex:(NSUInteger)index;
 

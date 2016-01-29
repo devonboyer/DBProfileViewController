@@ -387,6 +387,12 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
 
 #pragma mark - Adding and Removing Content View Controllers
 
+- (void)addContentViewControllers:(NSArray *)contentViewControllers {
+    for (UIViewController<DBProfileContentPresenting> *contentViewController in contentViewControllers) {
+        [self addContentViewController:contentViewController];
+    }
+}
+
 - (void)addContentViewController:(UIViewController<DBProfileContentPresenting> *)contentViewController {
     NSAssert(contentViewController, @"contentViewController cannot be nil");
     
@@ -947,7 +953,7 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
 #pragma mark - Blurring
 
 - (UIImage *)blurredImageAt:(CGFloat)percent {
-    NSNumber *keyNumber = @(round(percent * 20));
+    NSNumber *keyNumber = @(round(percent * 30));
     return [self.blurredImageCache objectForKey:keyNumber];
 }
 
@@ -955,8 +961,8 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     NSAssert(![NSThread isMainThread], @"`fillBlurredImageCacheWithImage:` should not be called on main thread");
     CGFloat maxBlurRadius = 30;
     [self.blurredImageCache removeAllObjects];
-    for (int i = 0; i <= 20; i++) {
-        CGFloat radius = maxBlurRadius * i/20;
+    for (int i = 0; i <= 30; i++) {
+        CGFloat radius = maxBlurRadius * i/30;
         [self.blurredImageCache setObject:[DBProfileImageEffects imageByApplyingBlurToImage:image withRadius:radius] forKey:@(i)];
     }
 }

@@ -34,9 +34,9 @@
     self.automaticallyAdjustsScrollViewInsets = NO;
     self.coverPhotoMimicsNavigationBar = YES;
     
-    [self addContentViewController:[[DBFollowersTableViewController alloc] init]];
-    [self addContentViewController:[[DBPhotosTableViewController alloc] init]];
-    [self addContentViewController:[[DBLikesTableViewController alloc] init]];
+    [self addContentViewControllers:@[[[DBFollowersTableViewController alloc] init],
+                                      [[DBPhotosTableViewController alloc] init],
+                                      [[DBLikesTableViewController alloc] init]]];
     
     [self setCoverPhoto:[UIImage imageNamed:@"cover-photo-blog.png"] animated:NO];
     [self setProfilePicture:[UIImage imageNamed:@"profile-picture.jpg"] animated:NO];
@@ -52,8 +52,8 @@
     detailsView.tintColor = [UIColor whiteColor];
     detailsView.editProfileButton.hidden = YES;
     
-    self.profilePictureSize = DBProfilePictureSizeLarge;
-    self.profilePictureView.style = DBProfilePictureStyleRound;
+    self.profilePictureSize = DBProfilePictureSizeNormal;
+    self.profilePictureView.style = DBProfilePictureStyleRoundedRect;
 }
 
 - (void)profileViewControllerDidPullToRefresh:(DBProfileViewController *)viewController {

@@ -30,9 +30,9 @@
     self.profilePictureInset = UIEdgeInsetsMake(0, 15, 72/2.0 - 10, 0);
     self.allowsPullToRefresh = YES;
     
-    [self addContentViewController:[[DBFollowersTableViewController alloc] init]];
-    [self addContentViewController:[[DBPhotosTableViewController alloc] init]];
-    [self addContentViewController:[[DBLikesTableViewController alloc] init]];
+    [self addContentViewControllers:@[[[DBFollowersTableViewController alloc] init],
+                                      [[DBPhotosTableViewController alloc] init],
+                                      [[DBLikesTableViewController alloc] init]]];
     
     [self setCoverPhoto:[UIImage imageNamed:@"cover-photo.png"] animated:NO];
     [self setProfilePicture:[UIImage imageNamed:@"profile-picture.jpg"] animated:NO];
