@@ -424,11 +424,11 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     }
     
     CGFloat topInset = CGRectGetMaxY(self.navigationView.frame) + CGRectGetHeight(self.segmentedControlView.frame);
-    _shouldScrollToTop = scrollView.contentOffset.y >= topInset;
+    _shouldScrollToTop = scrollView.contentOffset.y >= -topInset;
     _sharedContentOffset = scrollView.contentOffset;
     
     // Cache content offset of disappearing scroll view
-    [self cacheContentOffset:scrollView.contentOffset forKey:[self titleForVisibleContentViewController]];
+    [self cacheContentOffset:scrollView.contentOffset forKey:[self.visibleContentViewController contentTitle]];
     
     // Remove previous view controller from container
     [self removeViewControllerFromContainer:self.visibleContentViewController];
@@ -584,6 +584,7 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
         self.coverPhotoView.frame = CGRectZero;
     }
     
+    [scrollView bringSubviewToFront:self.detailsView];
     [scrollView addSubview:self.profilePictureView];
     
     [self configureDetailsViewLayoutConstraintsWithScrollView:scrollView];
@@ -605,9 +606,9 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
         [self resetContentOffsetForScrollView:scrollView];
         
         // Restore content offset for scroll view from cache
-        CGPoint contentOffset = [self cachedContentOffsetForKey:[self titleForVisibleContentViewController]];
-        if (contentOffset.y > scrollView.contentOffset.y && !self.automaticallyAdjustsScrollViewInsets) {
-            [scrollView setContentOffset:contentOffset];
+        CGPoint cachedContentOffset = [self cachedContentOffsetForKey:[visibleViewController contentTitle]];
+        if (cachedContentOffset.y > -scrollView.contentOffset.y) {
+            [scrollView setContentOffset:cachedContentOffset];
         }
     } else {
         [scrollView setContentOffset:_sharedContentOffset];
@@ -726,7 +727,7 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
         [self updateSubviewsWithContentOffset:contentOffset];
         [self handlePullToRefreshWithScrollView:scrollView];
         
-        if (self.coverPhotoMimicsNavigationBar) {
+        if (self.coverPhotoMimicsNavigationBar && !(self.coverPhotoOptions & DBProfileCoverPhotoOptionExtend)) {
             if (contentOffset.y < CGRectGetHeight(self.coverPhotoView.frame) - self.coverPhotoViewBottomConstraint.constant) {
                 [scrollView insertSubview:self.profilePictureView aboveSubview:self.coverPhotoView];
             } else {
