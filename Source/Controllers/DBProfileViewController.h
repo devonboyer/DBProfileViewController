@@ -31,11 +31,11 @@ extern const CGFloat DBProfileViewControllerProfilePictureSizeLarge;
  */
 typedef NS_OPTIONS(NSUInteger, DBProfileCoverPhotoOptions) {
     /*!
-     @abstract No options are specified
+     @abstract No options are specified.
      */
     DBProfileCoverPhotoOptionNone      = 1 << 0,
     /*!
-     @abstract The cover photo will strech with the scroll view.
+     @abstract The cover photo will stretch with the scroll view.
      */
     DBProfileCoverPhotoOptionStretch   = 1 << 1,
     /*!
@@ -180,7 +180,7 @@ typedef NS_ENUM(NSInteger, DBProfilePictureAlignment) {
 @property (nonatomic, assign) DBProfileCoverPhotoOptions coverPhotoOptions;
 
 /*!
- @abstract YES if the cover photo should be mimic a navigation bar when the view is scrolled, NO otherwise.
+ @abstract YES if the cover photo should mimic a navigation bar when the view is scrolled, NO otherwise.
  @discussion The default is YES. When this property is set to YES you should set `automaticallyAdjustsScrollViewInsets` to NO, otherwise set `automaticallyAdjustsScrollViewInsets` to YES.
  */
 @property (nonatomic, assign) BOOL coverPhotoMimicsNavigationBar;

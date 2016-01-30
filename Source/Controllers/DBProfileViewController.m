@@ -192,7 +192,7 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     // FIXME: Minor performance hit while loading the view
     [self.view setNeedsUpdateConstraints];
     
-    [self scrollVisibleContentViewControllerToTop];
+    [self scrollVisibleContentViewControllerToTopAnimated:NO];
     
     if (self.coverPhotoMimicsNavigationBar) {
         [self.navigationController setNavigationBarHidden:YES animated:YES];
@@ -269,6 +269,7 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
 }
 
 - (void)setCoverPhotoOptions:(DBProfileCoverPhotoOptions)coverPhotoOptions {
+    if (_coverPhotoOptions == coverPhotoOptions) return;
     _coverPhotoOptions = coverPhotoOptions;
     [self.view setNeedsUpdateConstraints];
 }
@@ -300,12 +301,19 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
 - (void)setCoverPhotoMimicsNavigationBar:(BOOL)coverPhotoMimicsNavigationBar {
     _coverPhotoMimicsNavigationBar = coverPhotoMimicsNavigationBar;
     self.navigationView.hidden = !coverPhotoMimicsNavigationBar;
+    [self.view setNeedsUpdateConstraints];
 }
 
 - (void)setDetailsView:(UIView *)detailsView {
     NSAssert(detailsView, @"detailsView cannot be nil");
     _detailsView = detailsView;
-    [self configureVisibleViewController:self.visibleContentViewController];
+    [self configureContentViewControllers];
+}
+
+- (void)setAllowsPullToRefresh:(BOOL)allowsPullToRefresh {
+    if (_allowsPullToRefresh == allowsPullToRefresh) return;
+    _allowsPullToRefresh = allowsPullToRefresh;
+    [self configureContentViewControllers];
 }
 
 #pragma mark - Action Responders
@@ -370,7 +378,7 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
 - (void)addContentViewControllers:(NSArray *)contentViewControllers {
     [self.mutableContentViewControllers addObjectsFromArray:contentViewControllers];
     [self configureContentViewControllers];
-    [self scrollVisibleContentViewControllerToTop];
+    [self scrollVisibleContentViewControllerToTopAnimated:NO];
 }
 
 - (void)addContentViewController:(UIViewController<DBProfileContentPresenting> *)contentViewController {
@@ -378,7 +386,7 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     
     [self.mutableContentViewControllers addObject:contentViewController];
     [self configureContentViewControllers];
-    [self scrollVisibleContentViewControllerToTop];
+    [self scrollVisibleContentViewControllerToTopAnimated:NO];
 }
 
 - (void)insertContentViewController:(UIViewController<DBProfileContentPresenting> *)contentViewController atIndex:(NSUInteger)index {
@@ -386,14 +394,14 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     
     [self.mutableContentViewControllers insertObject:contentViewController atIndex:index];
     [self configureContentViewControllers];
-    [self scrollVisibleContentViewControllerToTop];
+    [self scrollVisibleContentViewControllerToTopAnimated:NO];
 }
 
 - (void)removeContentViewControllerAtIndex:(NSUInteger)index {
     if (index < [self numberOfContentViewControllers]) {
         [self.mutableContentViewControllers removeObjectAtIndex:index];
         [self configureContentViewControllers];
-        [self scrollVisibleContentViewControllerToTop];
+        [self scrollVisibleContentViewControllerToTopAnimated:NO];
     }
 }
 
@@ -404,7 +412,7 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     }
     
     CGFloat topInset = CGRectGetMaxY(self.navigationView.frame) + CGRectGetHeight(self.segmentedControlView.frame);
-    _shouldScrollToTop = scrollView.contentOffset.y < topInset;
+    _shouldScrollToTop = scrollView.contentOffset.y >= topInset;
     _contentOffset = scrollView.contentOffset;
     
     // Cache content offset of disappearing scroll view
@@ -476,8 +484,7 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
 }
 
 - (NSString *)titleForVisibleContentViewController {
-    NSUInteger currentlySelectedIndex = [self visibleContentViewControllerIndex];
-    return [self titleForContentViewControllerAtIndex:currentlySelectedIndex];
+    return [self.visibleContentViewController contentTitle];
 }
 
 - (NSString *)subtitleForVisibleContentViewController {
@@ -515,9 +522,9 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     return [[self.contentOffsetCache objectForKey:key] CGPointValue];
 }
 
-- (void)scrollVisibleContentViewControllerToTop {
+- (void)scrollVisibleContentViewControllerToTopAnimated:(BOOL)animated {
     UIScrollView *scrollView = [self.visibleContentViewController contentScrollView];
-    [scrollView setContentOffset:CGPointMake(0, -scrollView.contentInset.top)];
+    [scrollView setContentOffset:CGPointMake(0, -scrollView.contentInset.top) animated:animated];
 }
 
 - (void)resetContentOffsetForScrollView:(UIScrollView *)scrollView {
@@ -558,8 +565,8 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
         
         // Pull-to-refresh ?
         if (self.allowsPullToRefresh) {
-            [scrollView addSubview:self.activityIndicator];
-            [self configureActivityIndicatorLayoutConstraintsWithScrollView:scrollView];
+            [self.coverPhotoView addSubview:self.activityIndicator];
+            [self configureActivityIndicatorLayoutConstraints];
         }
     } else {
         self.coverPhotoView.frame = CGRectZero;
@@ -569,7 +576,7 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     
     [self configureDetailsViewLayoutConstraintsWithScrollView:scrollView];
     [self configureProfilePictureViewLayoutConstraintsWithScrollView:scrollView];
-
+    
     [scrollView setNeedsLayout];
     [scrollView layoutIfNeeded];
     
@@ -582,13 +589,9 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     [self beginObservingContentOffsetForScrollView:scrollView];
     
     // Reset the content offset
-    if (!_hasAppeared) {
-        [self scrollVisibleContentViewControllerToTop];
-    } else if (!_shouldScrollToTop) {
+    if (_shouldScrollToTop) {
         [self resetContentOffsetForScrollView:scrollView];
         
-        // TOOD: Check if content size is too small (not enough rows to fill the screen)
-    
         // Restore content offset for scroll view from cache
         CGPoint contentOffset = [self cachedContentOffsetForKey:[self titleForVisibleContentViewController]];
         if (contentOffset.y > scrollView.contentOffset.y && !self.automaticallyAdjustsScrollViewInsets) {
@@ -629,6 +632,10 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     UIEdgeInsets contentInset = scrollView.contentInset;
     if (self.coverPhotoOptions & DBProfileCoverPhotoOptionExtend) topInset -= CGRectGetHeight(self.detailsView.frame);
     contentInset.top = (self.automaticallyAdjustsScrollViewInsets) ? topInset + [self.topLayoutGuide length] : topInset;
+    
+    if (scrollView.contentSize.height < CGRectGetHeight(scrollView.frame)) {
+        contentInset.bottom = contentInset.top + CGRectGetHeight(self.segmentedControlView.frame) + 2;
+    }
     
     scrollView.contentInset = contentInset;
     
@@ -904,9 +911,9 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     [scrollView addConstraint:self.detailsViewTopConstraint];
 }
 
-- (void)configureActivityIndicatorLayoutConstraintsWithScrollView:(UIScrollView *)scrollView {
-    [scrollView addConstraint:[NSLayoutConstraint constraintWithItem:self.activityIndicator attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.coverPhotoView attribute:NSLayoutAttributeCenterX multiplier:1 constant:0]];
-    [scrollView addConstraint:[NSLayoutConstraint constraintWithItem:self.activityIndicator attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:self.coverPhotoView attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
+- (void)configureActivityIndicatorLayoutConstraints {
+    [self.coverPhotoView addConstraint:[NSLayoutConstraint constraintWithItem:self.activityIndicator attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.coverPhotoView attribute:NSLayoutAttributeCenterX multiplier:1 constant:0]];
+    [self.coverPhotoView addConstraint:[NSLayoutConstraint constraintWithItem:self.activityIndicator attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self.coverPhotoView attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
 }
 
 - (void)configureCoverPhotoViewLayoutConstraintsWithScrollView:(UIScrollView *)scrollView {
