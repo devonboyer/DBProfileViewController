@@ -17,22 +17,31 @@
 @class DBProfileNavigationView;
 
 /*!
- @abstract A constant value representing the size of the profile pictures when using `DBProfilePictureSizeNormal`.
+ @abstract A constant value representing the size of the profile picture when using `DBProfilePictureSizeNormal`.
  */
 extern const CGFloat DBProfileViewControllerProfilePictureSizeNormal;
 
 /*!
- @abstract A constant value representing the size of the profile pictures when using `DBProfilePictureSizeLarge`.
+ @abstract A constant value representing the size of the profile picture when using `DBProfilePictureSizeLarge`.
  */
 extern const CGFloat DBProfileViewControllerProfilePictureSizeLarge;
 
 /*!
- @abstract The `DBProfileCoverPhotoOptions` defines the types of options for the cover photo.
+ @abstract The `DBProfileCoverPhotoOptions` defines options for changing the behaviour of the cover photo.
  */
 typedef NS_OPTIONS(NSUInteger, DBProfileCoverPhotoOptions) {
+    /*!
+     @abstract No options are specified
+     */
     DBProfileCoverPhotoOptionNone      = 1 << 0,
+    /*!
+     @abstract The cover photo will strech with the scroll view.
+     */
     DBProfileCoverPhotoOptionStretch   = 1 << 1,
-    DBProfileCoverPhotoOptionExtend  = 1 << 2,
+    /*!
+     @abstract The cover photo will extend beneath the details view.
+     */
+    DBProfileCoverPhotoOptionExtend    = 1 << 2,
 };
 
 /*!
@@ -164,6 +173,10 @@ typedef NS_ENUM(NSInteger, DBProfilePictureAlignment) {
  */
 @property (nonatomic, assign) BOOL coverPhotoHidden;
 
+/*!
+ @abstract The options that specify the behaviour of the covere photo.
+ @discussion The default is `DBProfileCoverPhotoOptionStretch`.
+ */
 @property (nonatomic, assign) DBProfileCoverPhotoOptions coverPhotoOptions;
 
 /*!
@@ -243,7 +256,12 @@ typedef NS_ENUM(NSInteger, DBProfilePictureAlignment) {
  */
 - (void)addContentViewController:(UIViewController<DBProfileContentPresenting> *)contentViewController;
 
-// Better performance than addContentViewController:
+/*!
+ @abstract Adds an array of content view controller to the profile.
+ @discussion Content view controllers must conform to `DBProfileContentPresenting`.
+ @param contentViewControllers An array of view controllers to add.
+ @see DBProfileContentPresenting
+ */
 - (void)addContentViewControllers:(NSArray *)contentViewControllers;
 
 /*!
