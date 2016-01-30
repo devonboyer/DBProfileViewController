@@ -424,6 +424,7 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     }
     
     CGFloat topInset = CGRectGetMaxY(self.navigationView.frame) + CGRectGetHeight(self.segmentedControlView.frame);
+    if (self.automaticallyAdjustsScrollViewInsets) topInset = CGRectGetHeight(self.segmentedControlView.frame);
     _shouldScrollToTop = scrollView.contentOffset.y >= -topInset;
     _sharedContentOffset = scrollView.contentOffset;
     
@@ -690,7 +691,7 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
 }
 
 - (void)fillBlurredImageCacheWithImage:(UIImage *)image {
-    NSAssert(![NSThread isMainThread], @"`fillBlurredImageCacheWithImage:` should not be called on main thread");
+    NSAssert(![NSThread isMainThread], @"fillBlurredImageCacheWithImage: should not be called on main thread");
     CGFloat maxBlurRadius = 30;
     [self.blurredImageCache removeAllObjects];
     for (int i = 0; i <= 15; i++) {
