@@ -29,9 +29,8 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
 
 @interface DBProfileViewController ()
 {
-    BOOL _hasAppeared;
     BOOL _shouldScrollToTop;
-    CGPoint _contentOffset;
+    CGPoint _sharedContentOffset;
 }
 
 @property (nonatomic, getter=isRefreshing) BOOL refreshing;
@@ -192,7 +191,7 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     // FIXME: Minor performance hit while loading the view
     [self.view setNeedsUpdateConstraints];
     
-    [self scrollVisibleContentViewControllerToTopAnimated:NO];
+    [self scrollVisibleContentViewControllerToTop];
     
     if (self.coverPhotoMimicsNavigationBar) {
         [self.navigationController setNavigationBarHidden:YES animated:YES];
@@ -203,8 +202,6 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
-    _hasAppeared = YES;
-
     NSAssert([self numberOfContentViewControllers] > 0, @"`DBProfileViewController` must have at least one content view controller.");
 }
 
@@ -243,7 +240,7 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     [self configureContentViewControllers];
     
     UIScrollView *scrollView = [self.visibleContentViewController contentScrollView];
-    [scrollView setContentOffset:_contentOffset];
+    [scrollView setContentOffset:_sharedContentOffset];
 }
 
 #pragma mark - Getters
@@ -352,7 +349,7 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     }
     
     if (croppedImage) {
-        // FIXME: Filling blurred image cache is very hard on memory. Is there a way we can cancel this in viewWillDissappear:?
+        // FIXME: Is there a way we can cancel this in viewWillDissappear: if necessary?
         __weak DBProfileViewController *weakSelf = self;
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             [weakSelf fillBlurredImageCacheWithImage:croppedImage];
@@ -378,7 +375,6 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
 - (void)addContentViewControllers:(NSArray *)contentViewControllers {
     [self.mutableContentViewControllers addObjectsFromArray:contentViewControllers];
     [self configureContentViewControllers];
-    [self scrollVisibleContentViewControllerToTopAnimated:NO];
 }
 
 - (void)addContentViewController:(UIViewController<DBProfileContentPresenting> *)contentViewController {
@@ -386,7 +382,6 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     
     [self.mutableContentViewControllers addObject:contentViewController];
     [self configureContentViewControllers];
-    [self scrollVisibleContentViewControllerToTopAnimated:NO];
 }
 
 - (void)insertContentViewController:(UIViewController<DBProfileContentPresenting> *)contentViewController atIndex:(NSUInteger)index {
@@ -394,14 +389,12 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     
     [self.mutableContentViewControllers insertObject:contentViewController atIndex:index];
     [self configureContentViewControllers];
-    [self scrollVisibleContentViewControllerToTopAnimated:NO];
 }
 
 - (void)removeContentViewControllerAtIndex:(NSUInteger)index {
     if (index < [self numberOfContentViewControllers]) {
         [self.mutableContentViewControllers removeObjectAtIndex:index];
         [self configureContentViewControllers];
-        [self scrollVisibleContentViewControllerToTopAnimated:NO];
     }
 }
 
@@ -413,7 +406,7 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     
     CGFloat topInset = CGRectGetMaxY(self.navigationView.frame) + CGRectGetHeight(self.segmentedControlView.frame);
     _shouldScrollToTop = scrollView.contentOffset.y >= topInset;
-    _contentOffset = scrollView.contentOffset;
+    _sharedContentOffset = scrollView.contentOffset;
     
     // Cache content offset of disappearing scroll view
     [self cacheContentOffset:scrollView.contentOffset forKey:[self titleForVisibleContentViewController]];
@@ -522,9 +515,9 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     return [[self.contentOffsetCache objectForKey:key] CGPointValue];
 }
 
-- (void)scrollVisibleContentViewControllerToTopAnimated:(BOOL)animated {
+- (void)scrollVisibleContentViewControllerToTop {
     UIScrollView *scrollView = [self.visibleContentViewController contentScrollView];
-    [scrollView setContentOffset:CGPointMake(0, -scrollView.contentInset.top) animated:animated];
+    [scrollView setContentOffset:CGPointMake(0, -scrollView.contentInset.top)];
 }
 
 - (void)resetContentOffsetForScrollView:(UIScrollView *)scrollView {
@@ -598,7 +591,7 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
             [scrollView setContentOffset:contentOffset];
         }
     } else {
-        [scrollView setContentOffset:_contentOffset];
+        [scrollView setContentOffset:_sharedContentOffset];
     }
     [scrollView flashScrollIndicators];
     
@@ -629,20 +622,24 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
 - (void)adjustContentInsetForScrollView:(UIScrollView *)scrollView {
     CGFloat topInset = CGRectGetHeight(self.segmentedControlView.frame) + CGRectGetHeight(self.detailsView.frame) + CGRectGetHeight(self.coverPhotoView.frame);
     
+    // Calculate scroll view top inset
     UIEdgeInsets contentInset = scrollView.contentInset;
     if (self.coverPhotoOptions & DBProfileCoverPhotoOptionExtend) topInset -= CGRectGetHeight(self.detailsView.frame);
     contentInset.top = (self.automaticallyAdjustsScrollViewInsets) ? topInset + [self.topLayoutGuide length] : topInset;
     
-    if (scrollView.contentSize.height < CGRectGetHeight(scrollView.frame)) {
-        contentInset.bottom = contentInset.top + CGRectGetHeight(self.segmentedControlView.frame) + 2;
+    // Calculate scroll view bottom inset
+    CGFloat minimumContentSizeHeight = CGRectGetHeight(scrollView.frame) - 64 - CGRectGetHeight(self.segmentedControlView.frame) + 5;
+    
+    if (scrollView.contentSize.height < minimumContentSizeHeight) {
+        contentInset.bottom = minimumContentSizeHeight - scrollView.contentSize.height;
     }
     
     scrollView.contentInset = contentInset;
     
-    // Cover photo inset
+    // Calculate cover photo inset
     self.coverPhotoViewTopConstraint.constant = -topInset;
     
-    // Details view inset
+    // Calculate details view inset
     if (self.coverPhotoOptions & DBProfileCoverPhotoOptionExtend) {
         topInset -= (CGRectGetHeight(self.coverPhotoView.frame) - CGRectGetHeight(self.detailsView.frame));
         [scrollView insertSubview:self.detailsView aboveSubview:self.coverPhotoView];
