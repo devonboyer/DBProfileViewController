@@ -180,18 +180,16 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
                                          forControlEvents:UIControlEventValueChanged];
     
     [self configureDefaults];
-    [self configureContentViewControllers];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
-    if ([self numberOfContentViewControllers] > 0 && !_hasAppeared) {
-        [self setVisibleContentViewControllerAtIndex:0];
-    }
-    
     [self.view setNeedsLayout];
     [self.view layoutIfNeeded];
+    [self.view setNeedsUpdateConstraints]; // performance hit while loading the view
+    
+    [self scrollVisibleContentViewControllerToTop];
     
     if (self.coverPhotoMimicsNavigationBar) {
         [self.navigationController setNavigationBarHidden:YES animated:YES];
@@ -202,15 +200,9 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
-    NSAssert([self numberOfContentViewControllers] > 0, @"`DBProfileViewController` must have at least one content view controller.");
-}
+    _hasAppeared = YES;
 
-- (void)viewDidLayoutSubviews {
-    [super viewDidLayoutSubviews];
-    if (!_hasAppeared) {
-        [self configureContentViewControllers];
-        _hasAppeared = YES;
-    }
+    NSAssert([self numberOfContentViewControllers] > 0, @"`DBProfileViewController` must have at least one content view controller.");
 }
 
 - (void)updateViewConstraints {
@@ -271,12 +263,12 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     NSAssert(coverPhotoHeightMultiplier > 0 && coverPhotoHeightMultiplier <= 1, @"`coverPhotoHeightMultiplier` must be greater than 0 or less than or equal to 1.");
     if (_coverPhotoHeightMultiplier == coverPhotoHeightMultiplier) return;
     _coverPhotoHeightMultiplier = coverPhotoHeightMultiplier;
-    [self updateViewConstraints];
+    [self.view setNeedsUpdateConstraints];
 }
 
 - (void)setCoverPhotoOptions:(DBProfileCoverPhotoOptions)coverPhotoOptions {
     _coverPhotoOptions = coverPhotoOptions;
-    [self updateViewConstraints];
+    [self.view setNeedsUpdateConstraints];
 }
 
 - (void)setCoverPhotoStyle:(DBProfileCoverPhotoStyle)coverPhotoStyle {
@@ -285,25 +277,25 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     }
     if (_coverPhotoStyle == coverPhotoStyle) return;
     _coverPhotoStyle = coverPhotoStyle;
-    [self updateViewConstraints];
+    [self.view setNeedsUpdateConstraints];
 }
 
 - (void)setProfilePictureInset:(UIEdgeInsets)profilePictureInset {
     if (UIEdgeInsetsEqualToEdgeInsets(_profilePictureInset, profilePictureInset)) return;
     _profilePictureInset = profilePictureInset;
-    [self updateViewConstraints];
+    [self.view setNeedsUpdateConstraints];
 }
 
 - (void)setProfilePictureAlignment:(DBProfilePictureAlignment)profilePictureAlignment {
     if (_profilePictureAlignment == profilePictureAlignment) return;
     _profilePictureAlignment = profilePictureAlignment;
-    [self updateViewConstraints];
+    [self.view setNeedsUpdateConstraints];
 }
 
 - (void)setProfilePictureSize:(DBProfilePictureSize)profilePictureSize {
     if (_profilePictureSize == profilePictureSize) return;
     _profilePictureSize = profilePictureSize;
-    [self updateViewConstraints];
+    [self.view setNeedsUpdateConstraints];
 }
 
 - (void)setCoverPhotoMimicsNavigationBar:(BOOL)coverPhotoMimicsNavigationBar {
@@ -366,8 +358,10 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     }
     
     if (croppedImage) {
+        // FIXME: Filling blurred image cache is very hard on memory. Is there a way we can cancel this in viewWillDissappear:?
+        __weak DBProfileViewController *weakSelf = self;
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            [self fillBlurredImageCacheWithImage:croppedImage];
+            [weakSelf fillBlurredImageCacheWithImage:croppedImage];
         });
     }
 }
@@ -388,9 +382,9 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
 #pragma mark - Adding and Removing Content View Controllers
 
 - (void)addContentViewControllers:(NSArray *)contentViewControllers {
-    for (UIViewController<DBProfileContentPresenting> *contentViewController in contentViewControllers) {
-        [self addContentViewController:contentViewController];
-    }
+    [self.mutableContentViewControllers addObjectsFromArray:contentViewControllers];
+    [self configureContentViewControllers];
+    [self scrollVisibleContentViewControllerToTop];
 }
 
 - (void)addContentViewController:(UIViewController<DBProfileContentPresenting> *)contentViewController {
@@ -584,7 +578,7 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     [scrollView setNeedsLayout];
     [scrollView layoutIfNeeded];
     
-    [self updateViewConstraints];
+    [self.view setNeedsUpdateConstraints];
     
     // Adjust contentInset
     [self adjustContentInsetForScrollView:scrollView];
@@ -953,7 +947,7 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
 #pragma mark - Blurring
 
 - (UIImage *)blurredImageAt:(CGFloat)percent {
-    NSNumber *keyNumber = @(round(percent * 30));
+    NSNumber *keyNumber = @(round(percent * 15));
     return [self.blurredImageCache objectForKey:keyNumber];
 }
 
@@ -961,8 +955,8 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     NSAssert(![NSThread isMainThread], @"`fillBlurredImageCacheWithImage:` should not be called on main thread");
     CGFloat maxBlurRadius = 30;
     [self.blurredImageCache removeAllObjects];
-    for (int i = 0; i <= 30; i++) {
-        CGFloat radius = maxBlurRadius * i/30;
+    for (int i = 0; i <= 15; i++) {
+        CGFloat radius = maxBlurRadius * i/15;
         [self.blurredImageCache setObject:[DBProfileImageEffects imageByApplyingBlurToImage:image withRadius:radius] forKey:@(i)];
     }
 }

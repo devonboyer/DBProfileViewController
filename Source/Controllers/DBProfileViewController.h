@@ -247,6 +247,8 @@ typedef NS_ENUM(NSInteger, DBProfilePictureAlignment) {
  @see DBProfileContentPresenting
  */
 - (void)addContentViewController:(UIViewController<DBProfileContentPresenting> *)contentViewController;
+
+// Better performance than addContentViewController:
 - (void)addContentViewControllers:(NSArray *)contentViewControllers;
 
 /*!
