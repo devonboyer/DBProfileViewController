@@ -373,15 +373,28 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
 #pragma mark - Adding and Removing Content View Controllers
 
 - (void)addContentViewControllers:(NSArray *)contentViewControllers {
+    NSAssert(contentViewControllers, @"contentViewControllers cannot be nil");
+
+    BOOL scrollVisibleContentViewControllerToTop = [self numberOfContentViewControllers] == 1;
+
     [self.mutableContentViewControllers addObjectsFromArray:contentViewControllers];
+    
     [self configureContentViewControllers];
+    
+    if (scrollVisibleContentViewControllerToTop) [self scrollVisibleContentViewControllerToTop];
 }
 
 - (void)addContentViewController:(UIViewController<DBProfileContentPresenting> *)contentViewController {
     NSAssert(contentViewController, @"contentViewController cannot be nil");
     
+    BOOL scrollVisibleContentViewControllerToTop = [self numberOfContentViewControllers] == 1;
+    
     [self.mutableContentViewControllers addObject:contentViewController];
+
     [self configureContentViewControllers];
+    
+    if (scrollVisibleContentViewControllerToTop) [self scrollVisibleContentViewControllerToTop];
+
 }
 
 - (void)insertContentViewController:(UIViewController<DBProfileContentPresenting> *)contentViewController atIndex:(NSUInteger)index {
@@ -393,8 +406,14 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
 
 - (void)removeContentViewControllerAtIndex:(NSUInteger)index {
     if (index < [self numberOfContentViewControllers]) {
+        
+        BOOL scrollVisibleContentViewControllerToTop = [self numberOfContentViewControllers] == 2;
+        
         [self.mutableContentViewControllers removeObjectAtIndex:index];
+
         [self configureContentViewControllers];
+
+        if (scrollVisibleContentViewControllerToTop) [self scrollVisibleContentViewControllerToTop];
     }
 }
 
@@ -611,7 +630,7 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     
     // Set the selected segment index
     if ([self numberOfContentViewControllers] > 0) {
-        if (selectedSegmentIndex == UISegmentedControlNoSegment) {
+        if (selectedSegmentIndex == UISegmentedControlNoSegment || selectedSegmentIndex >= [self numberOfContentViewControllers]) {
             [self setVisibleContentViewControllerAtIndex:0];
         } else {
             [self setVisibleContentViewControllerAtIndex:selectedSegmentIndex];
@@ -935,7 +954,9 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     self.coverPhotoViewTopSuperviewConstraint.priority = UILayoutPriorityDefaultHigh + 1;
     [self.view addConstraint:self.coverPhotoViewTopSuperviewConstraint];
     
-    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.segmentedControlView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:self.coverPhotoView attribute:NSLayoutAttributeBottom multiplier:1 constant:0]];
+    if ([self numberOfContentViewControllers] > 1) {
+        [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.segmentedControlView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:self.coverPhotoView attribute:NSLayoutAttributeBottom multiplier:1 constant:0]];
+    }
 }
 
 - (void)configureProfilePictureViewLayoutConstraintsWithScrollView:(UIScrollView *)scrollView {
