@@ -19,12 +19,12 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-        [self _commonInit];
+        [self db_commonInit];
     }
     return self;
 }
 
-- (void)_commonInit {
+- (void)db_commonInit {
     _navigationItem = [[UINavigationItem alloc] init];
     _navigationBar = [[UINavigationBar alloc] init];
     _titleView = [[DBProfileTitleView alloc] init];

@@ -22,28 +22,12 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-        [self _commonInit];
+        [self db_commonInit];
     }
     return self;
 }
 
-- (instancetype)initWithFrame:(CGRect)frame {
-    self = [super initWithFrame:frame];
-    if (self) {
-        [self _commonInit];
-    }
-    return self;
-}
-
-- (instancetype)initWithCoder:(NSCoder *)aDecoder {
-    self = [super initWithCoder:aDecoder];
-    if (self) {
-        [self _commonInit];
-    }
-    return self;
-}
-
-- (void)_commonInit {
+- (void)db_commonInit {
     _segmentedControl = [[UISegmentedControl alloc] init];
     _topBorderView = [[UIView alloc] init];
     _bottomBorderView = [[UIView alloc] init];
@@ -60,13 +44,15 @@
     [self configureTopBorderViewLayoutConstraints];
     [self configureBottomBorderViewLayoutConstraints];
     
-    [self configureDefaultAppearance];
+    [self configureDefaults];
 }
 
-#pragma mark - Defaults
+#pragma mark - Helpers
 
-- (void)configureDefaultAppearance {
+- (void)configureDefaults {
     UIColor *borderColor = [UIColor colorWithWhite:0 alpha:0.12];
+    self.backgroundColor = [UIColor whiteColor];
+    self.segmentedControl.tintColor = [UIColor grayColor];
     
     self.topBorderView.backgroundColor = borderColor;
     self.bottomBorderView.backgroundColor = borderColor;

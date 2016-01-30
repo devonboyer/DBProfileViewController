@@ -19,12 +19,12 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-        [self _commonInit];
+        [self db_commonInit];
     }
     return self;
 }
 
-- (void)_commonInit {
+- (void)db_commonInit {
     self.backgroundColor = [UIColor whiteColor];
     
     _imageView = [[UIImageView alloc] init];
@@ -39,12 +39,12 @@
     [self addSubview:self.imageView];
     
     [self configureImageViewLayoutConstraints];
-    [self configureDefaultAppearance];
+    [self configureDefaults];
 }
 
-#pragma mark - Defaults
+#pragma mark - Helpers
 
-- (void)configureDefaultAppearance {
+- (void)configureDefaults {
     self.backgroundColor = [UIColor clearColor];
     self.clipsToBounds = YES;
     

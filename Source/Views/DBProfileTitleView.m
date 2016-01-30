@@ -15,12 +15,12 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-        [self _commonInit];
+        [self db_commonInit];
     }
     return self;
 }
 
-- (void)_commonInit {
+- (void)db_commonInit {
     _contentView = [[UILabel alloc] init];
     _titleLabel = [[UILabel alloc] init];
     _subtitleLabel = [[UILabel alloc] init];
@@ -37,12 +37,12 @@
     [self configureTitleLabelLayoutConstraints];
     [self configureSubtitleLabelLayoutConstraints];
     
-    [self configureDefaultAppearance];
+    [self configureDefaults];
 }
 
-#pragma mark - Defaults
+#pragma mark - Helpers
 
-- (void)configureDefaultAppearance {
+- (void)configureDefaults {
     self.titleLabel.textColor = [UIColor whiteColor];
     self.titleLabel.font = [UIFont boldSystemFontOfSize:18];
     self.titleLabel.textAlignment = NSTextAlignmentCenter;

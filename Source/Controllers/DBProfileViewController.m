@@ -15,6 +15,7 @@
 #import "DBProfileNavigationView.h"
 #import "DBProfileContentPresenting.h"
 #import "DBProfileImageEffects.h"
+#import "NSBundle+DBProfileViewController.h"
 
 const CGFloat DBProfileViewControllerProfilePictureSizeNormal = 72.0;
 const CGFloat DBProfileViewControllerProfilePictureSizeLarge = 82.0;
@@ -69,7 +70,7 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
 - (instancetype)init {
     self = [super init];
     if (self) {
-        [self _commonInit];
+        [self db_commonInit];
     }
     return self;
 }
@@ -77,7 +78,7 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
 - (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        [self _commonInit];
+        [self db_commonInit];
     }
     return self;
 }
@@ -85,7 +86,7 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
 - (instancetype)initWithCoder:(NSCoder *)aDecoder {
     self = [super initWithCoder:aDecoder];
     if (self) {
-        [self _commonInit];
+        [self db_commonInit];
     }
     return self;
 }
@@ -94,12 +95,12 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     self = [super init];
     if (self) {
         [self.mutableContentViewControllers addObjectsFromArray:contentViewControllers];
-        [self _commonInit];
+        [self db_commonInit];
     }
     return self;
 }
 
-- (void)_commonInit {
+- (void)db_commonInit {
     _segmentedControlView = [[DBProfileSegmentedControlView alloc] init];
     _detailsView = [[DBProfileDetailsView alloc] init];
     _profilePictureView = [[DBProfilePictureView alloc] init];
@@ -112,12 +113,12 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
 
     NSCache *contentOffsetCache = [[NSCache alloc] init];
     contentOffsetCache.name = @"DBProfileViewController.contentOffsetCache";
-    contentOffsetCache.countLimit = 200;
+    contentOffsetCache.countLimit = 10;
     _contentOffsetCache = contentOffsetCache;
     
     NSCache *blurredImageCache = [[NSCache alloc] init];
     blurredImageCache.name = @"DBProfileViewController.blurredImageCache";
-    blurredImageCache.countLimit = 200;
+    blurredImageCache.countLimit = 30;
     _blurredImageCache = blurredImageCache;
 }
 
@@ -214,19 +215,18 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
 }
 
 - (void)configureDefaults {
+    // Cover photo
     self.coverPhotoOptions = DBProfileCoverPhotoOptionStretch;
     self.coverPhotoHidden = NO;
     self.coverPhotoMimicsNavigationBar = YES;
     self.coverPhotoHeightMultiplier = 0.2;
+    // Profile picture
     self.profilePictureAlignment = DBProfilePictureAlignmentLeft;
     self.profilePictureSize = DBProfilePictureSizeNormal;
     self.profilePictureInset = UIEdgeInsetsMake(0, 15, DBProfileViewControllerProfilePictureSizeNormal/2.0 - 10, 0);
     self.allowsPullToRefresh = YES;
-    
-    self.segmentedControlView.backgroundColor = [UIColor whiteColor];
-    self.segmentedControlView.segmentedControl.tintColor = [UIColor grayColor];
-    
-    self.navigationView.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"back-icon"] style:UIBarButtonItemStylePlain target:self action:@selector(back:)];
+    // Navigation
+    self.navigationView.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"db-profile-chevron" inBundle:[NSBundle db_resourcesBundle] compatibleWithTraitCollection:self.traitCollection] style:UIBarButtonItemStylePlain target:self action:@selector(back:)];
 }
 
 #pragma mark - Status Bar

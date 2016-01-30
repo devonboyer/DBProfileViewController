@@ -1,6 +1,9 @@
 source 'https://github.com/CocoaPods/Specs.git'
 use_frameworks!
 
+# ignore all warnings from all pods
+inhibit_all_warnings!
+
 target 'DBProfileViewController_Example', :exclusive => true do
   pod "DBProfileViewController", :path => "../"
   pod "UIImageEffects"
@@ -8,6 +11,4 @@ end
 
 target 'DBProfileViewController_Tests', :exclusive => true do
   pod "DBProfileViewController", :path => "../"
-
-  
 end

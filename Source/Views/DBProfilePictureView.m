@@ -21,12 +21,12 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-        [self _commonInit];
+        [self db_commonInit];
     }
     return self;
 }
 
-- (void)_commonInit {
+- (void)db_commonInit {
     _imageView = [[UIImageView alloc] init];
     
     [self.imageView setTranslatesAutoresizingMaskIntoConstraints:NO];
@@ -34,7 +34,7 @@
     [self addSubview:self.imageView];
     
     [self configureImageViewLayoutConstraints];
-    [self configureDefaultAppearance];
+    [self configureDefaults];
 }
 
 #pragma - Overrides
@@ -77,9 +77,9 @@
     [self updateConstraints];
 }
 
-#pragma mark - Defaults
+#pragma mark - Helpers
 
-- (void)configureDefaultAppearance {
+- (void)configureDefaults {
     self.backgroundColor = [UIColor whiteColor];
     self.layer.cornerRadius = 8;
     self.clipsToBounds = YES;

@@ -24,12 +24,12 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-        [self _commonInit];
+        [self db_commonInit];
     }
     return self;
 }
 
-- (void)_commonInit {
+- (void)db_commonInit {
     _contentView = [[UIView alloc] init];
     _nameLabel = [[UILabel alloc] init];
     _usernameLabel = [[UILabel alloc] init];
@@ -59,7 +59,7 @@
     [self configureDescriptionLabelLayoutConstraints];
     [self configureEditProfileButtonLayoutConstraints];
     
-    [self configureDefaultAppearance];
+    [self configureDefaults];
 }
 
 #pragma mark - Overrides
@@ -86,9 +86,9 @@
     [self updateConstraints];
 }
 
-#pragma mark - Defaults
+#pragma mark - Helpers
 
-- (void)configureDefaultAppearance {
+- (void)configureDefaults {
     self.tintColor = [UIColor colorWithRed:33/255.0 green:37/255.0 blue:42/255.0 alpha:1];
     
     self.contentInset = UIEdgeInsetsMake(15, 15, 15, 15);
