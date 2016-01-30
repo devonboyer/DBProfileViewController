@@ -27,17 +27,12 @@ extern const CGFloat DBProfileViewControllerProfilePictureSizeNormal;
 extern const CGFloat DBProfileViewControllerProfilePictureSizeLarge;
 
 /*!
- @abstract The `DBProfileCoverPhotoStyle` defines the types of styles for the cover photo.
+ @abstract The `DBProfileCoverPhotoOptions` defines the types of options for the cover photo.
  */
-typedef NS_ENUM(NSInteger, DBProfileCoverPhotoStyle) {
-    DBProfileCoverPhotoStyleNone, // no cover photo
-    DBProfileCoverPhotoStyleDefault, // display cover photo
-};
-
 typedef NS_OPTIONS(NSUInteger, DBProfileCoverPhotoOptions) {
     DBProfileCoverPhotoOptionNone      = 1 << 0,
     DBProfileCoverPhotoOptionStretch   = 1 << 1,
-    DBProfileCoverPhotoOptionExtended  = 1 << 2,
+    DBProfileCoverPhotoOptionExtend  = 1 << 2,
 };
 
 /*!
@@ -164,11 +159,11 @@ typedef NS_ENUM(NSInteger, DBProfilePictureAlignment) {
 @property (nonatomic, strong, readonly) DBProfileCoverPhotoView *coverPhotoView;
 
 /*!
- @abstract Specifies the style for the cover photo.
- @discussion The default is `DBProfileCoverPhotoStyleStretch`.
- @warning `DBProfileCoverPhotoStyleNone` is mutually exclusive with `coverPhotoMimicsNavigationBar` and `allowsPullToRefresh`.
+ @abstract YES if the cover photo should hidden, NO otherwise.
+ @discussion The default is `NO`.
  */
-@property (nonatomic, assign) DBProfileCoverPhotoStyle coverPhotoStyle;
+@property (nonatomic, assign) BOOL coverPhotoHidden;
+
 @property (nonatomic, assign) DBProfileCoverPhotoOptions coverPhotoOptions;
 
 /*!

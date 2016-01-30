@@ -23,7 +23,7 @@
     self.title = @"Devon Boyer";
     
     self.delegate = self;
-    
+        
     self.coverPhotoOptions = DBProfileCoverPhotoOptionStretch;
     self.profilePictureAlignment = DBProfilePictureAlignmentLeft;
     self.profilePictureSize = DBProfilePictureSizeNormal;

@@ -25,6 +25,8 @@
 }
 
 - (void)_commonInit {
+    self.backgroundColor = [UIColor whiteColor];
+    
     _imageView = [[UIImageView alloc] init];
     _overlayView = [[UIView alloc] init];
     

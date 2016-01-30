@@ -187,7 +187,9 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     
     [self.view setNeedsLayout];
     [self.view layoutIfNeeded];
-    [self.view setNeedsUpdateConstraints]; // performance hit while loading the view
+    
+    // FIXME: Minor performance hit while loading the view
+    [self.view setNeedsUpdateConstraints];
     
     [self scrollVisibleContentViewControllerToTop];
     
@@ -213,7 +215,7 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
 
 - (void)configureDefaults {
     self.coverPhotoOptions = DBProfileCoverPhotoOptionStretch;
-    self.coverPhotoStyle = DBProfileCoverPhotoStyleDefault;
+    self.coverPhotoHidden = NO;
     self.coverPhotoMimicsNavigationBar = YES;
     self.coverPhotoHeightMultiplier = 0.2;
     self.profilePictureAlignment = DBProfilePictureAlignmentLeft;
@@ -271,12 +273,9 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     [self.view setNeedsUpdateConstraints];
 }
 
-- (void)setCoverPhotoStyle:(DBProfileCoverPhotoStyle)coverPhotoStyle {
-    if (self.coverPhotoStyle == DBProfileCoverPhotoStyleNone) {
-        NSAssert(!self.coverPhotoMimicsNavigationBar || !self.allowsPullToRefresh, @"`DBProfileCoverPhotoStyleNone` is mutually exclusive with `coverPhotoMimicsNavigationBar` and `allowsPullToRefresh`");
-    }
-    if (_coverPhotoStyle == coverPhotoStyle) return;
-    _coverPhotoStyle = coverPhotoStyle;
+- (void)setCoverPhotoHidden:(BOOL)coverPhotoHidden {
+    if (_coverPhotoHidden == coverPhotoHidden) return;
+    _coverPhotoHidden = coverPhotoHidden;
     [self.view setNeedsUpdateConstraints];
 }
 
@@ -299,21 +298,8 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
 }
 
 - (void)setCoverPhotoMimicsNavigationBar:(BOOL)coverPhotoMimicsNavigationBar {
-    if (coverPhotoMimicsNavigationBar) {
-        //NSAssert(self.coverPhotoStyle != DBProfileCoverPhotoStyleNone, @"`DBProfileCoverPhotoStyleNone` is mutually exclusive with `coverPhotoMimicsNavigationBar` and `allowsPullToRefresh`");
-    }
-    if (coverPhotoMimicsNavigationBar && self.automaticallyAdjustsScrollViewInsets) {
-        NSLog(@"Warning: `automaticallyAdjustsScrollViewInsets` should be set to NO when using coverPhotoMimicsNavigationBar");
-    }
     _coverPhotoMimicsNavigationBar = coverPhotoMimicsNavigationBar;
     self.navigationView.hidden = !coverPhotoMimicsNavigationBar;
-}
-
-- (void)setAllowsPullToRefresh:(BOOL)allowsPullToRefresh {
-    if (allowsPullToRefresh) {
-        //NSAssert(self.coverPhotoStyle != DBProfileCoverPhotoStyleNone, @"`DBProfileCoverPhotoStyleNone` is mutually exclusive with `coverPhotoMimicsNavigationBar` and `allowsPullToRefresh`");
-    }
-    _allowsPullToRefresh = allowsPullToRefresh;
 }
 
 - (void)setDetailsView:(UIView *)detailsView {
@@ -556,24 +542,33 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     [self.activityIndicator setTranslatesAutoresizingMaskIntoConstraints:NO];
     
     [scrollView addSubview:self.detailsView];
-    [scrollView addSubview:self.coverPhotoView];
-    [scrollView addSubview:self.profilePictureView];
-    [scrollView addSubview:self.activityIndicator];
-    
-    // TODO: Check if we need to install the cover photo
-    
-    // Check if we need to install the segmented control
+
+    // Segmented control ?
     if ([self numberOfContentViewControllers] > 1) {
         [scrollView addSubview:self.segmentedControlView];
         [self configureSegmentedControlViewLayoutConstraintsWithScrollView:scrollView];
     } else {
         self.segmentedControlView.frame = CGRectZero;
     }
+
+    // Cover photo ?
+    if (!self.coverPhotoHidden) {
+        [scrollView addSubview:self.coverPhotoView];
+        [self configureCoverPhotoViewLayoutConstraintsWithScrollView:scrollView];
+        
+        // Pull-to-refresh ?
+        if (self.allowsPullToRefresh) {
+            [scrollView addSubview:self.activityIndicator];
+            [self configureActivityIndicatorLayoutConstraintsWithScrollView:scrollView];
+        }
+    } else {
+        self.coverPhotoView.frame = CGRectZero;
+    }
     
-    [self configureCoverPhotoViewLayoutConstraintsWithScrollView:scrollView];
+    [scrollView addSubview:self.profilePictureView];
+    
     [self configureDetailsViewLayoutConstraintsWithScrollView:scrollView];
     [self configureProfilePictureViewLayoutConstraintsWithScrollView:scrollView];
-    [self configureActivityIndicatorLayoutConstraintsWithScrollView:scrollView];
 
     [scrollView setNeedsLayout];
     [scrollView layoutIfNeeded];
@@ -632,7 +627,7 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     CGFloat topInset = CGRectGetHeight(self.segmentedControlView.frame) + CGRectGetHeight(self.detailsView.frame) + CGRectGetHeight(self.coverPhotoView.frame);
     
     UIEdgeInsets contentInset = scrollView.contentInset;
-    if (self.coverPhotoOptions & DBProfileCoverPhotoOptionExtended) topInset -= CGRectGetHeight(self.detailsView.frame);
+    if (self.coverPhotoOptions & DBProfileCoverPhotoOptionExtend) topInset -= CGRectGetHeight(self.detailsView.frame);
     contentInset.top = (self.automaticallyAdjustsScrollViewInsets) ? topInset + [self.topLayoutGuide length] : topInset;
     
     scrollView.contentInset = contentInset;
@@ -641,7 +636,7 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     self.coverPhotoViewTopConstraint.constant = -topInset;
     
     // Details view inset
-    if (self.coverPhotoOptions & DBProfileCoverPhotoOptionExtended) {
+    if (self.coverPhotoOptions & DBProfileCoverPhotoOptionExtend) {
         topInset -= (CGRectGetHeight(self.coverPhotoView.frame) - CGRectGetHeight(self.detailsView.frame));
         [scrollView insertSubview:self.detailsView aboveSubview:self.coverPhotoView];
     } else {
@@ -661,6 +656,23 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     [viewController willMoveToParentViewController:nil];
     [viewController.view removeFromSuperview];
     [viewController removeFromParentViewController];
+}
+
+#pragma mark - Blurring
+
+- (UIImage *)blurredImageAt:(CGFloat)percent {
+    NSNumber *keyNumber = @(round(percent * 15));
+    return [self.blurredImageCache objectForKey:keyNumber];
+}
+
+- (void)fillBlurredImageCacheWithImage:(UIImage *)image {
+    NSAssert(![NSThread isMainThread], @"`fillBlurredImageCacheWithImage:` should not be called on main thread");
+    CGFloat maxBlurRadius = 30;
+    [self.blurredImageCache removeAllObjects];
+    for (int i = 0; i <= 15; i++) {
+        CGFloat radius = maxBlurRadius * i/15;
+        [self.blurredImageCache setObject:[DBProfileImageEffects imageByApplyingBlurToImage:image withRadius:radius] forKey:@(i)];
+    }
 }
 
 #pragma mark - KVO
@@ -745,6 +757,7 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
 }
 
 - (void)updateProfilePictureViewWithContentOffset:(CGPoint)contentOffset {
+    if (self.coverPhotoHidden) return;
     CGFloat coverPhotoOffset = CGRectGetHeight(self.coverPhotoView.frame);
     CGFloat coverPhotoOffsetPercent = 0;
     if (self.coverPhotoMimicsNavigationBar) {
@@ -752,7 +765,7 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     }
     coverPhotoOffsetPercent = MIN(1, contentOffset.y / coverPhotoOffset);
 
-    if (self.coverPhotoOptions & DBProfileCoverPhotoOptionExtended) {
+    if (self.coverPhotoOptions & DBProfileCoverPhotoOptionExtend) {
         CGFloat alpha = 1 - coverPhotoOffsetPercent * 1.10;
         self.profilePictureView.alpha = self.detailsView.alpha = alpha;
         
@@ -771,7 +784,7 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     if (!self.coverPhotoMimicsNavigationBar) return;
     CGFloat titleViewOffset = ((CGRectGetHeight(self.coverPhotoView.frame) - CGRectGetMaxY(self.navigationView.frame)) + CGRectGetHeight(self.segmentedControlView.frame));
     
-    if (self.coverPhotoOptions & DBProfileCoverPhotoOptionExtended) {
+    if (self.coverPhotoOptions & DBProfileCoverPhotoOptionExtend) {
         // FIXME: Adding arbitrary padding to titleViewOffset
     } else {
         CGFloat profilePictureOffset = self.profilePictureInset.top - self.profilePictureInset.bottom;
@@ -881,7 +894,6 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     [scrollView addConstraint:[NSLayoutConstraint constraintWithItem:self.segmentedControlView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:self.detailsView attribute:NSLayoutAttributeBottom multiplier:1 constant:0]];
     
     [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.segmentedControlView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:[self topLayoutGuide] attribute:NSLayoutAttributeBottom multiplier:1 constant:0]];
-    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.segmentedControlView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:self.coverPhotoView attribute:NSLayoutAttributeBottom multiplier:1 constant:0]];
 }
 
 - (void)configureDetailsViewLayoutConstraintsWithScrollView:(UIScrollView *)scrollView  {
@@ -918,6 +930,8 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     self.coverPhotoViewTopSuperviewConstraint = [NSLayoutConstraint constraintWithItem:self.coverPhotoView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationLessThanOrEqual toItem:self.view attribute:NSLayoutAttributeTop multiplier:1 constant:0];
     self.coverPhotoViewTopSuperviewConstraint.priority = UILayoutPriorityDefaultHigh + 1;
     [self.view addConstraint:self.coverPhotoViewTopSuperviewConstraint];
+    
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.segmentedControlView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:self.coverPhotoView attribute:NSLayoutAttributeBottom multiplier:1 constant:0]];
 }
 
 - (void)configureProfilePictureViewLayoutConstraintsWithScrollView:(UIScrollView *)scrollView {
@@ -942,23 +956,6 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     [scrollView addConstraints:@[self.profilePictureViewWidthConstraint, self.profilePictureViewLeftConstraint, self.profilePictureViewRightConstraint, self.profilePictureViewCenterXConstraint, self.profilePictureViewTopConstraint]];
     
     [NSLayoutConstraint deactivateConstraints:@[self.profilePictureViewLeftConstraint, self.profilePictureViewRightConstraint, self.profilePictureViewCenterXConstraint]];
-}
-
-#pragma mark - Blurring
-
-- (UIImage *)blurredImageAt:(CGFloat)percent {
-    NSNumber *keyNumber = @(round(percent * 15));
-    return [self.blurredImageCache objectForKey:keyNumber];
-}
-
-- (void)fillBlurredImageCacheWithImage:(UIImage *)image {
-    NSAssert(![NSThread isMainThread], @"`fillBlurredImageCacheWithImage:` should not be called on main thread");
-    CGFloat maxBlurRadius = 30;
-    [self.blurredImageCache removeAllObjects];
-    for (int i = 0; i <= 15; i++) {
-        CGFloat radius = maxBlurRadius * i/15;
-        [self.blurredImageCache setObject:[DBProfileImageEffects imageByApplyingBlurToImage:image withRadius:radius] forKey:@(i)];
-    }
 }
 
 @end

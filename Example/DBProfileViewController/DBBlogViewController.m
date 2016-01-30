@@ -24,7 +24,7 @@
     
     self.delegate = self;
     
-    self.coverPhotoOptions = DBProfileCoverPhotoOptionStretch | DBProfileCoverPhotoOptionExtended;
+    self.coverPhotoOptions = DBProfileCoverPhotoOptionStretch | DBProfileCoverPhotoOptionExtend;
     self.coverPhotoHeightMultiplier = 1.0;
     self.profilePictureAlignment = DBProfilePictureAlignmentLeft;
     self.profilePictureSize = DBProfilePictureSizeNormal;
