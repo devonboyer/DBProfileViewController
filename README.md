@@ -36,6 +36,10 @@ The table below details the most important classes and is hyperlinked directly t
         <td><a href="Source/Views/DBProfileProfilePicture.h">DBProfileProfilePicture</a></td>
         <td>A configurable view that displays a profile picture.</td>
     </tr>
+    <tr>
+        <td><a href="Source/Views/DBProfileSegmentedControlView.h">DBProfileSegmentedControlView</a></td>
+        <td>A configurable view that displays a segmented control.</td>
+    </tr>
 </table>
 
 ## Installation
