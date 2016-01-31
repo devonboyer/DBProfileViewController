@@ -1,12 +1,43 @@
 //
 //  DBProfileCoverPhotoView.m
-//  Pods
+//  DBProfileViewController
 //
 //  Created by Devon Boyer on 2016-01-08.
+//  Copyright (c) 2015 Devon Boyer. All rights reserved.
 //
+//  Released under an MIT license: http://opensource.org/licenses/MIT
 //
 
 #import "DBProfileCoverPhotoView.h"
+
+@interface DBProfileCoverPhotoOverlayView : UIView
+
+@end
+
+@implementation DBProfileCoverPhotoOverlayView
+
++ (Class)layerClass {
+    return [CAGradientLayer class];
+}
+
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    
+    CAGradientLayer *gradientLayer = (CAGradientLayer *)self.layer;
+    gradientLayer.colors = [NSArray arrayWithArray:
+                            @[(id)[UIColor colorWithWhite:0.0f alpha:0.6f].CGColor,
+                              (id)[UIColor colorWithWhite:0.0f alpha:0.4f].CGColor,
+                              (id)[UIColor colorWithWhite:0.0f alpha:0.2f].CGColor,
+                              (id)[UIColor colorWithWhite:0.0f alpha:0.0f].CGColor]];
+    
+    gradientLayer.locations = [NSArray arrayWithArray:
+                               @[[NSNumber numberWithFloat:0.0f],
+                                 [NSNumber numberWithFloat:0.3f],
+                                 [NSNumber numberWithFloat:0.5f],
+                                 [NSNumber numberWithFloat:1.0f]]];
+}
+
+@end
 
 @interface DBProfileCoverPhotoView ()
 @property (nonatomic, strong) UIView *overlayView;
@@ -28,11 +59,11 @@
     self.backgroundColor = [UIColor whiteColor];
     
     _imageView = [[UIImageView alloc] init];
-    _overlayView = [[UIView alloc] init];
+    _overlayView = [[DBProfileCoverPhotoOverlayView alloc] init];
     
     self.overlayView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.overlayView.frame = self.imageView.frame;
-    //[self.imageView addSubview:self.overlayView];
+    [self.imageView addSubview:self.overlayView];
     
     [self.imageView setTranslatesAutoresizingMaskIntoConstraints:NO];
 
@@ -50,9 +81,6 @@
     
     self.imageView.contentMode = UIViewContentModeScaleAspectFill;
     self.imageView.clipsToBounds = YES;
-    
-    self.overlayView.backgroundColor = [UIColor blackColor];
-    self.overlayView.alpha = 0.1;
 }
 
 #pragma mark - Auto Layout

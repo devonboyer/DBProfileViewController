@@ -34,8 +34,8 @@
                                       [[DBPhotosTableViewController alloc] init],
                                       [[DBLikesTableViewController alloc] init]]];
     
-    [self setCoverPhoto:[UIImage imageNamed:@"cover-photo.png"] animated:NO];
-    [self setProfilePicture:[UIImage imageNamed:@"profile-picture.jpg"] animated:NO];
+    [self setCoverPhoto:[UIImage imageNamed:@"demo-cover-photo"] animated:NO];
+    [self setProfilePicture:[UIImage imageNamed:@"demo-profile-picture"] animated:NO];
     
     // Setup details view
     DBProfileDetailsView *detailsView = (DBProfileDetailsView *)self.detailsView;

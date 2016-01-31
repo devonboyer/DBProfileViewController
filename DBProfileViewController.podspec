@@ -1,30 +1,12 @@
-#
-# Be sure to run `pod lib lint DBProfileViewController.podspec' to ensure this is a
-# valid spec before submitting.
-#
-# Any lines starting with a # are optional, but their use is encouraged
-# To learn more about a Podspec see http://guides.cocoapods.org/syntax/podspec.html
-#
-
 Pod::Spec.new do |s|
   s.name             = "DBProfileViewController"
   s.version          = "0.1.0"
-  s.summary          = "A short description of DBProfileViewController."
-
-# This description is used to generate tags and improve search results.
-#   * Think: What does it do? Why did you write it? What is the focus?
-#   * Try to keep it short, snappy and to the point.
-#   * Write the description between the DESC delimiters below.
-#   * Finally, don't worry about the indent, CocoaPods strips it!  
-  s.description      = <<-DESC
-                       DESC
-
-  s.homepage         = "https://github.com/<GITHUB_USERNAME>/DBProfileViewController"
-  # s.screenshots     = "www.example.com/screenshots_1", "www.example.com/screenshots_2"
+  s.summary          = "A customizable library for displaying a user profile interface."
+  s.homepage         = "https://github.com/devonboyer/DBProfileViewController"
   s.license          = 'MIT'
-  s.author           = { "Devon Boyer" => "devonboyer94@gmail.com" }
-  s.source           = { :git => "https://github.com/<GITHUB_USERNAME>/DBProfileViewController.git", :tag => s.version.to_s }
-  # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
+  s.author           = { "Devon Boyer" => "hello@devonboyer.com" }
+  s.source           = { :git => "https://github.com/devonboyer/DBProfileViewController.git", :tag => s.version.to_s }
+  s.social_media_url = 'https://twitter.com/devboyer'
 
   s.platform     = :ios, '7.0'
   s.requires_arc = true
@@ -34,7 +16,7 @@ Pod::Spec.new do |s|
     'DBProfileViewController' => ['Assets/*.png']
   }
 
-  # s.public_header_files = 'Pod/Classes/**/*.h'
-  # s.frameworks = 'UIKit', 'MapKit'
-    s.dependency 'UIImageEffects', '~> 0.0.1'
+  s.public_header_files = 'Source/**/*.h'
+  s.frameworks = 'UIKit'
+  s.dependency 'UIImageEffects', '~> 0.0.1'
 end

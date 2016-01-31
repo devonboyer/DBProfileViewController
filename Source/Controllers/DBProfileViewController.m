@@ -1,9 +1,11 @@
 //
 //  DBProfileViewController.m
-//  Pods
+//  DBProfileViewController
 //
 //  Created by Devon Boyer on 2015-12-18.
+//  Copyright (c) 2015 Devon Boyer. All rights reserved.
 //
+//  Released under an MIT license: http://opensource.org/licenses/MIT
 //
 
 #import "DBProfileViewController.h"
@@ -29,6 +31,7 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
 
 @interface DBProfileViewController ()
 {
+    BOOL _hasAppeared;
     BOOL _shouldScrollToTop;
     CGPoint _sharedContentOffset;
 }
@@ -191,7 +194,9 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     // FIXME: Minor performance hit while loading the view
     [self.view setNeedsUpdateConstraints];
     
-    [self scrollVisibleContentViewControllerToTop];
+    if (!_hasAppeared) {
+        [self scrollVisibleContentViewControllerToTop];
+    }
     
     if (self.coverPhotoMimicsNavigationBar) {
         [self.navigationController setNavigationBarHidden:YES animated:YES];
@@ -201,6 +206,8 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
+    
+    _hasAppeared = YES;
     
     NSAssert([self numberOfContentViewControllers] > 0, @"`DBProfileViewController` must have at least one content view controller.");
 }
@@ -336,7 +343,7 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
 #pragma mark - Configuring Cover Photo
 
 - (void)setCoverPhoto:(UIImage *)coverPhoto animated:(BOOL)animated {
-
+    
     UIImage *croppedImage = [DBProfileImageEffects imageByCroppingImage:coverPhoto withSize:self.coverPhotoView.frame.size];
     
     self.coverPhotoView.imageView.image = croppedImage;
@@ -581,11 +588,14 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
             [self.coverPhotoView addSubview:self.activityIndicator];
             [self configureActivityIndicatorLayoutConstraints];
         }
+        
+        if (self.coverPhotoOptions & DBProfileCoverPhotoOptionExtend) {
+            [scrollView insertSubview:self.detailsView aboveSubview:self.coverPhotoView];
+        }
     } else {
         self.coverPhotoView.frame = CGRectZero;
     }
     
-    [scrollView bringSubviewToFront:self.detailsView];
     [scrollView addSubview:self.profilePictureView];
     
     [self configureDetailsViewLayoutConstraintsWithScrollView:scrollView];
@@ -618,6 +628,7 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     
     self.navigationView.titleView.titleLabel.text = self.title;
     self.navigationView.titleView.subtitleLabel.text = [self subtitleForVisibleContentViewController];
+    self.coverPhotoView.overlayView.hidden = !self.coverPhotoMimicsNavigationBar;
 }
 
 - (void)configureContentViewControllers {
@@ -755,6 +766,8 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     if (!scrollView.isDragging && contentOffset.y >= 0 && shouldEndRefreshAnimations) {
         [self endRefreshAnimations];
     }
+
+    self.activityIndicator.alpha = (contentOffset.y > 0) ? 1 - contentOffset.y / 20 : 1;
 }
 
 #pragma mark - Updating Subviews On Scroll
@@ -775,6 +788,8 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
         }
         distance *= 0.5;
     }
+    
+    if (self.automaticallyAdjustsScrollViewInsets) distance += [self.topLayoutGuide length];
     
     CGFloat percent = MAX(MIN(1 - (distance - fabs(contentOffset.y))/distance, 1), 0);
     UIImage *blurredImage = [self blurredImageAt:percent];
@@ -809,9 +824,8 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     if (!self.coverPhotoMimicsNavigationBar) return;
     CGFloat titleViewOffset = ((CGRectGetHeight(self.coverPhotoView.frame) - CGRectGetMaxY(self.navigationView.frame)) + CGRectGetHeight(self.segmentedControlView.frame));
     
-    if (self.coverPhotoOptions & DBProfileCoverPhotoOptionExtend) {
+    if (!(self.coverPhotoOptions & DBProfileCoverPhotoOptionExtend)) {
         // FIXME: Adding arbitrary padding to titleViewOffset
-    } else {
         CGFloat profilePictureOffset = self.profilePictureInset.top - self.profilePictureInset.bottom;
         titleViewOffset += (CGRectGetHeight(self.profilePictureView.frame) + profilePictureOffset + 30);
     }
