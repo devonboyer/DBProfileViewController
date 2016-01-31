@@ -6,6 +6,7 @@
 [![Platform](https://img.shields.io/cocoapods/p/DBProfileViewController.svg?style=flat)](http://cocoapods.org/pods/DBProfileViewController)
 
 <img src="Screenshots/db-profile-screenshot-1.png" width="300">
+<img src="Screenshots/db-profile-screenshot-2.png" width="300">
 
 ## Overview
 
