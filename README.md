@@ -25,7 +25,7 @@ The table below details the most important classes and is hyperlinked directly t
     <tr><th colspan="2" style="text-align:center;">Protocols</th></tr>
     <tr>
         <td><a href="Source/Protocols/DBProfileContentPresenting.h">DBProfileContentPresenting</a></td>
-        <td>A protocol that is adopted by classes that are be displayed as content view controllers of a <a       href="Source/Controllers/DBProfileViewController.h">DBProfileViewController</a>.</td>
+        <td>A protocol that is adopted by classes that are to be displayed as content view controllers of a <a       href="Source/Controllers/DBProfileViewController.h">DBProfileViewController</a>.</td>
     </tr>
     <tr><th colspan="2" style="text-align:center;">Views</th></tr>
     <tr>
