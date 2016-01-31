@@ -320,7 +320,7 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     [self configureContentViewControllers];
 }
 
-#pragma mark - Action Responders
+#pragma mark - Actions
 
 - (void)back:(id)sender {
     [self.navigationController popViewControllerAnimated:YES];

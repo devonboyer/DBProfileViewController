@@ -37,12 +37,14 @@
     // Get the new view controller using [segue destinationViewController].
     // Pass the selected object to the new view controller.
     
+    DBUserProfileViewController *viewController = [segue destinationViewController];
+
     if ([segue.identifier isEqualToString:@"showUserProfile1"]) {
-        DBUserProfileViewController *viewController = [segue destinationViewController];
         viewController.style = DBUserProfileViewControllerStyle1;
     } else if ([segue.identifier isEqualToString:@"showUserProfile2"]) {
-        DBUserProfileViewController *viewController = [segue destinationViewController];
         viewController.style = DBUserProfileViewControllerStyle2;
+    } else if ([segue.identifier isEqualToString:@"showUserProfile3"]) {
+        viewController.style = DBUserProfileViewControllerStyle3;
     }
 }
 

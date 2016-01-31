@@ -11,6 +11,7 @@
 typedef NS_ENUM(NSInteger, DBUserProfileViewControllerStyle) {
     DBUserProfileViewControllerStyle1,
     DBUserProfileViewControllerStyle2,
+    DBUserProfileViewControllerStyle3
 };
 
 @interface DBUserProfileViewController : DBProfileViewController
