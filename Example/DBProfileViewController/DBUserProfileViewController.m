@@ -41,7 +41,7 @@
     DBProfileDetailsView *detailsView = (DBProfileDetailsView *)self.detailsView;
     detailsView.nameLabel.text = @"Devon Boyer";
     detailsView.usernameLabel.text = @"@devboyer";
-    detailsView.descriptionLabel.text = @"CS @UWaterloo, iOS developer with a passion for mobile computing and great #uidesign.";
+    detailsView.descriptionLabel.text = @"A customizable library for creating stunning user profiles.";
     detailsView.contentInset = UIEdgeInsetsMake(60, 15, 15, 15);
         
     [self setStyle:self.style];
