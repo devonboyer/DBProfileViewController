@@ -7,7 +7,7 @@
 
 ## Overview
 
-A customizable library for displaying a user profile interface consisting of a cover photo, profile picture and an array of content view controllers. It was designed to address two use cases simultaneously:
+A customizable library for displaying a user profile interface consisting of a cover photo, profile picture, segmented control, and an array of content view controllers. It was designed to address two use cases simultaneously:
 
 1. Provide good looking, high quality implementations of familiar profile experiences out of the box. By default a `DBProfileViewController` is styled to look much like a Twitter profile.
 2. Enable quick and easy customization of the user experience via properties which change the appearance and behaviour of the cover photo and profile picture.
