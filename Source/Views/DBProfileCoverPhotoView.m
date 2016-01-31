@@ -24,19 +24,18 @@
     [super layoutSubviews];
     
     CAGradientLayer *gradientLayer = (CAGradientLayer *)self.layer;
-    gradientLayer.colors = [NSArray arrayWithArray:
-                            @[(id)[UIColor colorWithWhite:0.0f alpha:0.5f].CGColor,
-                              (id)[UIColor colorWithWhite:0.0f alpha:0.4f].CGColor,
-                              (id)[UIColor colorWithWhite:0.0f alpha:0.3f].CGColor,
-                              (id)[UIColor colorWithWhite:0.0f alpha:0.2f].CGColor,
-                              (id)[UIColor colorWithWhite:0.0f alpha:0.0f].CGColor]];
     
-    gradientLayer.locations = [NSArray arrayWithArray:
-                               @[[NSNumber numberWithFloat:0.0f],
-                                 [NSNumber numberWithFloat:0.2f],
-                                 [NSNumber numberWithFloat:0.4],
-                                 [NSNumber numberWithFloat:0.6f],
-                                 [NSNumber numberWithFloat:1.0f]]];
+    gradientLayer.colors = @[(id)[UIColor colorWithWhite:0.0f alpha:0.5f].CGColor,
+                             (id)[UIColor colorWithWhite:0.0f alpha:0.4f].CGColor,
+                             (id)[UIColor colorWithWhite:0.0f alpha:0.3f].CGColor,
+                             (id)[UIColor colorWithWhite:0.0f alpha:0.2f].CGColor,
+                             (id)[UIColor colorWithWhite:0.0f alpha:0.0f].CGColor];
+    
+    gradientLayer.locations = @[[NSNumber numberWithFloat:0.0f],
+                                [NSNumber numberWithFloat:0.2f],
+                                [NSNumber numberWithFloat:0.4],
+                                [NSNumber numberWithFloat:0.6f],
+                                [NSNumber numberWithFloat:1.0f]];
 }
 
 @end
