@@ -179,6 +179,7 @@
         <!--Blog-->
         <scene sceneID="0OS-qz-8Bq">
             <objects>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="m3u-Ya-kea" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <viewController title="Blog" id="PXQ-73-3li" customClass="DBBlogViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="GRJ-zP-sMu"/>
@@ -191,12 +192,11 @@
                     </view>
                     <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="lightContent"/>
                 </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="m3u-Ya-kea" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="303" y="1258"/>
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="4a8-Aa-ubk"/>
+        <segue reference="ad5-Ad-sIr"/>
     </inferredMetricsTieBreakers>
 </document>

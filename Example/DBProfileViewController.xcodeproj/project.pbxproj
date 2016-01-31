@@ -20,20 +20,17 @@
 		6003F5B2195388D20070C39A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F591195388D20070C39A /* UIKit.framework */; };
 		6003F5BA195388D20070C39A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6003F5B8195388D20070C39A /* InfoPlist.strings */; };
 		6003F5BC195388D20070C39A /* Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6003F5BB195388D20070C39A /* Tests.m */; };
-		6702AD211C5D8242008D014D /* demo-cover-photo.png in Resources */ = {isa = PBXBuildFile; fileRef = 6702AD1F1C5D8242008D014D /* demo-cover-photo.png */; };
 		6702AD221C5D8242008D014D /* demo-profile-picture.png in Resources */ = {isa = PBXBuildFile; fileRef = 6702AD201C5D8242008D014D /* demo-profile-picture.png */; };
+		6702AD241C5D8988008D014D /* demo-cover-photo.png in Resources */ = {isa = PBXBuildFile; fileRef = 6702AD231C5D8988008D014D /* demo-cover-photo.png */; };
 		672EF5A91C4401B60035567E /* cover-photo-blog.png in Resources */ = {isa = PBXBuildFile; fileRef = 672EF5A81C4401B60035567E /* cover-photo-blog.png */; };
 		672EF5CF1C49E9B60035567E /* DBUserProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 672EF5CE1C49E9B60035567E /* DBUserProfileViewController.m */; };
 		672EF5D21C49E9CA0035567E /* DBBlogViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 672EF5D11C49E9CA0035567E /* DBBlogViewController.m */; };
 		672EF5D61C4B09AA0035567E /* DBDemoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 672EF5D51C4B09AA0035567E /* DBDemoViewController.m */; };
-		675B0F6F1C40882C000AADC6 /* profile-picture.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 675B0F6E1C40882C000AADC6 /* profile-picture.jpg */; };
-		675B0F8B1C429199000AADC6 /* cover-photo-user.png in Resources */ = {isa = PBXBuildFile; fileRef = 675B0F8A1C429199000AADC6 /* cover-photo-user.png */; };
 		675B0F921C42A1C4000AADC6 /* DBFollowersTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 675B0F911C42A1C4000AADC6 /* DBFollowersTableViewController.m */; };
 		675B0F951C42A1D4000AADC6 /* DBPhotosTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 675B0F941C42A1D4000AADC6 /* DBPhotosTableViewController.m */; };
 		675B0F981C42A1E0000AADC6 /* DBLikesTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 675B0F971C42A1E0000AADC6 /* DBLikesTableViewController.m */; };
 		675D5BA01C3FCB72009E44CE /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 675D5B9F1C3FCB72009E44CE /* Launch Screen.storyboard */; };
 		675D5BA21C3FDCCC009E44CE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 675D5BA11C3FDCCC009E44CE /* Main.storyboard */; };
-		67C162221C55A0AC00EEA811 /* cover-photo.png in Resources */ = {isa = PBXBuildFile; fileRef = 67C162211C55A0AC00EEA811 /* cover-photo.png */; };
 		6BF96457D33B2A1824077D1C /* Pods_DBProfileViewController_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A74FB59D2E8276FE73FD3C57 /* Pods_DBProfileViewController_Tests.framework */; };
 /* End PBXBuildFile section */
 
@@ -67,8 +64,8 @@
 		6003F5B9195388D20070C39A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		6003F5BB195388D20070C39A /* Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Tests.m; sourceTree = "<group>"; };
 		606FC2411953D9B200FFA9A0 /* Tests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Tests-Prefix.pch"; sourceTree = "<group>"; };
-		6702AD1F1C5D8242008D014D /* demo-cover-photo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "demo-cover-photo.png"; sourceTree = "<group>"; };
 		6702AD201C5D8242008D014D /* demo-profile-picture.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "demo-profile-picture.png"; sourceTree = "<group>"; };
+		6702AD231C5D8988008D014D /* demo-cover-photo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "demo-cover-photo.png"; sourceTree = "<group>"; };
 		672EF5A81C4401B60035567E /* cover-photo-blog.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "cover-photo-blog.png"; sourceTree = "<group>"; };
 		672EF5CD1C49E9B60035567E /* DBUserProfileViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBUserProfileViewController.h; sourceTree = "<group>"; };
 		672EF5CE1C49E9B60035567E /* DBUserProfileViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBUserProfileViewController.m; sourceTree = "<group>"; };
@@ -76,8 +73,6 @@
 		672EF5D11C49E9CA0035567E /* DBBlogViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBBlogViewController.m; sourceTree = "<group>"; };
 		672EF5D41C4B09AA0035567E /* DBDemoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBDemoViewController.h; sourceTree = "<group>"; };
 		672EF5D51C4B09AA0035567E /* DBDemoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBDemoViewController.m; sourceTree = "<group>"; };
-		675B0F6E1C40882C000AADC6 /* profile-picture.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "profile-picture.jpg"; sourceTree = "<group>"; };
-		675B0F8A1C429199000AADC6 /* cover-photo-user.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "cover-photo-user.png"; sourceTree = "<group>"; };
 		675B0F901C42A1C4000AADC6 /* DBFollowersTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBFollowersTableViewController.h; sourceTree = "<group>"; };
 		675B0F911C42A1C4000AADC6 /* DBFollowersTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBFollowersTableViewController.m; sourceTree = "<group>"; };
 		675B0F931C42A1D4000AADC6 /* DBPhotosTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBPhotosTableViewController.h; sourceTree = "<group>"; };
@@ -86,7 +81,6 @@
 		675B0F971C42A1E0000AADC6 /* DBLikesTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBLikesTableViewController.m; sourceTree = "<group>"; };
 		675D5B9F1C3FCB72009E44CE /* Launch Screen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 		675D5BA11C3FDCCC009E44CE /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
-		67C162211C55A0AC00EEA811 /* cover-photo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "cover-photo.png"; sourceTree = "<group>"; };
 		762FB2E17229F4187C24A3D1 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		8E706C59695F1FFDD539460E /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		8EA72A854F72D8A6662DA9BB /* Pods-DBProfileViewController_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DBProfileViewController_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-DBProfileViewController_Tests/Pods-DBProfileViewController_Tests.release.xcconfig"; sourceTree = "<group>"; };
@@ -226,12 +220,9 @@
 		672EF5D31C49EC150035567E /* Assets */ = {
 			isa = PBXGroup;
 			children = (
-				6702AD1F1C5D8242008D014D /* demo-cover-photo.png */,
+				6702AD231C5D8988008D014D /* demo-cover-photo.png */,
 				6702AD201C5D8242008D014D /* demo-profile-picture.png */,
-				67C162211C55A0AC00EEA811 /* cover-photo.png */,
 				672EF5A81C4401B60035567E /* cover-photo-blog.png */,
-				675B0F8A1C429199000AADC6 /* cover-photo-user.png */,
-				675B0F6E1C40882C000AADC6 /* profile-picture.jpg */,
 			);
 			name = Assets;
 			sourceTree = "<group>";
@@ -330,13 +321,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				67C162221C55A0AC00EEA811 /* cover-photo.png in Resources */,
 				6003F5A9195388D20070C39A /* Images.xcassets in Resources */,
-				6702AD211C5D8242008D014D /* demo-cover-photo.png in Resources */,
 				675D5BA01C3FCB72009E44CE /* Launch Screen.storyboard in Resources */,
-				675B0F8B1C429199000AADC6 /* cover-photo-user.png in Resources */,
+				6702AD241C5D8988008D014D /* demo-cover-photo.png in Resources */,
 				6003F598195388D20070C39A /* InfoPlist.strings in Resources */,
-				675B0F6F1C40882C000AADC6 /* profile-picture.jpg in Resources */,
 				672EF5A91C4401B60035567E /* cover-photo-blog.png in Resources */,
 				675D5BA21C3FDCCC009E44CE /* Main.storyboard in Resources */,
 				6702AD221C5D8242008D014D /* demo-profile-picture.png in Resources */,

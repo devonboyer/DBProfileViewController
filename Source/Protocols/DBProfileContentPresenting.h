@@ -12,7 +12,7 @@
 
 /*!
  @protocol DBProfileContentPresenting
- @abstract The `DBProfileContentPresenting` protocol is adopted by classes that are be displayed as content view controllers of a `DBProfileViewController`.
+ @abstract The `DBProfileContentPresenting` protocol is adopted by classes that are to be displayed as content view controllers of a `DBProfileViewController`.
  */
 @protocol DBProfileContentPresenting <NSObject>
 

@@ -12,7 +12,7 @@
 
 /*!
  @class DBProfileCoverPhotoView
- @abstract The `DBProfileCoverPhotoView` class displays a cover photo and manages an activity indicator.
+ @abstract The `DBProfileCoverPhotoView` class displays a cover photo.
  */
 @interface DBProfileCoverPhotoView : UIView
 
