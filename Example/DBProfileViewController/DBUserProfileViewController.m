@@ -25,16 +25,18 @@
     self.delegate = self;
         
     self.coverPhotoOptions = DBProfileCoverPhotoOptionStretch;
-    self.profilePictureAlignment = DBProfilePictureAlignmentLeft;
-    self.profilePictureSize = DBProfilePictureSizeNormal;
+    self.profilePictureAlignment = DBProfilePictureAlignmentCenter;
+    self.profilePictureView.style = DBProfilePictureStyleRound;
+    self.profilePictureSize = DBProfilePictureSizeLarge;
     self.profilePictureInset = UIEdgeInsetsMake(0, 15, 72/2.0 - 10, 0);
+    self.profilePictureView.borderWidth = 5;
     self.allowsPullToRefresh = YES;
     
     [self addContentViewControllers:@[[[DBFollowersTableViewController alloc] init],
                                       [[DBPhotosTableViewController alloc] init],
                                       [[DBLikesTableViewController alloc] init]]];
     
-    [self setCoverPhoto:[UIImage imageNamed:@"demo-cover-photo"] animated:NO];
+    [self setCoverPhoto:[UIImage imageNamed:@"cold-snow-winter-mountain.jpeg"] animated:NO];
     [self setProfilePicture:[UIImage imageNamed:@"demo-profile-picture"] animated:NO];
     
     // Setup details view
@@ -42,13 +44,17 @@
     detailsView.nameLabel.text = @"Devon Boyer";
     detailsView.usernameLabel.text = @"@devboyer";
     detailsView.descriptionLabel.text = @"A customizable library for creating stunning user profiles.";
-    detailsView.contentInset = UIEdgeInsetsMake(60, 15, 15, 15);
+    detailsView.contentInset = UIEdgeInsetsMake(80, 15, 15, 15);
+    detailsView.editProfileButton.hidden = YES;
+    detailsView.nameLabel.textAlignment = NSTextAlignmentCenter;
+    detailsView.usernameLabel.textAlignment = NSTextAlignmentCenter;
+    detailsView.descriptionLabel.textAlignment = NSTextAlignmentCenter;
         
     [self setStyle:self.style];
     
     UIBarButtonItem *addBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Add" style:UIBarButtonItemStylePlain target:self action:@selector(add)];
     UIBarButtonItem *removeBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Remove" style:UIBarButtonItemStylePlain target:self action:@selector(remove)];
-    self.navigationView.navigationItem.rightBarButtonItems = @[addBarButtonItem, removeBarButtonItem];
+    //self.navigationView.navigationItem.rightBarButtonItems = @[addBarButtonItem, removeBarButtonItem];
 }
 
 - (void)setStyle:(DBUserProfileViewControllerStyle)style {

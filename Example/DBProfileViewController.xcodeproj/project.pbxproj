@@ -22,6 +22,7 @@
 		6003F5BC195388D20070C39A /* Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6003F5BB195388D20070C39A /* Tests.m */; };
 		6702AD221C5D8242008D014D /* demo-profile-picture.png in Resources */ = {isa = PBXBuildFile; fileRef = 6702AD201C5D8242008D014D /* demo-profile-picture.png */; };
 		6702AD281C5D9C66008D014D /* demo-cover-photo.png in Resources */ = {isa = PBXBuildFile; fileRef = 6702AD271C5D9C66008D014D /* demo-cover-photo.png */; };
+		6702AD2A1C5DA2FC008D014D /* cold-snow-winter-mountain.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = 6702AD291C5DA2FC008D014D /* cold-snow-winter-mountain.jpeg */; };
 		672EF5A91C4401B60035567E /* cover-photo-blog.png in Resources */ = {isa = PBXBuildFile; fileRef = 672EF5A81C4401B60035567E /* cover-photo-blog.png */; };
 		672EF5CF1C49E9B60035567E /* DBUserProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 672EF5CE1C49E9B60035567E /* DBUserProfileViewController.m */; };
 		672EF5D21C49E9CA0035567E /* DBBlogViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 672EF5D11C49E9CA0035567E /* DBBlogViewController.m */; };
@@ -66,6 +67,7 @@
 		606FC2411953D9B200FFA9A0 /* Tests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Tests-Prefix.pch"; sourceTree = "<group>"; };
 		6702AD201C5D8242008D014D /* demo-profile-picture.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "demo-profile-picture.png"; sourceTree = "<group>"; };
 		6702AD271C5D9C66008D014D /* demo-cover-photo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "demo-cover-photo.png"; sourceTree = "<group>"; };
+		6702AD291C5DA2FC008D014D /* cold-snow-winter-mountain.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "cold-snow-winter-mountain.jpeg"; sourceTree = "<group>"; };
 		672EF5A81C4401B60035567E /* cover-photo-blog.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "cover-photo-blog.png"; sourceTree = "<group>"; };
 		672EF5CD1C49E9B60035567E /* DBUserProfileViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBUserProfileViewController.h; sourceTree = "<group>"; };
 		672EF5CE1C49E9B60035567E /* DBUserProfileViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBUserProfileViewController.m; sourceTree = "<group>"; };
@@ -220,6 +222,7 @@
 		672EF5D31C49EC150035567E /* Assets */ = {
 			isa = PBXGroup;
 			children = (
+				6702AD291C5DA2FC008D014D /* cold-snow-winter-mountain.jpeg */,
 				6702AD271C5D9C66008D014D /* demo-cover-photo.png */,
 				6702AD201C5D8242008D014D /* demo-profile-picture.png */,
 				672EF5A81C4401B60035567E /* cover-photo-blog.png */,
@@ -327,6 +330,7 @@
 				672EF5A91C4401B60035567E /* cover-photo-blog.png in Resources */,
 				675D5BA21C3FDCCC009E44CE /* Main.storyboard in Resources */,
 				6702AD281C5D9C66008D014D /* demo-cover-photo.png in Resources */,
+				6702AD2A1C5DA2FC008D014D /* cold-snow-winter-mountain.jpeg in Resources */,
 				6702AD221C5D8242008D014D /* demo-profile-picture.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

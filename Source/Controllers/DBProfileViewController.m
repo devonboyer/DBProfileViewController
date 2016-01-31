@@ -20,7 +20,7 @@
 #import "NSBundle+DBProfileViewController.h"
 
 const CGFloat DBProfileViewControllerProfilePictureSizeNormal = 72.0;
-const CGFloat DBProfileViewControllerProfilePictureSizeLarge = 82.0;
+const CGFloat DBProfileViewControllerProfilePictureSizeLarge = 92.0;
 
 static const CGFloat DBProfileViewControllerPullToRefreshDistance = 80.0;
 static const CGFloat DBProfileViewControllerNavigationBarHeightRegular = 64.0;
