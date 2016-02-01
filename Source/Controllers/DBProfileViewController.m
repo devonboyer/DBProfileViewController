@@ -34,6 +34,8 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     BOOL _hasAppeared;
     BOOL _shouldScrollToTop;
     CGPoint _sharedContentOffset;
+    
+    UIEdgeInsets _cachedContentInset;
 }
 
 @property (nonatomic, getter=isRefreshing) BOOL refreshing;
@@ -241,13 +243,28 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
 
 #pragma mark - Size Classes
 
+- (void)willTransitionToTraitCollection:(UITraitCollection *)newCollection withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
+    UIScrollView *scrollView = [self.visibleContentViewController contentScrollView];
+    _cachedContentInset = scrollView.contentInset;
+}
+
 - (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection {
     [super traitCollectionDidChange:previousTraitCollection];
     
-    [self configureContentViewControllers];
-    
+    // The scroll view content inset needs to be recalculated for the new size class
     UIScrollView *scrollView = [self.visibleContentViewController contentScrollView];
-    [scrollView setContentOffset:_sharedContentOffset];
+    
+    [scrollView setNeedsLayout];
+    [scrollView layoutIfNeeded];
+    
+    [self.view setNeedsUpdateConstraints];
+    
+    [self adjustContentInsetForScrollView:scrollView];
+    
+    // Preserve the relative contentOffset during size class changes
+    CGPoint contentOffset = scrollView.contentOffset;
+    contentOffset.y -= MAX(scrollView.contentInset.top - _cachedContentInset.top, 0);
+    scrollView.contentOffset = contentOffset;
 }
 
 #pragma mark - Getters
@@ -489,6 +506,7 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
 
 #pragma mark - Helpers
 
+// FIXME: This is not always an accurate representation of selected index
 - (NSUInteger)visibleContentViewControllerIndex {
     return [self.segmentedControlView.segmentedControl selectedSegmentIndex];
 }
@@ -497,6 +515,7 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     return [self.contentViewControllers count];
 }
 
+// FIXME: This method never seems to work
 - (UIScrollView *)scrollViewForVisibleContentViewController {
     NSAssert(self.visibleContentViewController, @"visibleContentViewController cannot be nil");
     NSUInteger currentlySelectedIndex = [self visibleContentViewControllerIndex];
@@ -618,7 +637,7 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
         
         // Restore content offset for scroll view from cache
         CGPoint cachedContentOffset = [self cachedContentOffsetForKey:[visibleViewController contentTitle]];
-        if (cachedContentOffset.y > -scrollView.contentOffset.y) {
+        if (cachedContentOffset.y > scrollView.contentOffset.y && !CGPointEqualToPoint(CGPointZero, cachedContentOffset)) {
             [scrollView setContentOffset:cachedContentOffset];
         }
     } else {
@@ -660,7 +679,16 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     contentInset.top = (self.automaticallyAdjustsScrollViewInsets) ? topInset + [self.topLayoutGuide length] : topInset;
     
     // Calculate scroll view bottom inset
-    CGFloat minimumContentSizeHeight = CGRectGetHeight(scrollView.frame) - 64 - CGRectGetHeight(self.segmentedControlView.frame) + 5;
+    CGFloat minimumContentSizeHeight = CGRectGetHeight(scrollView.frame) - CGRectGetHeight(self.segmentedControlView.frame);
+    
+    switch (self.view.traitCollection.verticalSizeClass) {
+        case UIUserInterfaceSizeClassCompact:
+            minimumContentSizeHeight -= DBProfileViewControllerNavigationBarHeightCompact;
+            break;
+        default:
+            minimumContentSizeHeight -= DBProfileViewControllerNavigationBarHeightRegular;
+            break;
+    }
     
     if (scrollView.contentSize.height < minimumContentSizeHeight) {
         contentInset.bottom = minimumContentSizeHeight - scrollView.contentSize.height;
@@ -697,7 +725,7 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
 #pragma mark - Blurring
 
 - (UIImage *)blurredImageAt:(CGFloat)percent {
-    NSNumber *keyNumber = @(round(percent * 15));
+    NSNumber *keyNumber = @(round(percent * 20));
     return [self.blurredImageCache objectForKey:keyNumber];
 }
 
@@ -705,8 +733,8 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
     NSAssert(![NSThread isMainThread], @"fillBlurredImageCacheWithImage: should not be called on main thread");
     CGFloat maxBlurRadius = 30;
     [self.blurredImageCache removeAllObjects];
-    for (int i = 0; i <= 15; i++) {
-        CGFloat radius = maxBlurRadius * i/15;
+    for (int i = 0; i <= 20; i++) {
+        CGFloat radius = maxBlurRadius * i/20;
         [self.blurredImageCache setObject:[DBProfileImageEffects imageByApplyingBlurToImage:image withRadius:radius] forKey:@(i)];
     }
 }
@@ -767,6 +795,9 @@ static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentO
         [self endRefreshAnimations];
     }
 
+    if (contentOffset.y > 0 && shouldEndRefreshAnimations) {
+        [self endRefreshAnimations];
+    }
     self.activityIndicator.alpha = (contentOffset.y > 0) ? 1 - contentOffset.y / 20 : 1;
 }
 
