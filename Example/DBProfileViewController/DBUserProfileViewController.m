@@ -11,7 +11,11 @@
 #import "DBPhotosTableViewController.h"
 #import "DBLikesTableViewController.h"
 
-@interface DBUserProfileViewController () <DBProfileViewControllerDelegate>
+@interface DBUserProfileViewController () <DBProfileViewControllerDelegate, DBProfileViewControllerDataSource> {
+    DBFollowersTableViewController *followers;
+    DBPhotosTableViewController *photos;
+    DBLikesTableViewController *likes;
+}
 @end
 
 @implementation DBUserProfileViewController
@@ -19,14 +23,14 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    followers = [[DBFollowersTableViewController alloc] init];
+    photos = [[DBPhotosTableViewController alloc] init];
+    likes = [[DBLikesTableViewController alloc] init];
+
     self.title = @"DBProfileViewController";
     
     self.delegate = self;
-    
-    // Add content view controllers
-    [self addContentViewControllers:@[[[DBFollowersTableViewController alloc] init],
-                                      [[DBPhotosTableViewController alloc] init],
-                                      [[DBLikesTableViewController alloc] init]]];
+    self.dataSource = self;
     
     // Customize profile appearance
     self.coverPhotoOptions = DBProfileCoverPhotoOptionStretch;
@@ -38,9 +42,17 @@
     detailsView.nameLabel.text = @"DBProfileViewController";
     detailsView.usernameLabel.text = @"by @devboyer";
     detailsView.descriptionLabel.text = @"A customizable library for creating stunning user profiles.";
+    [detailsView.editProfileButton addTarget:self action:@selector(editProfile:) forControlEvents:UIControlEventTouchUpInside];
     
     [self setProfilePicture:[UIImage imageNamed:@"demo-profile-picture"] animated:NO];
     [self setStyle:self.style];
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    
+    // Why isn't this working?
+    [self setCoverPhoto:[UIImage imageNamed:@"demo-cover-photo-2"] animated:NO];
 }
 
 - (void)setStyle:(DBUserProfileViewControllerStyle)style {
@@ -63,7 +75,7 @@
             
             detailsView.contentInset = UIEdgeInsetsMake(70, 15, 15, 15);
             
-            [self setCoverPhoto:[UIImage imageNamed:@"demo-cover-photo-1"] animated:NO];
+            [self setCoverPhoto:[UIImage imageNamed:@"demo-cover-photo-2"] animated:NO];
             break;
         case DBUserProfileViewControllerStyle3:
             self.profilePictureView.style = DBProfilePictureStyleRound;
@@ -83,7 +95,61 @@
     }
 }
 
+#pragma mark - Actions
+
+- (void)editProfile:(id)sender {
+    DBProfileDetailsView *detailsView = (DBProfileDetailsView *)self.detailsView;
+    detailsView.expanded = !detailsView.expanded;
+    
+    // Animate changes to height
+    CGPoint contentOffset = [self.visibleContentViewController contentScrollView].contentOffset;
+    contentOffset.y += (detailsView.expanded) ? -125 : 125;
+    
+    [self beginUpdates];
+    [self.visibleContentViewController contentScrollView].contentOffset = contentOffset;
+    [self endUpdates];
+}
+
+#pragma mark - DBProfileViewControllerDataSource
+
+- (NSUInteger)numberOfSegmentsForProfileViewController:(DBProfileViewController *)profileViewController {
+    return 3;
+}
+
+- (UIViewController<DBProfileContentPresenting> *)profileViewController:(DBProfileViewController *)profileViewController contentViewControllerAtIndex:(NSUInteger)index {
+
+    switch (index) {
+        case 0:
+            return followers;
+        case 1:
+            return photos;
+        case 2:
+            return likes;
+        default:
+            break;
+    }
+    return nil;
+}
+
+- (NSString *)profileViewController:(DBProfileViewController *)profileViewController titleForContentAtIndex:(NSUInteger)index {
+    switch (index) {
+        case 0:
+            return @"Followers";
+        case 1:
+            return @"Photos";
+        case 2:
+            return @"Likes";
+        default:
+            break;
+    }
+    return nil;
+}
+
 #pragma mark - DBProfileViewControllerDelegate
+
+- (CGFloat)profileViewController:(DBProfileViewController *)viewController heightForHeaderInSegment:(NSInteger)segment {
+    return DBProfileViewControllerAutomaticDimension;
+}
 
 - (void)profileViewController:(DBProfileViewController *)viewController didSelectCoverPhoto:(UIImageView *)imageView { }
 

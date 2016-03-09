@@ -10,6 +10,9 @@
 
 #import <UIKit/UIKit.h>
 
+#import "DBProfileViewControllerDelegate.h"
+#import "DBProfileViewControllerDataSource.h"
+
 @protocol DBProfileContentPresenting;
 
 @class DBProfileViewController;
@@ -17,6 +20,8 @@
 @class DBProfilePictureView;
 @class DBProfileSegmentedControlView;
 @class DBProfileNavigationView;
+
+extern const CGFloat DBProfileViewControllerAutomaticDimension;
 
 /*!
  @abstract A constant value representing the size of the profile picture when using `DBProfilePictureSizeNormal`.
@@ -78,40 +83,6 @@ typedef NS_ENUM(NSInteger, DBProfilePictureAlignment) {
     DBProfilePictureAlignmentCenter,
 };
 
-///------------------------------------------------
-/// @name DBProfileViewControllerDelegate
-///------------------------------------------------
-
-/*!
- @protocol DBProfileViewControllerDelegate
- @abstract The `DBProfileViewControllerDelegate` protocol defines methods for interacting with a `DBProfileViewController`.
- */
-@protocol DBProfileViewControllerDelegate <NSObject>
-
-@optional
-
-/*!
- @abstract Called after the profile picture has been selected by the user.
- @param viewController The profile view controller where the selection was made.
- @prarm imageView The selected image view.
- */
-- (void)profileViewController:(DBProfileViewController *)viewController didSelectProfilePicture:(UIImageView *)imageView;
-
-/*!
- @abstract Called after the cover photo has been selected by the user.
- @param viewController The profile view controller where the selection was made.
- @prarm imageView The selected image view.
- */
-- (void)profileViewController:(DBProfileViewController *)viewController didSelectCoverPhoto:(UIImageView *)imageView;
-
-/*!
- @abstract Called after the user has triggered a pull-to-refresh.
- @param viewController The profile view controller that triggered a pull-to-refresh.
- */
-- (void)profileViewControllerDidPullToRefresh:(DBProfileViewController *)viewController;
-
-@end
-
 /*!
  @class DBProfileViewController
  @abstract The `DBProfileViewController` class is a view controller that is specialized to display a profile interface.
@@ -119,21 +90,21 @@ typedef NS_ENUM(NSInteger, DBProfilePictureAlignment) {
  */
 @interface DBProfileViewController : UIViewController
 
-///----------------------------------------------
-/// @name Creating a Profile View Controller
-///----------------------------------------------
-
-/**
- @abstract Creates and returns a new profile view controller.
- @param viewControllers An array of content view controllers.
- @return A newly created profile view controller.
- */
-- (instancetype)initWithContentViewControllers:(NSArray *)contentViewControllers;
+// Version 1.0.1
+- (void)beginUpdates;
+- (void)endUpdates;
+- (void)reloadData;
+@property (nonatomic, assign, readonly) NSUInteger indexForSelectedSegment;
 
 /*!
  @abstract The object that acts as the view controller's delegate.
  */
 @property (nonatomic, strong) id<DBProfileViewControllerDelegate> delegate;
+
+/*!
+ @abstract The object that acts as the view controller's data source.
+ */
+@property (nonatomic, strong) id<DBProfileViewControllerDataSource> dataSource;
 
 /*!
  @abstract A view that displays a navigation bar when `coverPhotoMimicsNavigationBar` is set to YES.
@@ -158,11 +129,10 @@ typedef NS_ENUM(NSInteger, DBProfilePictureAlignment) {
 
 /*!
  @abstract Specifies the height of the cover photo relative to the height of the screen.
- @discussion The default is 0.2. To hide the cover photo set the `coverPhotoStyle` to `DBProfileCoverPhotoStyleNone`.
+ @discussion The default is 0.2. To hide the cover photo set `coverPhotoHidden` to YES.
  @warning `coverPhotoHeightMultiplier` must be greater than 0 or less than or equal to 1.
  */
 @property (nonatomic, assign) CGFloat coverPhotoHeightMultiplier;
-
 
 /*!
  @abstract A view that is displays a cover photo.
@@ -170,7 +140,7 @@ typedef NS_ENUM(NSInteger, DBProfilePictureAlignment) {
 @property (nonatomic, strong, readonly) DBProfileCoverPhotoView *coverPhotoView;
 
 /*!
- @abstract YES if the cover photo should hidden, NO otherwise.
+ @abstract YES if the cover photo should be hidden, NO otherwise.
  @discussion The default is `NO`.
  */
 @property (nonatomic, assign) BOOL coverPhotoHidden;
@@ -223,69 +193,9 @@ typedef NS_ENUM(NSInteger, DBProfilePictureAlignment) {
 /*!
  @abstract Sets the profile picture.
  @param profilePicture The image to set as the profile picture.
- @param animated YES if setting the cover photo should be animated, NO otherwise.
+ @param animated YES if setting the profile picture should be animated, NO otherwise.
  */
 - (void)setProfilePicture:(UIImage *)profilePicture animated:(BOOL)animated;
-
-///--------------------------------------------------
-/// @name Accessing Content View Controllers
-///--------------------------------------------------
-
-/*!
- @abstract The array of content view controllers that this profile manages.
- */
-@property (nonatomic, strong, readonly) NSArray *contentViewControllers;
-
-/*!
- @abstract The content view controller that is currently visible.
- */
-@property (nonatomic, strong, readonly) UIViewController<DBProfileContentPresenting> *visibleContentViewController;
-
-/*!
- @abstract The index of the content view controller that is currently visible.
- */
-@property (nonatomic, assign, readonly) NSUInteger visibleContentViewControllerIndex;
-
-///---------------------------------------------------
-/// @name Adding and Removing Content View Controllers
-///---------------------------------------------------
-
-/*!
- @abstract Adds a content view controller to the profile.
- @discussion Content view controllers must conform to `DBProfileContentPresenting`.
- @param contentViewController The view controller to add.
- @see DBProfileContentPresenting
- */
-- (void)addContentViewController:(UIViewController<DBProfileContentPresenting> *)contentViewController;
-
-/*!
- @abstract Adds an array of content view controller to the profile.
- @discussion Content view controllers must conform to `DBProfileContentPresenting`.
- @param contentViewControllers An array of view controllers to add.
- @see DBProfileContentPresenting
- */
-- (void)addContentViewControllers:(NSArray *)contentViewControllers;
-
-/*!
- @abstract Inserts a content view controller to the profile at the specified index.
- @discussion Content view controllers must conform to `DBProfileContentPresenting`.
- @param viewController The view controller to insert.
- @param index The index at which to insert the view controller.
- @see DBProfileContentPresenting
- */
-- (void)insertContentViewController:(UIViewController<DBProfileContentPresenting> *)contentViewController atIndex:(NSUInteger)index;
-
-/*!
- @abstract Removes a content view controller the profile.
- @param index The index at which to remove the view controller.
- */
-- (void)removeContentViewControllerAtIndex:(NSUInteger)index;
-
-/*!
- @abstract Sets the view controller at the specified index as the visible view controller.
- @param index The index of the view controller to set as the visible view controller.
- */
-- (void)setVisibleContentViewControllerAtIndex:(NSUInteger)index;
 
 ///----------------------------------------------
 /// @name Configuring Pull-To-Refresh
@@ -298,8 +208,7 @@ typedef NS_ENUM(NSInteger, DBProfilePictureAlignment) {
 
 /*!
  @abstract YES to enable pull-to-refresh, NO otherwise.
-  @discussion The default is YES.
- @warning `DBProfileCoverPhotoStyleNone` is mutually exclusive with `allowsPullToRefresh`
+ @discussion The default is YES.
  */
 @property (nonatomic, assign) BOOL allowsPullToRefresh;
 
@@ -307,5 +216,20 @@ typedef NS_ENUM(NSInteger, DBProfilePictureAlignment) {
  @abstract Hides the pull-to-refresh indicator if it is currently animating.
  */
 - (void)endRefreshing;
+
+@end
+
+@interface DBProfileViewController (Deprecated)
+
+- (instancetype)initWithContentViewControllers:(NSArray *)contentViewControllers;
+
+@property (nonatomic, strong, readonly) UIViewController<DBProfileContentPresenting> *visibleContentViewController;
+@property (nonatomic, assign, readonly) NSUInteger visibleContentViewControllerIndex;
+
+- (void)insertContentViewController:(UIViewController<DBProfileContentPresenting> *)contentViewController atIndex:(NSUInteger)index;
+- (void)removeContentViewControllerAtIndex:(NSUInteger)index;
+- (void)addContentViewController:(UIViewController<DBProfileContentPresenting> *)contentViewController __deprecated;
+- (void)addContentViewControllers:(NSArray *)contentViewControllers __deprecated;
+//- (void)setVisibleContentViewControllerAtIndex:(NSUInteger)index __deprecated;
 
 @end

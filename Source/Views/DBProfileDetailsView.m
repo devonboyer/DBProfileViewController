@@ -38,6 +38,8 @@
     _descriptionLabel = [[UILabel alloc] init];
     _editProfileButton = [[UIButton alloc] init];
     
+    self.backgroundColor = [UIColor whiteColor];
+    
     [self.contentView addSubview:self.nameLabel];
     [self.contentView addSubview:self.usernameLabel];
     [self.contentView addSubview:self.descriptionLabel];
@@ -86,6 +88,12 @@
 - (void)setContentInset:(UIEdgeInsets)contentInset {
     _contentInset = contentInset;
     [self updateConstraints];
+}
+
+- (CGSize)intrinsicContentSize {
+    CGSize size = [super intrinsicContentSize];
+    size.height += ((self.expanded) ? 300 : 0);
+    return size;
 }
 
 #pragma mark - Helpers

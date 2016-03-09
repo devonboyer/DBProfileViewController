@@ -24,4 +24,6 @@
 
 @property (nonatomic, assign) UIEdgeInsets contentInset;
 
+@property (nonatomic, assign) BOOL expanded;
+
 @end
