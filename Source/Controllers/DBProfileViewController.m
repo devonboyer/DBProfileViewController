@@ -195,7 +195,7 @@ static void * DBProfileViewControllerUpdatesContext = &DBProfileViewControllerUp
     
     // Scroll displayed content controller to top
     if ([self.contentViewControllers count]) {
-        UIViewController<DBProfileContentPresenting> *displayedViewController = [self.contentViewControllers objectAtIndex:self.indexForSelectedSegment];
+        DBProfileContentViewController *displayedViewController = [self.contentViewControllers objectAtIndex:self.indexForSelectedSegment];
         [self scrollContentViewControllerToTop:displayedViewController];
     }
     
@@ -309,6 +309,7 @@ static void * DBProfileViewControllerUpdatesContext = &DBProfileViewControllerUp
 - (void)setCoverPhotoMimicsNavigationBar:(BOOL)coverPhotoMimicsNavigationBar {
     _coverPhotoMimicsNavigationBar = coverPhotoMimicsNavigationBar;
     self.navigationView.hidden = !coverPhotoMimicsNavigationBar;
+    self.coverPhotoView.overlayView.hidden = !coverPhotoMimicsNavigationBar;
     [self.view setNeedsUpdateConstraints];
 }
 
@@ -333,7 +334,7 @@ static void * DBProfileViewControllerUpdatesContext = &DBProfileViewControllerUp
 - (void)segmentChanged:(id)sender {
     NSInteger selectedSegmentIndex = [self.segmentedControlView.segmentedControl selectedSegmentIndex];
     
-    UIViewController<DBProfileContentPresenting> *viewControllerToDisplay = [self.contentViewControllers objectAtIndex:self.indexForSelectedSegment];
+    DBProfileContentViewController *viewControllerToDisplay = [self.contentViewControllers objectAtIndex:self.indexForSelectedSegment];
     UIScrollView *scrollView = [viewControllerToDisplay contentScrollView];
     [self endObservingContentOffsetForScrollView:scrollView];
     
@@ -429,7 +430,7 @@ static void * DBProfileViewControllerUpdatesContext = &DBProfileViewControllerUp
     
     for (NSInteger i = 0; i < numberOfSegments; i++) {
         // Reload content view controllers
-        UIViewController<DBProfileContentPresenting> *contentViewController = [self.dataSource profileViewController:self contentViewControllerAtIndex:i];
+        DBProfileContentViewController *contentViewController = [self.dataSource profileViewController:self contentViewControllerAtIndex:i];
         [self.contentViewControllers addObject:contentViewController];
         
         // Reload segmented control
@@ -444,17 +445,21 @@ static void * DBProfileViewControllerUpdatesContext = &DBProfileViewControllerUp
 - (void)setIndexForSelectedSegment:(NSUInteger)indexForSelectedSegment {
     if (![self.contentViewControllers count]) return;
     
-    UIViewController<DBProfileContentPresenting> *viewControllerToHide = [self.contentViewControllers objectAtIndex:_indexForSelectedSegment];
+    DBProfileContentViewController *viewControllerToHide = [self.contentViewControllers objectAtIndex:_indexForSelectedSegment];
     if (viewControllerToHide) [self hideContentViewController:viewControllerToHide];
     
     _indexForSelectedSegment = indexForSelectedSegment;
     [self.segmentedControlView.segmentedControl setSelectedSegmentIndex:indexForSelectedSegment];
     
-    UIViewController<DBProfileContentPresenting> *viewControllerToDisplay = [self.contentViewControllers objectAtIndex:indexForSelectedSegment];
+    DBProfileContentViewController *viewControllerToDisplay = [self.contentViewControllers objectAtIndex:indexForSelectedSegment];
     if (viewControllerToDisplay) [self displayContentViewController:viewControllerToDisplay];
     
     [self updateViewConstraints];
     [self.view layoutIfNeeded];
+    
+    // Update titles
+    self.navigationView.titleView.titleLabel.text = self.title;
+    self.navigationView.titleView.subtitleLabel.text = [self.dataSource profileViewController:self subtitleForContentAtIndex:self.indexForSelectedSegment];
 }
 
 
@@ -493,28 +498,13 @@ static void * DBProfileViewControllerUpdatesContext = &DBProfileViewControllerUp
     }
 }
 
-#pragma mark - Helpers
-
-- (NSString *)subtitleForVisibleContentViewController {
-    NSUInteger currentlySelectedIndex = [self indexForSelectedSegment];
-    return [self subtitleForContentViewControllerAtIndex:currentlySelectedIndex];
-}
-
-- (NSString *)subtitleForContentViewControllerAtIndex:(NSUInteger)index {
-    UIViewController<DBProfileContentPresenting> *viewController = self.contentViewControllers[index];
-    if ([viewController respondsToSelector:@selector(contentSubtitle)]) {
-        return [viewController contentSubtitle];
-    }
-    return nil;
-}
-
 #pragma mark - Container View Controller
 
 - (CGRect)frameForContentViewController {
     return self.containerView.frame;
 }
 
-- (void)displayContentViewController:(UIViewController<DBProfileContentPresenting> *)viewController {
+- (void)displayContentViewController:(DBProfileContentViewController *)viewController {
     NSAssert(viewController, @"viewController cannot be nil");
     [self addChildViewController:viewController];
     viewController.view.frame = [self frameForContentViewController];
@@ -524,7 +514,7 @@ static void * DBProfileViewControllerUpdatesContext = &DBProfileViewControllerUp
     [self buildContentViewController:viewController];
 }
 
-- (void)hideContentViewController:(UIViewController<DBProfileContentPresenting> *)viewController {
+- (void)hideContentViewController:(DBProfileContentViewController *)viewController {
     NSAssert(viewController, @"viewController cannot be nil");
     
     UIScrollView *scrollView = [viewController contentScrollView];
@@ -542,7 +532,7 @@ static void * DBProfileViewControllerUpdatesContext = &DBProfileViewControllerUp
     [viewController removeFromParentViewController];
 }
 
-- (void)buildContentViewController:(UIViewController<DBProfileContentPresenting> *)viewController {
+- (void)buildContentViewController:(DBProfileContentViewController *)viewController {
     NSAssert(viewController, @"viewController cannot be nil");
 
     UIScrollView *scrollView = [viewController contentScrollView];
@@ -618,10 +608,6 @@ static void * DBProfileViewControllerUpdatesContext = &DBProfileViewControllerUp
         [scrollView setContentOffset:_sharedContentOffset];
     }
     [scrollView flashScrollIndicators];
-    
-    self.navigationView.titleView.titleLabel.text = self.title;
-    self.navigationView.titleView.subtitleLabel.text = [self subtitleForVisibleContentViewController];
-    self.coverPhotoView.overlayView.hidden = !self.coverPhotoMimicsNavigationBar;
 }
 
 #pragma mark - Managing Content Offset
@@ -634,7 +620,7 @@ static void * DBProfileViewControllerUpdatesContext = &DBProfileViewControllerUp
     return [[self.contentOffsetCache objectForKey:key] CGPointValue];
 }
 
-- (void)scrollContentViewControllerToTop:(UIViewController<DBProfileContentPresenting> *)viewController {
+- (void)scrollContentViewControllerToTop:(DBProfileContentViewController *)viewController {
     UIScrollView *scrollView = [viewController contentScrollView];
     [scrollView setContentOffset:CGPointMake(0, -scrollView.contentInset.top)];
 }
@@ -991,13 +977,13 @@ static void * DBProfileViewControllerUpdatesContext = &DBProfileViewControllerUp
 
 - (void)addContentViewControllers:(NSArray *)contentViewControllers { }
 
-- (void)addContentViewController:(UIViewController<DBProfileContentPresenting> *)contentViewController { }
+- (void)addContentViewController:(DBProfileContentViewController *)contentViewController { }
 
-- (void)insertContentViewController:(UIViewController<DBProfileContentPresenting> *)contentViewController atIndex:(NSUInteger)index { }
+- (void)insertContentViewController:(DBProfileContentViewController *)contentViewController atIndex:(NSUInteger)index { }
 
 - (void)removeContentViewControllerAtIndex:(NSUInteger)index { }
 
-- (UIViewController<DBProfileContentPresenting> *)visibleContentViewController {
+- (DBProfileContentViewController *)visibleContentViewController {
     return [self.contentViewControllers objectAtIndex:self.indexForSelectedSegment];
 }
 

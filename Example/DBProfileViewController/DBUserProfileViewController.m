@@ -116,7 +116,7 @@
     return 3;
 }
 
-- (UIViewController<DBProfileContentPresenting> *)profileViewController:(DBProfileViewController *)profileViewController contentViewControllerAtIndex:(NSUInteger)index {
+- (DBProfileContentViewController *)profileViewController:(DBProfileViewController *)profileViewController contentViewControllerAtIndex:(NSUInteger)index {
 
     switch (index) {
         case 0:
@@ -145,9 +145,23 @@
     return nil;
 }
 
+- (NSString *)profileViewController:(DBProfileViewController *)profileViewController subtitleForContentAtIndex:(NSUInteger)index {
+    switch (index) {
+        case 0:
+            return @"20 Followers";
+        case 1:
+            return @"12 Photos";
+        case 2:
+            return @"4 Likes";
+        default:
+            break;
+    }
+    return nil;
+}
+
 #pragma mark - DBProfileViewControllerDelegate
 
-- (CGFloat)profileViewController:(DBProfileViewController *)viewController heightForHeaderInSegment:(NSInteger)segment {
+- (CGFloat)profileViewController:(DBProfileViewController *)viewController heightForDetailsViewAtIndex:(NSInteger)index {
     return DBProfileViewControllerAutomaticDimension;
 }
 

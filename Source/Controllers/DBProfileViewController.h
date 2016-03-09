@@ -223,12 +223,12 @@ typedef NS_ENUM(NSInteger, DBProfilePictureAlignment) {
 
 - (instancetype)initWithContentViewControllers:(NSArray *)contentViewControllers;
 
-@property (nonatomic, strong, readonly) UIViewController<DBProfileContentPresenting> *visibleContentViewController;
+@property (nonatomic, strong, readonly) DBProfileContentViewController *visibleContentViewController;
 @property (nonatomic, assign, readonly) NSUInteger visibleContentViewControllerIndex;
 
-- (void)insertContentViewController:(UIViewController<DBProfileContentPresenting> *)contentViewController atIndex:(NSUInteger)index;
+- (void)insertContentViewController:(DBProfileContentViewController *)contentViewController atIndex:(NSUInteger)index;
 - (void)removeContentViewControllerAtIndex:(NSUInteger)index;
-- (void)addContentViewController:(UIViewController<DBProfileContentPresenting> *)contentViewController __deprecated;
+- (void)addContentViewController:(DBProfileContentViewController *)contentViewController __deprecated;
 - (void)addContentViewControllers:(NSArray *)contentViewControllers __deprecated;
 //- (void)setVisibleContentViewControllerAtIndex:(NSUInteger)index __deprecated;
 

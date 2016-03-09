@@ -9,6 +9,11 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIViewController.h>
+
+@protocol DBProfileContentPresenting;
+
+typedef UIViewController<DBProfileContentPresenting> DBProfileContentViewController;
 
 /*!
  @protocol DBProfileContentPresenting
@@ -21,17 +26,9 @@
  */
 - (UIScrollView *)contentScrollView;
 
-/*!
- @abstract The title displayed in the segmented control.
- @warning The title cannot be nil.
- */
-- (NSString *)contentTitle;
-
 @optional
 
-/*!
- @abstract An optional subtitle that is displayed beneath the profile's title in a navigation bar.
- */
-- (NSString *)contentSubtitle;
+- (NSString *)contentTitle __deprecated;
+- (NSString *)contentSubtitle __deprecated;
 
 @end

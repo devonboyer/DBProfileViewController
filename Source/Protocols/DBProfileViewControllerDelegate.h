@@ -13,7 +13,7 @@
 
 @protocol DBProfileViewControllerDelegate <NSObject>
 
-- (CGFloat)profileViewController:(DBProfileViewController *)viewController heightForHeaderInSegment:(NSInteger)segment;
+- (CGFloat)profileViewController:(DBProfileViewController *)viewController heightForDetailsViewAtIndex:(NSInteger)index;
 
 @optional
 

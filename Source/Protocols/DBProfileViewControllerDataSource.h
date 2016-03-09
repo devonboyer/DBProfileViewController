@@ -17,9 +17,11 @@
 
 - (NSUInteger)numberOfSegmentsForProfileViewController:(DBProfileViewController *)profileViewController;
 
-- (UIViewController<DBProfileContentPresenting> *)profileViewController:(DBProfileViewController *)profileViewController contentViewControllerAtIndex:(NSUInteger)index;
+- (DBProfileContentViewController *)profileViewController:(DBProfileViewController *)profileViewController contentViewControllerAtIndex:(NSUInteger)index;
 
 - (NSString *)profileViewController:(DBProfileViewController *)profileViewController titleForContentAtIndex:(NSUInteger)index;
+
+- (NSString *)profileViewController:(DBProfileViewController *)profileViewController subtitleForContentAtIndex:(NSUInteger)index;
 
 @optional
 
