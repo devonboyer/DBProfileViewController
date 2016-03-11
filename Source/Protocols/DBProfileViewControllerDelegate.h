@@ -13,9 +13,9 @@
 
 @protocol DBProfileViewControllerDelegate <NSObject>
 
-- (CGFloat)profileViewController:(DBProfileViewController *)viewController heightForDetailsViewAtIndex:(NSInteger)index;
-
 @optional
+
+- (void)profileViewController:(DBProfileViewController *)viewController didSelectContentControllerAtIndex:(NSInteger)index;
 
 /*!
  @abstract Called after the profile picture has been selected by the user.

@@ -21,8 +21,6 @@
 @class DBProfileSegmentedControlView;
 @class DBProfileNavigationView;
 
-extern const CGFloat DBProfileViewControllerAutomaticDimension;
-
 /*!
  @abstract A constant value representing the size of the profile picture when using `DBProfilePictureSizeNormal`.
  */

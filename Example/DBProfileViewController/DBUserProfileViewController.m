@@ -101,18 +101,13 @@
     DBProfileDetailsView *detailsView = (DBProfileDetailsView *)self.detailsView;
     detailsView.expanded = !detailsView.expanded;
     
-    // Animate changes to height
-    CGPoint contentOffset = [self.visibleContentViewController contentScrollView].contentOffset;
-    contentOffset.y += (detailsView.expanded) ? -125 : 125;
-    
     [self beginUpdates];
-    [self.visibleContentViewController contentScrollView].contentOffset = contentOffset;
     [self endUpdates];
 }
 
 #pragma mark - DBProfileViewControllerDataSource
 
-- (NSUInteger)numberOfSegmentsForProfileViewController:(DBProfileViewController *)profileViewController {
+- (NSUInteger)numberOfContentControllersForProfileViewController:(DBProfileViewController *)profileViewController {
     return 3;
 }
 
@@ -120,18 +115,18 @@
 
     switch (index) {
         case 0:
-            return followers;
+            return [[DBFollowersTableViewController alloc] init];
         case 1:
-            return photos;
+            return [[DBPhotosTableViewController alloc] init];;
         case 2:
-            return likes;
+            return [[DBLikesTableViewController alloc] init];;
         default:
             break;
     }
     return nil;
 }
 
-- (NSString *)profileViewController:(DBProfileViewController *)profileViewController titleForContentAtIndex:(NSUInteger)index {
+- (NSString *)profileViewController:(DBProfileViewController *)profileViewController titleForContentControllerAtIndex:(NSUInteger)index {
     switch (index) {
         case 0:
             return @"Followers";
@@ -145,7 +140,7 @@
     return nil;
 }
 
-- (NSString *)profileViewController:(DBProfileViewController *)profileViewController subtitleForContentAtIndex:(NSUInteger)index {
+- (NSString *)profileViewController:(DBProfileViewController *)profileViewController subtitleForContentControllerAtIndex:(NSUInteger)index {
     switch (index) {
         case 0:
             return @"20 Followers";
@@ -161,9 +156,7 @@
 
 #pragma mark - DBProfileViewControllerDelegate
 
-- (CGFloat)profileViewController:(DBProfileViewController *)viewController heightForDetailsViewAtIndex:(NSInteger)index {
-    return DBProfileViewControllerAutomaticDimension;
-}
+- (void)profileViewController:(DBProfileViewController *)viewController didSelectContentControllerAtIndex:(NSInteger)index { }
 
 - (void)profileViewController:(DBProfileViewController *)viewController didSelectCoverPhoto:(UIImageView *)imageView { }
 

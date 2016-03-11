@@ -19,8 +19,6 @@
 #import "DBProfileImageEffects.h"
 #import "NSBundle+DBProfileViewController.h"
 
-const CGFloat DBProfileViewControllerAutomaticDimension = -CGFLOAT_MAX;
-
 const CGFloat DBProfileViewControllerProfilePictureSizeNormal = 72.0;
 const CGFloat DBProfileViewControllerProfilePictureSizeLarge = 92.0;
 
@@ -28,10 +26,13 @@ static const CGFloat DBProfileViewControllerPullToRefreshDistance = 80.0;
 static const CGFloat DBProfileViewControllerNavigationBarHeightRegular = 64.0;
 static const CGFloat DBProfileViewControllerNavigationBarHeightCompact = 44.0;
 
+static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProfileViewController.contentOffsetCache";
+static NSString * const DBProfileViewControllerBlurredImageCacheName = @"DBProfileViewController.blurredImageCache";
+
 static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewControllerContentOffsetKVOContext;
 static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentOffset";
 
-static void * DBProfileViewControllerUpdatesContext = &DBProfileViewControllerUpdatesContext;
+static void * DBProfileViewControllerUpdatesAnimationContext = &DBProfileViewControllerUpdatesAnimationContext;
 
 @interface DBProfileViewController ()
 {
@@ -40,6 +41,8 @@ static void * DBProfileViewControllerUpdatesContext = &DBProfileViewControllerUp
     UIEdgeInsets _cachedContentInset;
 }
 
+@property (nonatomic, getter=isUpdating) BOOL updating;
+
 @property (nonatomic, getter=isRefreshing) BOOL refreshing;
 @property (nonatomic, strong) NSMutableArray *contentViewControllers;
 @property (nonatomic, strong) NSCache *contentOffsetCache;
@@ -47,12 +50,10 @@ static void * DBProfileViewControllerUpdatesContext = &DBProfileViewControllerUp
 
 // Views
 @property (nonatomic, strong) UIView *containerView;
-
 @property (nonatomic, strong) DBProfileNavigationView *navigationView;
 @property (nonatomic, strong) UIActivityIndicatorView *activityIndicator;
 
 // Constraints
-
 @property (nonatomic, strong) NSLayoutConstraint *detailsViewTopConstraint;
 @property (nonatomic, strong) NSLayoutConstraint *coverPhotoViewTopConstraint;
 @property (nonatomic, strong) NSLayoutConstraint *coverPhotoViewHeightConstraint;
@@ -69,9 +70,10 @@ static void * DBProfileViewControllerUpdatesContext = &DBProfileViewControllerUp
 @property (nonatomic, strong) UITapGestureRecognizer *coverPhotoTapGestureRecognizer;
 @property (nonatomic, strong) UITapGestureRecognizer *profilePictureTapGestureRecognizer;
 
-
+// New!!
 @property (nonatomic, assign) NSUInteger indexForSelectedSegment;
-@property (nonatomic, strong) NSLayoutConstraint *headerViewHeightConstraint;
+
+@property (nonatomic, assign) CGFloat oldDetailsViewHeight;
 
 @end
 
@@ -114,12 +116,12 @@ static void * DBProfileViewControllerUpdatesContext = &DBProfileViewControllerUp
     _activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
 
     NSCache *contentOffsetCache = [[NSCache alloc] init];
-    contentOffsetCache.name = @"DBProfileViewController.contentOffsetCache";
+    contentOffsetCache.name = DBProfileViewControllerContentOffsetCacheName;
     contentOffsetCache.countLimit = 10;
     _contentOffsetCache = contentOffsetCache;
     
     NSCache *blurredImageCache = [[NSCache alloc] init];
-    blurredImageCache.name = @"DBProfileViewController.blurredImageCache";
+    blurredImageCache.name = DBProfileViewControllerBlurredImageCacheName;
     blurredImageCache.countLimit = 30;
     _blurredImageCache = blurredImageCache;
     
@@ -340,6 +342,8 @@ static void * DBProfileViewControllerUpdatesContext = &DBProfileViewControllerUp
     
     self.indexForSelectedSegment = selectedSegmentIndex;
     [self updateViewConstraints];
+    
+    [self notifyDelegateOfContentControllerSelectionAtIndex:self.indexForSelectedSegment];
 }
 
 - (void)handleProfilePictureTapGesture:(UITapGestureRecognizer *)sender {
@@ -407,19 +411,48 @@ static void * DBProfileViewControllerUpdatesContext = &DBProfileViewControllerUp
 #pragma mark - Inserting, Deleting, and Moving Segments
 
 - (void)beginUpdates {
-    [UIView beginAnimations:@"DBProfileViewController.updates" context:&DBProfileViewControllerUpdatesContext];
+    self.updating = YES;
+    
+    self.oldDetailsViewHeight = [self.detailsView systemLayoutSizeFittingSize:UILayoutFittingCompressedSize].height;
+    [self.view invalidateIntrinsicContentSize];
+
+    [UIView beginAnimations:@"DBProfileViewController.updates" context:&DBProfileViewControllerUpdatesAnimationContext];
+    [UIView setAnimationDidStopSelector:@selector(animationDidStop:finished:context:)];
+    [UIView setAnimationDelegate:self];
     [UIView setAnimationDuration:0.25];
 }
 
 - (void)endUpdates {
     [self setIndexForSelectedSegment:self.indexForSelectedSegment];
+
+    CGFloat oldHeight = self.oldDetailsViewHeight;
+    CGFloat newHeight = [self.detailsView systemLayoutSizeFittingSize:UILayoutFittingCompressedSize].height;
+    
+    if (round(oldHeight) != round(newHeight)) {
+        DBProfileContentViewController *viewController = [self.contentViewControllers objectAtIndex:self.indexForSelectedSegment];
+        UIScrollView *scrollView = [viewController contentScrollView];
+        
+        CGPoint contentOffset = scrollView.contentOffset;
+        contentOffset.y += (oldHeight - newHeight);
+        scrollView.contentOffset = contentOffset;
+    }
+    
+    [self.view layoutIfNeeded];
+    [self updateViewConstraints];
+
     [UIView commitAnimations];
+}
+
+- (void)animationDidStop:(NSString*)animationID finished:(BOOL)finished context:(void *)context {
+    if (context == DBProfileViewControllerUpdatesAnimationContext) {
+        self.updating = NO;
+    }
 }
 
 #pragma mark - Reloading Data
 
 - (void)reloadData {
-    NSInteger numberOfSegments = [self.dataSource numberOfSegmentsForProfileViewController:self];
+    NSInteger numberOfSegments = [self.dataSource numberOfContentControllersForProfileViewController:self];
     
     if ([self.contentViewControllers count] > 0) {
         [self hideContentViewController:[self.contentViewControllers objectAtIndex:self.indexForSelectedSegment]];
@@ -434,7 +467,7 @@ static void * DBProfileViewControllerUpdatesContext = &DBProfileViewControllerUp
         [self.contentViewControllers addObject:contentViewController];
         
         // Reload segmented control
-        NSString *title = [self.dataSource profileViewController:self titleForContentAtIndex:i];
+        NSString *title = [self.dataSource profileViewController:self titleForContentControllerAtIndex:i];
         [self.segmentedControlView.segmentedControl insertSegmentWithTitle:title atIndex:i animated:NO];
     }
     
@@ -459,7 +492,7 @@ static void * DBProfileViewControllerUpdatesContext = &DBProfileViewControllerUp
     
     // Update titles
     self.navigationView.titleView.titleLabel.text = self.title;
-    self.navigationView.titleView.subtitleLabel.text = [self.dataSource profileViewController:self subtitleForContentAtIndex:self.indexForSelectedSegment];
+    self.navigationView.titleView.subtitleLabel.text = [self.dataSource profileViewController:self subtitleForContentControllerAtIndex:self.indexForSelectedSegment];
 }
 
 
@@ -479,6 +512,12 @@ static void * DBProfileViewControllerUpdatesContext = &DBProfileViewControllerUp
 }
 
 #pragma mark - Delegate
+
+- (void)notifyDelegateOfContentControllerSelectionAtIndex:(NSInteger)index {
+    if ([self respondsToSelector:@selector(profileViewController:didSelectContentControllerAtIndex:)]) {
+        [self.delegate profileViewController:self didSelectContentControllerAtIndex:index];
+    }
+}
 
 - (void)notifyDelegateOfProfilePictureSelection:(UIImageView *)imageView {
     if ([self respondsToSelector:@selector(profileViewController:didSelectProfilePicture:)]) {
@@ -543,15 +582,15 @@ static void * DBProfileViewControllerUpdatesContext = &DBProfileViewControllerUp
     [self.segmentedControlView removeFromSuperview];
     [self.activityIndicator removeFromSuperview];
     
-    [self.coverPhotoView setTranslatesAutoresizingMaskIntoConstraints:NO];
-    [self.detailsView setTranslatesAutoresizingMaskIntoConstraints:NO];
-    [self.profilePictureView setTranslatesAutoresizingMaskIntoConstraints:NO];
-    [self.segmentedControlView setTranslatesAutoresizingMaskIntoConstraints:NO];
-    [self.activityIndicator setTranslatesAutoresizingMaskIntoConstraints:NO];
+    self.coverPhotoView.translatesAutoresizingMaskIntoConstraints = NO;
+    self.detailsView.translatesAutoresizingMaskIntoConstraints = NO;
+    self.profilePictureView.translatesAutoresizingMaskIntoConstraints = NO;
+    self.segmentedControlView.translatesAutoresizingMaskIntoConstraints = NO;
+    self.activityIndicator.translatesAutoresizingMaskIntoConstraints = NO;
     
     [scrollView addSubview:self.detailsView];
     
-    NSInteger numberOfSegments = [self.dataSource numberOfSegmentsForProfileViewController:self];
+    NSInteger numberOfSegments = [self.dataSource numberOfContentControllersForProfileViewController:self];
     
     // Segmented control ?
     if (numberOfSegments > 1) {
@@ -607,7 +646,6 @@ static void * DBProfileViewControllerUpdatesContext = &DBProfileViewControllerUp
     } else {
         [scrollView setContentOffset:_sharedContentOffset];
     }
-    [scrollView flashScrollIndicators];
 }
 
 #pragma mark - Managing Content Offset
@@ -743,6 +781,7 @@ static void * DBProfileViewControllerUpdatesContext = &DBProfileViewControllerUp
 }
 
 - (void)updateCoverPhotoViewWithContentOffset:(CGPoint)contentOffset {
+    if (self.isUpdating) return;
     
     CGFloat distance = CGRectGetHeight(self.coverPhotoView.frame) - CGRectGetMaxY(self.navigationView.frame);
     
@@ -761,7 +800,7 @@ static void * DBProfileViewControllerUpdatesContext = &DBProfileViewControllerUp
 }
 
 - (void)updateProfilePictureViewWithContentOffset:(CGPoint)contentOffset {
-    if (self.coverPhotoHidden) return;
+    if (self.coverPhotoHidden || self.isUpdating) return;
     CGFloat coverPhotoOffset = CGRectGetHeight(self.coverPhotoView.frame);
     CGFloat coverPhotoOffsetPercent = 0;
     if (self.coverPhotoMimicsNavigationBar) {

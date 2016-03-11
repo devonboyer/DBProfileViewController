@@ -15,13 +15,13 @@
 
 @protocol DBProfileViewControllerDataSource <NSObject>
 
-- (NSUInteger)numberOfSegmentsForProfileViewController:(DBProfileViewController *)profileViewController;
+- (NSUInteger)numberOfContentControllersForProfileViewController:(DBProfileViewController *)profileViewController;
 
 - (DBProfileContentViewController *)profileViewController:(DBProfileViewController *)profileViewController contentViewControllerAtIndex:(NSUInteger)index;
 
-- (NSString *)profileViewController:(DBProfileViewController *)profileViewController titleForContentAtIndex:(NSUInteger)index;
+- (NSString *)profileViewController:(DBProfileViewController *)profileViewController titleForContentControllerAtIndex:(NSUInteger)index;
 
-- (NSString *)profileViewController:(DBProfileViewController *)profileViewController subtitleForContentAtIndex:(NSUInteger)index;
+- (NSString *)profileViewController:(DBProfileViewController *)profileViewController subtitleForContentControllerAtIndex:(NSUInteger)index;
 
 @optional
 
