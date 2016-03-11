@@ -98,10 +98,12 @@
 #pragma mark - Actions
 
 - (void)editProfile:(id)sender {
+    
+    [self beginUpdates];
+    
     DBProfileDetailsView *detailsView = (DBProfileDetailsView *)self.detailsView;
     detailsView.expanded = !detailsView.expanded;
     
-    [self beginUpdates];
     [self endUpdates];
 }
 
@@ -162,7 +164,7 @@
 
 - (void)profileViewController:(DBProfileViewController *)viewController didSelectProfilePicture:(UIImageView *)imageView { }
 
-- (void)profileViewControllerDidPullToRefresh:(DBProfileViewController *)viewController {
+- (void)profileViewController:(DBProfileViewController *)viewController didPullToRefreshControllerAtIndex:(NSInteger)index {
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [self endRefreshing];
     });

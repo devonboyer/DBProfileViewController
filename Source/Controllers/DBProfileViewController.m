@@ -415,38 +415,33 @@ static void * DBProfileViewControllerUpdatesAnimationContext = &DBProfileViewCon
     
     self.oldDetailsViewHeight = [self.detailsView systemLayoutSizeFittingSize:UILayoutFittingCompressedSize].height;
     [self.view invalidateIntrinsicContentSize];
-
-    [UIView beginAnimations:@"DBProfileViewController.updates" context:&DBProfileViewControllerUpdatesAnimationContext];
-    [UIView setAnimationDidStopSelector:@selector(animationDidStop:finished:context:)];
-    [UIView setAnimationDelegate:self];
-    [UIView setAnimationDuration:0.25];
 }
 
 - (void)endUpdates {
-    [self setIndexForSelectedSegment:self.indexForSelectedSegment];
-
-    CGFloat oldHeight = self.oldDetailsViewHeight;
-    CGFloat newHeight = [self.detailsView systemLayoutSizeFittingSize:UILayoutFittingCompressedSize].height;
     
-    if (round(oldHeight) != round(newHeight)) {
-        DBProfileContentViewController *viewController = [self.contentViewControllers objectAtIndex:self.indexForSelectedSegment];
-        UIScrollView *scrollView = [viewController contentScrollView];
+    self.view.userInteractionEnabled = NO;
+    [UIView animateWithDuration:0.25 animations:^{
+        [self setIndexForSelectedSegment:self.indexForSelectedSegment];
+
+        CGFloat oldHeight = self.oldDetailsViewHeight;
+        CGFloat newHeight = [self.detailsView systemLayoutSizeFittingSize:UILayoutFittingCompressedSize].height;
         
-        CGPoint contentOffset = scrollView.contentOffset;
-        contentOffset.y += (oldHeight - newHeight);
-        scrollView.contentOffset = contentOffset;
-    }
-    
-    [self.view layoutIfNeeded];
-    [self updateViewConstraints];
-
-    [UIView commitAnimations];
-}
-
-- (void)animationDidStop:(NSString*)animationID finished:(BOOL)finished context:(void *)context {
-    if (context == DBProfileViewControllerUpdatesAnimationContext) {
+        if (round(oldHeight) != round(newHeight)) {
+            DBProfileContentViewController *viewController = [self.contentViewControllers objectAtIndex:self.indexForSelectedSegment];
+            UIScrollView *scrollView = [viewController contentScrollView];
+            
+            CGPoint contentOffset = scrollView.contentOffset;
+            contentOffset.y += (oldHeight - newHeight);
+            scrollView.contentOffset = contentOffset;
+        }
+        
+        [self.view layoutIfNeeded];
+        [self updateViewConstraints];
+        
+    } completion:^(BOOL finished) {
+        self.view.userInteractionEnabled = YES;
         self.updating = NO;
-    }
+    }];
 }
 
 #pragma mark - Reloading Data
@@ -519,6 +514,12 @@ static void * DBProfileViewControllerUpdatesAnimationContext = &DBProfileViewCon
     }
 }
 
+- (void)notifyDelegateOfPullToRefreshOfControllerAtIndex:(NSInteger)index  {
+    if ([self respondsToSelector:@selector(profileViewController:didPullToRefreshControllerAtIndex:)]) {
+        [self.delegate profileViewController:self didPullToRefreshControllerAtIndex:index];
+    }
+}
+
 - (void)notifyDelegateOfProfilePictureSelection:(UIImageView *)imageView {
     if ([self respondsToSelector:@selector(profileViewController:didSelectProfilePicture:)]) {
         [self.delegate profileViewController:self didSelectProfilePicture:imageView];
@@ -528,12 +529,6 @@ static void * DBProfileViewControllerUpdatesAnimationContext = &DBProfileViewCon
 - (void)notifyDelegateOfCoverPhotoSelection:(UIImageView *)imageView {
     if ([self respondsToSelector:@selector(profileViewController:didSelectCoverPhoto:)]) {
         [self.delegate profileViewController:self didSelectCoverPhoto:imageView];
-    }
-}
-
-- (void)notifyDelegateOfPullToRefresh {
-    if ([self respondsToSelector:@selector(profileViewControllerDidPullToRefresh:)]) {
-        [self.delegate profileViewControllerDidPullToRefresh:self];
     }
 }
 
@@ -758,7 +753,7 @@ static void * DBProfileViewControllerUpdatesAnimationContext = &DBProfileViewCon
         [self startRefreshAnimations];
     } else if (!scrollView.isDragging && !self.refreshing && contentOffset.y < -DBProfileViewControllerPullToRefreshDistance) {
         self.refreshing = YES;
-        [self notifyDelegateOfPullToRefresh];
+        [self notifyDelegateOfPullToRefreshOfControllerAtIndex:self.indexForSelectedSegment];
     }
     
     BOOL shouldEndRefreshAnimations = !self.refreshing && self.activityIndicator.isAnimating;
