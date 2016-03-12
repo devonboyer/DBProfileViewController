@@ -19,6 +19,8 @@
 #import "DBProfileImageEffects.h"
 #import "NSBundle+DBProfileViewController.h"
 
+#import "DBProfileBlurImageOperation.h"
+
 #pragma mark - Constants
 
 const CGFloat DBProfileViewControllerProfilePictureSizeNormal = 72.0;
@@ -29,7 +31,7 @@ static const CGFloat DBProfileViewControllerNavigationBarHeightRegular = 64.0;
 static const CGFloat DBProfileViewControllerNavigationBarHeightCompact = 44.0;
 
 static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProfileViewController.contentOffsetCache";
-static NSString * const DBProfileViewControllerBlurredImageCacheName = @"DBProfileViewController.blurredImageCache";
+static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileViewController.operationQueue";
 
 @interface DBProfileViewController () <DBProfileContentControllerObserverDelegate>
 {
@@ -49,7 +51,8 @@ static NSString * const DBProfileViewControllerBlurredImageCacheName = @"DBProfi
 @property (nonatomic, strong) NSMutableArray *contentViewControllers;
 @property (nonatomic, strong) NSMutableDictionary *observers;
 @property (nonatomic, strong) NSCache *contentOffsetCache;
-@property (nonatomic, strong) NSCache *blurredImageCache;
+@property (nonatomic, strong) NSDictionary *blurredImages;
+@property (nonatomic, strong) NSOperationQueue *operationQueue;
 
 // Views
 @property (nonatomic, strong) UIView *containerView;
@@ -128,10 +131,9 @@ static NSString * const DBProfileViewControllerBlurredImageCacheName = @"DBProfi
     contentOffsetCache.countLimit = 10;
     _contentOffsetCache = contentOffsetCache;
     
-    NSCache *blurredImageCache = [[NSCache alloc] init];
-    blurredImageCache.name = DBProfileViewControllerBlurredImageCacheName;
-    blurredImageCache.countLimit = 30;
-    _blurredImageCache = blurredImageCache;
+    self.operationQueue = [[NSOperationQueue alloc] init];
+    self.operationQueue.maxConcurrentOperationCount = 10;
+    self.operationQueue.name = DBProfileViewControllerOperationQueueName;
     
     self.containerView = [[UIView alloc] init];
     
@@ -140,9 +142,6 @@ static NSString * const DBProfileViewControllerBlurredImageCacheName = @"DBProfi
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    
-    [self.blurredImageCache removeAllObjects];
-    self.blurredImageCache = nil;
     
     [self.contentOffsetCache removeAllObjects];
     self.contentOffsetCache = nil;
@@ -174,17 +173,7 @@ static NSString * const DBProfileViewControllerBlurredImageCacheName = @"DBProfi
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(applicationWillEnterForeground:)
-                                                 name:UIApplicationWillEnterForegroundNotification
-                                               object:nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(applicationDidEnterBackground:)
-                                                 name:UIApplicationDidEnterBackgroundNotification
-                                               object:nil];
-    
+
     [self.segmentedControl addTarget:self
                               action:@selector(segmentChanged:)
                     forControlEvents:UIControlEventValueChanged];
@@ -210,6 +199,12 @@ static NSString * const DBProfileViewControllerBlurredImageCacheName = @"DBProfi
         [self.navigationController setNavigationBarHidden:YES animated:YES];
         [self.navigationController.interactivePopGestureRecognizer setDelegate:nil];
     }
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    
+    [self.operationQueue cancelAllOperations];
 }
 
 - (void)updateViewConstraints {
@@ -391,18 +386,19 @@ static NSString * const DBProfileViewControllerBlurredImageCacheName = @"DBProfi
 #pragma mark - Blurring
 
 - (UIImage *)blurredImageAt:(CGFloat)percent {
-    NSNumber *keyNumber = @(round(percent * 20));
-    return [self.blurredImageCache objectForKey:keyNumber];
+    NSNumber *keyNumber = @(round(percent * DBProfileBlurImageOperationNumberOfBlurredImages));
+    if ([self.blurredImages valueForKey:[keyNumber stringValue]]) {
+        return [self.blurredImages objectForKey:[keyNumber stringValue]];
+    }
+    return nil;
 }
 
 - (void)fillBlurredImageCacheWithImage:(UIImage *)image {
-    NSAssert(![NSThread isMainThread], @"fillBlurredImageCacheWithImage: should not be called on main thread");
-    CGFloat maxBlurRadius = 30;
-    [self.blurredImageCache removeAllObjects];
-    for (int i = 0; i <= 20; i++) {
-        CGFloat radius = maxBlurRadius * i/20;
-        [self.blurredImageCache setObject:[DBProfileImageEffects imageByApplyingBlurToImage:image withRadius:radius] forKey:@(i)];
-    }
+    DBProfileBlurImageOperation *operation = [[DBProfileBlurImageOperation alloc] initWithImageToBlur:image];
+    [operation setBlurImageCompletionBlock:^(NSDictionary *blurredImages) {
+        self.blurredImages = blurredImages;
+    }];
+    [self.operationQueue addOperation:operation];
 }
 
 #pragma mark - Public Methods
@@ -468,25 +464,27 @@ static NSString * const DBProfileViewControllerBlurredImageCacheName = @"DBProfi
 }
 
 - (void)setCoverPhoto:(UIImage *)coverPhoto animated:(BOOL)animated {
+    NSAssert(coverPhoto, @"");
     
-    UIImage *croppedImage = [DBProfileImageEffects imageByCroppingImage:coverPhoto withSize:self.coverPhotoView.frame.size];
-    
-    self.coverPhotoView.imageView.image = croppedImage;
-    
-    if (animated) {
-        self.coverPhotoView.imageView.alpha = 0;
-        [UIView animateWithDuration: 0.3 animations:^{
-            self.coverPhotoView.imageView.alpha = 1;
-        }];
-    }
-    
-    if (croppedImage) {
-        // FIXME: Is there a way we can cancel this in viewWillDissappear: if necessary?
-        __weak DBProfileViewController *weakSelf = self;
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            [weakSelf fillBlurredImageCacheWithImage:croppedImage];
+    dispatch_async( dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        
+        UIImage *croppedImage = [DBProfileImageEffects imageByCroppingImage:coverPhoto
+                                                                   withSize:CGSizeMake(CGRectGetWidth(self.view.frame), CGRectGetHeight(self.view.frame) *self.coverPhotoHeightMultiplier)];
+        dispatch_async( dispatch_get_main_queue(), ^{
+            
+            self.coverPhotoView.imageView.image = croppedImage;
+            
+            if (animated) {
+                self.coverPhotoView.imageView.alpha = 0;
+                [UIView animateWithDuration: 0.3 animations:^{
+                    self.coverPhotoView.imageView.alpha = 1;
+                }];
+            }
+            
+            [self fillBlurredImageCacheWithImage:croppedImage];
+            
         });
-    }
+    });
 }
 
 - (void)setProfilePicture:(UIImage *)profilePicture animated:(BOOL)animated {
@@ -1003,22 +1001,9 @@ static NSString * const DBProfileViewControllerBlurredImageCacheName = @"DBProfi
     
     [scrollView addConstraints:@[self.profilePictureViewWidthConstraint, self.profilePictureViewLeftConstraint, self.profilePictureViewRightConstraint, self.profilePictureViewCenterXConstraint, self.profilePictureViewTopConstraint]];
     
-    [NSLayoutConstraint deactivateConstraints:@[self.profilePictureViewLeftConstraint, self.profilePictureViewRightConstraint, self.profilePictureViewCenterXConstraint]];
-}
-
-#pragma mark - Notifications
-
-- (void)applicationDidEnterBackground:(NSNotification *)notification {
-    [self.blurredImageCache removeAllObjects];
-}
-
-- (void)applicationWillEnterForeground:(NSNotification *)notification {
-    UIImage *coverPhoto = self.coverPhotoView.imageView.image;
-    if (coverPhoto) {
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            [self fillBlurredImageCacheWithImage:coverPhoto];
-        });
-    }
+    [NSLayoutConstraint deactivateConstraints:@[self.profilePictureViewLeftConstraint,
+                                                self.profilePictureViewRightConstraint,
+                                                self.profilePictureViewCenterXConstraint]];
 }
 
 @end
