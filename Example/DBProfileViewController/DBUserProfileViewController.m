@@ -91,15 +91,7 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
 
 #pragma mark - Actions
 
-- (void)editProfile:(id)sender {
-    
-    [self beginUpdates];
-    
-    DBProfileDetailsView *detailsView = (DBProfileDetailsView *)self.detailsView;
-    detailsView.expanded = !detailsView.expanded;
-    
-    [self endUpdates];
-}
+- (void)editProfile:(id)sender { }
 
 #pragma mark - DBProfileViewControllerDataSource
 

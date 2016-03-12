@@ -228,7 +228,7 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     _allowsPullToRefresh = YES;
     
     // Navigation view
-    _navigationView.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"db-profile-chevron" inBundle:[NSBundle db_resourcesBundle] compatibleWithTraitCollection:self.traitCollection] style:UIBarButtonItemStylePlain target:self action:@selector(back:)];
+    self.coverPhotoMimicsNavigationBarNavigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"db-profile-chevron" inBundle:[NSBundle db_resourcesBundle] compatibleWithTraitCollection:self.traitCollection] style:UIBarButtonItemStylePlain target:self action:@selector(back:)];
 }
 
 #pragma mark - Status Bar
@@ -267,6 +267,10 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
 
 - (UISegmentedControl *)segmentedControl {
     return self.segmentedControlView.segmentedControl;
+}
+
+- (UINavigationItem *)coverPhotoMimicsNavigationBarNavigationItem {
+    return self.navigationView.navigationItem;
 }
 
 - (NSMutableArray *)contentViewControllers {
@@ -487,6 +491,10 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
 - (void)endRefreshing {
     self.refreshing = NO;
     [self endRefreshAnimations];
+}
+
+- (void)selectContentViewControllerAtIndex:(NSInteger)index {
+    self.indexForSelectedContentController = index;
 }
 
 - (void)setIndexForSelectedContentController:(NSUInteger)indexForSelectedContentController {

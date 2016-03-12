@@ -90,12 +90,6 @@
     [self updateConstraints];
 }
 
-- (CGSize)intrinsicContentSize {
-    CGSize size = [super intrinsicContentSize];
-    size.height += (self.expanded ? 300 : 0);
-    return size;
-}
-
 #pragma mark - Helpers
 
 - (void)configureDefaults {

@@ -108,16 +108,16 @@ typedef NS_ENUM(NSInteger, DBProfilePictureAlignment) {
 @property (nonatomic, weak) id<DBProfileViewControllerDataSource> dataSource;
 
 /*!
- @abstract The index of the selected content controller.
- */
-@property (nonatomic, assign, readonly) NSUInteger indexForSelectedContentController;
-
-/*!
  @abstract A view that is displayed under the cover photo and above the content controllers.
  @discussion The default is an instance of `DBProfileDetailsView`.
  @warning The `detailsView` cannot be nil.
  */
 @property (nonatomic, strong) UIView *detailsView;
+
+/*!
+ @abstract The navigation item used to represent the profile view controller's navigation bar when using `coverPhotoMimicsNavigationBar`
+ */
+@property (nonatomic, strong) UINavigationItem *coverPhotoMimicsNavigationBarNavigationItem;
 
 ///---------------------------------------------
 /// @name Reloading the Profile View Controller
@@ -155,6 +155,21 @@ typedef NS_ENUM(NSInteger, DBProfilePictureAlignment) {
  @discussion The default is YES
  */
 @property (nonatomic, assign) BOOL hidesSegmentedControlForSingleContentController;
+
+///---------------------------------------------
+/// @name Managing Selections
+///---------------------------------------------
+
+/*!
+ @abstract The index of the selected content controller.
+ */
+@property (nonatomic, assign, readonly) NSUInteger indexForSelectedContentController;
+
+/*!
+ @abstract Selects a content controller in the profile view controller at the specified index.
+ @param index An index identifying a content controller in the profile view controller.
+ */
+- (void)selectContentViewControllerAtIndex:(NSInteger)index;
 
 ///---------------------------------------------
 /// @name Configuring Cover Photo
