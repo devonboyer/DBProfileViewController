@@ -240,7 +240,7 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
 #pragma mark - Size Classes
 
 - (void)willTransitionToTraitCollection:(UITraitCollection *)newCollection withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
-    UIScrollView *scrollView = [self.visibleContentViewController contentScrollView];
+    UIScrollView *scrollView = [[self.contentViewControllers objectAtIndex:self.indexForSelectedContentController] contentScrollView];
     _cachedContentInset = scrollView.contentInset;
 }
 
@@ -248,7 +248,7 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     [super traitCollectionDidChange:previousTraitCollection];
     
     // The scroll view content inset needs to be recalculated for the new size class
-    UIScrollView *scrollView = [self.visibleContentViewController contentScrollView];
+    UIScrollView *scrollView = [[self.contentViewControllers objectAtIndex:self.indexForSelectedContentController] contentScrollView];
     
     [scrollView setNeedsLayout];
     [scrollView layoutIfNeeded];
@@ -998,33 +998,6 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     [NSLayoutConstraint deactivateConstraints:@[self.profilePictureViewLeftConstraint,
                                                 self.profilePictureViewRightConstraint,
                                                 self.profilePictureViewCenterXConstraint]];
-}
-
-@end
-
-#pragma mark - Deprecated
-
-@implementation DBProfileViewController (Deprecated)
-
-- (instancetype)initWithContentViewControllers:(NSArray *)contentViewControllers {
-    self = [super init];
-    if (self) {
-        [self.contentViewControllers addObjectsFromArray:contentViewControllers];
-        [self db_commonInit];
-    }
-    return self;
-}
-
-- (void)addContentViewControllers:(NSArray *)contentViewControllers { }
-
-- (void)addContentViewController:(DBProfileContentController *)contentViewController { }
-
-- (void)insertContentViewController:(DBProfileContentController *)contentViewController atIndex:(NSUInteger)index { }
-
-- (void)removeContentViewControllerAtIndex:(NSUInteger)index { }
-
-- (DBProfileContentController *)visibleContentViewController {
-    return [self.contentViewControllers objectAtIndex:self.indexForSelectedContentController];
 }
 
 @end

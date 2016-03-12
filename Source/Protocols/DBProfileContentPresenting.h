@@ -17,7 +17,7 @@ typedef UIViewController<DBProfileContentPresenting> DBProfileContentController;
 
 /*!
  @protocol DBProfileContentPresenting
- @abstract The `DBProfileContentPresenting` protocol is adopted by classes that are to be displayed as content view controllers of a `DBProfileViewController`.
+ @abstract The `DBProfileContentPresenting` protocol is adopted by classes that are to be displayed as content controllers of a `DBProfileViewController`.
  */
 @protocol DBProfileContentPresenting <NSObject>
 
@@ -25,10 +25,5 @@ typedef UIViewController<DBProfileContentPresenting> DBProfileContentController;
  @abstract The scroll view which will be used to track scrolling.
  */
 - (UIScrollView *)contentScrollView;
-
-@optional
-
-- (NSString *)contentTitle __deprecated;
-- (NSString *)contentSubtitle __deprecated;
 
 @end
