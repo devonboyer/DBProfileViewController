@@ -77,7 +77,7 @@
 #pragma mark - Helpers
 
 - (void)configureDefaults {
-    self.backgroundColor = [UIColor clearColor];
+    self.backgroundColor = [UIColor whiteColor];
     self.clipsToBounds = YES;
     
     self.imageView.contentMode = UIViewContentModeScaleAspectFill;

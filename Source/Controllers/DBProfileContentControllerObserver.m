@@ -15,13 +15,13 @@ static void * DBProfileContentControllerObserverKVOContext = &DBProfileContentCo
 static NSString * const DBProfileContentControllerObserverContentOffsetKeyPath = @"contentOffset";
 
 @interface DBProfileContentControllerObserver ()
-@property (nonatomic, weak) DBProfileContentViewController *contentController;
+@property (nonatomic, weak) DBProfileContentController *contentController;
 @property (nonatomic, assign, getter=isObserving) BOOL observing;
 @end
 
 @implementation DBProfileContentControllerObserver
 
-- (instancetype)initWithContentController:(DBProfileContentViewController *)contentController delegate:(id<DBProfileContentControllerObserverDelegate>)delegate {
+- (instancetype)initWithContentController:(DBProfileContentController *)contentController delegate:(id<DBProfileContentControllerObserverDelegate>)delegate {
     self = [super init];
     if (self) {
         self.delegate = delegate;

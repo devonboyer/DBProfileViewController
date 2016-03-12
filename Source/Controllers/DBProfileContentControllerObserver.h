@@ -23,10 +23,10 @@
 
 @interface DBProfileContentControllerObserver : NSObject
 
-- (instancetype)initWithContentController:(DBProfileContentViewController *)contentController delegate:(id<DBProfileContentControllerObserverDelegate>)delegate;
+- (instancetype)initWithContentController:(DBProfileContentController *)contentController delegate:(id<DBProfileContentControllerObserverDelegate>)delegate;
 
 @property (nonatomic, weak) id<DBProfileContentControllerObserverDelegate> delegate;
-@property (nonatomic, weak, readonly) DBProfileContentViewController *contentController;
+@property (nonatomic, weak, readonly) DBProfileContentController *contentController;
 @property (nonatomic, assign, getter=isObserving, readonly) BOOL observing;
 
 - (void)startObserving;

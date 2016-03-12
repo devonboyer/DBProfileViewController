@@ -45,6 +45,11 @@ typedef NS_ENUM(NSInteger, DBProfilePictureStyle) {
 @property (nonatomic, assign) CGFloat borderWidth;
 
 /*!
+ @abstract The border color for the profile picture.
+ */
+@property (nonatomic, strong) UIColor *borderColor;
+
+/*!
  @abstract Specifies the style.
  @discussion The default is `DBProfilePictureStyleRoundedRect`.
  */

@@ -43,12 +43,12 @@
     [self.contentView addSubview:self.nameLabel];
     [self.contentView addSubview:self.usernameLabel];
     [self.contentView addSubview:self.descriptionLabel];
-
-    [self.contentView setTranslatesAutoresizingMaskIntoConstraints:NO];
-    [self.nameLabel setTranslatesAutoresizingMaskIntoConstraints:NO];
-    [self.usernameLabel setTranslatesAutoresizingMaskIntoConstraints:NO];
-    [self.descriptionLabel setTranslatesAutoresizingMaskIntoConstraints:NO];
-    [self.editProfileButton setTranslatesAutoresizingMaskIntoConstraints:NO];
+    
+    self.contentView.translatesAutoresizingMaskIntoConstraints = NO;
+    self.nameLabel.translatesAutoresizingMaskIntoConstraints = NO;
+    self.usernameLabel.translatesAutoresizingMaskIntoConstraints = NO;
+    self.descriptionLabel.translatesAutoresizingMaskIntoConstraints = NO;
+    self.editProfileButton.translatesAutoresizingMaskIntoConstraints = NO;
 
     self.nameLabel.numberOfLines = 0;
     self.usernameLabel.numberOfLines = 0;
@@ -99,6 +99,7 @@
 #pragma mark - Helpers
 
 - (void)configureDefaults {
+    self.backgroundColor = [UIColor whiteColor];
     self.tintColor = [UIColor colorWithRed:33/255.0 green:37/255.0 blue:42/255.0 alpha:1];
     
     self.contentInset = UIEdgeInsetsMake(15, 15, 15, 15);

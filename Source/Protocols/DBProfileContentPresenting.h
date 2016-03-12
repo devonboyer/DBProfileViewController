@@ -13,7 +13,7 @@
 
 @protocol DBProfileContentPresenting;
 
-typedef UIViewController<DBProfileContentPresenting> DBProfileContentViewController;
+typedef UIViewController<DBProfileContentPresenting> DBProfileContentController;
 
 /*!
  @protocol DBProfileContentPresenting

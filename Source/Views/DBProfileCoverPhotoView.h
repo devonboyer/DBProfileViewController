@@ -22,7 +22,7 @@
 @property (nonatomic, strong, readonly) UIImageView *imageView;
 
 /*!
- @abstract A gradient view that overlays the cover photo to provide contrast.
+ @abstract A gradient view that overlays the cover photo to allow for visibility of any overlayed subviews.
  */
 @property (nonatomic, strong, readonly) UIView *overlayView;
 

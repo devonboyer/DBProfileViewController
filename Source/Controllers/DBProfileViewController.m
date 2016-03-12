@@ -9,18 +9,17 @@
 //
 
 #import "DBProfileViewController.h"
+#import "DBProfileContentControllerObserver.h"
 #import "DBProfileDetailsView.h"
 #import "DBProfilePictureView.h"
 #import "DBProfileCoverPhotoView.h"
 #import "DBProfileTitleView.h"
 #import "DBProfileSegmentedControlView.h"
 #import "DBProfileNavigationView.h"
-#import "DBProfileContentPresenting.h"
 #import "DBProfileImageEffects.h"
 #import "NSBundle+DBProfileViewController.h"
-#import "DBProfileContentControllerObserver.h"
 
-// Constants
+#pragma mark - Constants
 
 const CGFloat DBProfileViewControllerProfilePictureSizeNormal = 72.0;
 const CGFloat DBProfileViewControllerProfilePictureSizeLarge = 92.0;
@@ -39,19 +38,24 @@ static NSString * const DBProfileViewControllerBlurredImageCacheName = @"DBProfi
     UIEdgeInsets _cachedContentInset;
 }
 
-@property (nonatomic, getter=isUpdating) BOOL updating;
+@property (nonatomic, assign) Class segmentedControlClass;
 
+@property (nonatomic, assign) CGFloat oldDetailsViewHeight;
+@property (nonatomic, assign) NSUInteger indexForSelectedContentController;
+@property (nonatomic, getter=isUpdating) BOOL updating;
 @property (nonatomic, getter=isRefreshing) BOOL refreshing;
+
+// Data
+@property (nonatomic, strong) NSMutableArray *contentViewControllers;
+@property (nonatomic, strong) NSMutableDictionary *observers;
 @property (nonatomic, strong) NSCache *contentOffsetCache;
 @property (nonatomic, strong) NSCache *blurredImageCache;
 
-@property (nonatomic, strong) NSMutableArray *contentViewControllers;
-@property (nonatomic, strong) NSMutableDictionary *observers;
-
 // Views
 @property (nonatomic, strong) UIView *containerView;
-@property (nonatomic, strong) DBProfileNavigationView *navigationView;
 @property (nonatomic, strong) UIActivityIndicatorView *activityIndicator;
+@property (nonatomic, strong) DBProfileNavigationView *navigationView;
+@property (nonatomic, strong) DBProfileSegmentedControlView *segmentedControlView;
 
 // Constraints
 @property (nonatomic, strong) NSLayoutConstraint *detailsViewTopConstraint;
@@ -69,12 +73,6 @@ static NSString * const DBProfileViewControllerBlurredImageCacheName = @"DBProfi
 // Gestures
 @property (nonatomic, strong) UITapGestureRecognizer *coverPhotoTapGestureRecognizer;
 @property (nonatomic, strong) UITapGestureRecognizer *profilePictureTapGestureRecognizer;
-
-// New!!
-@property (nonatomic, assign) NSUInteger indexForSelectedSegment;
-@property (nonatomic, assign) CGFloat oldDetailsViewHeight;
-@property (nonatomic, assign) Class segmentedControlClass;
-@property (nonatomic, strong) DBProfileSegmentedControlView *segmentedControlView;
 
 @end
 
@@ -102,7 +100,7 @@ static NSString * const DBProfileViewControllerBlurredImageCacheName = @"DBProfi
     NSAssert([segmentedControlClass isSubclassOfClass:[UISegmentedControl class]], @"segmentedControlClass must inherit from UISegmentedControl");
     self = [self init];
     if (self) {
-        self.segmentedControlClass = segmentedControlClass;
+        self.segmentedControlClass = (segmentedControlClass) ? segmentedControlClass : [UISegmentedControl class];
     }
     return self;
 }
@@ -198,14 +196,14 @@ static NSString * const DBProfileViewControllerBlurredImageCacheName = @"DBProfi
     [super viewWillAppear:animated];
     
     [self reloadData];
-
+    
     [self.view setNeedsLayout];
     [self.view layoutIfNeeded];
     
     // Scroll displayed content controller to top
     if ([self.contentViewControllers count]) {
-        DBProfileContentViewController *displayedViewController = [self.contentViewControllers objectAtIndex:self.indexForSelectedSegment];
-        [self scrollContentViewControllerToTop:displayedViewController];
+        DBProfileContentController *displayedViewController = [self.contentViewControllers objectAtIndex:self.indexForSelectedContentController];
+        [self scrollContentControllerToTop:displayedViewController];
     }
     
     if (self.coverPhotoMimicsNavigationBar) {
@@ -223,21 +221,22 @@ static NSString * const DBProfileViewControllerBlurredImageCacheName = @"DBProfi
 - (void)configureDefaults {
     // Segmented control
     self.segmentedControl.tintColor = [UIColor grayColor];
+    _hidesSegmentedControlForSingleContentController = YES;
 
     // Cover photo
-    self.coverPhotoOptions = DBProfileCoverPhotoOptionStretch;
-    self.coverPhotoHidden = NO;
-    self.coverPhotoMimicsNavigationBar = YES;
-    self.coverPhotoHeightMultiplier = 0.2;
+    _coverPhotoOptions = DBProfileCoverPhotoOptionStretch;
+    _coverPhotoHidden = NO;
+    _coverPhotoMimicsNavigationBar = YES;
+    _coverPhotoHeightMultiplier = 0.2;
     
     // Profile picture
-    self.profilePictureAlignment = DBProfilePictureAlignmentLeft;
-    self.profilePictureSize = DBProfilePictureSizeNormal;
-    self.profilePictureInset = UIEdgeInsetsMake(0, 15, DBProfileViewControllerProfilePictureSizeNormal/2.0 - 10, 0);
-    self.allowsPullToRefresh = YES;
+    _profilePictureAlignment = DBProfilePictureAlignmentLeft;
+    _profilePictureSize = DBProfilePictureSizeNormal;
+    _profilePictureInset = UIEdgeInsetsMake(0, 15, DBProfileViewControllerProfilePictureSizeNormal/2.0 - 10, 0);
+    _allowsPullToRefresh = YES;
     
     // Navigation view
-    self.navigationView.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"db-profile-chevron" inBundle:[NSBundle db_resourcesBundle] compatibleWithTraitCollection:self.traitCollection] style:UIBarButtonItemStylePlain target:self action:@selector(back:)];
+    _navigationView.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"db-profile-chevron" inBundle:[NSBundle db_resourcesBundle] compatibleWithTraitCollection:self.traitCollection] style:UIBarButtonItemStylePlain target:self action:@selector(back:)];
 }
 
 #pragma mark - Status Bar
@@ -301,22 +300,16 @@ static NSString * const DBProfileViewControllerBlurredImageCacheName = @"DBProfi
     self.segmentedControlView.segmentedControl = segmentedControl;
 }
 
+- (void)setHidesSegmentedControlForSingleContentController:(BOOL)hidesSegmentedControlForSingleContentController {
+    if (_hidesSegmentedControlForSingleContentController == hidesSegmentedControlForSingleContentController) return;
+    _hidesSegmentedControlForSingleContentController = hidesSegmentedControlForSingleContentController;
+    [self reloadData];
+}
+
 - (void)setCoverPhotoHeightMultiplier:(CGFloat)coverPhotoHeightMultiplier {
     NSAssert(coverPhotoHeightMultiplier > 0 && coverPhotoHeightMultiplier <= 1, @"`coverPhotoHeightMultiplier` must be greater than 0 or less than or equal to 1.");
     if (_coverPhotoHeightMultiplier == coverPhotoHeightMultiplier) return;
     _coverPhotoHeightMultiplier = coverPhotoHeightMultiplier;
-    [self.view setNeedsUpdateConstraints];
-}
-
-- (void)setCoverPhotoOptions:(DBProfileCoverPhotoOptions)coverPhotoOptions {
-    if (_coverPhotoOptions == coverPhotoOptions) return;
-    _coverPhotoOptions = coverPhotoOptions;
-    [self.view setNeedsUpdateConstraints];
-}
-
-- (void)setCoverPhotoHidden:(BOOL)coverPhotoHidden {
-    if (_coverPhotoHidden == coverPhotoHidden) return;
-    _coverPhotoHidden = coverPhotoHidden;
     [self.view setNeedsUpdateConstraints];
 }
 
@@ -338,26 +331,38 @@ static NSString * const DBProfileViewControllerBlurredImageCacheName = @"DBProfi
     [self.view setNeedsUpdateConstraints];
 }
 
+- (void)setCoverPhotoOptions:(DBProfileCoverPhotoOptions)coverPhotoOptions {
+    if (_coverPhotoOptions == coverPhotoOptions) return;
+    _coverPhotoOptions = coverPhotoOptions;
+    [self.view updateConstraintsIfNeeded];
+}
+
+- (void)setCoverPhotoHidden:(BOOL)coverPhotoHidden {
+    if (_coverPhotoHidden == coverPhotoHidden) return;
+    _coverPhotoHidden = coverPhotoHidden;
+    [self.view updateConstraintsIfNeeded];
+}
+
 - (void)setCoverPhotoMimicsNavigationBar:(BOOL)coverPhotoMimicsNavigationBar {
     _coverPhotoMimicsNavigationBar = coverPhotoMimicsNavigationBar;
     self.navigationView.hidden = !coverPhotoMimicsNavigationBar;
     self.coverPhotoView.overlayView.hidden = !coverPhotoMimicsNavigationBar;
-    [self.view setNeedsUpdateConstraints];
+    [self.view updateConstraintsIfNeeded];
 }
 
 - (void)setDetailsView:(UIView *)detailsView {
     NSAssert(detailsView, @"detailsView cannot be nil");
     _detailsView = detailsView;
-    //[self reloadData];
+    [self reloadData];
 }
 
 - (void)setAllowsPullToRefresh:(BOOL)allowsPullToRefresh {
     if (_allowsPullToRefresh == allowsPullToRefresh) return;
     _allowsPullToRefresh = allowsPullToRefresh;
-    //[self reloadData];
+    [self reloadData];
 }
 
-#pragma mark - Actions
+#pragma mark - Action Responders
 
 - (void)back:(id)sender {
     [self.navigationController popViewControllerAnimated:YES];
@@ -366,13 +371,13 @@ static NSString * const DBProfileViewControllerBlurredImageCacheName = @"DBProfi
 - (void)segmentChanged:(id)sender {
     NSInteger selectedSegmentIndex = [self.segmentedControl selectedSegmentIndex];
     
-    DBProfileContentViewController *viewControllerToDisplay = [self.contentViewControllers objectAtIndex:self.indexForSelectedSegment];
+    DBProfileContentController *viewControllerToDisplay = [self.contentViewControllers objectAtIndex:self.indexForSelectedContentController];
     UIScrollView *scrollView = [viewControllerToDisplay contentScrollView];
     
-    self.indexForSelectedSegment = selectedSegmentIndex;
+    self.indexForSelectedContentController = selectedSegmentIndex;
     [self updateViewConstraints];
     
-    [self notifyDelegateOfContentControllerSelectionAtIndex:self.indexForSelectedSegment];
+    [self notifyDelegateOfContentControllerSelectionAtIndex:self.indexForSelectedContentController];
 }
 
 - (void)handleProfilePictureTapGesture:(UITapGestureRecognizer *)sender {
@@ -383,7 +388,84 @@ static NSString * const DBProfileViewControllerBlurredImageCacheName = @"DBProfi
     [self notifyDelegateOfCoverPhotoSelection:self.coverPhotoView.imageView];
 }
 
-#pragma mark - Configuring Cover Photo
+#pragma mark - Blurring
+
+- (UIImage *)blurredImageAt:(CGFloat)percent {
+    NSNumber *keyNumber = @(round(percent * 20));
+    return [self.blurredImageCache objectForKey:keyNumber];
+}
+
+- (void)fillBlurredImageCacheWithImage:(UIImage *)image {
+    NSAssert(![NSThread isMainThread], @"fillBlurredImageCacheWithImage: should not be called on main thread");
+    CGFloat maxBlurRadius = 30;
+    [self.blurredImageCache removeAllObjects];
+    for (int i = 0; i <= 20; i++) {
+        CGFloat radius = maxBlurRadius * i/20;
+        [self.blurredImageCache setObject:[DBProfileImageEffects imageByApplyingBlurToImage:image withRadius:radius] forKey:@(i)];
+    }
+}
+
+#pragma mark - Public Methods
+
+- (void)beginUpdates {
+    self.updating = YES;
+    
+    self.oldDetailsViewHeight = [self.detailsView systemLayoutSizeFittingSize:UILayoutFittingCompressedSize].height;
+    [self.view invalidateIntrinsicContentSize];
+}
+
+- (void)endUpdates {
+    
+    self.view.userInteractionEnabled = NO;
+    [UIView animateWithDuration:0.25 animations:^{
+        [self setIndexForSelectedContentController:self.indexForSelectedContentController];
+
+        CGFloat oldHeight = self.oldDetailsViewHeight;
+        CGFloat newHeight = [self.detailsView systemLayoutSizeFittingSize:UILayoutFittingCompressedSize].height;
+        
+        if (round(oldHeight) != round(newHeight)) {
+            DBProfileContentController *viewController = [self.contentViewControllers objectAtIndex:self.indexForSelectedContentController];
+            UIScrollView *scrollView = [viewController contentScrollView];
+            
+            CGPoint contentOffset = scrollView.contentOffset;
+            contentOffset.y += (oldHeight - newHeight);
+            scrollView.contentOffset = contentOffset;
+        }
+        
+        [self.view layoutIfNeeded];
+        [self updateViewConstraints];
+        
+    } completion:^(BOOL finished) {
+        self.view.userInteractionEnabled = YES;
+        self.updating = NO;
+    }];
+}
+
+- (void)reloadData {
+    NSInteger numberOfSegments = [self.dataSource numberOfContentControllersForProfileViewController:self];
+    
+    [self.observers removeAllObjects];
+    
+    if ([self.contentViewControllers count] > 0) {
+        [self hideContentController:[self.contentViewControllers objectAtIndex:self.indexForSelectedContentController]];
+    }
+    
+    [self.contentViewControllers removeAllObjects];
+    [self.segmentedControl removeAllSegments];
+    
+    for (NSInteger i = 0; i < numberOfSegments; i++) {
+        // Reload content view controllers
+        DBProfileContentController *contentViewController = [self.dataSource profileViewController:self contentControllerAtIndex:i];
+        [self.contentViewControllers addObject:contentViewController];
+        
+        // Reload segmented control
+        NSString *title = [self.dataSource profileViewController:self titleForContentControllerAtIndex:i];
+        [self.segmentedControl insertSegmentWithTitle:title atIndex:i animated:NO];
+    }
+    
+    // Display selected content view controller
+    [self setIndexForSelectedContentController:self.indexForSelectedContentController];
+}
 
 - (void)setCoverPhoto:(UIImage *)coverPhoto animated:(BOOL)animated {
     
@@ -407,28 +489,9 @@ static NSString * const DBProfileViewControllerBlurredImageCacheName = @"DBProfi
     }
 }
 
-#pragma mark - Blurring
-
-- (UIImage *)blurredImageAt:(CGFloat)percent {
-    NSNumber *keyNumber = @(round(percent * 20));
-    return [self.blurredImageCache objectForKey:keyNumber];
-}
-
-- (void)fillBlurredImageCacheWithImage:(UIImage *)image {
-    NSAssert(![NSThread isMainThread], @"fillBlurredImageCacheWithImage: should not be called on main thread");
-    CGFloat maxBlurRadius = 30;
-    [self.blurredImageCache removeAllObjects];
-    for (int i = 0; i <= 20; i++) {
-        CGFloat radius = maxBlurRadius * i/20;
-        [self.blurredImageCache setObject:[DBProfileImageEffects imageByApplyingBlurToImage:image withRadius:radius] forKey:@(i)];
-    }
-}
-
-#pragma mark - Configuring Profile Picture
-
 - (void)setProfilePicture:(UIImage *)profilePicture animated:(BOOL)animated {
     self.profilePictureView.imageView.image = profilePicture;
-
+    
     if (animated) {
         self.profilePictureView.imageView.alpha = 0;
         [UIView animateWithDuration: 0.3 animations:^{
@@ -437,75 +500,19 @@ static NSString * const DBProfileViewControllerBlurredImageCacheName = @"DBProfi
     }
 }
 
-#pragma mark - Public Methods
-
-- (void)beginUpdates {
-    self.updating = YES;
-    
-    self.oldDetailsViewHeight = [self.detailsView systemLayoutSizeFittingSize:UILayoutFittingCompressedSize].height;
-    [self.view invalidateIntrinsicContentSize];
+- (void)endRefreshing {
+    self.refreshing = NO;
+    [self endRefreshAnimations];
 }
 
-- (void)endUpdates {
+- (void)setIndexForSelectedContentController:(NSUInteger)indexForSelectedContentController {
     
-    self.view.userInteractionEnabled = NO;
-    [UIView animateWithDuration:0.25 animations:^{
-        [self setIndexForSelectedSegment:self.indexForSelectedSegment];
-
-        CGFloat oldHeight = self.oldDetailsViewHeight;
-        CGFloat newHeight = [self.detailsView systemLayoutSizeFittingSize:UILayoutFittingCompressedSize].height;
-        
-        if (round(oldHeight) != round(newHeight)) {
-            DBProfileContentViewController *viewController = [self.contentViewControllers objectAtIndex:self.indexForSelectedSegment];
-            UIScrollView *scrollView = [viewController contentScrollView];
-            
-            CGPoint contentOffset = scrollView.contentOffset;
-            contentOffset.y += (oldHeight - newHeight);
-            scrollView.contentOffset = contentOffset;
-        }
-        
-        [self.view layoutIfNeeded];
-        [self updateViewConstraints];
-        
-    } completion:^(BOOL finished) {
-        self.view.userInteractionEnabled = YES;
-        self.updating = NO;
-    }];
-}
-
-- (void)reloadData {
-    NSInteger numberOfSegments = [self.dataSource numberOfContentControllersForProfileViewController:self];
-    
-    [self.observers removeAllObjects];
-    
-    if ([self.contentViewControllers count] > 0) {
-        [self hideContentViewController:[self.contentViewControllers objectAtIndex:self.indexForSelectedSegment]];
-    }
-    
-    [self.contentViewControllers removeAllObjects];
-    [self.segmentedControl removeAllSegments];
-    
-    for (NSInteger i = 0; i < numberOfSegments; i++) {
-        // Reload content view controllers
-        DBProfileContentViewController *contentViewController = [self.dataSource profileViewController:self contentControllerAtIndex:i];
-        [self.contentViewControllers addObject:contentViewController];
-        
-        // Reload segmented control
-        NSString *title = [self.dataSource profileViewController:self titleForContentControllerAtIndex:i];
-        [self.segmentedControl insertSegmentWithTitle:title atIndex:i animated:NO];
-    }
-    
-    // Display selected content view controller
-    [self setIndexForSelectedSegment:self.indexForSelectedSegment];
-}
-
-- (void)setIndexForSelectedSegment:(NSUInteger)indexForSelectedSegment {
     if (![self.contentViewControllers count]) return;
     
-    DBProfileContentViewController *hideVC = [self.contentViewControllers objectAtIndex:_indexForSelectedSegment];
+    DBProfileContentController *hideVC = [self.contentViewControllers objectAtIndex:_indexForSelectedContentController];
     if (hideVC) {
-        [self hideContentViewController:hideVC];
-        NSString *key = [self.dataSource profileViewController:self titleForContentControllerAtIndex:_indexForSelectedSegment];
+        [self hideContentController:hideVC];
+        NSString *key = [self.dataSource profileViewController:self titleForContentControllerAtIndex:_indexForSelectedContentController];
         if ([self.observers valueForKey:key]) {
             DBProfileContentControllerObserver *observer = self.observers[key];
             [observer stopObserving];
@@ -513,13 +520,13 @@ static NSString * const DBProfileViewControllerBlurredImageCacheName = @"DBProfi
         }
     }
     
-    _indexForSelectedSegment = indexForSelectedSegment;
-    [self.segmentedControl setSelectedSegmentIndex:indexForSelectedSegment];
+    _indexForSelectedContentController = indexForSelectedContentController;
+    [self.segmentedControl setSelectedSegmentIndex:indexForSelectedContentController];
     
-    DBProfileContentViewController *displayVC = [self.contentViewControllers objectAtIndex:indexForSelectedSegment];
+    DBProfileContentController *displayVC = [self.contentViewControllers objectAtIndex:indexForSelectedContentController];
     if (displayVC) {
         [self displayContentViewController:displayVC];
-        NSString *key = [self.dataSource profileViewController:self titleForContentControllerAtIndex:indexForSelectedSegment];
+        NSString *key = [self.dataSource profileViewController:self titleForContentControllerAtIndex:indexForSelectedContentController];
         DBProfileContentControllerObserver *observer = [[DBProfileContentControllerObserver alloc] initWithContentController:displayVC delegate:self];
         [observer startObserving];
         self.observers[key] = observer;
@@ -530,15 +537,11 @@ static NSString * const DBProfileViewControllerBlurredImageCacheName = @"DBProfi
     
     // Update titles
     self.navigationView.titleView.titleLabel.text = self.title;
-    self.navigationView.titleView.subtitleLabel.text = [self.dataSource profileViewController:self subtitleForContentControllerAtIndex:self.indexForSelectedSegment];
+    self.navigationView.titleView.subtitleLabel.text = [self.dataSource profileViewController:self
+                                                          subtitleForContentControllerAtIndex:self.indexForSelectedContentController];
 }
 
-#pragma mark - Configuring Pull-To-Refresh
-
-- (void)endRefreshing {
-    self.refreshing = NO;
-    [self endRefreshAnimations];
-}
+#pragma mark - Pull-To-Refresh Animations
 
 - (void)startRefreshAnimations {
     [self.activityIndicator startAnimating];
@@ -576,21 +579,21 @@ static NSString * const DBProfileViewControllerBlurredImageCacheName = @"DBProfi
 
 #pragma mark - Container View Controller
 
-- (CGRect)frameForContentViewController {
+- (CGRect)frameForContentController {
     return self.containerView.frame;
 }
 
-- (void)displayContentViewController:(DBProfileContentViewController *)viewController {
+- (void)displayContentViewController:(DBProfileContentController *)viewController {
     NSAssert(viewController, @"viewController cannot be nil");
     [self addChildViewController:viewController];
-    viewController.view.frame = [self frameForContentViewController];
+    viewController.view.frame = [self frameForContentController];
     [self.containerView addSubview:viewController.view];
     [viewController didMoveToParentViewController:self];
     [self.view bringSubviewToFront:self.navigationView];
-    [self buildContentViewController:viewController];
+    [self buildContentController:viewController];
 }
 
-- (void)hideContentViewController:(DBProfileContentViewController *)viewController {
+- (void)hideContentController:(DBProfileContentController *)viewController {
     NSAssert(viewController, @"viewController cannot be nil");
     
     UIScrollView *scrollView = [viewController contentScrollView];
@@ -601,14 +604,14 @@ static NSString * const DBProfileViewControllerBlurredImageCacheName = @"DBProfi
     _shouldScrollToTop = scrollView.contentOffset.y >= -topInset;
     _sharedContentOffset = scrollView.contentOffset;
     
-    [self cacheContentOffset:scrollView.contentOffset forKey:viewController.title];
+    [self cacheContentOffset:scrollView.contentOffset forContentControllerAtIndex:self.indexForSelectedContentController];
     
     [viewController willMoveToParentViewController:nil];
     [viewController.view removeFromSuperview];
     [viewController removeFromParentViewController];
 }
 
-- (void)buildContentViewController:(DBProfileContentViewController *)viewController {
+- (void)buildContentController:(DBProfileContentController *)viewController {
     NSAssert(viewController, @"viewController cannot be nil");
 
     UIScrollView *scrollView = [viewController contentScrollView];
@@ -630,7 +633,7 @@ static NSString * const DBProfileViewControllerBlurredImageCacheName = @"DBProfi
     NSInteger numberOfSegments = [self.dataSource numberOfContentControllersForProfileViewController:self];
     
     // Segmented control ?
-    if (numberOfSegments > 1) {
+    if ([self.contentViewControllers count] > 1 || !self.hidesSegmentedControlForSingleContentController) {
         [scrollView addSubview:self.segmentedControlView];
         [self configureSegmentedControlViewLayoutConstraintsWithSuperview:scrollView];
     } else {
@@ -673,7 +676,7 @@ static NSString * const DBProfileViewControllerBlurredImageCacheName = @"DBProfi
         [self resetContentOffsetForScrollView:scrollView];
         
         // Restore content offset for scroll view from cache
-        CGPoint cachedContentOffset = [self cachedContentOffsetForKey:viewController.title];
+        CGPoint cachedContentOffset = [self cachedContentOffsetForContentControllerAtIndex:self.indexForSelectedContentController];
         if (cachedContentOffset.y > scrollView.contentOffset.y && !CGPointEqualToPoint(CGPointZero, cachedContentOffset)) {
             [scrollView setContentOffset:cachedContentOffset];
         }
@@ -684,15 +687,21 @@ static NSString * const DBProfileViewControllerBlurredImageCacheName = @"DBProfi
 
 #pragma mark - Managing Content Offset
 
-- (void)cacheContentOffset:(CGPoint)contentOffset forKey:(NSString *)key {
+- (void)cacheContentOffset:(CGPoint)contentOffset forContentControllerAtIndex:(NSInteger)index {
+    NSString *key = [self keyForContentControllerAtIndex:index];
     [self.contentOffsetCache setObject:[NSValue valueWithCGPoint:contentOffset] forKey:key];
 }
 
-- (CGPoint)cachedContentOffsetForKey:(NSString *)key {
+- (CGPoint)cachedContentOffsetForContentControllerAtIndex:(NSInteger)index {
+    NSString *key = [self keyForContentControllerAtIndex:index];
     return [[self.contentOffsetCache objectForKey:key] CGPointValue];
 }
 
-- (void)scrollContentViewControllerToTop:(DBProfileContentViewController *)viewController {
+- (NSString *)keyForContentControllerAtIndex:(NSInteger)index {
+    return [self.dataSource profileViewController:self titleForContentControllerAtIndex:index];
+}
+
+- (void)scrollContentControllerToTop:(DBProfileContentController *)viewController {
     UIScrollView *scrollView = [viewController contentScrollView];
     [scrollView setContentOffset:CGPointMake(0, -scrollView.contentInset.top)];
 }
@@ -761,7 +770,7 @@ static NSString * const DBProfileViewControllerBlurredImageCacheName = @"DBProfi
     }
 }
 
-#pragma mark - Pull To Refresh
+#pragma mark - Updating Subviews On Scroll
 
 - (void)handlePullToRefreshWithScrollView:(UIScrollView *)scrollView {
     if (!self.allowsPullToRefresh) return;
@@ -771,7 +780,7 @@ static NSString * const DBProfileViewControllerBlurredImageCacheName = @"DBProfi
         [self startRefreshAnimations];
     } else if (!scrollView.isDragging && !self.refreshing && contentOffset.y < -DBProfileViewControllerPullToRefreshDistance) {
         self.refreshing = YES;
-        [self notifyDelegateOfPullToRefreshOfContentControllerAtIndex:self.indexForSelectedSegment];
+        [self notifyDelegateOfPullToRefreshOfContentControllerAtIndex:self.indexForSelectedContentController];
     }
     
     BOOL shouldEndRefreshAnimations = !self.refreshing && self.activityIndicator.isAnimating;
@@ -784,8 +793,6 @@ static NSString * const DBProfileViewControllerBlurredImageCacheName = @"DBProfi
     }
     self.activityIndicator.alpha = (contentOffset.y > 0) ? 1 - contentOffset.y / 20 : 1;
 }
-
-#pragma mark - Updating Subviews On Scroll
 
 - (void)updateSubviewsWithContentOffset:(CGPoint)contentOffset {
     [self updateCoverPhotoViewWithContentOffset:contentOffset];
@@ -853,21 +860,6 @@ static NSString * const DBProfileViewControllerBlurredImageCacheName = @"DBProfi
     } else {
         [self.navigationView.navigationBar setTitleVerticalPositionAdjustment:MAX(titleViewOffset * titleViewOffsetPercent, 0)
                                                             forBarMetrics:UIBarMetricsDefault];
-    }
-}
-
-#pragma mark - Notifications
-
-- (void)applicationDidEnterBackground:(NSNotification *)notification {
-    [self.blurredImageCache removeAllObjects];
-}
-
-- (void)applicationWillEnterForeground:(NSNotification *)notification {
-    UIImage *coverPhoto = self.coverPhotoView.imageView.image;
-    if (coverPhoto) {
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            [self fillBlurredImageCacheWithImage:coverPhoto];
-        });
     }
 }
 
@@ -985,7 +977,7 @@ static NSString * const DBProfileViewControllerBlurredImageCacheName = @"DBProfi
     self.coverPhotoViewTopSuperviewConstraint.priority = UILayoutPriorityDefaultHigh + 1;
     [self.view addConstraint:self.coverPhotoViewTopSuperviewConstraint];
     
-    if ([self.contentViewControllers count] > 1) {
+    if ([self.contentViewControllers count] > 1 || !self.hidesSegmentedControlForSingleContentController) {
         [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.segmentedControlView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:self.coverPhotoView attribute:NSLayoutAttributeBottom multiplier:1 constant:0]];
     }
 }
@@ -1014,7 +1006,24 @@ static NSString * const DBProfileViewControllerBlurredImageCacheName = @"DBProfi
     [NSLayoutConstraint deactivateConstraints:@[self.profilePictureViewLeftConstraint, self.profilePictureViewRightConstraint, self.profilePictureViewCenterXConstraint]];
 }
 
+#pragma mark - Notifications
+
+- (void)applicationDidEnterBackground:(NSNotification *)notification {
+    [self.blurredImageCache removeAllObjects];
+}
+
+- (void)applicationWillEnterForeground:(NSNotification *)notification {
+    UIImage *coverPhoto = self.coverPhotoView.imageView.image;
+    if (coverPhoto) {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            [self fillBlurredImageCacheWithImage:coverPhoto];
+        });
+    }
+}
+
 @end
+
+#pragma mark - Deprecated
 
 @implementation DBProfileViewController (Deprecated)
 
@@ -1029,14 +1038,14 @@ static NSString * const DBProfileViewControllerBlurredImageCacheName = @"DBProfi
 
 - (void)addContentViewControllers:(NSArray *)contentViewControllers { }
 
-- (void)addContentViewController:(DBProfileContentViewController *)contentViewController { }
+- (void)addContentViewController:(DBProfileContentController *)contentViewController { }
 
-- (void)insertContentViewController:(DBProfileContentViewController *)contentViewController atIndex:(NSUInteger)index { }
+- (void)insertContentViewController:(DBProfileContentController *)contentViewController atIndex:(NSUInteger)index { }
 
 - (void)removeContentViewControllerAtIndex:(NSUInteger)index { }
 
-- (DBProfileContentViewController *)visibleContentViewController {
-    return [self.contentViewControllers objectAtIndex:self.indexForSelectedSegment];
+- (DBProfileContentController *)visibleContentViewController {
+    return [self.contentViewControllers objectAtIndex:self.indexForSelectedContentController];
 }
 
 @end

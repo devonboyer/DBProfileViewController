@@ -11,21 +11,14 @@
 #import "DBPhotosTableViewController.h"
 #import "DBLikesTableViewController.h"
 
-@interface DBUserProfileViewController () <DBProfileViewControllerDelegate, DBProfileViewControllerDataSource> {
-    DBFollowersTableViewController *followers;
-    DBPhotosTableViewController *photos;
-    DBLikesTableViewController *likes;
-}
+@interface DBUserProfileViewController () <DBProfileViewControllerDelegate, DBProfileViewControllerDataSource>
+
 @end
 
 @implementation DBUserProfileViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
-    followers = [[DBFollowersTableViewController alloc] init];
-    photos = [[DBPhotosTableViewController alloc] init];
-    likes = [[DBLikesTableViewController alloc] init];
 
     self.title = @"DBProfileViewController";
     
@@ -46,13 +39,6 @@
     
     [self setProfilePicture:[UIImage imageNamed:@"demo-profile-picture"] animated:NO];
     [self setStyle:self.style];
-}
-
-- (void)viewWillAppear:(BOOL)animated {
-    [super viewWillAppear:animated];
-    
-    // Why isn't this working?
-    [self setCoverPhoto:[UIImage imageNamed:@"demo-cover-photo-2"] animated:NO];
 }
 
 - (void)setStyle:(DBUserProfileViewControllerStyle)style {
@@ -113,7 +99,7 @@
     return 3;
 }
 
-- (DBProfileContentViewController *)profileViewController:(DBProfileViewController *)profileViewController contentControllerAtIndex:(NSUInteger)index {
+- (DBProfileContentController *)profileViewController:(DBProfileViewController *)profileViewController contentControllerAtIndex:(NSUInteger)index {
 
     switch (index) {
         case 0:

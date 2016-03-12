@@ -10,10 +10,9 @@
 
 #import <UIKit/UIKit.h>
 
+#import "DBProfileContentPresenting.h"
 #import "DBProfileViewControllerDelegate.h"
 #import "DBProfileViewControllerDataSource.h"
-
-@protocol DBProfileContentPresenting;
 
 @class DBProfileViewController;
 @class DBProfileCoverPhotoView;
@@ -88,36 +87,74 @@ typedef NS_ENUM(NSInteger, DBProfilePictureAlignment) {
  */
 @interface DBProfileViewController : UIViewController
 
+///---------------------------------------------
+/// @name Creating Profile View Controllers
+///---------------------------------------------
+
+/*!
+ @abstract Initializes a newly created profile view controller.
+ @param segmentedControlClass Specify the custom UISegmentedControl subclass you want to use, or specify nil to use the standard UISegmentedControl class.
+*/
 - (instancetype)initWithSegmentedControlClass:(Class)segmentedControlClass;
-
-@property (nonatomic, assign, readonly) NSUInteger indexForSelectedSegment;
-@property (nonatomic, assign, readonly) UISegmentedControl *segmentedControl;
-
-- (void)beginUpdates;
-- (void)endUpdates;
-- (void)reloadData;
 
 /*!
  @abstract The object that acts as the view controller's delegate.
  */
-@property (nonatomic, strong) id<DBProfileViewControllerDelegate> delegate;
+@property (nonatomic, weak) id<DBProfileViewControllerDelegate> delegate;
 
 /*!
  @abstract The object that acts as the view controller's data source.
  */
-@property (nonatomic, strong) id<DBProfileViewControllerDataSource> dataSource;
+@property (nonatomic, weak) id<DBProfileViewControllerDataSource> dataSource;
 
 /*!
- @abstract A view that displays a navigation bar when `coverPhotoMimicsNavigationBar` is set to YES.
+ @abstract The index of the selected content controller.
  */
-@property (nonatomic, strong, readonly) DBProfileNavigationView *navigationView;
+@property (nonatomic, assign, readonly) NSUInteger indexForSelectedContentController;
 
 /*!
- @abstract A view that is displayed under the cover photo and above the content view controllers.
+ @abstract A view that is displayed under the cover photo and above the content controllers.
  @discussion The default is an instance of `DBProfileDetailsView`.
  @warning The `detailsView` cannot be nil.
  */
 @property (nonatomic, strong) UIView *detailsView;
+
+///---------------------------------------------
+/// @name Reloading the Profile View Controller
+///---------------------------------------------
+
+/*!
+ @abstract Begins a series of method calls that modify height calculations for subviews of the profile view controller.
+ @discussion Call this method if you want subsequent height changes to subviews to be animated simultaneously. 
+ @warning This group of methods must conclude with an invocation of endUpdates. You should not call reloadData within the group.
+ */
+- (void)beginUpdates;
+
+/*!
+ @abstract Concludes a series of method calls that modify height calculations for subviews of the profile view controller.
+ @discussion You call this method to bracket a series of method calls that begins with beginUpdates. When you call endUpdates, height changes to subviews are animated simultaneously.
+ */
+- (void)endUpdates;
+
+/*!
+ @abstract Reloads the content controllers of the profile view controller by rebuilding the view heirarchy.
+ */
+- (void)reloadData;
+
+///---------------------------------------------
+/// @name Configuring Segmented Control
+///---------------------------------------------
+
+/*!
+ @abstract The segmented control managed by the profile view controller.
+ */
+@property (nonatomic, assign, readonly) UISegmentedControl *segmentedControl;
+
+/*!
+ @abstract YES if the segmented control is hidden when there is only one content controller, NO otherwise.
+ @discussion The default is YES
+ */
+@property (nonatomic, assign) BOOL hidesSegmentedControlForSingleContentController;
 
 ///---------------------------------------------
 /// @name Configuring Cover Photo
@@ -125,7 +162,7 @@ typedef NS_ENUM(NSInteger, DBProfilePictureAlignment) {
 
 /*!
  @abstract Specifies the height of the cover photo relative to the height of the screen.
- @discussion The default is 0.2. To hide the cover photo set `coverPhotoHidden` to YES.
+ @discussion The default is 0.2. To hide the cover photo set `coverPhotoHidden` to YES. When using `coverPhotoMimicsNavigationBar` is important that this value results in the height of the cover photo being greater than the height of a navigation bar.
  @warning `coverPhotoHeightMultiplier` must be greater than 0 or less than or equal to 1.
  */
 @property (nonatomic, assign) CGFloat coverPhotoHeightMultiplier;
@@ -152,6 +189,11 @@ typedef NS_ENUM(NSInteger, DBProfilePictureAlignment) {
  @discussion The default is YES. When this property is set to YES you should set `automaticallyAdjustsScrollViewInsets` to NO, otherwise set `automaticallyAdjustsScrollViewInsets` to YES.
  */
 @property (nonatomic, assign) BOOL coverPhotoMimicsNavigationBar;
+
+/*!
+ @abstract The gesture recognizer for when user taps the cover photo.
+ */
+@property (nonatomic, strong, readonly) UITapGestureRecognizer *coverPhotoTapGestureRecognizer;
 
 /*!
  @abstract Sets the cover photo.
@@ -187,6 +229,11 @@ typedef NS_ENUM(NSInteger, DBProfilePictureAlignment) {
 @property (nonatomic, assign) UIEdgeInsets profilePictureInset;
 
 /*!
+ @abstract The gesture recognizer for when user taps the profile picture.
+ */
+@property (nonatomic, strong, readonly) UITapGestureRecognizer *profilePictureTapGestureRecognizer;
+
+/*!
  @abstract Sets the profile picture.
  @param profilePicture The image to set as the profile picture.
  @param animated YES if setting the profile picture should be animated, NO otherwise.
@@ -219,12 +266,12 @@ typedef NS_ENUM(NSInteger, DBProfilePictureAlignment) {
 
 - (instancetype)initWithContentViewControllers:(NSArray *)contentViewControllers;
 
-@property (nonatomic, strong, readonly) DBProfileContentViewController *visibleContentViewController;
+@property (nonatomic, strong, readonly) DBProfileContentController *visibleContentViewController;
 @property (nonatomic, assign, readonly) NSUInteger visibleContentViewControllerIndex;
 
-- (void)insertContentViewController:(DBProfileContentViewController *)contentViewController atIndex:(NSUInteger)index;
+- (void)insertContentViewController:(DBProfileContentController *)contentViewController atIndex:(NSUInteger)index;
 - (void)removeContentViewControllerAtIndex:(NSUInteger)index;
-- (void)addContentViewController:(DBProfileContentViewController *)contentViewController __deprecated;
+- (void)addContentViewController:(DBProfileContentController *)contentViewController __deprecated;
 - (void)addContentViewControllers:(NSArray *)contentViewControllers __deprecated;
 //- (void)setVisibleContentViewControllerAtIndex:(NSUInteger)index __deprecated;
 

@@ -53,6 +53,11 @@
     [self layoutSubviews];
 }
 
+- (void)setBorderColor:(UIColor *)borderColor {
+    _borderColor = borderColor;
+    self.backgroundColor = borderColor;
+}
+
 - (void)layoutSubviews {
     [super layoutSubviews];
     
