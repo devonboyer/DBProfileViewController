@@ -186,9 +186,6 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     
     [self reloadData];
     
-    [self.view setNeedsLayout];
-    [self.view layoutIfNeeded];
-    
     // Scroll displayed content controller to top
     if ([self.contentViewControllers count]) {
         DBProfileContentController *displayedViewController = [self.contentViewControllers objectAtIndex:self.indexForSelectedContentController];
@@ -383,24 +380,6 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     [self notifyDelegateOfCoverPhotoSelection:self.coverPhotoView.imageView];
 }
 
-#pragma mark - Blurring
-
-- (UIImage *)blurredImageAt:(CGFloat)percent {
-    NSNumber *keyNumber = @(round(percent * DBProfileBlurImageOperationNumberOfBlurredImages));
-    if ([self.blurredImages valueForKey:[keyNumber stringValue]]) {
-        return [self.blurredImages objectForKey:[keyNumber stringValue]];
-    }
-    return nil;
-}
-
-- (void)fillBlurredImageCacheWithImage:(UIImage *)image {
-    DBProfileBlurImageOperation *operation = [[DBProfileBlurImageOperation alloc] initWithImageToBlur:image];
-    [operation setBlurImageCompletionBlock:^(NSDictionary *blurredImages) {
-        self.blurredImages = blurredImages;
-    }];
-    [self.operationQueue addOperation:operation];
-}
-
 #pragma mark - Public Methods
 
 - (void)beginUpdates {
@@ -411,7 +390,6 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
 }
 
 - (void)endUpdates {
-    
     self.view.userInteractionEnabled = NO;
     [UIView animateWithDuration:0.25 animations:^{
         [self setIndexForSelectedContentController:self.indexForSelectedContentController];
@@ -464,7 +442,9 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
 }
 
 - (void)setCoverPhoto:(UIImage *)coverPhoto animated:(BOOL)animated {
-    NSAssert(coverPhoto, @"");
+    if (!coverPhoto) return;
+    
+    __weak DBProfileViewController *weakSelf = self;
     
     dispatch_async( dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         
@@ -472,22 +452,28 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
                                                                    withSize:CGSizeMake(CGRectGetWidth(self.view.frame), CGRectGetHeight(self.view.frame) *self.coverPhotoHeightMultiplier)];
         dispatch_async( dispatch_get_main_queue(), ^{
             
-            self.coverPhotoView.imageView.image = croppedImage;
+            weakSelf.coverPhotoView.imageView.image = croppedImage;
             
             if (animated) {
-                self.coverPhotoView.imageView.alpha = 0;
+                weakSelf.coverPhotoView.imageView.alpha = 0;
                 [UIView animateWithDuration: 0.3 animations:^{
-                    self.coverPhotoView.imageView.alpha = 1;
+                    weakSelf.coverPhotoView.imageView.alpha = 1;
                 }];
             }
             
-            [self fillBlurredImageCacheWithImage:croppedImage];
+            DBProfileBlurImageOperation *operation = [[DBProfileBlurImageOperation alloc] initWithImageToBlur:croppedImage];
+            [operation setBlurImageCompletionBlock:^(NSDictionary *blurredImages) {
+                weakSelf.blurredImages = blurredImages;
+            }];
+            [weakSelf.operationQueue addOperation:operation];
             
         });
     });
 }
 
 - (void)setProfilePicture:(UIImage *)profilePicture animated:(BOOL)animated {
+    if (!profilePicture) return;
+
     self.profilePictureView.imageView.image = profilePicture;
     
     if (animated) {
@@ -859,6 +845,14 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
         [self.navigationView.navigationBar setTitleVerticalPositionAdjustment:MAX(titleViewOffset * titleViewOffsetPercent, 0)
                                                             forBarMetrics:UIBarMetricsDefault];
     }
+}
+
+- (UIImage *)blurredImageAt:(CGFloat)percent {
+    NSNumber *keyNumber = @(round(percent * DBProfileBlurImageOperationNumberOfBlurredImages));
+    if ([self.blurredImages valueForKey:[keyNumber stringValue]]) {
+        return [self.blurredImages objectForKey:[keyNumber stringValue]];
+    }
+    return nil;
 }
 
 #pragma mark - Updating Constraints
