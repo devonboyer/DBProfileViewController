@@ -30,26 +30,20 @@
 }
 
 - (void)db_commonInit {
-    _segmentedControl = [[UISegmentedControl alloc] init];
     _topBorderView = [[UIView alloc] init];
     _bottomBorderView = [[UIView alloc] init];
     
-    [self addSubview:self.segmentedControl];
     [self addSubview:self.topBorderView];
     [self addSubview:self.bottomBorderView];
 
-    [self.segmentedControl setTranslatesAutoresizingMaskIntoConstraints:NO];
     [self.topBorderView setTranslatesAutoresizingMaskIntoConstraints:NO];
     [self.bottomBorderView setTranslatesAutoresizingMaskIntoConstraints:NO];
 
-    [self configureSegmentedControlLayoutConstraints];
     [self configureTopBorderViewLayoutConstraints];
     [self configureBottomBorderViewLayoutConstraints];
     
     [self configureDefaults];
 }
-
-#pragma mark - Helpers
 
 - (void)configureDefaults {
     UIColor *borderColor = [UIColor colorWithWhite:0 alpha:0.12];
@@ -58,10 +52,19 @@
     
     self.topBorderView.backgroundColor = borderColor;
     self.bottomBorderView.backgroundColor = borderColor;
-    
     self.topBorderView.hidden = YES;
+}
+
+- (void)setSegmentedControl:(UISegmentedControl *)segmentedControl {
+    NSAssert(segmentedControl, @"");
+    [self.segmentedControl removeFromSuperview];
+    _segmentedControl = segmentedControl;
     
+    self.segmentedControl.translatesAutoresizingMaskIntoConstraints = NO;
     self.segmentedControl.selectedSegmentIndex = UISegmentedControlNoSegment;
+    
+    [self addSubview:self.segmentedControl];
+    [self configureSegmentedControlLayoutConstraints];
 }
 
 #pragma mark - Auto Layout

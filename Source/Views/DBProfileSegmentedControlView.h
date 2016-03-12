@@ -16,6 +16,6 @@
  */
 @interface DBProfileSegmentedControlView : UIView
 
-@property (nonatomic, strong, readonly) UISegmentedControl *segmentedControl;
+@property (nonatomic, strong) UISegmentedControl *segmentedControl;
 
 @end

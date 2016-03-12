@@ -72,8 +72,9 @@ static NSString * const DBProfileViewControllerBlurredImageCacheName = @"DBProfi
 
 // New!!
 @property (nonatomic, assign) NSUInteger indexForSelectedSegment;
-
 @property (nonatomic, assign) CGFloat oldDetailsViewHeight;
+@property (nonatomic, assign) Class segmentedControlClass;
+@property (nonatomic, strong) DBProfileSegmentedControlView *segmentedControlView;
 
 @end
 
@@ -84,7 +85,7 @@ static NSString * const DBProfileViewControllerBlurredImageCacheName = @"DBProfi
 - (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        [self commonInit];
+        [self db_commonInit];
     }
     return self;
 }
@@ -92,7 +93,16 @@ static NSString * const DBProfileViewControllerBlurredImageCacheName = @"DBProfi
 - (instancetype)initWithCoder:(NSCoder *)aDecoder {
     self = [super initWithCoder:aDecoder];
     if (self) {
-        [self commonInit];
+        [self db_commonInit];
+    }
+    return self;
+}
+
+- (instancetype)initWithSegmentedControlClass:(Class)segmentedControlClass {
+    NSAssert([segmentedControlClass isSubclassOfClass:[UISegmentedControl class]], @"segmentedControlClass must inherit from UISegmentedControl");
+    self = [self init];
+    if (self) {
+        self.segmentedControlClass = segmentedControlClass;
     }
     return self;
 }
@@ -100,12 +110,12 @@ static NSString * const DBProfileViewControllerBlurredImageCacheName = @"DBProfi
 - (instancetype)init {
     self = [super init];
     if (self) {
-        [self commonInit];
+        [self db_commonInit];
     }
     return self;
 }
 
-- (void)commonInit {
+- (void)db_commonInit {
     _segmentedControlView = [[DBProfileSegmentedControlView alloc] init];
     _detailsView = [[DBProfileDetailsView alloc] init];
     _profilePictureView = [[DBProfilePictureView alloc] init];
@@ -126,6 +136,8 @@ static NSString * const DBProfileViewControllerBlurredImageCacheName = @"DBProfi
     _blurredImageCache = blurredImageCache;
     
     self.containerView = [[UIView alloc] init];
+    
+    self.segmentedControlClass = [UISegmentedControl class];
 }
 
 - (void)dealloc {
@@ -175,9 +187,9 @@ static NSString * const DBProfileViewControllerBlurredImageCacheName = @"DBProfi
                                                  name:UIApplicationDidEnterBackgroundNotification
                                                object:nil];
     
-    [self.segmentedControlView.segmentedControl addTarget:self
-                                                   action:@selector(segmentChanged:)
-                                         forControlEvents:UIControlEventValueChanged];
+    [self.segmentedControl addTarget:self
+                              action:@selector(segmentChanged:)
+                    forControlEvents:UIControlEventValueChanged];
     
     [self configureDefaults];
 }
@@ -209,17 +221,22 @@ static NSString * const DBProfileViewControllerBlurredImageCacheName = @"DBProfi
 }
 
 - (void)configureDefaults {
+    // Segmented control
+    self.segmentedControl.tintColor = [UIColor grayColor];
+
     // Cover photo
     self.coverPhotoOptions = DBProfileCoverPhotoOptionStretch;
     self.coverPhotoHidden = NO;
     self.coverPhotoMimicsNavigationBar = YES;
     self.coverPhotoHeightMultiplier = 0.2;
+    
     // Profile picture
     self.profilePictureAlignment = DBProfilePictureAlignmentLeft;
     self.profilePictureSize = DBProfilePictureSizeNormal;
     self.profilePictureInset = UIEdgeInsetsMake(0, 15, DBProfileViewControllerProfilePictureSizeNormal/2.0 - 10, 0);
     self.allowsPullToRefresh = YES;
-    // Navigation
+    
+    // Navigation view
     self.navigationView.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"db-profile-chevron" inBundle:[NSBundle db_resourcesBundle] compatibleWithTraitCollection:self.traitCollection] style:UIBarButtonItemStylePlain target:self action:@selector(back:)];
 }
 
@@ -257,6 +274,10 @@ static NSString * const DBProfileViewControllerBlurredImageCacheName = @"DBProfi
 
 #pragma mark - Getters
 
+- (UISegmentedControl *)segmentedControl {
+    return self.segmentedControlView.segmentedControl;
+}
+
 - (NSMutableArray *)contentViewControllers {
     if (!_contentViewControllers) {
         _contentViewControllers = [NSMutableArray array];
@@ -272,6 +293,13 @@ static NSString * const DBProfileViewControllerBlurredImageCacheName = @"DBProfi
 }
 
 #pragma mark - Setters
+
+- (void)setSegmentedControlClass:(Class)segmentedControlClass {
+    _segmentedControlClass = segmentedControlClass;
+    
+    UIControl *segmentedControl = [[segmentedControlClass alloc] init];
+    self.segmentedControlView.segmentedControl = segmentedControl;
+}
 
 - (void)setCoverPhotoHeightMultiplier:(CGFloat)coverPhotoHeightMultiplier {
     NSAssert(coverPhotoHeightMultiplier > 0 && coverPhotoHeightMultiplier <= 1, @"`coverPhotoHeightMultiplier` must be greater than 0 or less than or equal to 1.");
@@ -336,7 +364,7 @@ static NSString * const DBProfileViewControllerBlurredImageCacheName = @"DBProfi
 }
 
 - (void)segmentChanged:(id)sender {
-    NSInteger selectedSegmentIndex = [self.segmentedControlView.segmentedControl selectedSegmentIndex];
+    NSInteger selectedSegmentIndex = [self.segmentedControl selectedSegmentIndex];
     
     DBProfileContentViewController *viewControllerToDisplay = [self.contentViewControllers objectAtIndex:self.indexForSelectedSegment];
     UIScrollView *scrollView = [viewControllerToDisplay contentScrollView];
@@ -409,7 +437,7 @@ static NSString * const DBProfileViewControllerBlurredImageCacheName = @"DBProfi
     }
 }
 
-#pragma mark - Inserting, Deleting, and Moving Segments
+#pragma mark - Public Methods
 
 - (void)beginUpdates {
     self.updating = YES;
@@ -445,8 +473,6 @@ static NSString * const DBProfileViewControllerBlurredImageCacheName = @"DBProfi
     }];
 }
 
-#pragma mark - Reloading Data
-
 - (void)reloadData {
     NSInteger numberOfSegments = [self.dataSource numberOfContentControllersForProfileViewController:self];
     
@@ -457,7 +483,7 @@ static NSString * const DBProfileViewControllerBlurredImageCacheName = @"DBProfi
     }
     
     [self.contentViewControllers removeAllObjects];
-    [self.segmentedControlView.segmentedControl removeAllSegments];
+    [self.segmentedControl removeAllSegments];
     
     for (NSInteger i = 0; i < numberOfSegments; i++) {
         // Reload content view controllers
@@ -466,7 +492,7 @@ static NSString * const DBProfileViewControllerBlurredImageCacheName = @"DBProfi
         
         // Reload segmented control
         NSString *title = [self.dataSource profileViewController:self titleForContentControllerAtIndex:i];
-        [self.segmentedControlView.segmentedControl insertSegmentWithTitle:title atIndex:i animated:NO];
+        [self.segmentedControl insertSegmentWithTitle:title atIndex:i animated:NO];
     }
     
     // Display selected content view controller
@@ -488,7 +514,7 @@ static NSString * const DBProfileViewControllerBlurredImageCacheName = @"DBProfi
     }
     
     _indexForSelectedSegment = indexForSelectedSegment;
-    [self.segmentedControlView.segmentedControl setSelectedSegmentIndex:indexForSelectedSegment];
+    [self.segmentedControl setSelectedSegmentIndex:indexForSelectedSegment];
     
     DBProfileContentViewController *displayVC = [self.contentViewControllers objectAtIndex:indexForSelectedSegment];
     if (displayVC) {
@@ -506,7 +532,6 @@ static NSString * const DBProfileViewControllerBlurredImageCacheName = @"DBProfi
     self.navigationView.titleView.titleLabel.text = self.title;
     self.navigationView.titleView.subtitleLabel.text = [self.dataSource profileViewController:self subtitleForContentControllerAtIndex:self.indexForSelectedSegment];
 }
-
 
 #pragma mark - Configuring Pull-To-Refresh
 
@@ -997,7 +1022,7 @@ static NSString * const DBProfileViewControllerBlurredImageCacheName = @"DBProfi
     self = [super init];
     if (self) {
         [self.contentViewControllers addObjectsFromArray:contentViewControllers];
-        [self commonInit];
+        [self db_commonInit];
     }
     return self;
 }

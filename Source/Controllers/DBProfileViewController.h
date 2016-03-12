@@ -84,15 +84,18 @@ typedef NS_ENUM(NSInteger, DBProfilePictureAlignment) {
 /*!
  @class DBProfileViewController
  @abstract The `DBProfileViewController` class is a view controller that is specialized to display a profile interface.
- @discussion This class manages and displays an array of content view controllers as well as a `DBProfileCoverPhotoView`, `DBProfilePictureView` and `DBProfileDetailsView`. There are many ways to customize the cover photo, profile picture and content view controllers of the profile screen.
+ @discussion This class manages and displays a collection of content controllers as well as a `DBProfileCoverPhotoView`, `DBProfilePictureView` and `DBProfileDetailsView`.
  */
 @interface DBProfileViewController : UIViewController
 
-// Version 1.0.1
+- (instancetype)initWithSegmentedControlClass:(Class)segmentedControlClass;
+
+@property (nonatomic, assign, readonly) NSUInteger indexForSelectedSegment;
+@property (nonatomic, assign, readonly) UISegmentedControl *segmentedControl;
+
 - (void)beginUpdates;
 - (void)endUpdates;
 - (void)reloadData;
-@property (nonatomic, assign, readonly) NSUInteger indexForSelectedSegment;
 
 /*!
  @abstract The object that acts as the view controller's delegate.
@@ -115,11 +118,6 @@ typedef NS_ENUM(NSInteger, DBProfilePictureAlignment) {
  @warning The `detailsView` cannot be nil.
  */
 @property (nonatomic, strong) UIView *detailsView;
-
-/*!
- @abstract A view that contains a segmented control and is displayed above the content view controllers.
- */
-@property (nonatomic, strong, readonly) DBProfileSegmentedControlView *segmentedControlView;
 
 ///---------------------------------------------
 /// @name Configuring Cover Photo
