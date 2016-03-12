@@ -18,6 +18,9 @@
 #import "DBProfileContentPresenting.h"
 #import "DBProfileImageEffects.h"
 #import "NSBundle+DBProfileViewController.h"
+#import "DBProfileContentControllerObserver.h"
+
+// Constants
 
 const CGFloat DBProfileViewControllerProfilePictureSizeNormal = 72.0;
 const CGFloat DBProfileViewControllerProfilePictureSizeLarge = 92.0;
@@ -29,12 +32,7 @@ static const CGFloat DBProfileViewControllerNavigationBarHeightCompact = 44.0;
 static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProfileViewController.contentOffsetCache";
 static NSString * const DBProfileViewControllerBlurredImageCacheName = @"DBProfileViewController.blurredImageCache";
 
-static void * DBProfileViewControllerContentOffsetKVOContext = &DBProfileViewControllerContentOffsetKVOContext;
-static NSString * const DBProfileViewControllerContentOffsetKeyPath = @"contentOffset";
-
-static void * DBProfileViewControllerUpdatesAnimationContext = &DBProfileViewControllerUpdatesAnimationContext;
-
-@interface DBProfileViewController ()
+@interface DBProfileViewController () <DBProfileContentControllerObserverDelegate>
 {
     BOOL _shouldScrollToTop;
     CGPoint _sharedContentOffset;
@@ -44,9 +42,11 @@ static void * DBProfileViewControllerUpdatesAnimationContext = &DBProfileViewCon
 @property (nonatomic, getter=isUpdating) BOOL updating;
 
 @property (nonatomic, getter=isRefreshing) BOOL refreshing;
-@property (nonatomic, strong) NSMutableArray *contentViewControllers;
 @property (nonatomic, strong) NSCache *contentOffsetCache;
 @property (nonatomic, strong) NSCache *blurredImageCache;
+
+@property (nonatomic, strong) NSMutableArray *contentViewControllers;
+@property (nonatomic, strong) NSMutableDictionary *observers;
 
 // Views
 @property (nonatomic, strong) UIView *containerView;
@@ -130,11 +130,6 @@ static void * DBProfileViewControllerUpdatesAnimationContext = &DBProfileViewCon
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    
-    if (self.visibleContentViewController) {
-        UIScrollView *scrollView = [self.visibleContentViewController contentScrollView];
-        [self endObservingContentOffsetForScrollView:scrollView];
-    }
     
     [self.blurredImageCache removeAllObjects];
     self.blurredImageCache = nil;
@@ -269,6 +264,13 @@ static void * DBProfileViewControllerUpdatesAnimationContext = &DBProfileViewCon
     return _contentViewControllers;
 }
 
+- (NSMutableDictionary *)observers {
+    if (!_observers) {
+        _observers = [NSMutableDictionary dictionary];
+    }
+    return _observers;
+}
+
 #pragma mark - Setters
 
 - (void)setCoverPhotoHeightMultiplier:(CGFloat)coverPhotoHeightMultiplier {
@@ -338,7 +340,6 @@ static void * DBProfileViewControllerUpdatesAnimationContext = &DBProfileViewCon
     
     DBProfileContentViewController *viewControllerToDisplay = [self.contentViewControllers objectAtIndex:self.indexForSelectedSegment];
     UIScrollView *scrollView = [viewControllerToDisplay contentScrollView];
-    [self endObservingContentOffsetForScrollView:scrollView];
     
     self.indexForSelectedSegment = selectedSegmentIndex;
     [self updateViewConstraints];
@@ -449,6 +450,8 @@ static void * DBProfileViewControllerUpdatesAnimationContext = &DBProfileViewCon
 - (void)reloadData {
     NSInteger numberOfSegments = [self.dataSource numberOfContentControllersForProfileViewController:self];
     
+    [self.observers removeAllObjects];
+    
     if ([self.contentViewControllers count] > 0) {
         [self hideContentViewController:[self.contentViewControllers objectAtIndex:self.indexForSelectedSegment]];
     }
@@ -458,7 +461,7 @@ static void * DBProfileViewControllerUpdatesAnimationContext = &DBProfileViewCon
     
     for (NSInteger i = 0; i < numberOfSegments; i++) {
         // Reload content view controllers
-        DBProfileContentViewController *contentViewController = [self.dataSource profileViewController:self contentViewControllerAtIndex:i];
+        DBProfileContentViewController *contentViewController = [self.dataSource profileViewController:self contentControllerAtIndex:i];
         [self.contentViewControllers addObject:contentViewController];
         
         // Reload segmented control
@@ -473,14 +476,28 @@ static void * DBProfileViewControllerUpdatesAnimationContext = &DBProfileViewCon
 - (void)setIndexForSelectedSegment:(NSUInteger)indexForSelectedSegment {
     if (![self.contentViewControllers count]) return;
     
-    DBProfileContentViewController *viewControllerToHide = [self.contentViewControllers objectAtIndex:_indexForSelectedSegment];
-    if (viewControllerToHide) [self hideContentViewController:viewControllerToHide];
+    DBProfileContentViewController *hideVC = [self.contentViewControllers objectAtIndex:_indexForSelectedSegment];
+    if (hideVC) {
+        [self hideContentViewController:hideVC];
+        NSString *key = [self.dataSource profileViewController:self titleForContentControllerAtIndex:_indexForSelectedSegment];
+        if ([self.observers valueForKey:key]) {
+            DBProfileContentControllerObserver *observer = self.observers[key];
+            [observer stopObserving];
+            [self.observers removeObjectForKey:key];
+        }
+    }
     
     _indexForSelectedSegment = indexForSelectedSegment;
     [self.segmentedControlView.segmentedControl setSelectedSegmentIndex:indexForSelectedSegment];
     
-    DBProfileContentViewController *viewControllerToDisplay = [self.contentViewControllers objectAtIndex:indexForSelectedSegment];
-    if (viewControllerToDisplay) [self displayContentViewController:viewControllerToDisplay];
+    DBProfileContentViewController *displayVC = [self.contentViewControllers objectAtIndex:indexForSelectedSegment];
+    if (displayVC) {
+        [self displayContentViewController:displayVC];
+        NSString *key = [self.dataSource profileViewController:self titleForContentControllerAtIndex:indexForSelectedSegment];
+        DBProfileContentControllerObserver *observer = [[DBProfileContentControllerObserver alloc] initWithContentController:displayVC delegate:self];
+        [observer startObserving];
+        self.observers[key] = observer;
+    }
     
     [self updateViewConstraints];
     [self.view layoutIfNeeded];
@@ -514,9 +531,9 @@ static void * DBProfileViewControllerUpdatesAnimationContext = &DBProfileViewCon
     }
 }
 
-- (void)notifyDelegateOfPullToRefreshOfControllerAtIndex:(NSInteger)index  {
-    if ([self respondsToSelector:@selector(profileViewController:didPullToRefreshControllerAtIndex:)]) {
-        [self.delegate profileViewController:self didPullToRefreshControllerAtIndex:index];
+- (void)notifyDelegateOfPullToRefreshOfContentControllerAtIndex:(NSInteger)index  {
+    if ([self respondsToSelector:@selector(profileViewController:didPullToRefreshContentControllerAtIndex:)]) {
+        [self.delegate profileViewController:self didPullToRefreshContentControllerAtIndex:index];
     }
 }
 
@@ -626,9 +643,6 @@ static void * DBProfileViewControllerUpdatesAnimationContext = &DBProfileViewCon
     // Adjust contentInset
     [self adjustContentInsetForScrollView:scrollView];
     
-    // Begin observing contentOffset
-    [self beginObservingContentOffsetForScrollView:scrollView];
-    
     // Reset the content offset
     if (_shouldScrollToTop) {
         [self resetContentOffsetForScrollView:scrollView];
@@ -705,40 +719,19 @@ static void * DBProfileViewControllerUpdatesAnimationContext = &DBProfileViewCon
     self.detailsViewTopConstraint.constant = -topInset;
 }
 
-#pragma mark - KVO
+#pragma mark - DBProfileContentControllerObserverDelegate
 
-- (void)beginObservingContentOffsetForScrollView:(UIScrollView *)scrollView {
-    if (scrollView) {
-        [scrollView addObserver:self
-                     forKeyPath:DBProfileViewControllerContentOffsetKeyPath
-                        options:0
-                        context:&DBProfileViewControllerContentOffsetKVOContext];
-    }
-}
-
-
-- (void)endObservingContentOffsetForScrollView:(UIScrollView *)scrollView {
-    if (scrollView) {
-        [scrollView removeObserver:self
-                        forKeyPath:DBProfileViewControllerContentOffsetKeyPath];
-    }
-}
-
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context {
+- (void)contentControllerObserver:(DBProfileContentControllerObserver *)observer contentControllerScrollViewDidScroll:(UIScrollView *)scrollView {
+    CGPoint contentOffset = scrollView.contentOffset;
+    contentOffset.y += scrollView.contentInset.top;
+    [self updateSubviewsWithContentOffset:contentOffset];
+    [self handlePullToRefreshWithScrollView:scrollView];
     
-    if ([keyPath isEqualToString:DBProfileViewControllerContentOffsetKeyPath] && context == DBProfileViewControllerContentOffsetKVOContext) {
-        UIScrollView *scrollView = (UIScrollView *)object;
-        CGPoint contentOffset = scrollView.contentOffset;
-        contentOffset.y += scrollView.contentInset.top;
-        [self updateSubviewsWithContentOffset:contentOffset];
-        [self handlePullToRefreshWithScrollView:scrollView];
-        
-        if (self.coverPhotoMimicsNavigationBar && !(self.coverPhotoOptions & DBProfileCoverPhotoOptionExtend)) {
-            if (contentOffset.y < CGRectGetHeight(self.coverPhotoView.frame) - self.coverPhotoViewBottomConstraint.constant) {
-                [scrollView insertSubview:self.profilePictureView aboveSubview:self.coverPhotoView];
-            } else {
-                [scrollView insertSubview:self.coverPhotoView aboveSubview:self.profilePictureView];
-            }
+    if (self.coverPhotoMimicsNavigationBar && !(self.coverPhotoOptions & DBProfileCoverPhotoOptionExtend)) {
+        if (contentOffset.y < CGRectGetHeight(self.coverPhotoView.frame) - self.coverPhotoViewBottomConstraint.constant) {
+            [scrollView insertSubview:self.profilePictureView aboveSubview:self.coverPhotoView];
+        } else {
+            [scrollView insertSubview:self.coverPhotoView aboveSubview:self.profilePictureView];
         }
     }
 }
@@ -753,7 +746,7 @@ static void * DBProfileViewControllerUpdatesAnimationContext = &DBProfileViewCon
         [self startRefreshAnimations];
     } else if (!scrollView.isDragging && !self.refreshing && contentOffset.y < -DBProfileViewControllerPullToRefreshDistance) {
         self.refreshing = YES;
-        [self notifyDelegateOfPullToRefreshOfControllerAtIndex:self.indexForSelectedSegment];
+        [self notifyDelegateOfPullToRefreshOfContentControllerAtIndex:self.indexForSelectedSegment];
     }
     
     BOOL shouldEndRefreshAnimations = !self.refreshing && self.activityIndicator.isAnimating;
@@ -822,9 +815,9 @@ static void * DBProfileViewControllerUpdatesAnimationContext = &DBProfileViewCon
     CGFloat titleViewOffset = ((CGRectGetHeight(self.coverPhotoView.frame) - CGRectGetMaxY(self.navigationView.frame)) + CGRectGetHeight(self.segmentedControlView.frame));
     
     if (!(self.coverPhotoOptions & DBProfileCoverPhotoOptionExtend)) {
-        // FIXME: Adding arbitrary padding to titleViewOffset
+        const CGFloat padding = 30.0;
         CGFloat profilePictureOffset = self.profilePictureInset.top - self.profilePictureInset.bottom;
-        titleViewOffset += (CGRectGetHeight(self.profilePictureView.frame) + profilePictureOffset + 30);
+        titleViewOffset += (CGRectGetHeight(self.profilePictureView.frame) + profilePictureOffset + padding);
     }
     
     CGFloat titleViewOffsetPercent = 1 - contentOffset.y / titleViewOffset;

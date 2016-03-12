@@ -35,6 +35,6 @@
  @abstract Called after the user has triggered a pull-to-refresh.
  @param viewController The profile view controller that triggered a pull-to-refresh.
  */
-- (void)profileViewController:(DBProfileViewController *)viewController didPullToRefreshControllerAtIndex:(NSInteger)index;
+- (void)profileViewController:(DBProfileViewController *)viewController didPullToRefreshContentControllerAtIndex:(NSInteger)index;
 
 @end

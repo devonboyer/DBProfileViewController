@@ -17,7 +17,7 @@
 
 - (NSUInteger)numberOfContentControllersForProfileViewController:(DBProfileViewController *)profileViewController;
 
-- (DBProfileContentViewController *)profileViewController:(DBProfileViewController *)profileViewController contentViewControllerAtIndex:(NSUInteger)index;
+- (DBProfileContentViewController *)profileViewController:(DBProfileViewController *)profileViewController contentControllerAtIndex:(NSUInteger)index;
 
 - (NSString *)profileViewController:(DBProfileViewController *)profileViewController titleForContentControllerAtIndex:(NSUInteger)index;
 

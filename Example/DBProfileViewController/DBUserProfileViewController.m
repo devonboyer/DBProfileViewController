@@ -113,7 +113,7 @@
     return 3;
 }
 
-- (DBProfileContentViewController *)profileViewController:(DBProfileViewController *)profileViewController contentViewControllerAtIndex:(NSUInteger)index {
+- (DBProfileContentViewController *)profileViewController:(DBProfileViewController *)profileViewController contentControllerAtIndex:(NSUInteger)index {
 
     switch (index) {
         case 0:
@@ -164,7 +164,7 @@
 
 - (void)profileViewController:(DBProfileViewController *)viewController didSelectProfilePicture:(UIImageView *)imageView { }
 
-- (void)profileViewController:(DBProfileViewController *)viewController didPullToRefreshControllerAtIndex:(NSInteger)index {
+- (void)profileViewController:(DBProfileViewController *)viewController didPullToRefreshContentControllerAtIndex:(NSInteger)index {
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [self endRefreshing];
     });
