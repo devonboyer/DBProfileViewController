@@ -13,13 +13,11 @@
 * Renamed `setVisibleContentViewControllerAtIndex:` to `selectContentViewControllerAtIndex:`
 * Renamed `visibleContentViewControllerIndex` property to `indexForSelectedContentController`
 * Renamed `profileViewControllerDidPullToRefresh:` to `profileViewController:didPullToRefreshContentControllerAtIndex:` of `DBProfileViewControllerDelegate`
-
 * Removed `addContentViewController:`
 * Removed `addContentViewControllers:`
 * Removed `insertContentViewController:atIndex:`
 * Removed `removeContentViewControllerAtIndex:`
 * Removed `addContentViewControllers:`
-
 * Removed `contentViewControllers` property
 * Removed `segmentedControlView` property
 * Removed `navigationView` property
