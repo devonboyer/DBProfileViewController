@@ -38,12 +38,4 @@
     return self.tableView;
 }
 
-- (NSString *)contentTitle {
-    return @"Likes";
-}
-
-- (NSString *)contentSubtitle {
-    return @"4 Likes";
-}
-
 @end

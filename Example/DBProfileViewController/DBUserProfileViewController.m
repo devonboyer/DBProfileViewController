@@ -11,6 +11,14 @@
 #import "DBPhotosTableViewController.h"
 #import "DBLikesTableViewController.h"
 
+static const NSInteger DBUserProfileNumberOfContentControllers = 3;
+
+typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
+    DBUserProfileContentControllerIndexFollowers,
+    DBUserProfileContentControllerIndexPhotos,
+    DBUserProfileContentControllerIndexLikes
+};
+
 @interface DBUserProfileViewController () <DBProfileViewControllerDelegate, DBProfileViewControllerDataSource>
 
 @end
@@ -61,7 +69,7 @@
             
             detailsView.contentInset = UIEdgeInsetsMake(70, 15, 15, 15);
             
-            [self setCoverPhoto:[UIImage imageNamed:@"demo-cover-photo-2"] animated:NO];
+            [self setCoverPhoto:[UIImage imageNamed:@"demo-cover-photo-1"] animated:NO];
             break;
         case DBUserProfileViewControllerStyle3:
             self.profilePictureView.style = DBProfilePictureStyleRound;
@@ -96,17 +104,17 @@
 #pragma mark - DBProfileViewControllerDataSource
 
 - (NSUInteger)numberOfContentControllersForProfileViewController:(DBProfileViewController *)profileViewController {
-    return 3;
+    return DBUserProfileNumberOfContentControllers;
 }
 
 - (DBProfileContentController *)profileViewController:(DBProfileViewController *)profileViewController contentControllerAtIndex:(NSUInteger)index {
 
     switch (index) {
-        case 0:
+        case DBUserProfileContentControllerIndexFollowers:
             return [[DBFollowersTableViewController alloc] init];
-        case 1:
+        case DBUserProfileContentControllerIndexPhotos:
             return [[DBPhotosTableViewController alloc] init];;
-        case 2:
+        case DBUserProfileContentControllerIndexLikes:
             return [[DBLikesTableViewController alloc] init];;
         default:
             break;
@@ -116,11 +124,11 @@
 
 - (NSString *)profileViewController:(DBProfileViewController *)profileViewController titleForContentControllerAtIndex:(NSUInteger)index {
     switch (index) {
-        case 0:
+        case DBUserProfileContentControllerIndexFollowers:
             return @"Followers";
-        case 1:
+        case DBUserProfileContentControllerIndexPhotos:
             return @"Photos";
-        case 2:
+        case DBUserProfileContentControllerIndexLikes:
             return @"Likes";
         default:
             break;
@@ -130,11 +138,11 @@
 
 - (NSString *)profileViewController:(DBProfileViewController *)profileViewController subtitleForContentControllerAtIndex:(NSUInteger)index {
     switch (index) {
-        case 0:
+        case DBUserProfileContentControllerIndexFollowers:
             return @"20 Followers";
-        case 1:
+        case DBUserProfileContentControllerIndexPhotos:
             return @"12 Photos";
-        case 2:
+        case DBUserProfileContentControllerIndexLikes:
             return @"4 Likes";
         default:
             break;

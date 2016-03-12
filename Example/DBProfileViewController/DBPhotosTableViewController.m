@@ -38,12 +38,4 @@
     return self.tableView;
 }
 
-- (NSString *)contentTitle {
-    return @"Photos";
-}
-
-- (NSString *)contentSubtitle {
-    return @"12 Photos";
-}
-
 @end
