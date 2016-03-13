@@ -48,8 +48,8 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
 @property (nonatomic, getter=isRefreshing) BOOL refreshing;
 
 // Data
-@property (nonatomic, strong) NSMutableArray *contentViewControllers;
-@property (nonatomic, strong) NSMutableDictionary *observers;
+@property (nonatomic, strong) NSMutableArray<DBProfileContentController *> *contentControllers;
+@property (nonatomic, strong) NSMutableDictionary<NSString *, DBProfileContentControllerObserver *> *observers;
 @property (nonatomic, strong) NSCache *contentOffsetCache;
 @property (nonatomic, strong) NSDictionary *blurredImages;
 @property (nonatomic, strong) NSOperationQueue *operationQueue;
@@ -187,8 +187,8 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     [self reloadData];
     
     // Scroll displayed content controller to top
-    if ([self.contentViewControllers count]) {
-        DBProfileContentController *displayedViewController = [self.contentViewControllers objectAtIndex:self.indexForSelectedContentController];
+    if ([self.contentControllers count]) {
+        DBProfileContentController *displayedViewController = [self.contentControllers objectAtIndex:self.indexForSelectedContentController];
         [self scrollContentControllerToTop:displayedViewController];
     }
     
@@ -240,7 +240,7 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
 #pragma mark - Size Classes
 
 - (void)willTransitionToTraitCollection:(UITraitCollection *)newCollection withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
-    UIScrollView *scrollView = [[self.contentViewControllers objectAtIndex:self.indexForSelectedContentController] contentScrollView];
+    UIScrollView *scrollView = [[self.contentControllers objectAtIndex:self.indexForSelectedContentController] contentScrollView];
     _cachedContentInset = scrollView.contentInset;
 }
 
@@ -248,7 +248,7 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     [super traitCollectionDidChange:previousTraitCollection];
     
     // The scroll view content inset needs to be recalculated for the new size class
-    UIScrollView *scrollView = [[self.contentViewControllers objectAtIndex:self.indexForSelectedContentController] contentScrollView];
+    UIScrollView *scrollView = [[self.contentControllers objectAtIndex:self.indexForSelectedContentController] contentScrollView];
     
     [scrollView setNeedsLayout];
     [scrollView layoutIfNeeded];
@@ -273,11 +273,11 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     return self.navigationView.navigationItem;
 }
 
-- (NSMutableArray *)contentViewControllers {
-    if (!_contentViewControllers) {
-        _contentViewControllers = [NSMutableArray array];
+- (NSMutableArray *)contentControllers {
+    if (!_contentControllers) {
+        _contentControllers = [NSMutableArray array];
     }
-    return _contentViewControllers;
+    return _contentControllers;
 }
 
 - (NSMutableDictionary *)observers {
@@ -367,7 +367,7 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
 - (void)segmentChanged:(id)sender {
     NSInteger selectedSegmentIndex = [self.segmentedControl selectedSegmentIndex];
     
-    DBProfileContentController *viewControllerToDisplay = [self.contentViewControllers objectAtIndex:self.indexForSelectedContentController];
+    DBProfileContentController *viewControllerToDisplay = [self.contentControllers objectAtIndex:self.indexForSelectedContentController];
     UIScrollView *scrollView = [viewControllerToDisplay contentScrollView];
     
     self.indexForSelectedContentController = selectedSegmentIndex;
@@ -402,7 +402,7 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
         CGFloat newHeight = [self.detailsView systemLayoutSizeFittingSize:UILayoutFittingCompressedSize].height;
         
         if (round(oldHeight) != round(newHeight)) {
-            DBProfileContentController *viewController = [self.contentViewControllers objectAtIndex:self.indexForSelectedContentController];
+            DBProfileContentController *viewController = [self.contentControllers objectAtIndex:self.indexForSelectedContentController];
             UIScrollView *scrollView = [viewController contentScrollView];
             
             CGPoint contentOffset = scrollView.contentOffset;
@@ -424,17 +424,17 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     
     [self.observers removeAllObjects];
     
-    if ([self.contentViewControllers count] > 0) {
-        [self hideContentController:[self.contentViewControllers objectAtIndex:self.indexForSelectedContentController]];
+    if ([self.contentControllers count] > 0) {
+        [self hideContentController:[self.contentControllers objectAtIndex:self.indexForSelectedContentController]];
     }
     
-    [self.contentViewControllers removeAllObjects];
+    [self.contentControllers removeAllObjects];
     [self.segmentedControl removeAllSegments];
     
     for (NSInteger i = 0; i < numberOfSegments; i++) {
         // Reload content view controllers
         DBProfileContentController *contentViewController = [self.dataSource profileViewController:self contentControllerAtIndex:i];
-        [self.contentViewControllers addObject:contentViewController];
+        [self.contentControllers addObject:contentViewController];
         
         // Reload segmented control
         NSString *title = [self.dataSource profileViewController:self titleForContentControllerAtIndex:i];
@@ -499,9 +499,9 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
 
 - (void)setIndexForSelectedContentController:(NSUInteger)indexForSelectedContentController {
     
-    if (![self.contentViewControllers count]) return;
+    if (![self.contentControllers count]) return;
     
-    DBProfileContentController *hideVC = [self.contentViewControllers objectAtIndex:_indexForSelectedContentController];
+    DBProfileContentController *hideVC = [self.contentControllers objectAtIndex:_indexForSelectedContentController];
     if (hideVC) {
         [self hideContentController:hideVC];
         NSString *key = [self.dataSource profileViewController:self titleForContentControllerAtIndex:_indexForSelectedContentController];
@@ -515,7 +515,7 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     _indexForSelectedContentController = indexForSelectedContentController;
     [self.segmentedControl setSelectedSegmentIndex:indexForSelectedContentController];
     
-    DBProfileContentController *displayVC = [self.contentViewControllers objectAtIndex:indexForSelectedContentController];
+    DBProfileContentController *displayVC = [self.contentControllers objectAtIndex:indexForSelectedContentController];
     if (displayVC) {
         [self displayContentViewController:displayVC];
         NSString *key = [self.dataSource profileViewController:self titleForContentControllerAtIndex:indexForSelectedContentController];
@@ -625,7 +625,7 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     NSInteger numberOfSegments = [self.dataSource numberOfContentControllersForProfileViewController:self];
     
     // Segmented control ?
-    if ([self.contentViewControllers count] > 1 || !self.hidesSegmentedControlForSingleContentController) {
+    if ([self.contentControllers count] > 1 || !self.hidesSegmentedControlForSingleContentController) {
         [scrollView addSubview:self.segmentedControlView];
         [self configureSegmentedControlViewLayoutConstraintsWithSuperview:scrollView];
     } else {
@@ -977,7 +977,7 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     self.coverPhotoViewTopSuperviewConstraint.priority = UILayoutPriorityDefaultHigh + 1;
     [self.view addConstraint:self.coverPhotoViewTopSuperviewConstraint];
     
-    if ([self.contentViewControllers count] > 1 || !self.hidesSegmentedControlForSingleContentController) {
+    if ([self.contentControllers count] > 1 || !self.hidesSegmentedControlForSingleContentController) {
         [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.segmentedControlView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:self.coverPhotoView attribute:NSLayoutAttributeBottom multiplier:1 constant:0]];
     }
 }
