@@ -105,9 +105,9 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
         case DBUserProfileContentControllerIndexFollowers:
             return [[DBFollowersTableViewController alloc] init];
         case DBUserProfileContentControllerIndexPhotos:
-            return [[DBPhotosTableViewController alloc] init];;
+            return [[DBPhotosTableViewController alloc] init];
         case DBUserProfileContentControllerIndexLikes:
-            return [[DBLikesTableViewController alloc] init];;
+            return [[DBLikesTableViewController alloc] init];
         default:
             break;
     }

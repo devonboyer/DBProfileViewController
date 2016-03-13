@@ -10,6 +10,8 @@
 
 #import <UIKit/UIKit.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 /*!
  @class DBProfileCoverPhotoView
  @abstract The `DBProfileCoverPhotoView` class displays a cover photo.
@@ -27,3 +29,5 @@
 @property (nonatomic, strong, readonly) UIView *overlayView;
 
 @end
+
+NS_ASSUME_NONNULL_END

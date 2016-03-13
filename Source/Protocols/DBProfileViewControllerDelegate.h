@@ -13,6 +13,8 @@
 
 @class DBProfileViewController;
 
+NS_ASSUME_NONNULL_BEGIN
+
 /*!
  @protocol DBProfileViewControllerDelegate
  @abstract The `DBProfileViewControllerDelegate` protocol is adopted by classes that act as the delegate of a `DBProfileViewController`.
@@ -50,3 +52,5 @@
 - (void)profileViewController:(DBProfileViewController *)profileViewController didPullToRefreshContentControllerAtIndex:(NSInteger)index;
 
 @end
+
+NS_ASSUME_NONNULL_END

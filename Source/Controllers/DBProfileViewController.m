@@ -117,8 +117,8 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
 }
 
 - (void)db_commonInit {
+    _detailsView = [[DBProfileDetailsView alloc] initWithStyle:DBProfileDetailsViewStyleDefault];
     _segmentedControlView = [[DBProfileSegmentedControlView alloc] init];
-    _detailsView = [[DBProfileDetailsView alloc] init];
     _profilePictureView = [[DBProfilePictureView alloc] init];
     _coverPhotoView = [[DBProfileCoverPhotoView alloc] init];
     _navigationView = [[DBProfileNavigationView alloc] init];
@@ -493,7 +493,7 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     [self endRefreshAnimations];
 }
 
-- (void)selectContentViewControllerAtIndex:(NSInteger)index {
+- (void)selectContentControllerAtIndex:(NSInteger)index {
     self.indexForSelectedContentController = index;
 }
 

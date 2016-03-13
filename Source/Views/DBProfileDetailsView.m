@@ -12,6 +12,8 @@
 
 @interface DBProfileDetailsView ()
 
+@property (nonatomic, assign) DBProfileDetailsViewStyle style;
+
 @property (nonatomic, strong) NSLayoutConstraint *contentViewTopConstraint;
 @property (nonatomic, strong) NSLayoutConstraint *contentViewBottomConstraint;
 @property (nonatomic, strong) NSLayoutConstraint *contentViewRightConstraint;
@@ -22,6 +24,14 @@
 @implementation DBProfileDetailsView
 
 #pragma mark - Initialization
+
+- (instancetype)initWithStyle:(DBProfileDetailsViewStyle)style {
+    self = [self init];
+    if (self) {
+        self.style = style;
+    }
+    return self;
+}
 
 - (instancetype)init {
     self = [super init];
@@ -37,8 +47,6 @@
     _usernameLabel = [[UILabel alloc] init];
     _descriptionLabel = [[UILabel alloc] init];
     _editProfileButton = [[UIButton alloc] init];
-    
-    self.backgroundColor = [UIColor whiteColor];
     
     [self.contentView addSubview:self.nameLabel];
     [self.contentView addSubview:self.usernameLabel];

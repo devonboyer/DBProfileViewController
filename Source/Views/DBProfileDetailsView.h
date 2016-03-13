@@ -10,18 +10,29 @@
 
 #import <UIKit/UIKit.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
+typedef NS_ENUM(NSInteger, DBProfileDetailsViewStyle)  {
+    DBProfileDetailsViewStyleDefault
+};
+
 /*!
  @class DBProfileDetailsView
  @abstract The `DBProfileDetailsView` class displays profile details such as name, username, and description.
  */
 @interface DBProfileDetailsView : UIView
 
+- (instancetype)initWithStyle:(DBProfileDetailsViewStyle)style;
+
 @property (nonatomic, strong, readonly) UIView *contentView;
+@property (nonatomic, assign) UIEdgeInsets contentInset;
+
 @property (nonatomic, strong, readonly) UILabel *nameLabel;
 @property (nonatomic, strong, readonly) UILabel *usernameLabel;
 @property (nonatomic, strong, readonly) UILabel *descriptionLabel;
+
 @property (nonatomic, strong, readonly) UIButton *editProfileButton;
 
-@property (nonatomic, assign) UIEdgeInsets contentInset;
-
 @end
+
+NS_ASSUME_NONNULL_END

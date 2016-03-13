@@ -10,6 +10,8 @@
 
 #import <UIKit/UIKit.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 /*!
  @abstract The `DBProfilePictureStyle` defines the types of styles for the profile picture.
  */
@@ -56,3 +58,5 @@ typedef NS_ENUM(NSInteger, DBProfilePictureStyle) {
 @property (nonatomic, assign) DBProfilePictureStyle style;
 
 @end
+
+NS_ASSUME_NONNULL_END

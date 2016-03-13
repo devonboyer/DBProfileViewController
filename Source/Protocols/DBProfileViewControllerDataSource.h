@@ -15,6 +15,8 @@
 
 @class DBProfileViewController;
 
+NS_ASSUME_NONNULL_BEGIN
+
 /*!
  @protocol DBProfileViewControllerDataSource
  @abstract The `DBProfileViewControllerDataSource` protocol is adopted by classes that act as the data source of a `DBProfileViewController`.
@@ -52,6 +54,6 @@
  */
 - (NSString *)profileViewController:(DBProfileViewController *)profileViewController subtitleForContentControllerAtIndex:(NSUInteger)index;
 
-@optional
-
 @end
+
+NS_ASSUME_NONNULL_END

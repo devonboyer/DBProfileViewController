@@ -13,6 +13,8 @@
 
 @protocol DBProfileContentPresenting;
 
+NS_ASSUME_NONNULL_BEGIN
+
 typedef UIViewController<DBProfileContentPresenting> DBProfileContentController;
 
 /*!
@@ -27,3 +29,5 @@ typedef UIViewController<DBProfileContentPresenting> DBProfileContentController;
 - (UIScrollView *)contentScrollView;
 
 @end
+
+NS_ASSUME_NONNULL_END

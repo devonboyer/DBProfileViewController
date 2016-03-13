@@ -20,6 +20,8 @@
 @class DBProfileSegmentedControlView;
 @class DBProfileNavigationView;
 
+NS_ASSUME_NONNULL_BEGIN
+
 /*!
  @abstract A constant value representing the size of the profile picture when using `DBProfilePictureSizeNormal`.
  */
@@ -95,17 +97,17 @@ typedef NS_ENUM(NSInteger, DBProfilePictureAlignment) {
  @abstract Initializes a newly created profile view controller.
  @param segmentedControlClass Specify the custom UISegmentedControl subclass you want to use, or specify nil to use the standard UISegmentedControl class.
 */
-- (instancetype)initWithSegmentedControlClass:(Class)segmentedControlClass;
+- (instancetype)initWithSegmentedControlClass:(nullable Class)segmentedControlClass;
 
 /*!
  @abstract The object that acts as the view controller's delegate.
  */
-@property (nonatomic, weak) id<DBProfileViewControllerDelegate> delegate;
+@property (nonatomic, weak, nullable) id<DBProfileViewControllerDelegate> delegate;
 
 /*!
  @abstract The object that acts as the view controller's data source.
  */
-@property (nonatomic, weak) id<DBProfileViewControllerDataSource> dataSource;
+@property (nonatomic, weak, nullable) id<DBProfileViewControllerDataSource> dataSource;
 
 /*!
  @abstract A view that is displayed under the cover photo and above the content controllers.
@@ -117,7 +119,7 @@ typedef NS_ENUM(NSInteger, DBProfilePictureAlignment) {
 /*!
  @abstract The navigation item used to represent the profile view controller's navigation bar when using `coverPhotoMimicsNavigationBar`
  */
-@property (nonatomic, strong) UINavigationItem *coverPhotoMimicsNavigationBarNavigationItem;
+@property (nonatomic, strong, readonly) UINavigationItem *coverPhotoMimicsNavigationBarNavigationItem;
 
 ///---------------------------------------------
 /// @name Reloading the Profile View Controller
@@ -169,7 +171,7 @@ typedef NS_ENUM(NSInteger, DBProfilePictureAlignment) {
  @abstract Selects a content controller in the profile view controller at the specified index.
  @param index An index identifying a content controller in the profile view controller.
  */
-- (void)selectContentViewControllerAtIndex:(NSInteger)index;
+- (void)selectContentControllerAtIndex:(NSInteger)index;
 
 ///---------------------------------------------
 /// @name Configuring Cover Photo
@@ -276,3 +278,5 @@ typedef NS_ENUM(NSInteger, DBProfilePictureAlignment) {
 - (void)endRefreshing;
 
 @end
+
+NS_ASSUME_NONNULL_END
