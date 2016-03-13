@@ -23,6 +23,7 @@
 
 #pragma mark - Constants
 
+const CGFloat DBProfileViewControllerProfilePictureSizeEditProfile = 62.0;
 const CGFloat DBProfileViewControllerProfilePictureSizeNormal = 72.0;
 const CGFloat DBProfileViewControllerProfilePictureSizeLarge = 92.0;
 
@@ -219,12 +220,12 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     _coverPhotoOptions = DBProfileCoverPhotoOptionStretch;
     _coverPhotoHidden = NO;
     _coverPhotoMimicsNavigationBar = YES;
-    _coverPhotoHeightMultiplier = 0.2;
+    _coverPhotoHeightMultiplier = 0.18;
     
     // Profile picture
     _profilePictureAlignment = DBProfilePictureAlignmentLeft;
     _profilePictureSize = DBProfilePictureSizeNormal;
-    _profilePictureInset = UIEdgeInsetsMake(0, 15, DBProfileViewControllerProfilePictureSizeNormal/2.0 - 10, 0);
+    _profilePictureInset = UIEdgeInsetsMake(0, 15, DBProfileViewControllerProfilePictureSizeNormal/2.0 - 15, 0);
     _allowsPullToRefresh = YES;
     
     // Navigation view
@@ -726,7 +727,8 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
             break;
     }
     
-    if (scrollView.contentSize.height < minimumContentSizeHeight) {
+    if (scrollView.contentSize.height < minimumContentSizeHeight && ([self.contentControllers count] > 1 ||
+        ([self.contentControllers count] == 1 && !self.hidesSegmentedControlForSingleContentController))) {
         contentInset.bottom = minimumContentSizeHeight - scrollView.contentSize.height;
     }
     
@@ -909,18 +911,24 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
         }
     }
     
+    CGFloat profilePictureSize;
+    
     switch (self.profilePictureSize) {
+        case DBProfilePictureSizeEditProfile:
+            profilePictureSize = DBProfileViewControllerProfilePictureSizeEditProfile;
+            break;
         case DBProfilePictureSizeNormal:
-            self.profilePictureViewWidthConstraint.constant = DBProfileViewControllerProfilePictureSizeNormal;
-            self.profilePictureViewRightConstraint.constant = CGRectGetWidth(self.view.bounds) - DBProfileViewControllerProfilePictureSizeNormal + self.profilePictureInset.left - self.profilePictureInset.right;
+            profilePictureSize = DBProfileViewControllerProfilePictureSizeNormal;
             break;
         case DBProfilePictureSizeLarge:
-            self.profilePictureViewWidthConstraint.constant = DBProfileViewControllerProfilePictureSizeLarge;
-            self.profilePictureViewRightConstraint.constant = CGRectGetWidth(self.view.bounds) - DBProfileViewControllerProfilePictureSizeLarge + self.profilePictureInset.left - self.profilePictureInset.right;
+            profilePictureSize = DBProfileViewControllerProfilePictureSizeLarge;
             break;
         default:
             break;
     }
+    
+    self.profilePictureViewWidthConstraint.constant = profilePictureSize;
+    self.profilePictureViewRightConstraint.constant = CGRectGetWidth(self.view.bounds) - profilePictureSize + self.profilePictureInset.left - self.profilePictureInset.right;
     
     self.profilePictureViewLeftConstraint.constant = self.profilePictureInset.left - self.profilePictureInset.right;
     self.profilePictureViewTopConstraint.constant = self.profilePictureInset.top - self.profilePictureInset.bottom;

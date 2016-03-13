@@ -68,8 +68,9 @@
             self.imageView.layer.cornerRadius = CGRectGetWidth(self.imageView.frame) / 2;
             break;
         case DBProfilePictureStyleRoundedRect:
-            self.layer.cornerRadius = 8;
-            self.imageView.layer.cornerRadius = 6;
+            // FIXME: Corner radius should depend on border width
+            self.layer.cornerRadius = 6;
+            self.imageView.layer.cornerRadius = 4;
             break;
         case DBProfilePictureStyleNone:
             self.hidden = YES;
@@ -96,7 +97,7 @@
     self.imageView.layer.cornerRadius = 6;
     
     self.style = DBProfilePictureStyleRoundedRect;
-    self.borderWidth = 4;
+    self.borderWidth = 3;
 }
 
 #pragma mark - Auto Layout

@@ -1,34 +1,37 @@
 //
-//  DBFollowersTableViewController.m
-//  DBProfileViewController
+//  DBEditProfileContentController.m
+//  Pods
 //
-//  Created by Devon Boyer on 2016-01-10.
-//  Copyright © 2016 Devon Boyer. All rights reserved.
+//  Created by Devon Boyer on 2016-03-12.
+//
 //
 
-#import "DBFollowersTableViewController.h"
+#import "DBEditProfileContentController.h"
+#import "DBEditProfileItem.h"
 
-@implementation DBFollowersTableViewController
+@implementation DBEditProfileContentController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    self.title = @"Followers";
-    
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"Cell"];
+    
+    self.tableView.backgroundColor = [UIColor colorWithRed:245/255.0 green:248/255.0 blue:250/255.0 alpha:1.0];
+    self.tableView.separatorColor = [UIColor colorWithRed:204/255.0 green:214/255.0 blue:221/255.0 alpha:1.0];
 }
 
+#pragma mark - Table View
+
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 30;
+    return 5;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return 80.0;
+    return 52.0;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
-    cell.textLabel.text = @"Follower";
     return cell;
 }
 

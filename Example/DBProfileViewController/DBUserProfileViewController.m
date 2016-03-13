@@ -69,7 +69,7 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
             
             detailsView.contentInset = UIEdgeInsetsMake(70, 15, 15, 15);
             
-            [self setCoverPhoto:[UIImage imageNamed:@"demo-cover-photo-1"] animated:NO];
+            [self setCoverPhoto:[UIImage imageNamed:@"demo-cover-photo-2"] animated:NO];
             break;
         case DBUserProfileViewControllerStyle3:
             self.profilePictureView.style = DBProfilePictureStyleRound;
@@ -91,7 +91,10 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
 
 #pragma mark - Actions
 
-- (void)editProfile:(id)sender { }
+- (void)editProfile:(id)sender {
+    DBEditProfileViewController *editProfileVC = [[DBEditProfileViewController alloc] init];
+    [self presentViewController:[[UINavigationController alloc] initWithRootViewController:editProfileVC] animated:YES completion:nil];
+}
 
 #pragma mark - DBProfileViewControllerDataSource
 

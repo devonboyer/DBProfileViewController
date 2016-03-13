@@ -23,6 +23,11 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /*!
+ @abstract A constant value representing the size of the profile picture when using `DBProfilePictureSizeEditProfile`.
+ */
+extern const CGFloat DBProfileViewControllerProfilePictureSizeEditProfile;
+
+/*!
  @abstract A constant value representing the size of the profile picture when using `DBProfilePictureSizeNormal`.
  */
 extern const CGFloat DBProfileViewControllerProfilePictureSizeNormal;
@@ -54,6 +59,10 @@ typedef NS_OPTIONS(NSUInteger, DBProfileCoverPhotoOptions) {
  @abstract The `DBProfilePictureSize` defines the size of the the profile picture.
  */
 typedef NS_ENUM(NSInteger, DBProfilePictureSize) {
+    /*!
+     @abstract The profile picture size for `DBEditProfileViewController`
+     */
+    DBProfilePictureSizeEditProfile,
     /*!
      @abstract Specifys that the profile picture should be the normal size. 
      */
@@ -179,7 +188,7 @@ typedef NS_ENUM(NSInteger, DBProfilePictureAlignment) {
 
 /*!
  @abstract Specifies the height of the cover photo relative to the height of the screen.
- @discussion The default is 0.2. To hide the cover photo set `coverPhotoHidden` to YES. When using `coverPhotoMimicsNavigationBar` is important that this value results in the height of the cover photo being greater than the height of a navigation bar.
+ @discussion The default is 0.18. To hide the cover photo set `coverPhotoHidden` to YES. When using `coverPhotoMimicsNavigationBar` is important that this value results in the height of the cover photo being greater than the height of a navigation bar.
  @warning `coverPhotoHeightMultiplier` must be greater than 0 or less than or equal to 1.
  */
 @property (nonatomic, assign) CGFloat coverPhotoHeightMultiplier;
