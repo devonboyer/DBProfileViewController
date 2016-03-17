@@ -23,7 +23,11 @@
 * Added `profileViewController:didUnhighlightProfilePicture:` to `DBProfileViewControllerDelegate`
 * Added `profileViewController:didHighlightCoverPhoto:` to `DBProfileViewControllerDelegate`
 * Added `profileViewController:didUnhighlightCoverPhoto:` to `DBProfileViewControllerDelegate`
-* Added `coverPhotoAnimationStyle` property
+* Added `selectCoverPhotoAnimated:`
+* Added `deselectCoverPhotoAnimated:`
+* Added `selectProfilePictureAnimated:`
+* Added `deselectCoverPhotoAnimated:`
+* Added `coverPhotoScrollAnimationStyle` property
 
 ## 1.0.1
 

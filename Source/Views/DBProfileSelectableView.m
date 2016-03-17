@@ -50,7 +50,7 @@
             [self setHighlighted:YES animated:YES];
             break;
         default:
-            [self setHighlighted:NO animated:YES];
+            self.highlighted = NO;
             self.selected = !self.isSelected;
             break;
     }
@@ -63,6 +63,7 @@
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
+    if (_selected == selected) return;
     _selected = selected;
 
     void (^animationBlock)() = ^void() {
@@ -87,6 +88,7 @@
 }
 
 - (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated {
+    if (_highlighted == highlighted) return;
     _highlighted = highlighted;
     
     if (self.isSelected) return;

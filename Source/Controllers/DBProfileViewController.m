@@ -206,7 +206,7 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     _coverPhotoOptions = [[DBProfileViewControllerDefaults sharedDefaults] defaultCoverPhotoOptions];
     _coverPhotoHidden = [[DBProfileViewControllerDefaults sharedDefaults] defaultCoverPhotoHidden];
     _coverPhotoMimicsNavigationBar = [[DBProfileViewControllerDefaults sharedDefaults] defaultCoverPhotoMimicsNavigationBar];
-    _coverPhotoAnimationStyle = [[DBProfileViewControllerDefaults sharedDefaults] defaultCoverPhotoAnimationStyle];
+    _coverPhotoScrollAnimationStyle = [[DBProfileViewControllerDefaults sharedDefaults] defaultCoverPhotoScrollAnimationStyle];
     _coverPhotoHeightMultiplier = [[DBProfileViewControllerDefaults sharedDefaults] defaultCoverPhotoHeightMultiplier];
     _profilePictureAlignment = [[DBProfileViewControllerDefaults sharedDefaults] defaultProfilePictureAlignment];
     _profilePictureSize = [[DBProfileViewControllerDefaults sharedDefaults] defaultProfilePictureSize];
@@ -492,6 +492,22 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
 
 - (void)selectContentControllerAtIndex:(NSInteger)index {
     self.indexForSelectedContentController = index;
+}
+
+- (void)selectCoverPhotoAnimated:(BOOL)animated {
+    [self.coverPhotoView setSelected:YES animated:animated];
+}
+
+- (void)deselectCoverPhotoAnimated:(BOOL)animated {
+    [self.coverPhotoView setSelected:NO animated:animated];
+}
+
+- (void)selectProfilePictureAnimated:(BOOL)animated {
+    [self.profilePictureView setSelected:YES animated:animated];
+}
+
+- (void)deselectProfilePictureAnimated:(BOOL)animated {
+    [self.profilePictureView setSelected:NO animated:animated];
 }
 
 - (void)setIndexForSelectedContentController:(NSUInteger)indexForSelectedContentController {
@@ -884,7 +900,7 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
         distance *= 0.5;
     }
     
-    if (self.coverPhotoAnimationStyle == DBProfileCoverPhotoAnimationStyleBlur) {
+    if (self.coverPhotoScrollAnimationStyle == DBProfileCoverPhotoScrollAnimationStyleBlur) {
         if (self.automaticallyAdjustsScrollViewInsets) distance += [self.topLayoutGuide length];
         CGFloat percent = MAX(MIN(1 - (distance - fabs(contentOffset.y))/distance, 1), 0);
         UIImage *blurredImage = [self blurredImageAt:percent];

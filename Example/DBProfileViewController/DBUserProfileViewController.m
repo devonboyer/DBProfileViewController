@@ -59,7 +59,7 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
     
     switch (style) {
         case DBUserProfileViewControllerStyle1:
-            self.coverPhotoAnimationStyle = DBProfileCoverPhotoAnimationStyleNone;
+            self.coverPhotoScrollAnimationStyle = DBProfileCoverPhotoScrollAnimationStyleNone;
             self.automaticallyAdjustsScrollViewInsets = YES;
             self.coverPhotoMimicsNavigationBar = NO;
         case DBUserProfileViewControllerStyle2:
@@ -180,20 +180,12 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
 
 #pragma mark - DBProfileViewControllerDelegate
 
-- (void)profileViewController:(DBProfileViewController *)profileViewController didHighlightCoverPhoto:(DBProfileCoverPhotoView *)coverPhotoView {
-    NSLog(@"didHighlightCoverPhoto");
-}
-
-- (void)profileViewController:(DBProfileViewController *)profileViewController didUnhighlightCoverPhoto:(DBProfileCoverPhotoView *)coverPhotoView {
-    NSLog(@"didUnhighlightCoverPhoto");
-}
-
-- (void)profileViewController:(DBProfileViewController *)profileViewController didDeselectCoverPhoto:(DBProfileCoverPhotoView *)coverPhotoView {
-    NSLog(@"didDeselectCoverPhoto");
-}
-
 - (void)profileViewController:(DBProfileViewController *)profileViewController didSelectCoverPhoto:(DBProfileCoverPhotoView *)coverPhotoView {
-    NSLog(@"didSelectCoverPhoto");
+    [profileViewController deselectCoverPhotoAnimated:YES];
+}
+
+- (void)profileViewController:(DBProfileViewController *)profileViewController didSelectProfilePicture:(DBProfilePictureView *)profilePictureView {
+    [profileViewController deselectProfilePictureAnimated:YES];
 }
 
 - (void)profileViewController:(DBProfileViewController *)viewController didSelectContentControllerAtIndex:(NSInteger)index { }
