@@ -8,7 +8,7 @@
 //  Released under an MIT license: http://opensource.org/licenses/MIT
 //
 
-#import <UIKit/UIKit.h>
+#import "DBProfileSelectableView.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -43,7 +43,7 @@ typedef NS_ENUM(NSInteger, DBProfilePictureStyle) {
  @class DBProfilePictureView
  @abstract The `DBProfilePictureView` class displays a profile picture.
  */
-@interface DBProfilePictureView : UIView
+@interface DBProfilePictureView : DBProfileSelectableView
 
 @property (nonatomic, weak) id<DBProfilePictureViewDelegate> delegate;
 
@@ -72,10 +72,6 @@ typedef NS_ENUM(NSInteger, DBProfilePictureStyle) {
  @discussion The default is `DBProfilePictureStyleRoundedRect`.
  */
 @property (nonatomic, assign) DBProfilePictureStyle style;
-
-@property (nonatomic, assign, getter=isHighlighted) BOOL highlighted;
-
-- (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated;
 
 @end
 

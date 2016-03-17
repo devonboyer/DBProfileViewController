@@ -8,7 +8,7 @@
 //  Released under an MIT license: http://opensource.org/licenses/MIT
 //
 
-#import <UIKit/UIKit.h>
+#import "DBProfileSelectableView.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -25,7 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
  @class DBProfileCoverPhotoView
  @abstract The `DBProfileCoverPhotoView` class displays a cover photo.
  */
-@interface DBProfileCoverPhotoView : UIView
+@interface DBProfileCoverPhotoView : DBProfileSelectableView
 
 @property (nonatomic, weak) id<DBProfileCoverPhotoViewDelegate> delegate;
 
@@ -43,11 +43,6 @@ NS_ASSUME_NONNULL_BEGIN
  @abstract A gradient view that overlays the cover photo to allow for visibility of any overlayed subviews.
  */
 @property (nonatomic, strong, readonly) UIView *overlayView;
-
-
-@property (nonatomic, assign, getter=isHighlighted) BOOL highlighted;
-
-- (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated;
 
 @end
 

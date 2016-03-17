@@ -14,7 +14,6 @@
 @interface DBProfilePictureView ()
 
 @property (nonatomic, strong) NSLayoutConstraint *imageViewWidthConstraint;
-@property (nonatomic, strong) UIView *highlightedView;
 
 @end
 
@@ -33,18 +32,12 @@
 - (void)db_commonInit {
     _imageView = [[UIImageView alloc] init];
     _overlayImageView = [[UIImageView alloc] init];
-    _highlightedView = [[UIView alloc] init];
     
     self.imageView.translatesAutoresizingMaskIntoConstraints = NO;
     self.overlayImageView.translatesAutoresizingMaskIntoConstraints = NO;
     
     [self addSubview:self.imageView];
     [self.imageView addSubview:self.overlayImageView];
-    
-    self.highlightedView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    self.highlightedView.frame = self.frame;
-    self.highlightedView.hidden = YES;
-    [self addSubview:self.highlightedView];
 
     [self configureImageViewLayoutConstraints];
     [self configureOverlayImageViewLayoutConstraints];
@@ -62,24 +55,10 @@
     self.imageView.clipsToBounds = YES;
     self.imageView.layer.cornerRadius = 6;
     
-    self.highlightedView.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.1];
-    
     self.style = [[DBProfileViewControllerDefaults sharedDefaults] defaultProfilePictureStyle];
     self.borderWidth = 3;
     
     //self.overlayImageView.image = [UIImage imageNamed:@"db-profile-camera"];
-}
-
-- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
-    self.highlighted = YES;
-}
-
-- (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
-    self.highlighted = NO;
-}
-
-- (void)touchesCancelled:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
-    self.highlighted = NO;
 }
 
 - (void)setHighlighted:(BOOL)highlighted {
@@ -87,11 +66,7 @@
 }
 
 - (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated {
-    _highlighted = highlighted;
-    
-    [UIView animateWithDuration:animated ? 0.2 : 0.0 animations:^{
-        self.highlightedView.hidden = !highlighted;
-    }];
+    [super setHighlighted:highlighted animated:animated];
     
     if (highlighted && [self.delegate respondsToSelector:@selector(profilePictureViewDidHighlight:)]) {
         [self.delegate profilePictureViewDidHighlight:self];
