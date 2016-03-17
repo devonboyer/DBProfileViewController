@@ -8,7 +8,25 @@
 
 #import <DBProfileViewController/DBProfileViewController.h>
 
-@interface DBEditProfileViewController : DBProfileViewController <DBProfileViewControllerDataSource, DBProfileViewControllerDelegate>
+@class DBEditProfileViewController;
+@class DBEditProfileContentController;
+@class DBProfileItemChange;
+
+@protocol DBEditProfileViewControllerDelegate <NSObject>
+
+- (void)editProfileViewController:(DBEditProfileViewController *)editProfileViewController didFinishEditingWithChanges:(NSArray<DBProfileItemChange *> *)changes;
+
+@optional
+
+- (void)editProfileViewControllerDidCancel:(DBEditProfileViewController *)editProfileViewController;
+
+@end
+
+@interface DBEditProfileViewController : DBProfileViewController <DBProfileViewControllerDataSource>
+
+@property (nonatomic, weak) id<DBProfileViewControllerDelegate, DBEditProfileViewControllerDelegate> delegate;
+
+@property (nonatomic, strong, readonly) DBEditProfileContentController *contentController;
 
 @property (nonatomic, strong, readonly) UIBarButtonItem *cancelBarButtonItem;
 

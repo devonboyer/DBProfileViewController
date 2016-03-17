@@ -8,10 +8,20 @@
 
 #import <UIKit/UIKit.h>
 
-typedef NS_ENUM(NSInteger, DBEditProfileTableViewCellStyle) {
-    DBEditProfileTableViewCellStyleTextEntry,
-};
+@class DBEditProfileTableViewCell;
+
+@protocol DBEditProfileTableViewCellDelegate <NSObject>
+
+@end
 
 @interface DBEditProfileTableViewCell : UITableViewCell
+
+@property (nonatomic, weak) id<DBEditProfileTableViewCellDelegate> delegate;
+
+@property (nonatomic, strong, readonly) UILabel *titleLabel;
+
+@property (nonatomic, assign, readonly) BOOL hasChanges;
+
+@property (nonatomic, assign, getter=isEditable, readonly) BOOL editable;
 
 @end

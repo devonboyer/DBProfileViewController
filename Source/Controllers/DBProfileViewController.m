@@ -17,9 +17,8 @@
 #import "DBProfileSegmentedControlView.h"
 #import "DBProfileNavigationView.h"
 #import "DBProfileImageEffects.h"
-#import "NSBundle+DBProfileViewController.h"
-
 #import "DBProfileBlurImageOperation.h"
+#import "DBProfileViewControllerDefaults.h"
 
 #pragma mark - Constants
 
@@ -27,7 +26,6 @@ const CGFloat DBProfileViewControllerProfilePictureSizeEditProfile = 62.0;
 const CGFloat DBProfileViewControllerProfilePictureSizeNormal = 72.0;
 const CGFloat DBProfileViewControllerProfilePictureSizeLarge = 92.0;
 
-static const CGFloat DBProfileViewControllerPullToRefreshDistance = 80.0;
 static const CGFloat DBProfileViewControllerNavigationBarHeightRegular = 64.0;
 static const CGFloat DBProfileViewControllerNavigationBarHeightCompact = 44.0;
 
@@ -139,6 +137,8 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     self.containerView = [[UIView alloc] init];
     
     self.segmentedControlClass = [UISegmentedControl class];
+    
+    [self configureDefaults];
 }
 
 - (void)dealloc {
@@ -178,8 +178,6 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     [self.segmentedControl addTarget:self
                               action:@selector(segmentChanged:)
                     forControlEvents:UIControlEventValueChanged];
-    
-    [self configureDefaults];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -212,24 +210,17 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
 }
 
 - (void)configureDefaults {
-    // Segmented control
-    self.segmentedControl.tintColor = [UIColor grayColor];
-    _hidesSegmentedControlForSingleContentController = YES;
-
-    // Cover photo
-    _coverPhotoOptions = DBProfileCoverPhotoOptionStretch;
-    _coverPhotoHidden = NO;
-    _coverPhotoMimicsNavigationBar = YES;
-    _coverPhotoHeightMultiplier = 0.18;
-    
-    // Profile picture
-    _profilePictureAlignment = DBProfilePictureAlignmentLeft;
-    _profilePictureSize = DBProfilePictureSizeNormal;
-    _profilePictureInset = UIEdgeInsetsMake(0, 15, DBProfileViewControllerProfilePictureSizeNormal/2.0 - 15, 0);
-    _allowsPullToRefresh = YES;
-    
-    // Navigation view
-    self.coverPhotoMimicsNavigationBarNavigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"db-profile-chevron" inBundle:[NSBundle db_resourcesBundle] compatibleWithTraitCollection:self.traitCollection] style:UIBarButtonItemStylePlain target:self action:@selector(back:)];
+    _hidesSegmentedControlForSingleContentController = [[DBProfileViewControllerDefaults sharedDefaults] defaultHidesSegmentedControlForSingleContentController];
+    _coverPhotoOptions = [[DBProfileViewControllerDefaults sharedDefaults] defaultCoverPhotoOptions];
+    _coverPhotoHidden = [[DBProfileViewControllerDefaults sharedDefaults] defaultCoverPhotoHidden];
+    _coverPhotoMimicsNavigationBar = [[DBProfileViewControllerDefaults sharedDefaults] defaultCoverPhotoMimicsNavigationBar];
+    _coverPhotoHeightMultiplier = [[DBProfileViewControllerDefaults sharedDefaults] defaultCoverPhotoHeightMultiplier];
+    _profilePictureAlignment = [[DBProfileViewControllerDefaults sharedDefaults] defaultProfilePictureAlignment];
+    _profilePictureSize = [[DBProfileViewControllerDefaults sharedDefaults] defaultProfilePictureSize];
+    _profilePictureInset = [[DBProfileViewControllerDefaults sharedDefaults] defaultProfilePictureInsets];
+    _allowsPullToRefresh = [[DBProfileViewControllerDefaults sharedDefaults] defaultAllowsPullToRefresh];
+    self.segmentedControl.tintColor = [[DBProfileViewControllerDefaults sharedDefaults] defaultSegmentedControlTintColor];
+    self.coverPhotoMimicsNavigationBarNavigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[[DBProfileViewControllerDefaults sharedDefaults] defaultBackBarButtonItemImageForTraitCollection:self.traitCollection] style:UIBarButtonItemStylePlain target:self action:@selector(back:)];
 }
 
 #pragma mark - Status Bar
@@ -676,6 +667,14 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     } else {
         [scrollView setContentOffset:_sharedContentOffset];
     }
+    
+    if (self.coverPhotoMimicsNavigationBar && !(self.coverPhotoOptions & DBProfileCoverPhotoOptionExtend)) {
+        if ((scrollView.contentOffset.y + scrollView.contentInset.top) < CGRectGetHeight(self.coverPhotoView.frame) - self.coverPhotoViewBottomConstraint.constant) {
+            [scrollView insertSubview:self.profilePictureView aboveSubview:self.coverPhotoView];
+        } else {
+            [scrollView insertSubview:self.coverPhotoView aboveSubview:self.profilePictureView];
+        }
+    }
 }
 
 #pragma mark - Managing Content Offset
@@ -772,7 +771,7 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     contentOffset.y += scrollView.contentInset.top;
     if (scrollView.isDragging && contentOffset.y < 0) {
         [self startRefreshAnimations];
-    } else if (!scrollView.isDragging && !self.refreshing && contentOffset.y < -DBProfileViewControllerPullToRefreshDistance) {
+    } else if (!scrollView.isDragging && !self.refreshing && contentOffset.y < -[[DBProfileViewControllerDefaults sharedDefaults] defaultPullToRefreshTriggerDistance]) {
         self.refreshing = YES;
         [self notifyDelegateOfPullToRefreshOfContentControllerAtIndex:self.indexForSelectedContentController];
     }

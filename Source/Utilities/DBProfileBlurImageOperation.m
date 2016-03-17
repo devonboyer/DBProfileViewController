@@ -11,7 +11,7 @@
 #import "DBProfileBlurImageOperation.h"
 #import "DBProfileImageEffects.h"
 
-const NSInteger DBProfileBlurImageOperationNumberOfBlurredImages = 20;
+const NSInteger DBProfileBlurImageOperationNumberOfBlurredImages = 15;
 const CGFloat DBProfileBlurImageOperationMaxBlurRadius = 30.0;
 
 @interface DBProfileBlurImageOperation ()

@@ -10,7 +10,7 @@
 
 #import "DBProfileContentPresenting.h"
 
-@class DBEditProfileItem;
+@class DBProfileItem;
 @class DBEditProfileContentController;
 
 @protocol DBEditProfileContentControllerDataSource <NSObject>
@@ -19,7 +19,7 @@
 
 - (NSInteger)editProfileContentController:(DBEditProfileContentController *)editProfileContentController numberOfItemsInSection:(NSInteger)section;
 
-- (DBEditProfileItem *)editProfileContentController:(DBEditProfileContentController *)editProfileContentController editProfileItemAtIndexPath:(NSIndexPath *)indexPath;
+- (DBProfileItem *)editProfileContentController:(DBEditProfileContentController *)editProfileContentController itemAtIndexPath:(NSIndexPath *)indexPath;
 
 @end
 

@@ -9,17 +9,25 @@
 #import "DBEditProfileViewController.h"
 #import "DBEditProfileContentController.h"
 #import "DBProfileDetailsView.h"
+#import "DBProfileItemChange.h"
 
 @interface DBEditProfileViewController ()
 
-@property (nonatomic, strong) DBEditProfileContentController *editProfileContentController;
-
+@property (nonatomic, strong) DBEditProfileContentController *contentController;
 @property (nonatomic, strong) UIBarButtonItem *cancelBarButtonItem;
 @property (nonatomic, strong) UIBarButtonItem *doneBarButtonItem;
 
 @end
 
 @implementation DBEditProfileViewController
+
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        self.contentController = [[DBEditProfileContentController alloc] initWithStyle:UITableViewStyleGrouped];
+    }
+    return self;
+}
 
 #pragma mark - View Lifecycle
 
@@ -28,7 +36,6 @@
     
     self.cancelBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(cancel:)];
     self.doneBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Done" style:UIBarButtonItemStyleDone target:self action:@selector(done:)];
-    self.editProfileContentController = [[DBEditProfileContentController alloc] initWithStyle:UITableViewStyleGrouped];
 }
 
 - (void)viewDidLoad {
@@ -38,10 +45,7 @@
     
     self.navigationItem.leftBarButtonItem = self.cancelBarButtonItem;
     self.navigationItem.rightBarButtonItem = self.doneBarButtonItem;
-    
-    self.delegate = self;
-    self.dataSource = self;
-    
+        
     self.coverPhotoMimicsNavigationBar = NO;
         
     [self setProfilePicture:[UIImage imageNamed:@"demo-profile-picture"] animated:NO];
@@ -53,6 +57,10 @@
 }
 
 #pragma mark - Overrides
+
+- (id<DBProfileViewControllerDataSource>)dataSource {
+    return self;
+}
 
 - (DBProfilePictureSize)profilePictureSize {
     return DBProfilePictureSizeEditProfile;
@@ -79,7 +87,7 @@
 }
 
 - (DBProfileContentController *)profileViewController:(DBProfileViewController *)profileViewController contentControllerAtIndex:(NSUInteger)index {
-    return self.editProfileContentController;
+    return self.contentController;
 }
 
 - (NSString *)profileViewController:(DBProfileViewController *)profileViewController titleForContentControllerAtIndex:(NSUInteger)index {
@@ -89,7 +97,5 @@
 - (NSString *)profileViewController:(DBProfileViewController *)profileViewController subtitleForContentControllerAtIndex:(NSUInteger)index {
     return @"";
 }
-
-#pragma mark - DBProfileViewControllerDelegate
 
 @end
