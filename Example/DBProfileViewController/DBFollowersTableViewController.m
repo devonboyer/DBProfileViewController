@@ -32,6 +32,22 @@
     return cell;
 }
 
+- (void)tableView:(UITableView *)tableView didHighlightRowAtIndexPath:(NSIndexPath *)indexPath {
+    NSLog(@"didHighlightRowAtIndexPath");
+}
+
+- (void)tableView:(UITableView *)tableView didUnhighlightRowAtIndexPath:(NSIndexPath *)indexPath {
+    NSLog(@"didUnhighlightRowAtIndexPath");
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    NSLog(@"didSelectRowAtIndexPath");
+}
+
+- (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath {
+    NSLog(@"didDeselectRowAtIndexPath");
+}
+
 #pragma mark - DBProfileContentPresenting
 
 - (UIScrollView *)contentScrollView {

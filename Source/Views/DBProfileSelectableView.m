@@ -11,7 +11,6 @@
 @interface DBProfileSelectableView () <UIGestureRecognizerDelegate>
 
 @property (nonatomic, strong) UILongPressGestureRecognizer *highlightedLongPressGestureRecognizer;
-@property (nonatomic, strong) UITapGestureRecognizer *selectedTapGestureRecognizer;
 @property (nonatomic, strong) UIView *selectedBackgroundView;
 
 @end
@@ -34,11 +33,6 @@
         self.highlightedLongPressGestureRecognizer.minimumPressDuration = 0.0;
         self.highlightedLongPressGestureRecognizer.delegate = self;
         [self addGestureRecognizer:self.highlightedLongPressGestureRecognizer];
-        
-        self.selectedTapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSelectedTapGesture:)];
-        self.selectedTapGestureRecognizer.numberOfTapsRequired = 1;
-        self.selectedTapGestureRecognizer.delegate = self;
-        [self addGestureRecognizer:self.selectedTapGestureRecognizer];
     }
     return self;
 }
@@ -50,10 +44,6 @@
 
 #pragma mark - Action Responders
 
-- (void)handleSelectedTapGesture:(UITapGestureRecognizer *)gestureRecognizer {
-    [self setSelected:!self.isSelected animated:YES];
-}
-
 - (void)handleHighlightedLongPressGesture:(UILongPressGestureRecognizer *)gestureRecognizer {
     switch (gestureRecognizer.state) {
         case UIGestureRecognizerStateBegan:
@@ -61,6 +51,7 @@
             break;
         default:
             [self setHighlighted:NO animated:YES];
+            self.selected = !self.isSelected;
             break;
     }
 }
@@ -73,8 +64,7 @@
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
     _selected = selected;
-    _highlighted = selected;
-    
+
     void (^animationBlock)() = ^void() {
         if (selected && self.selectedBackgroundView.alpha == 0) {
             self.selectedBackgroundView.alpha = 1;
