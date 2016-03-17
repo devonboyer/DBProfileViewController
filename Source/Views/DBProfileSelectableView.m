@@ -8,10 +8,11 @@
 
 #import "DBProfileSelectableView.h"
 
-@interface DBProfileSelectableView ()
+@interface DBProfileSelectableView () <UIGestureRecognizerDelegate>
 
 @property (nonatomic, strong) UILongPressGestureRecognizer *highlightedLongPressGestureRecognizer;
-@property (nonatomic, strong) UIView *highlightedView;
+@property (nonatomic, strong) UITapGestureRecognizer *selectedTapGestureRecognizer;
+@property (nonatomic, strong) UIView *selectedBackgroundView;
 
 @end
 
@@ -20,35 +21,76 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-        self.highlightedView = [[UIView alloc] init];
-        self.highlightedView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-        self.highlightedView.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.15];
-        self.highlightedView.frame = self.frame;
-        self.highlightedView.hidden = YES;
-        [self addSubview:self.highlightedView];
+        self.userInteractionEnabled = YES;
+        
+        self.selectedBackgroundView = [[UIView alloc] init];
+        self.selectedBackgroundView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        self.selectedBackgroundView.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.15];
+        self.selectedBackgroundView.frame = self.frame;
+        self.selectedBackgroundView.alpha = 0.0;
+        [self addSubview:self.selectedBackgroundView];
         
         self.highlightedLongPressGestureRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleHighlightedLongPressGesture:)];
         self.highlightedLongPressGestureRecognizer.minimumPressDuration = 0.0;
+        self.highlightedLongPressGestureRecognizer.delegate = self;
         [self addGestureRecognizer:self.highlightedLongPressGestureRecognizer];
+        
+        self.selectedTapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSelectedTapGesture:)];
+        self.selectedTapGestureRecognizer.numberOfTapsRequired = 1;
+        self.selectedTapGestureRecognizer.delegate = self;
+        [self addGestureRecognizer:self.selectedTapGestureRecognizer];
     }
     return self;
 }
 
 - (void)layoutSubviews {
     [super layoutSubviews];
-    [self bringSubviewToFront:self.highlightedView];
+    [self bringSubviewToFront:self.selectedBackgroundView];
+}
+
+#pragma mark - Action Responders
+
+- (void)handleSelectedTapGesture:(UITapGestureRecognizer *)gestureRecognizer {
+    [self setSelected:!self.isSelected animated:YES];
 }
 
 - (void)handleHighlightedLongPressGesture:(UILongPressGestureRecognizer *)gestureRecognizer {
     switch (gestureRecognizer.state) {
         case UIGestureRecognizerStateBegan:
-            self.highlighted = YES;
+            [self setHighlighted:YES animated:YES];
             break;
         default:
-            self.highlighted = NO;
+            [self setHighlighted:NO animated:YES];
             break;
     }
 }
+
+#pragma mark - Selection
+
+- (void)setSelected:(BOOL)selected {
+    [self setSelected:selected animated:NO];
+}
+
+- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
+    _selected = selected;
+    _highlighted = selected;
+    
+    void (^animationBlock)() = ^void() {
+        if (selected && self.selectedBackgroundView.alpha == 0) {
+            self.selectedBackgroundView.alpha = 1;
+        } else if (!selected && self.selectedBackgroundView.alpha == 1) {
+            self.selectedBackgroundView.alpha = 0;
+        }
+    };
+    
+    if (animated) {
+        [UIView animateWithDuration:0.12 animations:animationBlock];
+    } else {
+        [UIView performWithoutAnimation:animationBlock];
+    }
+}
+
+#pragma mark - Highlighting
 
 - (void)setHighlighted:(BOOL)highlighted {
     [self setHighlighted:highlighted animated:NO];
@@ -57,9 +99,27 @@
 - (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated {
     _highlighted = highlighted;
     
-    [UIView animateWithDuration:animated ? 0.2 : 0.0 animations:^{
-        self.highlightedView.hidden = !highlighted;
-    }];
+    if (self.isSelected) return;
+    
+    void (^animationBlock)() = ^void() {
+        if (highlighted && self.selectedBackgroundView.alpha == 0) {
+            self.selectedBackgroundView.alpha = 1;
+        } else if (!highlighted && self.selectedBackgroundView.alpha == 1) {
+            self.selectedBackgroundView.alpha = 0;
+        }
+    };
+    
+    if (animated) {
+        [UIView animateWithDuration:0.12 animations:animationBlock];
+    } else {
+        [UIView performWithoutAnimation:animationBlock];
+    }
+}
+
+#pragma mark - UIGestureRecognizerDelegate
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
+    return YES;
 }
 
 @end

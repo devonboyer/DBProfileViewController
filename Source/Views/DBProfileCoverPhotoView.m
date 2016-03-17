@@ -94,13 +94,23 @@
    // self.overlayImageView.image = [UIImage imageNamed:@"db-profile-camera"];
 }
 
+- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
+    [super setSelected:selected animated:animated];
+    
+    if (selected && [self.delegate respondsToSelector:@selector(didSelectCoverPhotoView:)]) {
+        [self.delegate didSelectCoverPhotoView:self];
+    } else if (!selected && [self.delegate respondsToSelector:@selector(didDeselectCoverPhotoView:)]) {
+        [self.delegate didDeselectCoverPhotoView:self];
+    }
+}
+
 - (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated {
     [super setHighlighted:highlighted animated:animated];
     
-    if (highlighted && [self.delegate respondsToSelector:@selector(coverPhotoViewDidHighlight:)]) {
-        [self.delegate coverPhotoViewDidHighlight:self];
-    } else if (!highlighted && [self.delegate respondsToSelector:@selector(coverPhotoViewDidUnhighlight:)]) {
-        [self.delegate coverPhotoViewDidUnhighlight:self];
+    if (highlighted && [self.delegate respondsToSelector:@selector(didHighlightCoverPhotoView:)]) {
+        [self.delegate didHighlightCoverPhotoView:self];
+    } else if (!highlighted && [self.delegate respondsToSelector:@selector(didUnhighlightCoverPhotoView:)]) {
+        [self.delegate didUnhighlightCoverPhotoView:self];
     }
 }
 

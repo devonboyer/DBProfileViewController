@@ -8,9 +8,13 @@
 
 #import <UIKit/UIKit.h>
 
-@class DBProfileSelectableView;
-
 @interface DBProfileSelectableView : UIView
+
+@property (nonatomic, strong, readonly) UIView *selectedBackgroundView;
+
+@property (nonatomic, assign, getter=isSelected) BOOL selected;
+
+- (void)setSelected:(BOOL)selected animated:(BOOL)animated;
 
 @property (nonatomic, assign, getter=isHighlighted) BOOL highlighted;
 

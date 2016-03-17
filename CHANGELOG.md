@@ -17,6 +17,8 @@
 * Added `profileViewController:willSelectContentControllerAtIndex:` to `DBProfileViewControllerDelegate`
 * Added `profileViewController:willDeselectContentControllerAtIndex:` to `DBProfileViewControllerDelegate`
 * Added `profileViewController:didDeselectContentControllerAtIndex:` to `DBProfileViewControllerDelegate`
+* Added `profileViewController:didDeselectProfilePicture:` to `DBProfileViewControllerDelegate`
+* Added `profileViewController:didDeselectCoverPhoto:` to `DBProfileViewControllerDelegate`
 * Added `profileViewController:didHighlightProfilePicture:` to `DBProfileViewControllerDelegate`
 * Added `profileViewController:didUnhighlightProfilePicture:` to `DBProfileViewControllerDelegate`
 * Added `profileViewController:didHighlightCoverPhoto:` to `DBProfileViewControllerDelegate`

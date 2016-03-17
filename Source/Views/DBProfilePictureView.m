@@ -61,17 +61,23 @@
     //self.overlayImageView.image = [UIImage imageNamed:@"db-profile-camera"];
 }
 
-- (void)setHighlighted:(BOOL)highlighted {
-    [self setHighlighted:highlighted animated:NO];
+- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
+    [super setSelected:selected animated:animated];
+    
+    if (selected && [self.delegate respondsToSelector:@selector(didSelectProfilePictureView:)]) {
+        [self.delegate didSelectProfilePictureView:self];
+    } else if (!selected && [self.delegate respondsToSelector:@selector(didDeselectProfilePictureView:)]) {
+        [self.delegate didDeselectProfilePictureView:self];
+    }
 }
 
 - (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated {
     [super setHighlighted:highlighted animated:animated];
     
-    if (highlighted && [self.delegate respondsToSelector:@selector(profilePictureViewDidHighlight:)]) {
-        [self.delegate profilePictureViewDidHighlight:self];
-    } else if (!highlighted && [self.delegate respondsToSelector:@selector(profilePictureViewUnhighlight:)]) {
-        [self.delegate profilePictureViewDidUnhighlight:self];
+    if (highlighted && [self.delegate respondsToSelector:@selector(didHighlightProfilePictureView:)]) {
+        [self.delegate didHighlightProfilePictureView:self];
+    } else if (!highlighted && [self.delegate respondsToSelector:@selector(didUnhighlightProfilePictureView:)]) {
+        [self.delegate didUnhighlightProfilePictureView:self];
     }
 }
 

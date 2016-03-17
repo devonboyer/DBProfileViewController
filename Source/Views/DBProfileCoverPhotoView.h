@@ -16,8 +16,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol DBProfileCoverPhotoViewDelegate <NSObject>
 
-- (void)coverPhotoViewDidHighlight:(DBProfileCoverPhotoView *)coverPhotoView;
-- (void)coverPhotoViewDidUnhighlight:(DBProfileCoverPhotoView *)coverPhotoView;
+- (void)didSelectCoverPhotoView:(DBProfileCoverPhotoView *)coverPhotoView;
+- (void)didDeselectCoverPhotoView:(DBProfileCoverPhotoView *)coverPhotoView;
+- (void)didHighlightCoverPhotoView:(DBProfileCoverPhotoView *)coverPhotoView;
+- (void)didUnhighlightCoverPhotoView:(DBProfileCoverPhotoView *)coverPhotoView;
 
 @end
 

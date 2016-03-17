@@ -54,18 +54,32 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)profileViewController:(DBProfileViewController *)profileViewController didDeselectContentControllerAtIndex:(NSInteger)index;
 
 /*!
- @abstract Tells the delegate that the profile picture has been selected by the user.
+ @abstract Tells the delegate that the profile picture has been selected.
  @param profileViewController The profile view controller where the selection was made.
  @prarm profilePictureView The profile picture view that was selected.
  */
 - (void)profileViewController:(DBProfileViewController *)profileViewController didSelectProfilePicture:(DBProfilePictureView *)profilePictureView;
 
 /*!
- @abstract Tells the delegate that the cover photo has been selected by the user.
+ @abstract Tells the delegate that the profile picture photo has been deselected.
+ @param profileViewController The profile view controller where the selection was made.
+ @prarm profilePictureView The profile picture view that was deselected.
+ */
+- (void)profileViewController:(DBProfileViewController *)profileViewController didDeselectProfilePicture:(DBProfilePictureView *)profilePictureView;
+
+/*!
+ @abstract Tells the delegate that the cover photo has been selected.
  @param profileViewController The profile view controller where the selection was made.
  @prarm profilePictureView The cover photo view that was selected.
  */
 - (void)profileViewController:(DBProfileViewController *)profileViewController didSelectCoverPhoto:(DBProfileCoverPhotoView *)coverPhotoView;
+
+/*!
+ @abstract Tells the delegate that the cover photo has been deselected.
+ @param profileViewController The profile view controller where the selection was made.
+ @prarm profilePictureView The cover photo view that was deselected.
+ */
+- (void)profileViewController:(DBProfileViewController *)profileViewController didDeselectCoverPhoto:(DBProfileCoverPhotoView *)coverPhotoView;
 
 /*!
  @abstract Tells the delegate that the user has triggered a pull-to-refresh.

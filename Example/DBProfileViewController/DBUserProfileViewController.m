@@ -180,11 +180,23 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
 
 #pragma mark - DBProfileViewControllerDelegate
 
+- (void)profileViewController:(DBProfileViewController *)profileViewController didHighlightCoverPhoto:(DBProfileCoverPhotoView *)coverPhotoView {
+    NSLog(@"didHighlightCoverPhoto");
+}
+
+- (void)profileViewController:(DBProfileViewController *)profileViewController didUnhighlightCoverPhoto:(DBProfileCoverPhotoView *)coverPhotoView {
+    NSLog(@"didUnhighlightCoverPhoto");
+}
+
+- (void)profileViewController:(DBProfileViewController *)profileViewController didDeselectCoverPhoto:(DBProfileCoverPhotoView *)coverPhotoView {
+    NSLog(@"didDeselectCoverPhoto");
+}
+
+- (void)profileViewController:(DBProfileViewController *)profileViewController didSelectCoverPhoto:(DBProfileCoverPhotoView *)coverPhotoView {
+    NSLog(@"didSelectCoverPhoto");
+}
+
 - (void)profileViewController:(DBProfileViewController *)viewController didSelectContentControllerAtIndex:(NSInteger)index { }
-
-- (void)profileViewController:(DBProfileViewController *)viewController didSelectCoverPhoto:(UIImageView *)imageView { }
-
-- (void)profileViewController:(DBProfileViewController *)viewController didSelectProfilePicture:(UIImageView *)imageView { }
 
 - (void)profileViewController:(DBProfileViewController *)viewController didPullToRefreshContentControllerAtIndex:(NSInteger)index {
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{

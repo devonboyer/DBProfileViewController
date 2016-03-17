@@ -72,10 +72,6 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
 @property (nonatomic, strong) NSLayoutConstraint *coverPhotoViewTopLayoutGuideConstraint;
 @property (nonatomic, strong) NSLayoutConstraint *coverPhotoViewTopSuperviewConstraint;
 
-// Gestures
-@property (nonatomic, strong) UITapGestureRecognizer *coverPhotoTapGestureRecognizer;
-@property (nonatomic, strong) UITapGestureRecognizer *profilePictureTapGestureRecognizer;
-
 @end
 
 @implementation DBProfileViewController
@@ -166,13 +162,6 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     
     // Auto Layout
     [self configureNavigationViewLayoutConstraints];
-    
-    // Gestures
-    [self.coverPhotoView addGestureRecognizer:self.coverPhotoTapGestureRecognizer];
-    self.coverPhotoView.userInteractionEnabled = YES;
-    
-    [self.profilePictureView addGestureRecognizer:self.profilePictureTapGestureRecognizer];
-    self.profilePictureView.userInteractionEnabled = YES;
 }
 
 - (void)viewDidLoad {
@@ -389,20 +378,6 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     }
 }
 
-- (void)handleProfilePictureTapGesture:(UITapGestureRecognizer *)sender {
-    // Inform delegate that the profile picture was selected
-    if ([self respondsToSelector:@selector(profileViewController:didSelectProfilePicture:)]) {
-        [self.delegate profileViewController:self didSelectProfilePicture:self.profilePictureView];
-    }
-}
-
-- (void)handleCoverPhotoTapGesture:(UITapGestureRecognizer *)sender {
-    // Inform delegate that the cover photo was selected
-    if ([self respondsToSelector:@selector(profileViewController:didSelectCoverPhoto:)]) {
-        [self.delegate profileViewController:self didSelectCoverPhoto:self.profilePictureView];
-    }
-}
-
 #pragma mark - Public Methods
 
 - (void)beginUpdates {
@@ -567,28 +542,64 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
 
 #pragma mark - Delegate / Data Source
 
-- (void)coverPhotoViewDidHighlight:(DBProfileCoverPhotoView *)coverPhotoView {
+- (void)didSelectCoverPhotoView:(DBProfileCoverPhotoView *)coverPhotoView {
+    // Inform delegate that the cover photo was selected
+    if ([self.delegate respondsToSelector:@selector(profileViewController:didSelectCoverPhoto:)]) {
+        [self.delegate profileViewController:self didSelectCoverPhoto:coverPhotoView];
+    }
+    
+    if (self.profilePictureView.isSelected) [self.profilePictureView setSelected:NO animated:YES];
+}
+
+- (void)didDeselectCoverPhotoView:(DBProfileCoverPhotoView *)coverPhotoView {
+    // Inform delegate that the cover photo was deselected
+    if ([self.delegate respondsToSelector:@selector(profileViewController:didDeselectCoverPhoto:)]) {
+        [self.delegate profileViewController:self didDeselectCoverPhoto:coverPhotoView];
+    }
+}
+
+- (void)didHighlightCoverPhotoView:(DBProfileCoverPhotoView *)coverPhotoView {
     // Inform delegate that the cover photo was highlighted
     if ([self.delegate respondsToSelector:@selector(profileViewController:didHighlightCoverPhoto:)]) {
         [self.delegate profileViewController:self didHighlightCoverPhoto:coverPhotoView];
     }
+    
+    if (self.profilePictureView.isSelected) [self.profilePictureView setSelected:NO animated:YES];
 }
 
-- (void)coverPhotoViewDidUnhighlight:(DBProfileCoverPhotoView *)coverPhotoView {
+- (void)didUnhighlightCoverPhotoView:(DBProfileCoverPhotoView *)coverPhotoView {
     // Inform delegate that the cover photo was unhighlighted
     if ([self.delegate respondsToSelector:@selector(profileViewController:didUnhighlightCoverPhoto:)]) {
         [self.delegate profileViewController:self didUnhighlightCoverPhoto:coverPhotoView];
     }
 }
 
-- (void)profilePictureViewDidHighlight:(DBProfilePictureView *)profilePictureView {
+- (void)didSelectProfilePictureView:(DBProfilePictureView *)profilePictureView {
+    // Inform delegate that the profile picture was selected
+    if ([self.delegate respondsToSelector:@selector(profileViewController:didSelectProfilePicture:)]) {
+        [self.delegate profileViewController:self didSelectProfilePicture:profilePictureView];
+    }
+    
+    if (self.coverPhotoView.isSelected) [self.coverPhotoView setSelected:NO animated:YES];
+}
+
+- (void)didDeselectProfilePictureView:(DBProfilePictureView *)profilePictureView {
+    // Inform delegate that the profile picture was deselected
+    if ([self.delegate respondsToSelector:@selector(profileViewController:didDeselectProfilePicture:)]) {
+        [self.delegate profileViewController:self didDeselectProfilePicture:profilePictureView];
+    }
+}
+
+- (void)didHighlightProfilePictureView:(DBProfilePictureView *)profilePictureView {
     // Inform delegate that the profile picture was highlighted
     if ([self.delegate respondsToSelector:@selector(profileViewController:didHighlightProfilePicture:)]) {
         [self.delegate profileViewController:self didHighlightProfilePicture:profilePictureView];
     }
+    
+    if (self.coverPhotoView.isSelected) [self.coverPhotoView setSelected:NO animated:YES];
 }
 
-- (void)profilePictureViewDidUnhighlight:(DBProfilePictureView *)profilePictureView {
+- (void)didUnhighlightProfilePictureView:(DBProfilePictureView *)profilePictureView {
     // Inform delegate that the profile picture was unhighlighted
     if ([self.delegate respondsToSelector:@selector(profileViewController:didUnhighlightProfilePicture:)]) {
         [self.delegate profileViewController:self didUnhighlightProfilePicture:profilePictureView];

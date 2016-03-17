@@ -34,8 +34,10 @@ typedef NS_ENUM(NSInteger, DBProfilePictureStyle) {
 
 @protocol DBProfilePictureViewDelegate <NSObject>
 
-- (void)profilePictureViewDidHighlight:(DBProfilePictureView *)profilePictureView;
-- (void)profilePictureViewDidUnhighlight:(DBProfilePictureView *)profilePictureView;
+- (void)didSelectProfilePictureView:(DBProfilePictureView *)profilePictureView;
+- (void)didDeselectProfilePictureView:(DBProfilePictureView *)profilePictureView;
+- (void)didHighlightProfilePictureView:(DBProfilePictureView *)profilePictureView;
+- (void)didUnhighlightProfilePictureView:(DBProfilePictureView *)profilePictureView;
 
 @end
 
