@@ -59,6 +59,7 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
     
     switch (style) {
         case DBUserProfileViewControllerStyle1:
+            self.coverPhotoAnimationStyle = DBProfileCoverPhotoAnimationStyleNone;
             self.automaticallyAdjustsScrollViewInsets = YES;
             self.coverPhotoMimicsNavigationBar = NO;
         case DBUserProfileViewControllerStyle2:

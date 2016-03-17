@@ -288,4 +288,22 @@ typedef NS_ENUM(NSInteger, DBProfilePictureAlignment) {
 
 @end
 
+///----------------------------------------------
+/// @name Version 1.0.2
+///----------------------------------------------
+
+typedef NS_ENUM(NSInteger, DBProfileCoverPhotoAnimationStyle) {
+    DBProfileCoverPhotoAnimationStyleNone,
+    DBProfileCoverPhotoAnimationStyleBlur
+};
+
+@interface DBProfileViewController ()
+
+// Support for editing??
+
+@property (nonatomic, assign) DBProfileCoverPhotoAnimationStyle coverPhotoAnimationStyle;
+@property (nonatomic, assign) BOOL rememberIndexForSelectedContentController;
+
+@end
+
 NS_ASSUME_NONNULL_END

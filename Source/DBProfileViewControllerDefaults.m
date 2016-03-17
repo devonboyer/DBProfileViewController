@@ -32,6 +32,10 @@
     return DBProfileCoverPhotoOptionStretch;
 }
 
+- (DBProfileCoverPhotoAnimationStyle)defaultCoverPhotoAnimationStyle {
+    return DBProfileCoverPhotoAnimationStyleBlur;
+}
+
 - (CGFloat)defaultCoverPhotoHeightMultiplier {
     return 0.18;
 }
@@ -44,12 +48,20 @@
     return DBProfilePictureSizeNormal;
 }
 
+- (DBProfilePictureStyle)defaultProfilePictureStyle {
+    return DBProfilePictureStyleRoundedRect;
+}
+
 - (UIEdgeInsets)defaultProfilePictureInsets {
     return UIEdgeInsetsMake(0, 15, DBProfileViewControllerProfilePictureSizeNormal/2.0 - 15, 0);
 }
 
 - (CGFloat)defaultPullToRefreshTriggerDistance {
     return 80.0;
+}
+
+- (BOOL)defaultRememberIndexForSelectedContentController {
+    return YES;
 }
 
 - (BOOL)defaultHidesSegmentedControlForSingleContentController {

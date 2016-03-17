@@ -1,5 +1,28 @@
 # Changelog
 
+## 1.0.2
+
+## Bug Fixes
+
+* Fixed a bug somtimes causing the profile picture to appear on top of the cover photo when changing segments.
+* Added assertions for when nil is returned from required data source methods
+
+### Public API Changes
+
+* Renamed `selectContentViewControllerAtIndex:` to `selectContentControllerAtIndex:`
+* Changed `profileViewController:subtitleForContentControllerAtIndex:` to now be optional
+
+### Added
+
+* Added `profileViewController:willSelectContentControllerAtIndex:` to `DBProfileViewControllerDelegate`
+* Added `profileViewController:willDeselectContentControllerAtIndex:` to `DBProfileViewControllerDelegate`
+* Added `profileViewController:didDeselectContentControllerAtIndex:` to `DBProfileViewControllerDelegate`
+* Added `profileViewController:didHighlightProfilePicture:` to `DBProfileViewControllerDelegate`
+* Added `profileViewController:didUnhighlightProfilePicture:` to `DBProfileViewControllerDelegate`
+* Added `profileViewController:didHighlightCoverPhoto:` to `DBProfileViewControllerDelegate`
+* Added `profileViewController:didUnhighlightCoverPhoto:` to `DBProfileViewControllerDelegate`
+* Added `coverPhotoAnimationStyle` property
+
 ## 1.0.1
 
 ## Bug Fixes

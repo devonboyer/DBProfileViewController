@@ -12,6 +12,8 @@
 #import <UIKit/UIKit.h>
 
 @class DBProfileViewController;
+@class DBProfilePictureView;
+@class DBProfileCoverPhotoView;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -24,32 +26,81 @@ NS_ASSUME_NONNULL_BEGIN
 @optional
 
 /*!
- @abstract Called after the selected content controller changes.
+ @abstract Tells the delegate that a specified content controller is about to be selected.
  @param profileViewController The profile view controller where the selection was made.
- @prarm index The index of the selected content controller.
+ @prarm index The index locating the content controller in the profile view controller.
+ */
+- (void)profileViewController:(DBProfileViewController *)profileViewController willSelectContentControllerAtIndex:(NSInteger)index;
+
+/*!
+ @abstract Tells the delegate that a specified content controller is now selected.
+ @param profileViewController The profile view controller where the selection was made.
+ @prarm index The index locating the content controller in the profile view controller.
  */
 - (void)profileViewController:(DBProfileViewController *)profileViewController didSelectContentControllerAtIndex:(NSInteger)index;
 
 /*!
- @abstract Called after the profile picture has been selected by the user.
+ @abstract Tells the delegate that a specified content controller is about to be deselected.
  @param profileViewController The profile view controller where the selection was made.
- @prarm imageView The selected image view.
+ @prarm index The index locating the content controller in the profile view controller.
  */
-- (void)profileViewController:(DBProfileViewController *)profileViewController didSelectProfilePicture:(UIImageView *)imageView;
+- (void)profileViewController:(DBProfileViewController *)profileViewController willDeselectContentControllerAtIndex:(NSInteger)index;
 
 /*!
- @abstract Called after the cover photo has been selected by the user.
+ @abstract Tells the delegate that a specified content controller is now deselected.
  @param profileViewController The profile view controller where the selection was made.
- @prarm imageView The selected image view.
+ @prarm index The index locating the content controller in the profile view controller.
  */
-- (void)profileViewController:(DBProfileViewController *)profileViewController didSelectCoverPhoto:(UIImageView *)imageView;
+- (void)profileViewController:(DBProfileViewController *)profileViewController didDeselectContentControllerAtIndex:(NSInteger)index;
 
 /*!
- @abstract Called after the user has triggered a pull-to-refresh.
+ @abstract Tells the delegate that the profile picture has been selected by the user.
+ @param profileViewController The profile view controller where the selection was made.
+ @prarm profilePictureView The profile picture view that was selected.
+ */
+- (void)profileViewController:(DBProfileViewController *)profileViewController didSelectProfilePicture:(DBProfilePictureView *)profilePictureView;
+
+/*!
+ @abstract Tells the delegate that the cover photo has been selected by the user.
+ @param profileViewController The profile view controller where the selection was made.
+ @prarm profilePictureView The cover photo view that was selected.
+ */
+- (void)profileViewController:(DBProfileViewController *)profileViewController didSelectCoverPhoto:(DBProfileCoverPhotoView *)coverPhotoView;
+
+/*!
+ @abstract Tells the delegate that the user has triggered a pull-to-refresh.
  @param profileViewController The profile view controller that triggered a pull-to-refresh.
- @prarm index The index of the selected content controller.
+ @prarm index The index locating the content controller in the profile view controller.
  */
 - (void)profileViewController:(DBProfileViewController *)profileViewController didPullToRefreshContentControllerAtIndex:(NSInteger)index;
+
+/*!
+ @abstract Tells the delegate that the profile picture was highlighted.
+ @param profileViewController The profile view controller that highlighted the profile picture.
+ @prarm profilePictureView The profile picture view that was highlighted.
+ */
+- (void)profileViewController:(DBProfileViewController *)profileViewController didHighlightProfilePicture:(DBProfilePictureView *)profilePictureView;
+
+/*!
+ @abstract Tells the delegate that the profile picture was unhighlighted.
+ @param profileViewController The profile view controller that unhighlighted the profile picture.
+ @prarm profilePictureView The profile picture view that was unhighlighted.
+ */
+- (void)profileViewController:(DBProfileViewController *)profileViewController didUnhighlightProfilePicture:(DBProfilePictureView *)profilePictureView;
+
+/*!
+ @abstract Tells the delegate that the cover photo was highlighted.
+ @param profileViewController The profile view controller that highlighted the cover photo.
+ @prarm coverPhotoView The cover photo view that was highlighted.
+ */
+- (void)profileViewController:(DBProfileViewController *)profileViewController didHighlightCoverPhoto:(DBProfileCoverPhotoView *)coverPhotoView;
+
+/*!
+ @abstract Tells the delegate that the cover photo was unhighlighted.
+ @param profileViewController The profile view controller that unhighlighted the cover photo.
+ @prarm coverPhotoView The cover photo view that was unhighlighted.
+ */
+- (void)profileViewController:(DBProfileViewController *)profileViewController didUnhighlightCoverPhoto:(DBProfileCoverPhotoView *)coverPhotoView;
 
 @end
 

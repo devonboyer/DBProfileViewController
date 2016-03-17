@@ -12,6 +12,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class DBProfilePictureView;
+
 /*!
  @abstract The `DBProfilePictureStyle` defines the types of styles for the profile picture.
  */
@@ -30,16 +32,30 @@ typedef NS_ENUM(NSInteger, DBProfilePictureStyle) {
     DBProfilePictureStyleRoundedRect,
 };
 
+@protocol DBProfilePictureViewDelegate <NSObject>
+
+- (void)profilePictureViewDidHighlight:(DBProfilePictureView *)profilePictureView;
+- (void)profilePictureViewDidUnhighlight:(DBProfilePictureView *)profilePictureView;
+
+@end
+
 /*!
  @class DBProfilePictureView
  @abstract The `DBProfilePictureView` class displays a profile picture.
  */
 @interface DBProfilePictureView : UIView
 
+@property (nonatomic, weak) id<DBProfilePictureViewDelegate> delegate;
+
 /*!
  @abstract The image view that displays the profile picture.
  */
 @property (nonatomic, strong, readonly) UIImageView *imageView;
+
+/*!
+ @abstract The image view that overlays the profile picture.
+ */
+@property (nonatomic, strong, readonly) UIImageView *overlayImageView;
 
 /*!
  @abstract The border width for the profile picture.
@@ -56,6 +72,10 @@ typedef NS_ENUM(NSInteger, DBProfilePictureStyle) {
  @discussion The default is `DBProfilePictureStyleRoundedRect`.
  */
 @property (nonatomic, assign) DBProfilePictureStyle style;
+
+@property (nonatomic, assign, getter=isHighlighted) BOOL highlighted;
+
+- (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated;
 
 @end
 

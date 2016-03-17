@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import "DBProfileViewController.h"
+#import "DBProfilePictureView.h"
 
 @interface DBProfileViewControllerDefaults : NSObject
 
@@ -20,15 +21,21 @@
 
 - (DBProfileCoverPhotoOptions)defaultCoverPhotoOptions;
 
+- (DBProfileCoverPhotoAnimationStyle)defaultCoverPhotoAnimationStyle;
+
 - (CGFloat)defaultCoverPhotoHeightMultiplier;
 
 - (DBProfilePictureAlignment)defaultProfilePictureAlignment;
 
 - (DBProfilePictureSize)defaultProfilePictureSize;
 
+- (DBProfilePictureStyle)defaultProfilePictureStyle;
+
 - (UIEdgeInsets)defaultProfilePictureInsets;
 
 - (CGFloat)defaultPullToRefreshTriggerDistance;
+
+- (BOOL)defaultRememberIndexForSelectedContentController;
 
 - (BOOL)defaultHidesSegmentedControlForSingleContentController;
 

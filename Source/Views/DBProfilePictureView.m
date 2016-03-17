@@ -9,10 +9,12 @@
 //
 
 #import "DBProfilePictureView.h"
+#import "DBProfileViewControllerDefaults.h"
 
 @interface DBProfilePictureView ()
 
 @property (nonatomic, strong) NSLayoutConstraint *imageViewWidthConstraint;
+@property (nonatomic, strong) UIView *highlightedView;
 
 @end
 
@@ -30,13 +32,72 @@
 
 - (void)db_commonInit {
     _imageView = [[UIImageView alloc] init];
+    _overlayImageView = [[UIImageView alloc] init];
+    _highlightedView = [[UIView alloc] init];
     
-    [self.imageView setTranslatesAutoresizingMaskIntoConstraints:NO];
+    self.imageView.translatesAutoresizingMaskIntoConstraints = NO;
+    self.overlayImageView.translatesAutoresizingMaskIntoConstraints = NO;
     
     [self addSubview:self.imageView];
+    [self.imageView addSubview:self.overlayImageView];
     
+    self.highlightedView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    self.highlightedView.frame = self.frame;
+    self.highlightedView.hidden = YES;
+    [self addSubview:self.highlightedView];
+
     [self configureImageViewLayoutConstraints];
+    [self configureOverlayImageViewLayoutConstraints];
     [self configureDefaults];
+}
+
+- (void)configureDefaults {
+    self.userInteractionEnabled = YES;
+    
+    self.backgroundColor = [UIColor whiteColor];
+    self.layer.cornerRadius = 8;
+    self.clipsToBounds = YES;
+    
+    self.imageView.contentMode = UIViewContentModeScaleAspectFill;
+    self.imageView.clipsToBounds = YES;
+    self.imageView.layer.cornerRadius = 6;
+    
+    self.highlightedView.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.1];
+    
+    self.style = [[DBProfileViewControllerDefaults sharedDefaults] defaultProfilePictureStyle];
+    self.borderWidth = 3;
+    
+    //self.overlayImageView.image = [UIImage imageNamed:@"db-profile-camera"];
+}
+
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+    self.highlighted = YES;
+}
+
+- (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+    self.highlighted = NO;
+}
+
+- (void)touchesCancelled:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+    self.highlighted = NO;
+}
+
+- (void)setHighlighted:(BOOL)highlighted {
+    [self setHighlighted:highlighted animated:NO];
+}
+
+- (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated {
+    _highlighted = highlighted;
+    
+    [UIView animateWithDuration:animated ? 0.2 : 0.0 animations:^{
+        self.highlightedView.hidden = !highlighted;
+    }];
+    
+    if (highlighted && [self.delegate respondsToSelector:@selector(profilePictureViewDidHighlight:)]) {
+        [self.delegate profilePictureViewDidHighlight:self];
+    } else if (!highlighted && [self.delegate respondsToSelector:@selector(profilePictureViewUnhighlight:)]) {
+        [self.delegate profilePictureViewDidUnhighlight:self];
+    }
 }
 
 #pragma - Overrides
@@ -85,21 +146,6 @@
     [self updateConstraints];
 }
 
-#pragma mark - Helpers
-
-- (void)configureDefaults {
-    self.backgroundColor = [UIColor whiteColor];
-    self.layer.cornerRadius = 8;
-    self.clipsToBounds = YES;
-    
-    self.imageView.contentMode = UIViewContentModeScaleAspectFill;
-    self.imageView.clipsToBounds = YES;
-    self.imageView.layer.cornerRadius = 6;
-    
-    self.style = DBProfilePictureStyleRoundedRect;
-    self.borderWidth = 3;
-}
-
 #pragma mark - Auto Layout
 
 - (void)configureImageViewLayoutConstraints {
@@ -108,6 +154,13 @@
     [self addConstraint:[NSLayoutConstraint constraintWithItem:self.imageView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:self.imageView attribute:NSLayoutAttributeWidth multiplier:1 constant:0]];
     self.imageViewWidthConstraint = [NSLayoutConstraint constraintWithItem:self.imageView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeWidth multiplier:1 constant:0];
     [self addConstraint:self.imageViewWidthConstraint];
+}
+
+- (void)configureOverlayImageViewLayoutConstraints {
+    [self.imageView addConstraint:[NSLayoutConstraint constraintWithItem:self.overlayImageView attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.imageView attribute:NSLayoutAttributeCenterX multiplier:1 constant:0]];
+    [self.imageView addConstraint:[NSLayoutConstraint constraintWithItem:self.overlayImageView attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self.imageView attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
+    [self.imageView addConstraint:[NSLayoutConstraint constraintWithItem:self.overlayImageView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationLessThanOrEqual toItem:self.imageView attribute:NSLayoutAttributeHeight multiplier:1 constant:0]];
+    [self.imageView addConstraint:[NSLayoutConstraint constraintWithItem:self.overlayImageView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationLessThanOrEqual toItem:self.imageView attribute:NSLayoutAttributeWidth multiplier:1 constant:0]];
 }
 
 @end
