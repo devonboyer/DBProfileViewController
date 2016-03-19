@@ -16,16 +16,11 @@
 
 @class DBProfileViewController;
 @class DBProfileCoverPhotoView;
-@class DBProfilePictureView;
+@class DBProfileAvatarImageView;
 @class DBProfileSegmentedControlView;
 @class DBProfileNavigationView;
 
 NS_ASSUME_NONNULL_BEGIN
-
-/*!
- @abstract A constant value representing the size of the profile picture when using `DBProfilePictureSizeEditProfile`.
- */
-extern const CGFloat DBProfileViewControllerProfilePictureSizeEditProfile;
 
 /*!
  @abstract A constant value representing the size of the profile picture when using `DBProfilePictureSizeNormal`.
@@ -67,10 +62,6 @@ typedef NS_ENUM(NSInteger, DBProfileCoverPhotoScrollAnimationStyle) {
  @abstract The `DBProfilePictureSize` defines the size of the the profile picture.
  */
 typedef NS_ENUM(NSInteger, DBProfilePictureSize) {
-    /*!
-     @abstract The profile picture size for `DBEditProfileViewController`
-     */
-    DBProfilePictureSizeEditProfile,
     /*!
      @abstract Specifys that the profile picture should be the normal size. 
      */
@@ -231,11 +222,6 @@ typedef NS_ENUM(NSInteger, DBProfilePictureAlignment) {
 @property (nonatomic, assign) BOOL coverPhotoMimicsNavigationBar;
 
 /*!
- @abstract The gesture recognizer for when user taps the cover photo.
- */
-@property (nonatomic, strong, readonly) UITapGestureRecognizer *coverPhotoTapGestureRecognizer;
-
-/*!
  @abstract Sets the cover photo.
  @param coverPhoto The image to set as the cover photo.
  @param animated YES if setting the cover photo should be animated, NO otherwise.
@@ -243,13 +229,13 @@ typedef NS_ENUM(NSInteger, DBProfilePictureAlignment) {
 - (void)setCoverPhoto:(UIImage *)coverPhotoImage animated:(BOOL)animated;
 
 ///---------------------------------------------
-/// @name Configuring Profile Picture
+/// @name Configuring Avatar Image View
 ///---------------------------------------------
 
 /*!
- @abstract A view that is displays a profile picture.
+ @abstract A view that is displays an avatar image.
  */
-@property (nonatomic, strong, readonly) DBProfilePictureView *profilePictureView;
+@property (nonatomic, strong, readonly) DBProfileAvatarImageView *avatarImageView;
 
 /*!
  @abstract Specifies the alignment for the profile picture.
@@ -269,16 +255,11 @@ typedef NS_ENUM(NSInteger, DBProfilePictureAlignment) {
 @property (nonatomic, assign) UIEdgeInsets profilePictureInset;
 
 /*!
- @abstract The gesture recognizer for when user taps the profile picture.
- */
-@property (nonatomic, strong, readonly) UITapGestureRecognizer *profilePictureTapGestureRecognizer;
-
-/*!
  @abstract Sets the profile picture.
  @param profilePicture The image to set as the profile picture.
  @param animated YES if setting the profile picture should be animated, NO otherwise.
  */
-- (void)setProfilePicture:(UIImage *)profilePictureImage animated:(BOOL)animated;
+- (void)setAvatarImage:(UIImage *)avatarImage animated:(BOOL)animated;
 
 ///----------------------------------------------
 /// @name Configuring Pull-To-Refresh

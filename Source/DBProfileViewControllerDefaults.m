@@ -48,8 +48,8 @@
     return DBProfilePictureSizeNormal;
 }
 
-- (DBProfilePictureStyle)defaultProfilePictureStyle {
-    return DBProfilePictureStyleRoundedRect;
+- (DBProfileAvatarStyle)defaultAvatarStyle {
+    return DBProfileAvatarStyleRoundedRect;
 }
 
 - (UIEdgeInsets)defaultProfilePictureInsets {

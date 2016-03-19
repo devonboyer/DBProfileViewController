@@ -12,7 +12,7 @@
 #import <UIKit/UIKit.h>
 
 @class DBProfileViewController;
-@class DBProfilePictureView;
+@class DBProfileAvatarImageView;
 @class DBProfileCoverPhotoView;
 
 NS_ASSUME_NONNULL_BEGIN
@@ -58,14 +58,14 @@ NS_ASSUME_NONNULL_BEGIN
  @param profileViewController The profile view controller where the selection was made.
  @prarm profilePictureView The profile picture view that was selected.
  */
-- (void)profileViewController:(DBProfileViewController *)profileViewController didSelectProfilePicture:(DBProfilePictureView *)profilePictureView;
+- (void)profileViewController:(DBProfileViewController *)profileViewController didSelectAvatarImageView:(DBProfileAvatarImageView *)avatarImageView;
 
 /*!
  @abstract Tells the delegate that the profile picture photo has been deselected.
  @param profileViewController The profile view controller where the selection was made.
  @prarm profilePictureView The profile picture view that was deselected.
  */
-- (void)profileViewController:(DBProfileViewController *)profileViewController didDeselectProfilePicture:(DBProfilePictureView *)profilePictureView;
+- (void)profileViewController:(DBProfileViewController *)profileViewController didDeselectAvatarImageView:(DBProfileAvatarImageView *)avatarImageView;
 
 /*!
  @abstract Tells the delegate that the cover photo has been selected.
@@ -93,14 +93,14 @@ NS_ASSUME_NONNULL_BEGIN
  @param profileViewController The profile view controller that highlighted the profile picture.
  @prarm profilePictureView The profile picture view that was highlighted.
  */
-- (void)profileViewController:(DBProfileViewController *)profileViewController didHighlightProfilePicture:(DBProfilePictureView *)profilePictureView;
+- (void)profileViewController:(DBProfileViewController *)profileViewController didHighlightAvatarImageView:(DBProfileAvatarImageView *)avatarImageView;
 
 /*!
  @abstract Tells the delegate that the profile picture was unhighlighted.
  @param profileViewController The profile view controller that unhighlighted the profile picture.
  @prarm profilePictureView The profile picture view that was unhighlighted.
  */
-- (void)profileViewController:(DBProfileViewController *)profileViewController didUnhighlightProfilePicture:(DBProfilePictureView *)profilePictureView;
+- (void)profileViewController:(DBProfileViewController *)profileViewController didUnhighlightAvatarImageView:(DBProfileAvatarImageView *)avatarImageView;
 
 /*!
  @abstract Tells the delegate that the cover photo was highlighted.

@@ -6,11 +6,14 @@
 
 * Fixed a bug somtimes causing the profile picture to appear on top of the cover photo when changing segments.
 * Added assertions for when nil is returned from required data source methods
+* Changed from using `UIImageEffects` to `FXBlurView` to blur the cover photo.
 
 ### Public API Changes
 
 * Renamed `selectContentViewControllerAtIndex:` to `selectContentControllerAtIndex:`
 * Changed `profileViewController:subtitleForContentControllerAtIndex:` to now be optional
+* Renamed `DBProfilePictureView` class to `DBProfileAvatarImageView`
+* Renamed `profilePictureView` property to `avatarImageView`
 
 ### Added
 

@@ -36,8 +36,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, strong, readonly) UIImageView *imageView;
 
-@property (nonatomic, strong, readonly) UIImageView *blurredImageView;
-
 /*!
  @abstract The image view that overlays the cover photo.
  */
@@ -47,8 +45,6 @@ NS_ASSUME_NONNULL_BEGIN
  @abstract A gradient view that overlays the cover photo to allow for visibility of any overlayed subviews.
  */
 @property (nonatomic, strong, readonly) UIView *overlayView;
-
-- (void)setHeaderImage:(UIImage *)headerImage animated:(BOOL)animated;
 
 @end
 

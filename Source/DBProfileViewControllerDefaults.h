@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import "DBProfileViewController.h"
-#import "DBProfilePictureView.h"
+#import "DBProfileAvatarImageView.h"
 
 @interface DBProfileViewControllerDefaults : NSObject
 
@@ -29,7 +29,7 @@
 
 - (DBProfilePictureSize)defaultProfilePictureSize;
 
-- (DBProfilePictureStyle)defaultProfilePictureStyle;
+- (DBProfileAvatarStyle)defaultAvatarStyle;
 
 - (UIEdgeInsets)defaultProfilePictureInsets;
 

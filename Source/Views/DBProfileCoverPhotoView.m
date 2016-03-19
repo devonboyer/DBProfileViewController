@@ -65,14 +65,8 @@
     self.backgroundColor = [UIColor whiteColor];
     
     _imageView = [[UIImageView alloc] init];
-    _blurredImageView = [[UIImageView alloc] init];
     _overlayImageView = [[UIImageView alloc] init];
     _overlayView = [[DBProfileCoverPhotoOverlayView alloc] init];
-    
-    self.blurredImageView.alpha = 0;
-    
-    self.blurredImageView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    self.blurredImageView.frame = self.imageView.frame;
     
     self.overlayView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.overlayView.frame = self.imageView.frame;
@@ -81,7 +75,6 @@
     self.overlayImageView.translatesAutoresizingMaskIntoConstraints = NO;
 
     [self addSubview:self.imageView];
-    [self.imageView addSubview:self.blurredImageView];
     [self.imageView addSubview:self.overlayView];
     [self.imageView addSubview:self.overlayImageView];
 
@@ -100,9 +93,6 @@
     
     self.imageView.contentMode = UIViewContentModeScaleAspectFill;
     self.imageView.clipsToBounds = YES;
-    
-    self.blurredImageView.contentMode = UIViewContentModeScaleAspectFill;
-    self.blurredImageView.clipsToBounds = YES;
     
    // self.overlayImageView.image = [UIImage imageNamed:@"db-profile-camera"];
 }
