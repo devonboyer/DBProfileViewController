@@ -1,5 +1,5 @@
 //
-//  DBProfileAvatarImageView.m
+//  DBProfileAvatarView.m
 //  DBProfileViewController
 //
 //  Created by Devon Boyer on 2016-01-08.
@@ -8,16 +8,16 @@
 //  Released under an MIT license: http://opensource.org/licenses/MIT
 //
 
-#import "DBProfileAvatarImageView.h"
+#import "DBProfileAvatarView.h"
 #import "DBProfileViewControllerDefaults.h"
 
-@interface DBProfileAvatarImageView ()
+@interface DBProfileAvatarView ()
 
 @property (nonatomic, strong) NSLayoutConstraint *imageViewWidthConstraint;
 
 @end
 
-@implementation DBProfileAvatarImageView
+@implementation DBProfileAvatarView
 
 #pragma mark - Initialization
 
@@ -64,20 +64,20 @@
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
     [super setSelected:selected animated:animated];
     
-    if (selected && [self.delegate respondsToSelector:@selector(didSelectAvatarImageView:)]) {
-        [self.delegate didSelectAvatarImageView:self];
-    } else if (!selected && [self.delegate respondsToSelector:@selector(didDeselectAvatarImageView:)]) {
-        [self.delegate didDeselectAvatarImageView:self];
+    if (selected && [self.delegate respondsToSelector:@selector(didSelectAvatarView:)]) {
+        [self.delegate didSelectAvatarView:self];
+    } else if (!selected && [self.delegate respondsToSelector:@selector(didDeselectAvatarView:)]) {
+        [self.delegate didDeselectAvatarView:self];
     }
 }
 
 - (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated {
     [super setHighlighted:highlighted animated:animated];
     
-    if (highlighted && [self.delegate respondsToSelector:@selector(didHighlightAvatarImageView:)]) {
-        [self.delegate didHighlightAvatarImageView:self];
-    } else if (!highlighted && [self.delegate respondsToSelector:@selector(didUnhighlightAvatarImageView:)]) {
-        [self.delegate didUnhighlightAvatarImageView:self];
+    if (highlighted && [self.delegate respondsToSelector:@selector(didHighlightAvatarView:)]) {
+        [self.delegate didHighlightAvatarView:self];
+    } else if (!highlighted && [self.delegate respondsToSelector:@selector(didUnhighlightAvatarView:)]) {
+        [self.delegate didUnhighlightAvatarView:self];
     }
 }
 

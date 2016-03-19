@@ -1,5 +1,5 @@
 //
-//  DBProfileAvatarImageView.h
+//  DBProfileAvatarView.h
 //  DBProfileViewController
 //
 //  Created by Devon Boyer on 2016-01-08.
@@ -34,18 +34,18 @@ typedef NS_ENUM(NSInteger, DBProfileAvatarStyle) {
 
 @protocol DBProfileAvatarImageViewDelegate <NSObject>
 
-- (void)didSelectAvatarImageView:(DBProfileAvatarImageView *)avatarImageView;
-- (void)didDeselectAvatarImageView:(DBProfileAvatarImageView *)avatarImageView;
-- (void)didHighlightAvatarImageView:(DBProfileAvatarImageView *)avatarImageView;
-- (void)didUnhighlightAvatarImageView:(DBProfileAvatarImageView *)avatarImageView;
+- (void)didSelectAvatarView:(DBProfileAvatarImageView *)avatarImageView;
+- (void)didDeselectAvatarView:(DBProfileAvatarImageView *)avatarImageView;
+- (void)didHighlightAvatarView:(DBProfileAvatarImageView *)avatarImageView;
+- (void)didUnhighlightAvatarView:(DBProfileAvatarImageView *)avatarImageView;
 
 @end
 
 /*!
- @class DBProfileAvatarImageView
- @abstract The `DBProfileAvatarImageView` class displays an avatar image.
+ @class DBProfileAvatarView
+ @abstract The `DBProfileAvatarView` class displays an avatar image.
  */
-@interface DBProfileAvatarImageView : DBProfileSelectableView
+@interface DBProfileAvatarView : DBProfileSelectableView
 
 /*!
  @abstract The The object that acts as the view's delegate.

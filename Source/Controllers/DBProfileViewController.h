@@ -16,7 +16,7 @@
 
 @class DBProfileViewController;
 @class DBProfileCoverPhotoView;
-@class DBProfileAvatarImageView;
+@class DBProfileAvatarView;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -201,13 +201,13 @@ typedef NS_ENUM(NSInteger, DBProfileAvatarAlignment) {
  @abstract Selects the avatar.
  @param animated YES if setting selecting the avatar should be animated, NO otherwise.
  */
-- (void)selectAvatarImageViewAnimated:(BOOL)animated;
+- (void)selectAvatarViewAnimated:(BOOL)animated;
 
 /*!
  @abstract Deselects the avatar.
  @param animated YES if setting deselecting the avatar should be animated, NO otherwise.
  */
-- (void)deselectAvatarImageViewAnimated:(BOOL)animated;
+- (void)deselectAvatarViewAnimated:(BOOL)animated;
 
 ///---------------------------------------------
 /// @name Configuring Cover Photo View
@@ -254,16 +254,16 @@ typedef NS_ENUM(NSInteger, DBProfileAvatarAlignment) {
  @param coverPhoto The image to set as the cover photo.
  @param animated YES if setting the cover photo should be animated, NO otherwise.
  */
-- (void)setCoverPhoto:(UIImage *)coverPhotoImage animated:(BOOL)animated;
+- (void)setCoverPhotoImage:(UIImage *)coverPhotoImage animated:(BOOL)animated;
 
 ///---------------------------------------------
-/// @name Configuring Avatar Image View
+/// @name Configuring Avatar View
 ///---------------------------------------------
 
 /*!
  @abstract A view that is displays an avatar image.
  */
-@property (nonatomic, strong, readonly) DBProfileAvatarImageView *avatarImageView;
+@property (nonatomic, strong, readonly) DBProfileAvatarView *avatarView;
 
 /*!
  @abstract Specifies the alignment for the avatar.

@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import "DBProfileViewController.h"
-#import "DBProfileAvatarImageView.h"
+#import "DBProfileAvatarView.h"
 
 @interface DBProfileViewControllerDefaults : NSObject
 

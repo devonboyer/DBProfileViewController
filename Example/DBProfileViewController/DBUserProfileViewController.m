@@ -36,7 +36,7 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
     // Customize profile appearance
     self.coverPhotoOptions = DBProfileCoverPhotoOptionStretch;
     self.avatarInset = UIEdgeInsetsMake(0, 15, DBProfileViewControllerAvatarSizeNormal/2.0 - 10, 0);
-    self.avatarImageView.borderWidth = 4;
+    self.avatarView.borderWidth = 4;
     self.allowsPullToRefresh = YES;
     
     DBProfileDetailsView *detailsView = (DBProfileDetailsView *)self.detailsView;
@@ -63,17 +63,17 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
             self.automaticallyAdjustsScrollViewInsets = YES;
             self.coverPhotoMimicsNavigationBar = NO;
         case DBUserProfileViewControllerStyle2:
-            self.avatarImageView.style = DBProfileAvatarStyleRoundedRect;
+            self.avatarView.style = DBProfileAvatarStyleRoundedRect;
             self.avatarSize = DBProfileAvatarSizeNormal;
             self.avatarAlignment = DBProfileAvatarAlignmentLeft;
-            self.avatarImageView.borderWidth = 4;
+            self.avatarView.borderWidth = 4;
             
             detailsView.contentInset = UIEdgeInsetsMake(70, 15, 15, 15);
             
-            [self setCoverPhoto:[UIImage imageNamed:@"header"] animated:NO];
+            [self setCoverPhotoImage:[UIImage imageNamed:@"header"] animated:NO];
             break;
         case DBUserProfileViewControllerStyle3:
-            self.avatarImageView.style = DBProfileAvatarStyleRound;
+            self.avatarView.style = DBProfileAvatarStyleRound;
             self.avatarSize = DBProfileAvatarSizeLarge;
             self.avatarAlignment = DBProfileAvatarAlignmentCenter;
             
@@ -83,7 +83,7 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
             detailsView.usernameLabel.textAlignment = NSTextAlignmentCenter;
             detailsView.descriptionLabel.textAlignment = NSTextAlignmentCenter;
             
-            [self setCoverPhoto:[UIImage imageNamed:@"header"] animated:NO];
+            [self setCoverPhotoImage:[UIImage imageNamed:@"header"] animated:NO];
             break;
         default:
             break;
@@ -149,8 +149,8 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
     [profileViewController deselectCoverPhotoViewAnimated:YES];
 }
 
-- (void)profileViewController:(DBProfileViewController *)profileViewController didSelectAvatarImageView:(DBProfileAvatarImageView *)avatarImageView {
-    [profileViewController deselectAvatarImageViewAnimated:YES];
+- (void)profileViewController:(DBProfileViewController *)profileViewController didSelectAvatarView:(DBProfileAvatarImageView *)avatarView {
+    [profileViewController deselectAvatarViewAnimated:YES];
 }
 
 - (void)profileViewController:(DBProfileViewController *)viewController didSelectContentControllerAtIndex:(NSInteger)index { }
