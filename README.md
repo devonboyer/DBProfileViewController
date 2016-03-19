@@ -36,17 +36,8 @@ The table below details the most important classes and is hyperlinked directly t
         <td>A configurable view that displays a cover photo image.</td>
     </tr>
     <tr>
-<<<<<<< HEAD
-        <td><a href="Source/Views/DBProfilePictureView.h">DBProfilePictureView</a></td>
-        <td>A configurable view that displays a profile picture.</td>
-    </tr>
-    <tr>
-        <td><a href="Source/Views/DBProfileSegmentedControlView.h">DBProfileSegmentedControlView</a></td>
-        <td>A configurable view that displays a segmented control.</td>
-=======
         <td><a href="Source/Views/DBProfileAvatarView.h">DBProfileAvatarView</a></td>
         <td>A configurable view that displays an avatar image.</td>
->>>>>>> devel
     </tr>
 </table>
 
