@@ -29,12 +29,17 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface DBProfileCoverPhotoView : DBProfileSelectableView
 
+/*!
+ @abstract The The object that acts as the view's delegate.
+ */
 @property (nonatomic, weak) id<DBProfileCoverPhotoViewDelegate> delegate;
 
 /*!
  @abstract The image view that displays the cover photo.
  */
 @property (nonatomic, strong, readonly) UIImageView *imageView;
+
+
 
 /*!
  @abstract The image view that overlays the cover photo.

@@ -22,8 +22,8 @@
 
 #pragma mark - Constants
 
-const CGFloat DBProfileViewControllerProfilePictureSizeNormal = 72.0;
-const CGFloat DBProfileViewControllerProfilePictureSizeLarge = 92.0;
+const CGFloat DBProfileViewControllerAvatarSizeNormal = 72.0;
+const CGFloat DBProfileViewControllerAvatarSizeLarge = 92.0;
 
 static const CGFloat DBProfileViewControllerNavigationBarHeightRegular = 64.0;
 static const CGFloat DBProfileViewControllerNavigationBarHeightCompact = 44.0;
@@ -62,14 +62,14 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
 @property (nonatomic, strong) NSLayoutConstraint *detailsViewTopConstraint;
 @property (nonatomic, strong) NSLayoutConstraint *coverPhotoViewTopConstraint;
 @property (nonatomic, strong) NSLayoutConstraint *coverPhotoViewHeightConstraint;
-@property (nonatomic, strong) NSLayoutConstraint *profilePictureViewLeftConstraint;
-@property (nonatomic, strong) NSLayoutConstraint *profilePictureViewRightConstraint;
-@property (nonatomic, strong) NSLayoutConstraint *profilePictureViewCenterXConstraint;
-@property (nonatomic, strong) NSLayoutConstraint *profilePictureViewTopConstraint;
-@property (nonatomic, strong) NSLayoutConstraint *profilePictureViewWidthConstraint;
 @property (nonatomic, strong) NSLayoutConstraint *coverPhotoViewBottomConstraint;
 @property (nonatomic, strong) NSLayoutConstraint *coverPhotoViewTopLayoutGuideConstraint;
 @property (nonatomic, strong) NSLayoutConstraint *coverPhotoViewTopSuperviewConstraint;
+@property (nonatomic, strong) NSLayoutConstraint *avatarImageViewLeftConstraint;
+@property (nonatomic, strong) NSLayoutConstraint *avatarImageViewRightConstraint;
+@property (nonatomic, strong) NSLayoutConstraint *avatarImageViewCenterXConstraint;
+@property (nonatomic, strong) NSLayoutConstraint *avatarImageViewTopConstraint;
+@property (nonatomic, strong) NSLayoutConstraint *avatarImageViewWidthConstraint;
 
 @end
 
@@ -194,23 +194,30 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
 
 - (void)updateViewConstraints {
     [self updateCoverPhotoViewLayoutConstraints];
-    [self updateProfilePictureViewLayoutConstraints];
+    [self updateAvatarImageViewLayoutConstraints];
     [super updateViewConstraints];
 }
 
 - (void)configureDefaults {
-    _hidesSegmentedControlForSingleContentController = [[DBProfileViewControllerDefaults sharedDefaults] defaultHidesSegmentedControlForSingleContentController];
-    _coverPhotoOptions = [[DBProfileViewControllerDefaults sharedDefaults] defaultCoverPhotoOptions];
-    _coverPhotoHidden = [[DBProfileViewControllerDefaults sharedDefaults] defaultCoverPhotoHidden];
-    _coverPhotoMimicsNavigationBar = [[DBProfileViewControllerDefaults sharedDefaults] defaultCoverPhotoMimicsNavigationBar];
-    _coverPhotoScrollAnimationStyle = [[DBProfileViewControllerDefaults sharedDefaults] defaultCoverPhotoScrollAnimationStyle];
-    _coverPhotoHeightMultiplier = [[DBProfileViewControllerDefaults sharedDefaults] defaultCoverPhotoHeightMultiplier];
-    _profilePictureAlignment = [[DBProfileViewControllerDefaults sharedDefaults] defaultProfilePictureAlignment];
-    _profilePictureSize = [[DBProfileViewControllerDefaults sharedDefaults] defaultProfilePictureSize];
-    _profilePictureInset = [[DBProfileViewControllerDefaults sharedDefaults] defaultProfilePictureInsets];
-    _allowsPullToRefresh = [[DBProfileViewControllerDefaults sharedDefaults] defaultAllowsPullToRefresh];
-    self.segmentedControl.tintColor = [[DBProfileViewControllerDefaults sharedDefaults] defaultSegmentedControlTintColor];
-    self.coverPhotoMimicsNavigationBarNavigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[[DBProfileViewControllerDefaults sharedDefaults] defaultBackBarButtonItemImageForTraitCollection:self.traitCollection] style:UIBarButtonItemStylePlain target:self action:@selector(back:)];
+    // Set segmented control defaults
+    self.segmentedControl.tintColor = [DBProfileViewControllerDefaults defaultSegmentedControlTintColor];
+
+    // Set cover photo defaults
+    _hidesSegmentedControlForSingleContentController = [DBProfileViewControllerDefaults defaultHidesSegmentedControlForSingleContentController];
+    _coverPhotoOptions = [DBProfileViewControllerDefaults defaultCoverPhotoOptions];
+    _coverPhotoHidden = [DBProfileViewControllerDefaults defaultCoverPhotoHidden];
+    _coverPhotoMimicsNavigationBar = [DBProfileViewControllerDefaults defaultCoverPhotoMimicsNavigationBar];
+    _coverPhotoScrollAnimationStyle = [DBProfileViewControllerDefaults defaultCoverPhotoScrollAnimationStyle];
+    _coverPhotoHeightMultiplier = [DBProfileViewControllerDefaults defaultCoverPhotoHeightMultiplier];
+    
+    // Set avatar defaults
+    _avatarAlignment = [DBProfileViewControllerDefaults defaultAvatarAlignment];
+    _avatarSize = [DBProfileViewControllerDefaults defaultAvatarSize];
+    _avatarInset = [DBProfileViewControllerDefaults defaultAvatarInsets];
+    
+    // Set pull-to-refresh defaults
+    _allowsPullToRefresh = [DBProfileViewControllerDefaults defaultAllowsPullToRefresh];
+    self.coverPhotoMimicsNavigationBarNavigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[DBProfileViewControllerDefaults defaultBackBarButtonItemImageForTraitCollection:self.traitCollection] style:UIBarButtonItemStylePlain target:self action:@selector(back:)];
 }
 
 #pragma mark - Status Bar
@@ -291,21 +298,21 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     [self.view setNeedsUpdateConstraints];
 }
 
-- (void)setProfilePictureInset:(UIEdgeInsets)profilePictureInset {
-    if (UIEdgeInsetsEqualToEdgeInsets(_profilePictureInset, profilePictureInset)) return;
-    _profilePictureInset = profilePictureInset;
+- (void)setAvatarSize:(DBProfileAvatarSize)avatarSize {
+    if (_avatarSize == avatarSize) return;
+    _avatarSize = avatarSize;
     [self.view setNeedsUpdateConstraints];
 }
 
-- (void)setProfilePictureAlignment:(DBProfilePictureAlignment)profilePictureAlignment {
-    if (_profilePictureAlignment == profilePictureAlignment) return;
-    _profilePictureAlignment = profilePictureAlignment;
+- (void)setAvatarAlignment:(DBProfileAvatarAlignment)avatarAlignment {
+    if (_avatarAlignment == avatarAlignment) return;
+    _avatarAlignment = avatarAlignment;
     [self.view setNeedsUpdateConstraints];
 }
 
-- (void)setProfilePictureSize:(DBProfilePictureSize)profilePictureSize {
-    if (_profilePictureSize == profilePictureSize) return;
-    _profilePictureSize = profilePictureSize;
+- (void)setAvatarInset:(UIEdgeInsets)avatarInset {
+    if (UIEdgeInsetsEqualToEdgeInsets(_avatarInset, avatarInset)) return;
+    _avatarInset = avatarInset;
     [self.view setNeedsUpdateConstraints];
 }
 
@@ -494,19 +501,19 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     self.indexForSelectedContentController = index;
 }
 
-- (void)selectCoverPhotoAnimated:(BOOL)animated {
+- (void)selectCoverPhotoViewAnimated:(BOOL)animated {
     [self.coverPhotoView setSelected:YES animated:animated];
 }
 
-- (void)deselectCoverPhotoAnimated:(BOOL)animated {
+- (void)deselectCoverPhotoViewAnimated:(BOOL)animated {
     [self.coverPhotoView setSelected:NO animated:animated];
 }
 
-- (void)selectProfilePictureAnimated:(BOOL)animated {
+- (void)selectAvatarImageViewAnimated:(BOOL)animated {
     [self.avatarImageView setSelected:YES animated:animated];
 }
 
-- (void)deselectProfilePictureAnimated:(BOOL)animated {
+- (void)deselectAvatarImageViewAnimated:(BOOL)animated {
     [self.avatarImageView setSelected:NO animated:animated];
 }
 
@@ -560,8 +567,8 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
 
 - (void)didSelectCoverPhotoView:(DBProfileCoverPhotoView *)coverPhotoView {
     // Inform delegate that the cover photo was selected
-    if ([self.delegate respondsToSelector:@selector(profileViewController:didSelectCoverPhoto:)]) {
-        [self.delegate profileViewController:self didSelectCoverPhoto:coverPhotoView];
+    if ([self.delegate respondsToSelector:@selector(profileViewController:didSelectCoverPhotoView:)]) {
+        [self.delegate profileViewController:self didSelectCoverPhotoView:coverPhotoView];
     }
     
     if (self.avatarImageView.isSelected) [self.avatarImageView setSelected:NO animated:YES];
@@ -569,15 +576,15 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
 
 - (void)didDeselectCoverPhotoView:(DBProfileCoverPhotoView *)coverPhotoView {
     // Inform delegate that the cover photo was deselected
-    if ([self.delegate respondsToSelector:@selector(profileViewController:didDeselectCoverPhoto:)]) {
-        [self.delegate profileViewController:self didDeselectCoverPhoto:coverPhotoView];
+    if ([self.delegate respondsToSelector:@selector(profileViewController:didDeselectCoverPhotoView:)]) {
+        [self.delegate profileViewController:self didDeselectCoverPhotoView:coverPhotoView];
     }
 }
 
 - (void)didHighlightCoverPhotoView:(DBProfileCoverPhotoView *)coverPhotoView {
     // Inform delegate that the cover photo was highlighted
-    if ([self.delegate respondsToSelector:@selector(profileViewController:didHighlightCoverPhoto:)]) {
-        [self.delegate profileViewController:self didHighlightCoverPhoto:coverPhotoView];
+    if ([self.delegate respondsToSelector:@selector(profileViewController:didHighlightCoverPhotoView:)]) {
+        [self.delegate profileViewController:self didHighlightCoverPhotoView:coverPhotoView];
     }
     
     if (self.avatarImageView.isSelected) [self.avatarImageView setSelected:NO animated:YES];
@@ -585,8 +592,8 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
 
 - (void)didUnhighlightCoverPhotoView:(DBProfileCoverPhotoView *)coverPhotoView {
     // Inform delegate that the cover photo was unhighlighted
-    if ([self.delegate respondsToSelector:@selector(profileViewController:didUnhighlightCoverPhoto:)]) {
-        [self.delegate profileViewController:self didUnhighlightCoverPhoto:coverPhotoView];
+    if ([self.delegate respondsToSelector:@selector(profileViewController:didUnhighlightCoverPhotoView:)]) {
+        [self.delegate profileViewController:self didUnhighlightCoverPhotoView:coverPhotoView];
     }
 }
 
@@ -736,7 +743,7 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     [scrollView addSubview:self.avatarImageView];
     
     [self configureDetailsViewLayoutConstraintsWithSuperview:scrollView];
-    [self configureProfilePictureViewLayoutConstraintsWithSuperview:scrollView];
+    [self configureAvatarImageViewLayoutConstraintsWithSuperview:scrollView];
     
     [scrollView setNeedsLayout];
     [scrollView layoutIfNeeded];
@@ -866,7 +873,7 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     contentOffset.y += scrollView.contentInset.top;
     if (scrollView.isDragging && contentOffset.y < 0) {
         [self startRefreshAnimations];
-    } else if (!scrollView.isDragging && !self.refreshing && contentOffset.y < -[[DBProfileViewControllerDefaults sharedDefaults] defaultPullToRefreshTriggerDistance]) {
+    } else if (!scrollView.isDragging && !self.refreshing && contentOffset.y < -[DBProfileViewControllerDefaults defaultPullToRefreshTriggerDistance]) {
         self.refreshing = YES;
         [self notifyDelegateOfPullToRefreshOfContentControllerAtIndex:self.indexForSelectedContentController];
     }
@@ -884,7 +891,7 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
 
 - (void)updateSubviewsWithContentOffset:(CGPoint)contentOffset {
     [self updateCoverPhotoViewWithContentOffset:contentOffset];
-    [self updateProfilePictureViewWithContentOffset:contentOffset];
+    [self updateAvatarImageViewWithContentOffset:contentOffset];
     [self updateTitleViewWithContentOffset:contentOffset];
 }
 
@@ -908,7 +915,7 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     }
 }
 
-- (void)updateProfilePictureViewWithContentOffset:(CGPoint)contentOffset {
+- (void)updateAvatarImageViewWithContentOffset:(CGPoint)contentOffset {
     if (self.coverPhotoHidden || self.isUpdating) return;
     CGFloat coverPhotoOffset = CGRectGetHeight(self.coverPhotoView.frame);
     CGFloat coverPhotoOffsetPercent = 0;
@@ -920,14 +927,12 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     if (self.coverPhotoOptions & DBProfileCoverPhotoOptionExtend) {
         CGFloat alpha = 1 - coverPhotoOffsetPercent * 1.10;
         self.avatarImageView.alpha = self.detailsView.alpha = alpha;
-        
     } else {
-        CGFloat profilePictureScale = MIN(1 - coverPhotoOffsetPercent * 0.3, 1);
-        CGAffineTransform transform = CGAffineTransformMakeScale(profilePictureScale, profilePictureScale);
-        CGFloat profilePictureOffset = self.profilePictureInset.bottom + self.profilePictureInset.top;
-        transform = CGAffineTransformTranslate(transform, 0, MAX(profilePictureOffset * coverPhotoOffsetPercent, 0));
-        
-        self.avatarImageView.transform = transform;
+        CGFloat avatarScaleFactor = MIN(1 - coverPhotoOffsetPercent * 0.3, 1);
+        CGAffineTransform avatarTransform = CGAffineTransformMakeScale(avatarScaleFactor, avatarScaleFactor);
+        CGFloat avatarOffset = self.avatarInset.bottom + self.avatarInset.top;
+        avatarTransform = CGAffineTransformTranslate(avatarTransform, 0, MAX(avatarOffset * coverPhotoOffsetPercent, 0));
+        self.avatarImageView.transform = avatarTransform;
     }
 }
 
@@ -937,8 +942,8 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     
     if (!(self.coverPhotoOptions & DBProfileCoverPhotoOptionExtend)) {
         const CGFloat padding = 30.0;
-        CGFloat profilePictureOffset = self.profilePictureInset.top - self.profilePictureInset.bottom;
-        titleViewOffset += (CGRectGetHeight(self.avatarImageView.frame) + profilePictureOffset + padding);
+        CGFloat avatarOffset = self.avatarInset.top - self.avatarInset.bottom;
+        titleViewOffset += (CGRectGetHeight(self.avatarImageView.frame) + avatarOffset + padding);
     }
     
     CGFloat titleViewOffsetPercent = 1 - contentOffset.y / titleViewOffset;
@@ -986,44 +991,44 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     }
 }
 
-- (void)updateProfilePictureViewLayoutConstraints {
-    if (self.profilePictureViewLeftConstraint && self.profilePictureViewCenterXConstraint) {
-        switch (self.profilePictureAlignment) {
-            case DBProfilePictureAlignmentLeft:
-                [NSLayoutConstraint activateConstraints:@[self.profilePictureViewLeftConstraint]];
-                [NSLayoutConstraint deactivateConstraints:@[self.profilePictureViewRightConstraint, self.profilePictureViewCenterXConstraint]];
+- (void)updateAvatarImageViewLayoutConstraints {
+    if (self.avatarImageViewLeftConstraint && self.avatarImageViewCenterXConstraint) {
+        switch (self.avatarAlignment) {
+            case DBProfileAvatarAlignmentLeft:
+                [NSLayoutConstraint activateConstraints:@[self.avatarImageViewLeftConstraint]];
+                [NSLayoutConstraint deactivateConstraints:@[self.avatarImageViewRightConstraint, self.avatarImageViewCenterXConstraint]];
                 break;
-            case DBProfilePictureAlignmentRight:
-                [NSLayoutConstraint activateConstraints:@[self.profilePictureViewRightConstraint]];
-                [NSLayoutConstraint deactivateConstraints:@[self.profilePictureViewLeftConstraint, self.profilePictureViewCenterXConstraint]];
+            case DBProfileAvatarAlignmentRight:
+                [NSLayoutConstraint activateConstraints:@[self.avatarImageViewRightConstraint]];
+                [NSLayoutConstraint deactivateConstraints:@[self.avatarImageViewLeftConstraint, self.avatarImageViewCenterXConstraint]];
                 break;
-            case DBProfilePictureAlignmentCenter:
-                [NSLayoutConstraint activateConstraints:@[self.profilePictureViewCenterXConstraint]];
-                [NSLayoutConstraint deactivateConstraints:@[self.profilePictureViewLeftConstraint, self.profilePictureViewRightConstraint]];
+            case DBProfileAvatarAlignmentCenter:
+                [NSLayoutConstraint activateConstraints:@[self.avatarImageViewCenterXConstraint]];
+                [NSLayoutConstraint deactivateConstraints:@[self.avatarImageViewLeftConstraint, self.avatarImageViewRightConstraint]];
                 break;
             default:
                 break;
         }
     }
     
-    CGFloat profilePictureSize;
+    CGFloat avatarSize;
     
-    switch (self.profilePictureSize) {
-        case DBProfilePictureSizeNormal:
-            profilePictureSize = DBProfileViewControllerProfilePictureSizeNormal;
+    switch (self.avatarSize) {
+        case DBProfileAvatarSizeNormal:
+            avatarSize = DBProfileViewControllerAvatarSizeNormal;
             break;
-        case DBProfilePictureSizeLarge:
-            profilePictureSize = DBProfileViewControllerProfilePictureSizeLarge;
+        case DBProfileAvatarSizeLarge:
+            avatarSize = DBProfileViewControllerAvatarSizeLarge;
             break;
         default:
             break;
     }
     
-    self.profilePictureViewWidthConstraint.constant = profilePictureSize;
-    self.profilePictureViewRightConstraint.constant = CGRectGetWidth(self.view.bounds) - profilePictureSize + self.profilePictureInset.left - self.profilePictureInset.right;
+    self.avatarImageViewWidthConstraint.constant = avatarSize;
+    self.avatarImageViewRightConstraint.constant = CGRectGetWidth(self.view.bounds) - avatarSize + self.avatarInset.left - self.avatarInset.right;
     
-    self.profilePictureViewLeftConstraint.constant = self.profilePictureInset.left - self.profilePictureInset.right;
-    self.profilePictureViewTopConstraint.constant = self.profilePictureInset.top - self.profilePictureInset.bottom;
+    self.avatarImageViewLeftConstraint.constant = self.avatarInset.left - self.avatarInset.right;
+    self.avatarImageViewTopConstraint.constant = self.avatarInset.top - self.avatarInset.bottom;
 }
 
 #pragma mark - Auto Layout
@@ -1082,30 +1087,30 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     }
 }
 
-- (void)configureProfilePictureViewLayoutConstraintsWithSuperview:(UIView *)scrollView {
+- (void)configureAvatarImageViewLayoutConstraintsWithSuperview:(UIView *)scrollView {
     [scrollView addConstraint:[NSLayoutConstraint constraintWithItem:self.avatarImageView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:self.avatarImageView attribute:NSLayoutAttributeWidth multiplier:1 constant:0]];
     
     // Customizing size
-    self.profilePictureViewWidthConstraint = [NSLayoutConstraint constraintWithItem:self.avatarImageView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:DBProfileViewControllerProfilePictureSizeNormal];
+    self.avatarImageViewWidthConstraint = [NSLayoutConstraint constraintWithItem:self.avatarImageView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:DBProfileViewControllerAvatarSizeNormal];
 
     // Customizing horizontal alignment
-    self.profilePictureViewLeftConstraint = [NSLayoutConstraint constraintWithItem:self.avatarImageView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:scrollView attribute:NSLayoutAttributeLeft multiplier:1 constant:0];
-    self.profilePictureViewLeftConstraint.priority = UILayoutPriorityDefaultLow;
+    self.avatarImageViewLeftConstraint = [NSLayoutConstraint constraintWithItem:self.avatarImageView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:scrollView attribute:NSLayoutAttributeLeft multiplier:1 constant:0];
+    self.avatarImageViewLeftConstraint.priority = UILayoutPriorityDefaultLow;
 
-    self.profilePictureViewRightConstraint = [NSLayoutConstraint constraintWithItem:self.avatarImageView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:scrollView attribute:NSLayoutAttributeLeft multiplier:1 constant:0];
-    self.profilePictureViewRightConstraint.priority = UILayoutPriorityDefaultLow;
+    self.avatarImageViewRightConstraint = [NSLayoutConstraint constraintWithItem:self.avatarImageView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:scrollView attribute:NSLayoutAttributeLeft multiplier:1 constant:0];
+    self.avatarImageViewRightConstraint.priority = UILayoutPriorityDefaultLow;
 
-    self.profilePictureViewCenterXConstraint = [NSLayoutConstraint constraintWithItem:self.avatarImageView attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:scrollView attribute:NSLayoutAttributeCenterX multiplier:1 constant:0];
-    self.profilePictureViewCenterXConstraint.priority = UILayoutPriorityDefaultLow;
+    self.avatarImageViewCenterXConstraint = [NSLayoutConstraint constraintWithItem:self.avatarImageView attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:scrollView attribute:NSLayoutAttributeCenterX multiplier:1 constant:0];
+    self.avatarImageViewCenterXConstraint.priority = UILayoutPriorityDefaultLow;
 
     // Customizing vertical alignment
-    self.profilePictureViewTopConstraint = [NSLayoutConstraint constraintWithItem:self.avatarImageView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.detailsView attribute:NSLayoutAttributeTop multiplier:1 constant:0];
+    self.avatarImageViewTopConstraint = [NSLayoutConstraint constraintWithItem:self.avatarImageView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.detailsView attribute:NSLayoutAttributeTop multiplier:1 constant:0];
     
-    [scrollView addConstraints:@[self.profilePictureViewWidthConstraint, self.profilePictureViewLeftConstraint, self.profilePictureViewRightConstraint, self.profilePictureViewCenterXConstraint, self.profilePictureViewTopConstraint]];
+    [scrollView addConstraints:@[self.avatarImageViewWidthConstraint, self.avatarImageViewLeftConstraint, self.avatarImageViewRightConstraint, self.avatarImageViewCenterXConstraint, self.avatarImageViewTopConstraint]];
     
-    [NSLayoutConstraint deactivateConstraints:@[self.profilePictureViewLeftConstraint,
-                                                self.profilePictureViewRightConstraint,
-                                                self.profilePictureViewCenterXConstraint]];
+    [NSLayoutConstraint deactivateConstraints:@[self.avatarImageViewLeftConstraint,
+                                                self.avatarImageViewRightConstraint,
+                                                self.avatarImageViewCenterXConstraint]];
 }
 
 @end

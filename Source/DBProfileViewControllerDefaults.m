@@ -11,72 +11,59 @@
 
 @implementation DBProfileViewControllerDefaults
 
-+ (instancetype)sharedDefaults {
-    static DBProfileViewControllerDefaults *sharedDefaults = nil;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        sharedDefaults = [[self alloc] init];
-    });
-    return sharedDefaults;
-}
-
-- (UIColor *)defaultSegmentedControlTintColor {
++ (UIColor *)defaultSegmentedControlTintColor {
     return [UIColor grayColor];
 }
 
-- (UIImage *)defaultBackBarButtonItemImageForTraitCollection:(UITraitCollection *)traitCollection {
++ (UIImage *)defaultBackBarButtonItemImageForTraitCollection:(UITraitCollection *)traitCollection {
     return [UIImage imageNamed:@"db-profile-chevron" inBundle:[NSBundle db_resourcesBundle] compatibleWithTraitCollection:traitCollection];
 }
 
-- (DBProfileCoverPhotoOptions)defaultCoverPhotoOptions {
++ (DBProfileCoverPhotoOptions)defaultCoverPhotoOptions {
     return DBProfileCoverPhotoOptionStretch;
 }
 
-- (DBProfileCoverPhotoScrollAnimationStyle)defaultCoverPhotoScrollAnimationStyle {
++ (DBProfileCoverPhotoScrollAnimationStyle)defaultCoverPhotoScrollAnimationStyle {
     return DBProfileCoverPhotoScrollAnimationStyleBlur;
 }
 
-- (CGFloat)defaultCoverPhotoHeightMultiplier {
++ (CGFloat)defaultCoverPhotoHeightMultiplier {
     return 0.18;
 }
 
-- (DBProfilePictureAlignment)defaultProfilePictureAlignment {
-    return DBProfilePictureAlignmentLeft;
++ (DBProfileAvatarAlignment)defaultAvatarAlignment {
+    return DBProfileAvatarAlignmentLeft;
 }
 
-- (DBProfilePictureSize)defaultProfilePictureSize {
-    return DBProfilePictureSizeNormal;
++ (DBProfileAvatarSize)defaultAvatarSize {
+    return DBProfileAvatarSizeNormal;
 }
 
-- (DBProfileAvatarStyle)defaultAvatarStyle {
++ (DBProfileAvatarStyle)defaultAvatarStyle {
     return DBProfileAvatarStyleRoundedRect;
 }
 
-- (UIEdgeInsets)defaultProfilePictureInsets {
-    return UIEdgeInsetsMake(0, 15, DBProfileViewControllerProfilePictureSizeNormal/2.0 - 15, 0);
++ (UIEdgeInsets)defaultAvatarInsets {
+    return UIEdgeInsetsMake(0, 15, DBProfileViewControllerAvatarSizeNormal/2.0 - 15, 0);
 }
 
-- (CGFloat)defaultPullToRefreshTriggerDistance {
++ (CGFloat)defaultPullToRefreshTriggerDistance {
     return 80.0;
 }
 
-- (BOOL)defaultRememberIndexForSelectedContentController {
++ (BOOL)defaultHidesSegmentedControlForSingleContentController {
     return YES;
 }
 
-- (BOOL)defaultHidesSegmentedControlForSingleContentController {
-    return YES;
-}
-
-- (BOOL)defaultCoverPhotoHidden {
++ (BOOL)defaultCoverPhotoHidden {
     return NO;
 }
 
-- (BOOL)defaultCoverPhotoMimicsNavigationBar {
++ (BOOL)defaultCoverPhotoMimicsNavigationBar {
     return YES;
 }
 
-- (BOOL)defaultAllowsPullToRefresh {
++ (BOOL)defaultAllowsPullToRefresh {
     return YES;
 }
 

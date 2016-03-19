@@ -55,7 +55,7 @@
     self.imageView.clipsToBounds = YES;
     self.imageView.layer.cornerRadius = 6;
     
-    self.style = [[DBProfileViewControllerDefaults sharedDefaults] defaultAvatarStyle];
+    self.style = [DBProfileViewControllerDefaults defaultAvatarStyle];
     self.borderWidth = 3;
     
     //self.overlayImageView.image = [UIImage imageNamed:@"db-profile-camera"];

@@ -13,36 +13,32 @@
 
 @interface DBProfileViewControllerDefaults : NSObject
 
-+ (instancetype)sharedDefaults;
++ (UIColor *)defaultSegmentedControlTintColor;
 
-- (UIColor *)defaultSegmentedControlTintColor;
++ (UIImage *)defaultBackBarButtonItemImageForTraitCollection:(UITraitCollection *)traitCollection;
 
-- (UIImage *)defaultBackBarButtonItemImageForTraitCollection:(UITraitCollection *)traitCollection;
++ (DBProfileCoverPhotoOptions)defaultCoverPhotoOptions;
 
-- (DBProfileCoverPhotoOptions)defaultCoverPhotoOptions;
++ (DBProfileCoverPhotoScrollAnimationStyle)defaultCoverPhotoScrollAnimationStyle;
 
-- (DBProfileCoverPhotoScrollAnimationStyle)defaultCoverPhotoScrollAnimationStyle;
++ (CGFloat)defaultCoverPhotoHeightMultiplier;
 
-- (CGFloat)defaultCoverPhotoHeightMultiplier;
++ (DBProfileAvatarAlignment)defaultAvatarAlignment;
 
-- (DBProfilePictureAlignment)defaultProfilePictureAlignment;
++ (DBProfileAvatarSize)defaultAvatarSize;
 
-- (DBProfilePictureSize)defaultProfilePictureSize;
++ (DBProfileAvatarStyle)defaultAvatarStyle;
 
-- (DBProfileAvatarStyle)defaultAvatarStyle;
++ (UIEdgeInsets)defaultAvatarInsets;
 
-- (UIEdgeInsets)defaultProfilePictureInsets;
++ (CGFloat)defaultPullToRefreshTriggerDistance;
 
-- (CGFloat)defaultPullToRefreshTriggerDistance;
++ (BOOL)defaultHidesSegmentedControlForSingleContentController;
 
-- (BOOL)defaultRememberIndexForSelectedContentController;
++ (BOOL)defaultCoverPhotoHidden;
 
-- (BOOL)defaultHidesSegmentedControlForSingleContentController;
++ (BOOL)defaultCoverPhotoMimicsNavigationBar;
 
-- (BOOL)defaultCoverPhotoHidden;
-
-- (BOOL)defaultCoverPhotoMimicsNavigationBar;
-
-- (BOOL)defaultAllowsPullToRefresh;
++ (BOOL)defaultAllowsPullToRefresh;
 
 @end

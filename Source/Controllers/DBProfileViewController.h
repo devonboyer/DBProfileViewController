@@ -17,20 +17,18 @@
 @class DBProfileViewController;
 @class DBProfileCoverPhotoView;
 @class DBProfileAvatarImageView;
-@class DBProfileSegmentedControlView;
-@class DBProfileNavigationView;
 
 NS_ASSUME_NONNULL_BEGIN
 
 /*!
  @abstract A constant value representing the size of the profile picture when using `DBProfilePictureSizeNormal`.
  */
-extern const CGFloat DBProfileViewControllerProfilePictureSizeNormal;
+extern const CGFloat DBProfileViewControllerAvatarSizeNormal;
 
 /*!
  @abstract A constant value representing the size of the profile picture when using `DBProfilePictureSizeLarge`.
  */
-extern const CGFloat DBProfileViewControllerProfilePictureSizeLarge;
+extern const CGFloat DBProfileViewControllerAvatarSizeLarge;
 
 /*!
  @abstract The `DBProfileCoverPhotoOptions` defines options for changing the behaviour of the cover photo.
@@ -54,40 +52,46 @@ typedef NS_OPTIONS(NSUInteger, DBProfileCoverPhotoOptions) {
  @abstract The `DBProfileCoverPhotoScrollAnimationStyle` defines the animation style for the cover photo while scrolling.
  */
 typedef NS_ENUM(NSInteger, DBProfileCoverPhotoScrollAnimationStyle) {
+    /*!
+     @abstract No animation while scrolling.
+     */
     DBProfileCoverPhotoScrollAnimationStyleNone,
+    /*!
+     @abstract The cover photo is blurred while scrolling.
+     */
     DBProfileCoverPhotoScrollAnimationStyleBlur
 };
 
 /*!
  @abstract The `DBProfilePictureSize` defines the size of the the profile picture.
  */
-typedef NS_ENUM(NSInteger, DBProfilePictureSize) {
+typedef NS_ENUM(NSInteger, DBProfileAvatarSize) {
     /*!
      @abstract Specifys that the profile picture should be the normal size. 
      */
-    DBProfilePictureSizeNormal,
+    DBProfileAvatarSizeNormal,
     /*!
      @abstract Specifys that the profile picture should be large size. 
      */
-    DBProfilePictureSizeLarge,
+    DBProfileAvatarSizeLarge,
 };
 
 /*!
  @abstract The `DBProfilePictureAlignment` defines the alignment of the the profile picture.
  */
-typedef NS_ENUM(NSInteger, DBProfilePictureAlignment) {
+typedef NS_ENUM(NSInteger, DBProfileAvatarAlignment) {
     /*!
      @abstract Specifys that the profile picture should be left aligned. 
      */
-    DBProfilePictureAlignmentLeft,
+    DBProfileAvatarAlignmentLeft,
     /*!
      @abstract Specifys that the profile picture should be right aligned. 
      */
-    DBProfilePictureAlignmentRight,
+    DBProfileAvatarAlignmentRight,
     /*!
      @abstract Specifys that the profile picture should be center aligned. 
      */
-    DBProfilePictureAlignmentCenter,
+    DBProfileAvatarAlignmentCenter,
 };
 
 /*!
@@ -181,8 +185,32 @@ typedef NS_ENUM(NSInteger, DBProfilePictureAlignment) {
  */
 - (void)selectContentControllerAtIndex:(NSInteger)index;
 
+/*!
+ @abstract Selects the cover photo.
+ @param animated YES if setting selecting the cover photo should be animated, NO otherwise.
+ */
+- (void)selectCoverPhotoViewAnimated:(BOOL)animated;
+
+/*!
+ @abstract Deselects the cover photo.
+ @param animated YES if setting deselecting the cover photo should be animated, NO otherwise.
+ */
+- (void)deselectCoverPhotoViewAnimated:(BOOL)animated;
+
+/*!
+ @abstract Selects the avatar.
+ @param animated YES if setting selecting the avatar should be animated, NO otherwise.
+ */
+- (void)selectAvatarImageViewAnimated:(BOOL)animated;
+
+/*!
+ @abstract Deselects the avatar.
+ @param animated YES if setting deselecting the avatar should be animated, NO otherwise.
+ */
+- (void)deselectAvatarImageViewAnimated:(BOOL)animated;
+
 ///---------------------------------------------
-/// @name Configuring Cover Photo
+/// @name Configuring Cover Photo View
 ///---------------------------------------------
 
 /*!
@@ -238,26 +266,26 @@ typedef NS_ENUM(NSInteger, DBProfilePictureAlignment) {
 @property (nonatomic, strong, readonly) DBProfileAvatarImageView *avatarImageView;
 
 /*!
- @abstract Specifies the alignment for the profile picture.
- @discussion The default is `DBProfilePictureAlignmentLeft`.
+ @abstract Specifies the alignment for the avatar.
+ @discussion The default is `DBProfileAvatarAlignmentLeft`.
  */
-@property (nonatomic, assign) DBProfilePictureAlignment profilePictureAlignment;
+@property (nonatomic, assign) DBProfileAvatarAlignment avatarAlignment;
 
 /*!
- @abstract Specifies the size for the profile picture.
- @discussion The default is `DBProfilePictureSizeNormal`.
+ @abstract Specifies the size for the avatar.
+ @discussion The default is `DBProfileAvatarSizeNormal`.
  */
-@property (nonatomic, assign) DBProfilePictureSize profilePictureSize;
+@property (nonatomic, assign) DBProfileAvatarSize avatarSize;
 
 /*!
- @abstract The distance that the profile picture is inset from the alignment.
+ @abstract The distance that the avatar is inset from the `avatarAlignment`.
  */
-@property (nonatomic, assign) UIEdgeInsets profilePictureInset;
+@property (nonatomic, assign) UIEdgeInsets avatarInset;
 
 /*!
- @abstract Sets the profile picture.
- @param profilePicture The image to set as the profile picture.
- @param animated YES if setting the profile picture should be animated, NO otherwise.
+ @abstract Sets the avatar image.
+ @param avatarImage The image to set as the avatar.
+ @param animated YES if setting the avatar image should be animated, NO otherwise.
  */
 - (void)setAvatarImage:(UIImage *)avatarImage animated:(BOOL)animated;
 
@@ -280,21 +308,6 @@ typedef NS_ENUM(NSInteger, DBProfilePictureAlignment) {
  @abstract Hides the pull-to-refresh indicator if it is currently animating.
  */
 - (void)endRefreshing;
-
-@end
-
-///----------------------------------------------
-/// @name Version 1.0.2
-///----------------------------------------------
-
-@interface DBProfileViewController ()
-
-@property (nonatomic, assign) BOOL rememberIndexForSelectedContentController;
-
-- (void)selectCoverPhotoAnimated:(BOOL)animated;
-- (void)deselectCoverPhotoAnimated:(BOOL)animated;
-- (void)selectProfilePictureAnimated:(BOOL)animated;
-- (void)deselectProfilePictureAnimated:(BOOL)animated;
 
 @end
 

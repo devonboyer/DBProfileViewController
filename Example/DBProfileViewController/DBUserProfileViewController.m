@@ -35,8 +35,8 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
     
     // Customize profile appearance
     self.coverPhotoOptions = DBProfileCoverPhotoOptionStretch;
-    self.profilePictureInset = UIEdgeInsetsMake(0, 15, DBProfileViewControllerProfilePictureSizeNormal/2.0 - 10, 0);
-    self.profilePictureView.borderWidth = 4;
+    self.avatarInset = UIEdgeInsetsMake(0, 15, DBProfileViewControllerAvatarSizeNormal/2.0 - 10, 0);
+    self.avatarImageView.borderWidth = 4;
     self.allowsPullToRefresh = YES;
     
     DBProfileDetailsView *detailsView = (DBProfileDetailsView *)self.detailsView;
@@ -45,7 +45,7 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
     detailsView.descriptionLabel.text = @"A customizable library for creating stunning user profiles.";
     [detailsView.editProfileButton addTarget:self action:@selector(editProfile:) forControlEvents:UIControlEventTouchUpInside];
     
-    [self setProfilePicture:[UIImage imageNamed:@"demo-profile-picture"] animated:NO];
+    [self setAvatarImage:[UIImage imageNamed:@"demo-profile-picture"] animated:NO];
     [self setStyle:self.style];
 }
 
@@ -63,19 +63,19 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
             self.automaticallyAdjustsScrollViewInsets = YES;
             self.coverPhotoMimicsNavigationBar = NO;
         case DBUserProfileViewControllerStyle2:
-            self.profilePictureView.style = DBProfilePictureStyleRoundedRect;
-            self.profilePictureSize = DBProfilePictureSizeNormal;
-            self.profilePictureAlignment = DBProfilePictureAlignmentLeft;
-            self.profilePictureView.borderWidth = 4;
+            self.avatarImageView.style = DBProfileAvatarStyleRoundedRect;
+            self.avatarSize = DBProfileAvatarSizeNormal;
+            self.avatarAlignment = DBProfileAvatarAlignmentLeft;
+            self.avatarImageView.borderWidth = 4;
             
             detailsView.contentInset = UIEdgeInsetsMake(70, 15, 15, 15);
             
             [self setCoverPhoto:[UIImage imageNamed:@"header"] animated:NO];
             break;
         case DBUserProfileViewControllerStyle3:
-            self.profilePictureView.style = DBProfilePictureStyleRound;
-            self.profilePictureSize = DBProfilePictureSizeLarge;
-            self.profilePictureAlignment = DBProfilePictureAlignmentCenter;
+            self.avatarImageView.style = DBProfileAvatarStyleRound;
+            self.avatarSize = DBProfileAvatarSizeLarge;
+            self.avatarAlignment = DBProfileAvatarAlignmentCenter;
             
             detailsView.contentInset = UIEdgeInsetsMake(80, 15, 15, 15);
             detailsView.editProfileButton.hidden = YES;
@@ -145,12 +145,12 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
 
 #pragma mark - DBProfileViewControllerDelegate
 
-- (void)profileViewController:(DBProfileViewController *)profileViewController didSelectCoverPhoto:(DBProfileCoverPhotoView *)coverPhotoView {
-    [profileViewController deselectCoverPhotoAnimated:YES];
+- (void)profileViewController:(DBProfileViewController *)profileViewController didSelectCoverPhotoView:(DBProfileCoverPhotoView *)coverPhotoView {
+    [profileViewController deselectCoverPhotoViewAnimated:YES];
 }
 
-- (void)profileViewController:(DBProfileViewController *)profileViewController didSelectProfilePicture:(DBProfilePictureView *)profilePictureView {
-    [profileViewController deselectProfilePictureAnimated:YES];
+- (void)profileViewController:(DBProfileViewController *)profileViewController didSelectAvatarImageView:(DBProfileAvatarImageView *)avatarImageView {
+    [profileViewController deselectAvatarImageViewAnimated:YES];
 }
 
 - (void)profileViewController:(DBProfileViewController *)viewController didSelectContentControllerAtIndex:(NSInteger)index { }

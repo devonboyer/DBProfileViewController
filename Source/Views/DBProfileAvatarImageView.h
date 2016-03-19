@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class DBProfileAvatarImageView;
 
 /*!
- @abstract The `DBProfilePictureStyle` defines the types of styles for the profile picture.
+ @abstract The `DBProfileAvatarStyle` defines the types of styles for the avatar.
  */
 typedef NS_ENUM(NSInteger, DBProfileAvatarStyle) {
     /*!
@@ -48,22 +48,15 @@ typedef NS_ENUM(NSInteger, DBProfileAvatarStyle) {
 @interface DBProfileAvatarImageView : DBProfileSelectableView
 
 /*!
- @abstract Specifies the style.
- @discussion The default is `DBProfilePictureStyleRoundedRect`.
+ @abstract The The object that acts as the view's delegate.
  */
-@property (nonatomic, assign) DBProfileAvatarStyle style;
-
 @property (nonatomic, weak) id<DBProfileAvatarImageViewDelegate> delegate;
 
 /*!
- @abstract The image view that displays the profile picture.
+ @abstract Specifies the style.
+ @discussion The default is `DBProfileAvatarStyleRoundedRect`.
  */
-@property (nonatomic, strong, readonly) UIImageView *imageView;
-
-/*!
- @abstract The image view that overlays the profile picture.
- */
-@property (nonatomic, strong, readonly) UIImageView *overlayImageView;
+@property (nonatomic, assign) DBProfileAvatarStyle style;
 
 /*!
  @abstract The border width for the profile picture.
@@ -74,6 +67,18 @@ typedef NS_ENUM(NSInteger, DBProfileAvatarStyle) {
  @abstract The border color for the profile picture.
  */
 @property (nonatomic, strong) UIColor *borderColor;
+
+/*!
+ @abstract The image view that displays the profile picture.
+ */
+@property (nonatomic, strong, readonly) UIImageView *imageView;
+
+
+
+/*!
+ @abstract The image view that overlays the profile picture.
+ */
+@property (nonatomic, strong, readonly) UIImageView *overlayImageView;
 
 @end
 

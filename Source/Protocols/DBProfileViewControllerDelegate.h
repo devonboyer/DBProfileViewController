@@ -72,14 +72,14 @@ NS_ASSUME_NONNULL_BEGIN
  @param profileViewController The profile view controller where the selection was made.
  @prarm profilePictureView The cover photo view that was selected.
  */
-- (void)profileViewController:(DBProfileViewController *)profileViewController didSelectCoverPhoto:(DBProfileCoverPhotoView *)coverPhotoView;
+- (void)profileViewController:(DBProfileViewController *)profileViewController didSelectCoverPhotoView:(DBProfileCoverPhotoView *)coverPhotoView;
 
 /*!
  @abstract Tells the delegate that the cover photo has been deselected.
  @param profileViewController The profile view controller where the selection was made.
  @prarm profilePictureView The cover photo view that was deselected.
  */
-- (void)profileViewController:(DBProfileViewController *)profileViewController didDeselectCoverPhoto:(DBProfileCoverPhotoView *)coverPhotoView;
+- (void)profileViewController:(DBProfileViewController *)profileViewController didDeselectCoverPhotoView:(DBProfileCoverPhotoView *)coverPhotoView;
 
 /*!
  @abstract Tells the delegate that the user has triggered a pull-to-refresh.
@@ -107,14 +107,14 @@ NS_ASSUME_NONNULL_BEGIN
  @param profileViewController The profile view controller that highlighted the cover photo.
  @prarm coverPhotoView The cover photo view that was highlighted.
  */
-- (void)profileViewController:(DBProfileViewController *)profileViewController didHighlightCoverPhoto:(DBProfileCoverPhotoView *)coverPhotoView;
+- (void)profileViewController:(DBProfileViewController *)profileViewController didHighlightCoverPhotoView:(DBProfileCoverPhotoView *)coverPhotoView;
 
 /*!
  @abstract Tells the delegate that the cover photo was unhighlighted.
  @param profileViewController The profile view controller that unhighlighted the cover photo.
  @prarm coverPhotoView The cover photo view that was unhighlighted.
  */
-- (void)profileViewController:(DBProfileViewController *)profileViewController didUnhighlightCoverPhoto:(DBProfileCoverPhotoView *)coverPhotoView;
+- (void)profileViewController:(DBProfileViewController *)profileViewController didUnhighlightCoverPhotoView:(DBProfileCoverPhotoView *)coverPhotoView;
 
 @end
 
