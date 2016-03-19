@@ -8,16 +8,34 @@
 //  Released under an MIT license: http://opensource.org/licenses/MIT
 //
 
-#import <UIKit/UIKit.h>
+#import "DBProfileSelectableView.h"
+
+NS_ASSUME_NONNULL_BEGIN
+
+@class DBProfileCoverPhotoView;
+
+@protocol DBProfileCoverPhotoViewDelegate <NSObject>
+
+- (void)didSelectCoverPhotoView:(DBProfileCoverPhotoView *)coverPhotoView;
+- (void)didDeselectCoverPhotoView:(DBProfileCoverPhotoView *)coverPhotoView;
+- (void)didHighlightCoverPhotoView:(DBProfileCoverPhotoView *)coverPhotoView;
+- (void)didUnhighlightCoverPhotoView:(DBProfileCoverPhotoView *)coverPhotoView;
+
+@end
 
 /*!
  @class DBProfileCoverPhotoView
  @abstract The `DBProfileCoverPhotoView` class displays a cover photo.
  */
-@interface DBProfileCoverPhotoView : UIView
+@interface DBProfileCoverPhotoView : DBProfileSelectableView
 
 /*!
- @abstract The image view that displays the cover photo.
+ @abstract The The object that acts as the view's delegate.
+ */
+@property (nonatomic, weak) id<DBProfileCoverPhotoViewDelegate> delegate;
+
+/*!
+ @abstract The image view that displays the cover photo image.
  */
 @property (nonatomic, strong, readonly) UIImageView *imageView;
 
@@ -27,3 +45,5 @@
 @property (nonatomic, strong, readonly) UIView *overlayView;
 
 @end
+
+NS_ASSUME_NONNULL_END

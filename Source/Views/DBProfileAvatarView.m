@@ -1,5 +1,5 @@
 //
-//  DBProfilePictureView.m
+//  DBProfileAvatarView.m
 //  DBProfileViewController
 //
 //  Created by Devon Boyer on 2016-01-08.
@@ -8,15 +8,16 @@
 //  Released under an MIT license: http://opensource.org/licenses/MIT
 //
 
-#import "DBProfilePictureView.h"
+#import "DBProfileAvatarView.h"
+#import "DBProfileViewControllerDefaults.h"
 
-@interface DBProfilePictureView ()
+@interface DBProfileAvatarView ()
 
 @property (nonatomic, strong) NSLayoutConstraint *imageViewWidthConstraint;
 
 @end
 
-@implementation DBProfilePictureView
+@implementation DBProfileAvatarView
 
 #pragma mark - Initialization
 
@@ -31,12 +32,47 @@
 - (void)db_commonInit {
     _imageView = [[UIImageView alloc] init];
     
-    [self.imageView setTranslatesAutoresizingMaskIntoConstraints:NO];
+    self.imageView.translatesAutoresizingMaskIntoConstraints = NO;
     
     [self addSubview:self.imageView];
-    
+
     [self configureImageViewLayoutConstraints];
     [self configureDefaults];
+}
+
+- (void)configureDefaults {
+    self.userInteractionEnabled = YES;
+    
+    self.backgroundColor = [UIColor whiteColor];
+    self.layer.cornerRadius = 8;
+    self.clipsToBounds = YES;
+    
+    self.imageView.contentMode = UIViewContentModeScaleAspectFill;
+    self.imageView.clipsToBounds = YES;
+    self.imageView.layer.cornerRadius = 6;
+    
+    self.style = [DBProfileViewControllerDefaults defaultAvatarStyle];
+    self.borderWidth = 3;
+}
+
+- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
+    [super setSelected:selected animated:animated];
+    
+    if (selected && [self.delegate respondsToSelector:@selector(didSelectAvatarView:)]) {
+        [self.delegate didSelectAvatarView:self];
+    } else if (!selected && [self.delegate respondsToSelector:@selector(didDeselectAvatarView:)]) {
+        [self.delegate didDeselectAvatarView:self];
+    }
+}
+
+- (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated {
+    [super setHighlighted:highlighted animated:animated];
+    
+    if (highlighted && [self.delegate respondsToSelector:@selector(didHighlightAvatarView:)]) {
+        [self.delegate didHighlightAvatarView:self];
+    } else if (!highlighted && [self.delegate respondsToSelector:@selector(didUnhighlightAvatarView:)]) {
+        [self.delegate didUnhighlightAvatarView:self];
+    }
 }
 
 #pragma - Overrides
@@ -48,7 +84,7 @@
 
 #pragma mark - Setters
 
-- (void)setStyle:(DBProfilePictureStyle)style {
+- (void)setStyle:(DBProfileAvatarStyle)style {
     _style = style;
     [self layoutSubviews];
 }
@@ -63,15 +99,16 @@
     
     self.hidden = NO;
     switch (self.style) {
-        case DBProfilePictureStyleRound:
+        case DBProfileAvatarStyleRound:
             self.layer.cornerRadius = CGRectGetWidth(self.bounds) / 2;
             self.imageView.layer.cornerRadius = CGRectGetWidth(self.imageView.frame) / 2;
             break;
-        case DBProfilePictureStyleRoundedRect:
-            self.layer.cornerRadius = 8;
-            self.imageView.layer.cornerRadius = 6;
+        case DBProfileAvatarStyleRoundedRect:
+            // FIXME: Corner radius should depend on border width
+            self.layer.cornerRadius = 6;
+            self.imageView.layer.cornerRadius = 4;
             break;
-        case DBProfilePictureStyleNone:
+        case DBProfileAvatarStyleNone:
             self.hidden = YES;
             break;
         default:
@@ -82,21 +119,6 @@
 - (void)setBorderWidth:(CGFloat)borderWidth {
     _borderWidth = borderWidth;
     [self updateConstraints];
-}
-
-#pragma mark - Helpers
-
-- (void)configureDefaults {
-    self.backgroundColor = [UIColor whiteColor];
-    self.layer.cornerRadius = 8;
-    self.clipsToBounds = YES;
-    
-    self.imageView.contentMode = UIViewContentModeScaleAspectFill;
-    self.imageView.clipsToBounds = YES;
-    self.imageView.layer.cornerRadius = 6;
-    
-    self.style = DBProfilePictureStyleRoundedRect;
-    self.borderWidth = 4;
 }
 
 #pragma mark - Auto Layout

@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = "DBProfileViewController"
-  s.version          = "1.0.1"
+  s.version          = "1.0.2"
   s.summary          = "A customizable library for creating stunning user profiles."
   s.homepage         = "https://github.com/devonboyer/DBProfileViewController"
   s.license          = 'MIT'
@@ -18,5 +18,5 @@ Pod::Spec.new do |s|
 
   s.public_header_files = 'Source/**/*.h'
   s.frameworks = 'UIKit'
-  s.dependency 'UIImageEffects', '~> 0.0.1'
+  s.dependency 'FXBlurView', '~> 1.6.4'
 end

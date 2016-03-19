@@ -10,9 +10,10 @@
 
 #import "DBProfileBlurImageOperation.h"
 #import "DBProfileImageEffects.h"
+#import <FXBlurView/FXBlurView.h>
 
-const NSInteger DBProfileBlurImageOperationNumberOfBlurredImages = 20;
-const CGFloat DBProfileBlurImageOperationMaxBlurRadius = 30.0;
+const NSInteger DBProfileBlurImageOperationNumberOfBlurredImages = 30;
+const CGFloat DBProfileBlurImageOperationMaxBlurRadius = 20.0;
 
 @interface DBProfileBlurImageOperation ()
 
@@ -35,7 +36,7 @@ const CGFloat DBProfileBlurImageOperationMaxBlurRadius = 30.0;
     NSMutableDictionary *blurredImages = [[NSMutableDictionary alloc] init];
     for (int i = 0; i <= DBProfileBlurImageOperationNumberOfBlurredImages; i++) {
         CGFloat radius = DBProfileBlurImageOperationMaxBlurRadius * i/DBProfileBlurImageOperationNumberOfBlurredImages;
-        [blurredImages setObject:[DBProfileImageEffects imageByApplyingBlurToImage:self.imageToBlur withRadius:radius] forKey:[@(i) stringValue]];
+        [blurredImages setObject:[self.imageToBlur blurredImageWithRadius:radius iterations:10 tintColor:[UIColor clearColor]] forKey:[@(i) stringValue]];
     }
     
     dispatch_async(dispatch_get_main_queue(), ^{

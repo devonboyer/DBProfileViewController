@@ -41,7 +41,12 @@
 @end
 
 @interface DBProfileCoverPhotoView ()
+
 @property (nonatomic, strong) UIView *overlayView;
+
+@property (nonatomic, strong) NSDictionary *blurredImages;
+@property (nonatomic, strong) NSOperationQueue *operationQueue;
+
 @end
 
 @implementation DBProfileCoverPhotoView
@@ -64,12 +69,12 @@
     
     self.overlayView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.overlayView.frame = self.imageView.frame;
-    [self.imageView addSubview:self.overlayView];
     
-    [self.imageView setTranslatesAutoresizingMaskIntoConstraints:NO];
+    self.imageView.translatesAutoresizingMaskIntoConstraints = NO;
 
     [self addSubview:self.imageView];
-    
+    [self.imageView addSubview:self.overlayView];
+
     [self configureImageViewLayoutConstraints];
     [self configureDefaults];
 }
@@ -77,11 +82,33 @@
 #pragma mark - Helpers
 
 - (void)configureDefaults {
+    self.userInteractionEnabled = YES;
+    
     self.backgroundColor = [UIColor whiteColor];
     self.clipsToBounds = YES;
     
     self.imageView.contentMode = UIViewContentModeScaleAspectFill;
     self.imageView.clipsToBounds = YES;
+}
+
+- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
+    [super setSelected:selected animated:animated];
+    
+    if (selected && [self.delegate respondsToSelector:@selector(didSelectCoverPhotoView:)]) {
+        [self.delegate didSelectCoverPhotoView:self];
+    } else if (!selected && [self.delegate respondsToSelector:@selector(didDeselectCoverPhotoView:)]) {
+        [self.delegate didDeselectCoverPhotoView:self];
+    }
+}
+
+- (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated {
+    [super setHighlighted:highlighted animated:animated];
+    
+    if (highlighted && [self.delegate respondsToSelector:@selector(didHighlightCoverPhotoView:)]) {
+        [self.delegate didHighlightCoverPhotoView:self];
+    } else if (!highlighted && [self.delegate respondsToSelector:@selector(didUnhighlightCoverPhotoView:)]) {
+        [self.delegate didUnhighlightCoverPhotoView:self];
+    }
 }
 
 #pragma mark - Auto Layout

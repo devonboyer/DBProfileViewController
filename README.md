@@ -28,20 +28,25 @@ The table below details the most important classes and is hyperlinked directly t
     <tr><th colspan="2" style="text-align:center;">Protocols</th></tr>
     <tr>
         <td><a href="Source/Protocols/DBProfileContentPresenting.h">DBProfileContentPresenting</a></td>
-        <td>A protocol that is adopted by classes that are to be displayed as content view controllers of a <a       href="Source/Controllers/DBProfileViewController.h">DBProfileViewController</a>.</td>
+        <td>A protocol that is adopted by classes that are to be displayed as content controllers of a <a       href="Source/Controllers/DBProfileViewController.h">DBProfileViewController</a>.</td>
     </tr>
     <tr><th colspan="2" style="text-align:center;">Views</th></tr>
     <tr>
         <td><a href="Source/Views/DBProfileCoverPhotoView.h">DBProfileCoverPhotoView</a></td>
-        <td>A configurable view that displays a cover photo.</td>
+        <td>A configurable view that displays a cover photo image.</td>
     </tr>
     <tr>
+<<<<<<< HEAD
         <td><a href="Source/Views/DBProfilePictureView.h">DBProfilePictureView</a></td>
         <td>A configurable view that displays a profile picture.</td>
     </tr>
     <tr>
         <td><a href="Source/Views/DBProfileSegmentedControlView.h">DBProfileSegmentedControlView</a></td>
         <td>A configurable view that displays a segmented control.</td>
+=======
+        <td><a href="Source/Views/DBProfileAvatarView.h">DBProfileAvatarView</a></td>
+        <td>A configurable view that displays an avatar image.</td>
+>>>>>>> devel
     </tr>
 </table>
 

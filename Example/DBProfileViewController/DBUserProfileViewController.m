@@ -35,17 +35,20 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
     
     // Customize profile appearance
     self.coverPhotoOptions = DBProfileCoverPhotoOptionStretch;
-    self.profilePictureInset = UIEdgeInsetsMake(0, 15, DBProfileViewControllerProfilePictureSizeNormal/2.0 - 10, 0);
-    self.profilePictureView.borderWidth = 4;
+    self.avatarInset = UIEdgeInsetsMake(0, 15, DBProfileViewControllerAvatarSizeNormal/2.0 - 10, 0);
+    self.avatarView.borderWidth = 4;
     self.allowsPullToRefresh = YES;
     
+    // Customize details view
     DBProfileDetailsView *detailsView = (DBProfileDetailsView *)self.detailsView;
     detailsView.nameLabel.text = @"DBProfileViewController";
     detailsView.usernameLabel.text = @"by @devboyer";
     detailsView.descriptionLabel.text = @"A customizable library for creating stunning user profiles.";
-    [detailsView.editProfileButton addTarget:self action:@selector(editProfile:) forControlEvents:UIControlEventTouchUpInside];
+    detailsView.contentInset = UIEdgeInsetsMake(60, 15, 15, 15);
     
-    [self setProfilePicture:[UIImage imageNamed:@"demo-profile-picture"] animated:NO];
+    // Set cover photo and avatar images
+    [self setAvatarImage:[UIImage imageNamed:@"demo-avatar"] animated:NO];
+    [self setCoverPhotoImage:[UIImage imageNamed:@"demo-header"] animated:NO];
     [self setStyle:self.style];
 }
 
@@ -59,39 +62,28 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
     
     switch (style) {
         case DBUserProfileViewControllerStyle1:
+            self.coverPhotoScrollAnimationStyle = DBProfileCoverPhotoScrollAnimationStyleNone;
             self.automaticallyAdjustsScrollViewInsets = YES;
             self.coverPhotoMimicsNavigationBar = NO;
         case DBUserProfileViewControllerStyle2:
-            self.profilePictureView.style = DBProfilePictureStyleRoundedRect;
-            self.profilePictureSize = DBProfilePictureSizeNormal;
-            self.profilePictureAlignment = DBProfilePictureAlignmentLeft;
-            self.profilePictureView.borderWidth = 4;
-            
-            detailsView.contentInset = UIEdgeInsetsMake(70, 15, 15, 15);
-            
-            [self setCoverPhoto:[UIImage imageNamed:@"demo-cover-photo-1"] animated:NO];
+            self.avatarView.style = DBProfileAvatarStyleRoundedRect;
+            self.avatarSize = DBProfileAvatarSizeNormal;
+            self.avatarAlignment = DBProfileAvatarAlignmentLeft;
+            self.avatarView.borderWidth = 4;
             break;
         case DBUserProfileViewControllerStyle3:
-            self.profilePictureView.style = DBProfilePictureStyleRound;
-            self.profilePictureSize = DBProfilePictureSizeLarge;
-            self.profilePictureAlignment = DBProfilePictureAlignmentCenter;
+            self.avatarView.style = DBProfileAvatarStyleRound;
+            self.avatarSize = DBProfileAvatarSizeLarge;
+            self.avatarAlignment = DBProfileAvatarAlignmentCenter;
             
-            detailsView.contentInset = UIEdgeInsetsMake(80, 15, 15, 15);
-            detailsView.editProfileButton.hidden = YES;
             detailsView.nameLabel.textAlignment = NSTextAlignmentCenter;
             detailsView.usernameLabel.textAlignment = NSTextAlignmentCenter;
             detailsView.descriptionLabel.textAlignment = NSTextAlignmentCenter;
-            
-            [self setCoverPhoto:[UIImage imageNamed:@"demo-cover-photo-2"] animated:NO];
             break;
         default:
             break;
     }
 }
-
-#pragma mark - Actions
-
-- (void)editProfile:(id)sender { }
 
 #pragma mark - DBProfileViewControllerDataSource
 
@@ -105,9 +97,9 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
         case DBUserProfileContentControllerIndexFollowers:
             return [[DBFollowersTableViewController alloc] init];
         case DBUserProfileContentControllerIndexPhotos:
-            return [[DBPhotosTableViewController alloc] init];;
+            return [[DBPhotosTableViewController alloc] init];
         case DBUserProfileContentControllerIndexLikes:
-            return [[DBLikesTableViewController alloc] init];;
+            return [[DBLikesTableViewController alloc] init];
         default:
             break;
     }
@@ -144,11 +136,15 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
 
 #pragma mark - DBProfileViewControllerDelegate
 
+- (void)profileViewController:(DBProfileViewController *)profileViewController didSelectCoverPhotoView:(DBProfileCoverPhotoView *)coverPhotoView {
+    [profileViewController deselectCoverPhotoViewAnimated:YES];
+}
+
+- (void)profileViewController:(DBProfileViewController *)profileViewController didSelectAvatarView:(DBProfileAvatarView *)avatarView {
+    [profileViewController deselectAvatarViewAnimated:YES];
+}
+
 - (void)profileViewController:(DBProfileViewController *)viewController didSelectContentControllerAtIndex:(NSInteger)index { }
-
-- (void)profileViewController:(DBProfileViewController *)viewController didSelectCoverPhoto:(UIImageView *)imageView { }
-
-- (void)profileViewController:(DBProfileViewController *)viewController didSelectProfilePicture:(UIImageView *)imageView { }
 
 - (void)profileViewController:(DBProfileViewController *)viewController didPullToRefreshContentControllerAtIndex:(NSInteger)index {
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
