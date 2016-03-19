@@ -12,7 +12,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class DBProfileAvatarImageView;
+@class DBProfileAvatarView;
 
 /*!
  @abstract The `DBProfileAvatarStyle` defines the types of styles for the avatar.
@@ -34,10 +34,10 @@ typedef NS_ENUM(NSInteger, DBProfileAvatarStyle) {
 
 @protocol DBProfileAvatarViewDelegate <NSObject>
 
-- (void)didSelectAvatarView:(DBProfileAvatarImageView *)avatarView;
-- (void)didDeselectAvatarView:(DBProfileAvatarImageView *)avatarView;
-- (void)didHighlightAvatarView:(DBProfileAvatarImageView *)avatarView;
-- (void)didUnhighlightAvatarView:(DBProfileAvatarImageView *)avatarView;
+- (void)didSelectAvatarView:(DBProfileAvatarView *)avatarView;
+- (void)didDeselectAvatarView:(DBProfileAvatarView *)avatarView;
+- (void)didHighlightAvatarView:(DBProfileAvatarView *)avatarView;
+- (void)didUnhighlightAvatarView:(DBProfileAvatarView *)avatarView;
 
 @end
 

@@ -281,7 +281,7 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
 - (void)setSegmentedControlClass:(Class)segmentedControlClass {
     _segmentedControlClass = segmentedControlClass;
     
-    UIControl *segmentedControl = [[segmentedControlClass alloc] init];
+    UISegmentedControl *segmentedControl = [[segmentedControlClass alloc] init];
     self.segmentedControlView.segmentedControl = segmentedControl;
 }
 
@@ -377,7 +377,7 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     }
     
     // Inform delegate that the chosen content controller is now selected
-    if ([self.delegate respondsToSelector:@selector(profileViewController:DidSelectContentControllerAtIndex:)]) {
+    if ([self.delegate respondsToSelector:@selector(profileViewController:didSelectContentControllerAtIndex:)]) {
         [self.delegate profileViewController:self didSelectContentControllerAtIndex:selectedSegmentIndex];
     }
 }
@@ -597,7 +597,7 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     }
 }
 
-- (void)didSelectAvatarView:(DBProfileAvatarImageView *)avatarView {
+- (void)didSelectAvatarView:(DBProfileAvatarView *)avatarView {
     // Inform delegate that the profile picture was selected
     if ([self.delegate respondsToSelector:@selector(profileViewController:didSelectAvatarView:)]) {
         [self.delegate profileViewController:self didSelectAvatarView:avatarView];
@@ -606,14 +606,14 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     if (self.coverPhotoView.isSelected) [self.coverPhotoView setSelected:NO animated:YES];
 }
 
-- (void)didDeselectAvatarView:(DBProfileAvatarImageView *)avatarView {
+- (void)didDeselectAvatarView:(DBProfileAvatarView *)avatarView {
     // Inform delegate that the profile picture was deselected
     if ([self.delegate respondsToSelector:@selector(profileViewController:didDeselectAvatarView:)]) {
         [self.delegate profileViewController:self didDeselectAvatarView:avatarView];
     }
 }
 
-- (void)didHighlightAvatarView:(DBProfileAvatarImageView *)avatarView {
+- (void)didHighlightAvatarView:(DBProfileAvatarView *)avatarView {
     // Inform delegate that the profile picture was highlighted
     if ([self.delegate respondsToSelector:@selector(profileViewController:didHighlightAvatarView:)]) {
         [self.delegate profileViewController:self didHighlightAvatarView:avatarView];
@@ -622,7 +622,7 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     if (self.coverPhotoView.isSelected) [self.coverPhotoView setSelected:NO animated:YES];
 }
 
-- (void)didUnhighlightAvatarView:(DBProfileAvatarImageView *)avatarView {
+- (void)didUnhighlightAvatarView:(DBProfileAvatarView *)avatarView {
     // Inform delegate that the profile picture was unhighlighted
     if ([self.delegate respondsToSelector:@selector(profileViewController:didUnhighlightAvatarView:)]) {
         [self.delegate profileViewController:self didUnhighlightAvatarView:avatarView];
@@ -711,8 +711,6 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     self.activityIndicator.translatesAutoresizingMaskIntoConstraints = NO;
     
     [scrollView addSubview:self.detailsView];
-    
-    NSInteger numberOfSegments = [self numberOfContentControllers];
     
     // Segmented control ?
     if ([self.contentControllers count] > 1 || !self.hidesSegmentedControlForSingleContentController) {

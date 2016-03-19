@@ -10,8 +10,6 @@
 
 #import "DBProfileImageEffects.h"
 
-#import <UIImageEffects/UIImage+ImageEffects.h>
-
 @interface DBProfileImageEffects ()
 
 @end
