@@ -12,26 +12,28 @@
 
 * Renamed `selectContentViewControllerAtIndex:` to `selectContentControllerAtIndex:`
 * Changed `profileViewController:subtitleForContentControllerAtIndex:` to now be optional
-* Renamed `DBProfilePictureView` class to `DBProfileAvatarImageView`
-* Renamed `profilePictureView` property to `avatarImageView`
-
-* Renamed `profileViewController:didSelectProfilePicture:` to `profileViewController:didSelectAvatarImageView:`
+* Renamed `DBProfilePictureView` class to `DBProfileAvatarView`
+* Renamed `profilePictureView` property to `avatarView`
+* Renamed `profileViewController:didSelectProfilePicture:` to `profileViewController:didSelectAvatarView:` in `DBProfileViewControllerDelegate`
+* Renamed `profileViewController:didSelectCoverPhoto:` to `profileViewController:didSelectCoverPhotoView:` in `DBProfileViewControllerDelegate`
+* Renamed `setProfilePicture:animated:` to `setAvatarImage:animated:`
+* Renamed `setCoverPhoto:animated:` to `setCoverPhotoImage:animated:`
 
 ### Added
 
 * Added `profileViewController:willSelectContentControllerAtIndex:` to `DBProfileViewControllerDelegate`
 * Added `profileViewController:willDeselectContentControllerAtIndex:` to `DBProfileViewControllerDelegate`
 * Added `profileViewController:didDeselectContentControllerAtIndex:` to `DBProfileViewControllerDelegate`
-* Added `profileViewController:didDeselectCoverPhoto:` to `DBProfileViewControllerDelegate`
-* Added `profileViewController:didHighlightCoverPhoto:` to `DBProfileViewControllerDelegate`
-* Added `profileViewController:didUnhighlightCoverPhoto:` to `DBProfileViewControllerDelegate`
-* Added `profileViewController:didHighlightAvatarImageView:` to `DBProfileViewControllerDelegate`
-* Added `profileViewController:didDeselectAvatarImageView:` to `DBProfileViewControllerDelegate`
-* Added `profileViewController:didUnhighlightAvatarImageView:` to `DBProfileViewControllerDelegate`
-* Added `selectCoverPhotoAnimated:`
-* Added `deselectCoverPhotoAnimated:`
-* Added `selectAvatarImageViewAnimated:`
-* Added `deselectAvatarImageViewAnimated:`
+* Added `profileViewController:didDeselectCoverPhotoView:` to `DBProfileViewControllerDelegate`
+* Added `profileViewController:didHighlightCoverPhotoView:` to `DBProfileViewControllerDelegate`
+* Added `profileViewController:didUnhighlightCoverPhotoView:` to `DBProfileViewControllerDelegate`
+* Added `profileViewController:didHighlightAvatarView:` to `DBProfileViewControllerDelegate`
+* Added `profileViewController:didDeselectAvatarView:` to `DBProfileViewControllerDelegate`
+* Added `profileViewController:didUnhighlightAvatarView:` to `DBProfileViewControllerDelegate`
+* Added `selectCoverPhotoViewAnimated:`
+* Added `deselectCoverPhotoViewAnimated:`
+* Added `selectAvatarViewAnimated:`
+* Added `deselectAvatarViewAnimated:`
 * Added `coverPhotoScrollAnimationStyle` property
 
 ## 1.0.1
