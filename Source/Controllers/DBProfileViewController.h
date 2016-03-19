@@ -56,6 +56,14 @@ typedef NS_OPTIONS(NSUInteger, DBProfileCoverPhotoOptions) {
 };
 
 /*!
+ @abstract The `DBProfileCoverPhotoScrollAnimationStyle` defines the animation style for the cover photo while scrolling.
+ */
+typedef NS_ENUM(NSInteger, DBProfileCoverPhotoScrollAnimationStyle) {
+    DBProfileCoverPhotoScrollAnimationStyleNone,
+    DBProfileCoverPhotoScrollAnimationStyleBlur
+};
+
+/*!
  @abstract The `DBProfilePictureSize` defines the size of the the profile picture.
  */
 typedef NS_ENUM(NSInteger, DBProfilePictureSize) {
@@ -211,6 +219,12 @@ typedef NS_ENUM(NSInteger, DBProfilePictureAlignment) {
 @property (nonatomic, assign) DBProfileCoverPhotoOptions coverPhotoOptions;
 
 /*!
+ @abstract The animation style for the cover photo while scrolling.
+ @discussion The default is `DBProfileCoverPhotoScrollAnimationStyleBlur`.
+ */
+@property (nonatomic, assign) DBProfileCoverPhotoScrollAnimationStyle coverPhotoScrollAnimationStyle;
+
+/*!
  @abstract YES if the cover photo should mimic a navigation bar when the view is scrolled, NO otherwise.
  @discussion The default is YES. When this property is set to YES you should set `automaticallyAdjustsScrollViewInsets` to NO, otherwise set `automaticallyAdjustsScrollViewInsets` to YES.
  */
@@ -226,7 +240,7 @@ typedef NS_ENUM(NSInteger, DBProfilePictureAlignment) {
  @param coverPhoto The image to set as the cover photo.
  @param animated YES if setting the cover photo should be animated, NO otherwise.
  */
-- (void)setCoverPhoto:(UIImage *)coverPhoto animated:(BOOL)animated;
+- (void)setCoverPhoto:(UIImage *)coverPhotoImage animated:(BOOL)animated;
 
 ///---------------------------------------------
 /// @name Configuring Profile Picture
@@ -264,7 +278,7 @@ typedef NS_ENUM(NSInteger, DBProfilePictureAlignment) {
  @param profilePicture The image to set as the profile picture.
  @param animated YES if setting the profile picture should be animated, NO otherwise.
  */
-- (void)setProfilePicture:(UIImage *)profilePicture animated:(BOOL)animated;
+- (void)setProfilePicture:(UIImage *)profilePictureImage animated:(BOOL)animated;
 
 ///----------------------------------------------
 /// @name Configuring Pull-To-Refresh
@@ -292,14 +306,8 @@ typedef NS_ENUM(NSInteger, DBProfilePictureAlignment) {
 /// @name Version 1.0.2
 ///----------------------------------------------
 
-typedef NS_ENUM(NSInteger, DBProfileCoverPhotoScrollAnimationStyle) {
-    DBProfileCoverPhotoScrollAnimationStyleNone,
-    DBProfileCoverPhotoScrollAnimationStyleBlur
-};
-
 @interface DBProfileViewController ()
 
-@property (nonatomic, assign) DBProfileCoverPhotoScrollAnimationStyle coverPhotoScrollAnimationStyle;
 @property (nonatomic, assign) BOOL rememberIndexForSelectedContentController;
 
 - (void)selectCoverPhotoAnimated:(BOOL)animated;

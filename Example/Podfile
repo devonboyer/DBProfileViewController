@@ -6,7 +6,7 @@ inhibit_all_warnings!
 
 target 'DBProfileViewController_Example', :exclusive => true do
   pod "DBProfileViewController", :path => "../"
-  pod "UIImageEffects"
+  pod "FXBlurView", "~> 1.6.4"
 end
 
 target 'DBProfileViewController_Tests', :exclusive => true do

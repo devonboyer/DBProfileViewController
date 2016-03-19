@@ -442,15 +442,18 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     [self setIndexForSelectedContentController:self.indexForSelectedContentController];
 }
 
-- (void)setCoverPhoto:(UIImage *)coverPhoto animated:(BOOL)animated {
-    if (!coverPhoto) return;
+- (void)setCoverPhoto:(UIImage *)coverPhotoImage animated:(BOOL)animated {
+    if (!coverPhotoImage) return;
+    
+    //[self.coverPhotoView setHeaderImage:coverPhotoImage animated:animated];
     
     __weak DBProfileViewController *weakSelf = self;
     
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         
-        UIImage *croppedImage = [DBProfileImageEffects imageByCroppingImage:coverPhoto
-                                                                   withSize:CGSizeMake(CGRectGetWidth(self.view.frame), CGRectGetHeight(self.view.frame) *self.coverPhotoHeightMultiplier)];
+        UIImage *croppedImage = [DBProfileImageEffects imageWithImage:coverPhotoImage
+                                                         scaledToSize:CGSizeMake(CGRectGetWidth(self.view.frame), CGRectGetHeight(self.view.frame) *self.coverPhotoHeightMultiplier)];
+                
         dispatch_async( dispatch_get_main_queue(), ^{
             
             weakSelf.coverPhotoView.imageView.image = croppedImage;
@@ -472,10 +475,10 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     });
 }
 
-- (void)setProfilePicture:(UIImage *)profilePicture animated:(BOOL)animated {
-    if (!profilePicture) return;
+- (void)setProfilePicture:(UIImage *)profilePictureImage animated:(BOOL)animated {
+    if (!profilePictureImage) return;
 
-    self.profilePictureView.imageView.image = profilePicture;
+    self.profilePictureView.imageView.image = profilePictureImage;
     
     if (animated) {
         self.profilePictureView.imageView.alpha = 0;

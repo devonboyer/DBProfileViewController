@@ -18,5 +18,5 @@ Pod::Spec.new do |s|
 
   s.public_header_files = 'Source/**/*.h'
   s.frameworks = 'UIKit'
-  s.dependency 'UIImageEffects', '~> 0.0.1'
+  s.dependency 'FXBlurView', '~> 1.6.4'
 end

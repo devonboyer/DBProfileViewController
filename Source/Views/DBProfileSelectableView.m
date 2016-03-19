@@ -49,9 +49,12 @@
         case UIGestureRecognizerStateBegan:
             [self setHighlighted:YES animated:YES];
             break;
-        default:
+        case UIGestureRecognizerStateCancelled:
+        case UIGestureRecognizerStateEnded:
             self.highlighted = NO;
             self.selected = !self.isSelected;
+            break;
+        default:
             break;
     }
 }

@@ -12,9 +12,8 @@
 
 @interface DBProfileImageEffects : NSObject
 
-+ (UIImage *)imageByApplyingBlurToImage:(UIImage *)image withRadius:(CGFloat)radius;
++ (UIImage *)imageWithImage:(UIImage *)image scaledToSize:(CGSize)newSize;
 
-// http://www.samwirch.com/blog/cropping-and-resizing-images-camera-ios-and-objective-c
-+ (UIImage *)imageByCroppingImage:(UIImage *)image withSize:(CGSize)newSize;
++ (UIImage *)imageWithImage:(UIImage *)image scaledToMaxWidth:(CGFloat)width maxHeight:(CGFloat)height;
 
 @end

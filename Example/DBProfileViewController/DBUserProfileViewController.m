@@ -19,7 +19,7 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
     DBUserProfileContentControllerIndexLikes
 };
 
-@interface DBUserProfileViewController () <DBProfileViewControllerDelegate, DBProfileViewControllerDataSource, DBEditProfileContentControllerDataSource>
+@interface DBUserProfileViewController () <DBProfileViewControllerDelegate, DBProfileViewControllerDataSource>
 
 @end
 
@@ -70,7 +70,7 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
             
             detailsView.contentInset = UIEdgeInsetsMake(70, 15, 15, 15);
             
-            [self setCoverPhoto:[UIImage imageNamed:@"demo-cover-photo-2"] animated:NO];
+            [self setCoverPhoto:[UIImage imageNamed:@"header"] animated:NO];
             break;
         case DBUserProfileViewControllerStyle3:
             self.profilePictureView.style = DBProfilePictureStyleRound;
@@ -83,7 +83,7 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
             detailsView.usernameLabel.textAlignment = NSTextAlignmentCenter;
             detailsView.descriptionLabel.textAlignment = NSTextAlignmentCenter;
             
-            [self setCoverPhoto:[UIImage imageNamed:@"demo-cover-photo-2"] animated:NO];
+            [self setCoverPhoto:[UIImage imageNamed:@"header"] animated:NO];
             break;
         default:
             break;
@@ -92,42 +92,7 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
 
 #pragma mark - Actions
 
-- (void)editProfile:(id)sender {
-    DBEditProfileViewController *editProfileVC = [[DBEditProfileViewController alloc] init];
-    editProfileVC.contentController.dataSource = self;
-    [self presentViewController:[[UINavigationController alloc] initWithRootViewController:editProfileVC] animated:YES completion:nil];
-}
-
-#pragma mark - DBEditProfileContentControllerDataSource
-
-- (NSUInteger)numberOfSectionsForEditProfileContentController:(DBEditProfileContentController *)editProfileContentController {
-    return 1;
-}
-
-- (NSInteger)editProfileContentController:(DBEditProfileContentController *)editProfileContentController numberOfItemsInSection:(NSInteger)section {
-    return 5;
-}
-
-- (DBProfileItem *)editProfileContentController:(DBEditProfileContentController *)editProfileContentController itemAtIndexPath:(NSIndexPath *)indexPath {
-    
-    switch (indexPath.row) {
-        case 0:
-            return [[DBProfileItem alloc] initWithTitle:@"Name" value:@"Devon Boyer"];
-        case 1: {
-            DBProfileItem *item = [[DBProfileItem alloc] initWithTitle:@"Bio" value:@"CS @UWaterloo, iOS developer with a passion for mobile computing and #uidesign."];
-            item.maxNumberOfLines = 5;
-            return item;
-        }
-        case 2:
-            return [[DBProfileItem alloc] initWithTitle:@"Location" value:@"Waterloo, Ontario"];
-        case 3:
-            return [[DBProfileItem alloc] initWithTitle:@"Website" value:@"http://devonboyer.com"];
-        case 4:
-            return [[DBProfileItem alloc] initWithTitle:@"Birthday" value:@"April 11, 1994"];
-        default:
-            return nil;
-    }
-}
+- (void)editProfile:(id)sender { }
 
 #pragma mark - DBProfileViewControllerDataSource
 
