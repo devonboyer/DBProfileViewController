@@ -31,16 +31,12 @@
 
 - (void)db_commonInit {
     _imageView = [[UIImageView alloc] init];
-    _overlayImageView = [[UIImageView alloc] init];
     
     self.imageView.translatesAutoresizingMaskIntoConstraints = NO;
-    self.overlayImageView.translatesAutoresizingMaskIntoConstraints = NO;
     
     [self addSubview:self.imageView];
-    [self.imageView addSubview:self.overlayImageView];
 
     [self configureImageViewLayoutConstraints];
-    [self configureOverlayImageViewLayoutConstraints];
     [self configureDefaults];
 }
 
@@ -57,8 +53,6 @@
     
     self.style = [DBProfileViewControllerDefaults defaultAvatarStyle];
     self.borderWidth = 3;
-    
-    //self.overlayImageView.image = [UIImage imageNamed:@"db-profile-camera"];
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
@@ -135,13 +129,6 @@
     [self addConstraint:[NSLayoutConstraint constraintWithItem:self.imageView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:self.imageView attribute:NSLayoutAttributeWidth multiplier:1 constant:0]];
     self.imageViewWidthConstraint = [NSLayoutConstraint constraintWithItem:self.imageView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeWidth multiplier:1 constant:0];
     [self addConstraint:self.imageViewWidthConstraint];
-}
-
-- (void)configureOverlayImageViewLayoutConstraints {
-    [self.imageView addConstraint:[NSLayoutConstraint constraintWithItem:self.overlayImageView attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.imageView attribute:NSLayoutAttributeCenterX multiplier:1 constant:0]];
-    [self.imageView addConstraint:[NSLayoutConstraint constraintWithItem:self.overlayImageView attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self.imageView attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
-    [self.imageView addConstraint:[NSLayoutConstraint constraintWithItem:self.overlayImageView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationLessThanOrEqual toItem:self.imageView attribute:NSLayoutAttributeHeight multiplier:1 constant:0]];
-    [self.imageView addConstraint:[NSLayoutConstraint constraintWithItem:self.overlayImageView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationLessThanOrEqual toItem:self.imageView attribute:NSLayoutAttributeWidth multiplier:1 constant:0]];
 }
 
 @end

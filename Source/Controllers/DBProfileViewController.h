@@ -278,7 +278,7 @@ typedef NS_ENUM(NSInteger, DBProfileAvatarAlignment) {
 @property (nonatomic, assign) DBProfileAvatarSize avatarSize;
 
 /*!
- @abstract The distance that the avatar is inset from the `avatarAlignment`.
+ @abstract The distance that the avatar view is inset from the `avatarAlignment`.
  */
 @property (nonatomic, assign) UIEdgeInsets avatarInset;
 

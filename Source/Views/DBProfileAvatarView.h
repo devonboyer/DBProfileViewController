@@ -32,12 +32,12 @@ typedef NS_ENUM(NSInteger, DBProfileAvatarStyle) {
     DBProfileAvatarStyleRoundedRect,
 };
 
-@protocol DBProfileAvatarImageViewDelegate <NSObject>
+@protocol DBProfileAvatarViewDelegate <NSObject>
 
-- (void)didSelectAvatarView:(DBProfileAvatarImageView *)avatarImageView;
-- (void)didDeselectAvatarView:(DBProfileAvatarImageView *)avatarImageView;
-- (void)didHighlightAvatarView:(DBProfileAvatarImageView *)avatarImageView;
-- (void)didUnhighlightAvatarView:(DBProfileAvatarImageView *)avatarImageView;
+- (void)didSelectAvatarView:(DBProfileAvatarImageView *)avatarView;
+- (void)didDeselectAvatarView:(DBProfileAvatarImageView *)avatarView;
+- (void)didHighlightAvatarView:(DBProfileAvatarImageView *)avatarView;
+- (void)didUnhighlightAvatarView:(DBProfileAvatarImageView *)avatarView;
 
 @end
 
@@ -50,7 +50,7 @@ typedef NS_ENUM(NSInteger, DBProfileAvatarStyle) {
 /*!
  @abstract The The object that acts as the view's delegate.
  */
-@property (nonatomic, weak) id<DBProfileAvatarImageViewDelegate> delegate;
+@property (nonatomic, weak) id<DBProfileAvatarViewDelegate> delegate;
 
 /*!
  @abstract Specifies the style.
@@ -59,26 +59,19 @@ typedef NS_ENUM(NSInteger, DBProfileAvatarStyle) {
 @property (nonatomic, assign) DBProfileAvatarStyle style;
 
 /*!
- @abstract The border width for the profile picture.
+ @abstract The border width for the avatar.
  */
 @property (nonatomic, assign) CGFloat borderWidth;
 
 /*!
- @abstract The border color for the profile picture.
+ @abstract The border color for the avatar.
  */
 @property (nonatomic, strong) UIColor *borderColor;
 
 /*!
- @abstract The image view that displays the profile picture.
+ @abstract The image view that displays the avatar image.
  */
 @property (nonatomic, strong, readonly) UIImageView *imageView;
-
-
-
-/*!
- @abstract The image view that overlays the profile picture.
- */
-@property (nonatomic, strong, readonly) UIImageView *overlayImageView;
 
 @end
 

@@ -12,27 +12,36 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef NS_ENUM(NSInteger, DBProfileDetailsViewStyle)  {
-    DBProfileDetailsViewStyleDefault
-};
-
 /*!
  @class DBProfileDetailsView
  @abstract The `DBProfileDetailsView` class displays profile details such as name, username, and description.
  */
 @interface DBProfileDetailsView : UIView
 
-- (instancetype)initWithStyle:(DBProfileDetailsViewStyle)style;
-
+/*!
+ @abstract The content view of is the default superview for content displayed by the view.
+ */
 @property (nonatomic, strong, readonly) UIView *contentView;
 
-@property (nonatomic, assign) UIEdgeInsets contentInset;
-
+/*!
+ @abstract The label used to display a screen name.
+ */
 @property (nonatomic, strong, readonly) UILabel *nameLabel;
+
+/*!
+ @abstract The label used to display a username.
+ */
 @property (nonatomic, strong, readonly) UILabel *usernameLabel;
+
+/*!
+ @abstract The label used to display a description or bio.
+ */
 @property (nonatomic, strong, readonly) UILabel *descriptionLabel;
 
-@property (nonatomic, strong, readonly) UIButton *editProfileButton;
+/*!
+ @abstract The distance that the content view is inset from the enclosing view.
+ */
+@property (nonatomic, assign) UIEdgeInsets contentInset;
 
 @end
 

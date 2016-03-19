@@ -39,13 +39,16 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
     self.avatarView.borderWidth = 4;
     self.allowsPullToRefresh = YES;
     
+    // Customize details view
     DBProfileDetailsView *detailsView = (DBProfileDetailsView *)self.detailsView;
     detailsView.nameLabel.text = @"DBProfileViewController";
     detailsView.usernameLabel.text = @"by @devboyer";
     detailsView.descriptionLabel.text = @"A customizable library for creating stunning user profiles.";
-    [detailsView.editProfileButton addTarget:self action:@selector(editProfile:) forControlEvents:UIControlEventTouchUpInside];
+    detailsView.contentInset = UIEdgeInsetsMake(60, 15, 15, 15);
     
-    [self setAvatarImage:[UIImage imageNamed:@"demo-profile-picture"] animated:NO];
+    // Set cover photo and avatar images
+    [self setAvatarImage:[UIImage imageNamed:@"demo-avatar"] animated:NO];
+    [self setCoverPhotoImage:[UIImage imageNamed:@"demo-header"] animated:NO];
     [self setStyle:self.style];
 }
 
@@ -67,32 +70,20 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
             self.avatarSize = DBProfileAvatarSizeNormal;
             self.avatarAlignment = DBProfileAvatarAlignmentLeft;
             self.avatarView.borderWidth = 4;
-            
-            detailsView.contentInset = UIEdgeInsetsMake(70, 15, 15, 15);
-            
-            [self setCoverPhotoImage:[UIImage imageNamed:@"header"] animated:NO];
             break;
         case DBUserProfileViewControllerStyle3:
             self.avatarView.style = DBProfileAvatarStyleRound;
             self.avatarSize = DBProfileAvatarSizeLarge;
             self.avatarAlignment = DBProfileAvatarAlignmentCenter;
             
-            detailsView.contentInset = UIEdgeInsetsMake(80, 15, 15, 15);
-            detailsView.editProfileButton.hidden = YES;
             detailsView.nameLabel.textAlignment = NSTextAlignmentCenter;
             detailsView.usernameLabel.textAlignment = NSTextAlignmentCenter;
             detailsView.descriptionLabel.textAlignment = NSTextAlignmentCenter;
-            
-            [self setCoverPhotoImage:[UIImage imageNamed:@"header"] animated:NO];
             break;
         default:
             break;
     }
 }
-
-#pragma mark - Actions
-
-- (void)editProfile:(id)sender { }
 
 #pragma mark - DBProfileViewControllerDataSource
 

@@ -35,16 +35,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, weak) id<DBProfileCoverPhotoViewDelegate> delegate;
 
 /*!
- @abstract The image view that displays the cover photo.
+ @abstract The image view that displays the cover photo image.
  */
 @property (nonatomic, strong, readonly) UIImageView *imageView;
-
-
-
-/*!
- @abstract The image view that overlays the cover photo.
- */
-@property (nonatomic, strong, readonly) UIImageView *overlayImageView;
 
 /*!
  @abstract A gradient view that overlays the cover photo to allow for visibility of any overlayed subviews.

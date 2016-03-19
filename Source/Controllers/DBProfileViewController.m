@@ -31,7 +31,7 @@ static const CGFloat DBProfileViewControllerNavigationBarHeightCompact = 44.0;
 static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProfileViewController.contentOffsetCache";
 static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileViewController.operationQueue";
 
-@interface DBProfileViewController () <DBProfileCoverPhotoViewDelegate, DBProfileAvatarImageViewDelegate, DBProfileContentControllerObserverDelegate>
+@interface DBProfileViewController () <DBProfileCoverPhotoViewDelegate, DBProfileAvatarViewDelegate, DBProfileContentControllerObserverDelegate>
 {
     BOOL _shouldScrollToTop;
     CGPoint _sharedContentOffset;
@@ -111,7 +111,7 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
 }
 
 - (void)db_commonInit {
-    _detailsView = [[DBProfileDetailsView alloc] initWithStyle:DBProfileDetailsViewStyleDefault];
+    _detailsView = [[DBProfileDetailsView alloc] init];
     _segmentedControlView = [[DBProfileSegmentedControlView alloc] init];
     _avatarView = [[DBProfileAvatarView alloc] init];
     _coverPhotoView = [[DBProfileCoverPhotoView alloc] init];
