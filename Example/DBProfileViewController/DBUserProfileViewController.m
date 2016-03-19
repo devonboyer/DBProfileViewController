@@ -149,7 +149,7 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
     [profileViewController deselectCoverPhotoViewAnimated:YES];
 }
 
-- (void)profileViewController:(DBProfileViewController *)profileViewController didSelectAvatarView:(DBProfileAvatarImageView *)avatarView {
+- (void)profileViewController:(DBProfileViewController *)profileViewController didSelectAvatarView:(DBProfileAvatarView *)avatarView {
     [profileViewController deselectAvatarViewAnimated:YES];
 }
 

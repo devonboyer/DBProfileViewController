@@ -21,12 +21,12 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /*!
- @abstract A constant value representing the size of the profile picture when using `DBProfilePictureSizeNormal`.
+ @abstract A constant value representing the size of the avatar when using `DBProfileAvatarSizeNormal`.
  */
 extern const CGFloat DBProfileViewControllerAvatarSizeNormal;
 
 /*!
- @abstract A constant value representing the size of the profile picture when using `DBProfilePictureSizeLarge`.
+ @abstract A constant value representing the size of the avatar when using `DBProfileAvatarSizeLarge`.
  */
 extern const CGFloat DBProfileViewControllerAvatarSizeLarge;
 
@@ -63,33 +63,33 @@ typedef NS_ENUM(NSInteger, DBProfileCoverPhotoScrollAnimationStyle) {
 };
 
 /*!
- @abstract The `DBProfilePictureSize` defines the size of the the profile picture.
+ @abstract The `DBProfileAvatarSize` defines the size of the the avatar.
  */
 typedef NS_ENUM(NSInteger, DBProfileAvatarSize) {
     /*!
-     @abstract Specifys that the profile picture should be the normal size. 
+     @abstract Specifys that the avatar should be the normal size.
      */
     DBProfileAvatarSizeNormal,
     /*!
-     @abstract Specifys that the profile picture should be large size. 
+     @abstract Specifys that the avatar should be large size.
      */
     DBProfileAvatarSizeLarge,
 };
 
 /*!
- @abstract The `DBProfilePictureAlignment` defines the alignment of the the profile picture.
+ @abstract The `DBProfileAvatarAlignment` defines the alignment of the the avatar.
  */
 typedef NS_ENUM(NSInteger, DBProfileAvatarAlignment) {
     /*!
-     @abstract Specifys that the profile picture should be left aligned. 
+     @abstract Specifys that the avatar should be left aligned.
      */
     DBProfileAvatarAlignmentLeft,
     /*!
-     @abstract Specifys that the profile picture should be right aligned. 
+     @abstract Specifys that the avatar should be right aligned.
      */
     DBProfileAvatarAlignmentRight,
     /*!
-     @abstract Specifys that the profile picture should be center aligned. 
+     @abstract Specifys that the avatar should be center aligned.
      */
     DBProfileAvatarAlignmentCenter,
 };
@@ -186,25 +186,25 @@ typedef NS_ENUM(NSInteger, DBProfileAvatarAlignment) {
 - (void)selectContentControllerAtIndex:(NSInteger)index;
 
 /*!
- @abstract Selects the cover photo.
+ @abstract Selects the cover photo view.
  @param animated YES if setting selecting the cover photo should be animated, NO otherwise.
  */
 - (void)selectCoverPhotoViewAnimated:(BOOL)animated;
 
 /*!
- @abstract Deselects the cover photo.
+ @abstract Deselects the cover photo view.
  @param animated YES if setting deselecting the cover photo should be animated, NO otherwise.
  */
 - (void)deselectCoverPhotoViewAnimated:(BOOL)animated;
 
 /*!
- @abstract Selects the avatar.
+ @abstract Selects the avatar view.
  @param animated YES if setting selecting the avatar should be animated, NO otherwise.
  */
 - (void)selectAvatarViewAnimated:(BOOL)animated;
 
 /*!
- @abstract Deselects the avatar.
+ @abstract Deselects the avatar view.
  @param animated YES if setting deselecting the avatar should be animated, NO otherwise.
  */
 - (void)deselectAvatarViewAnimated:(BOOL)animated;
