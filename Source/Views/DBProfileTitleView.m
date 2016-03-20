@@ -10,6 +10,12 @@
 
 #import "DBProfileTitleView.h"
 
+@interface DBProfileTitleView ()
+
+@property (nonatomic, strong) UIView *contentView;
+
+@end
+
 @implementation DBProfileTitleView
 
 #pragma mark - Initialization

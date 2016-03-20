@@ -56,7 +56,7 @@
 }
 
 - (void)setSegmentedControl:(UISegmentedControl *)segmentedControl {
-    NSAssert(segmentedControl, @"");
+    NSAssert(segmentedControl, @"segmented control cannot be nil");
     [self.segmentedControl removeFromSuperview];
     _segmentedControl = segmentedControl;
     

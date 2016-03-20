@@ -22,8 +22,7 @@
 
 #pragma mark - Constants
 
-const CGFloat DBProfileViewControllerAvatarSizeNormal = 72.0;
-const CGFloat DBProfileViewControllerAvatarSizeLarge = 92.0;
+
 
 static const CGFloat DBProfileViewControllerNavigationBarHeightRegular = 64.0;
 static const CGFloat DBProfileViewControllerNavigationBarHeightCompact = 44.0;

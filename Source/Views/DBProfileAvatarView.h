@@ -9,28 +9,11 @@
 //
 
 #import "DBProfileSelectableView.h"
+#import "DBProfileViewControllerConstants.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @class DBProfileAvatarView;
-
-/*!
- @abstract The `DBProfileAvatarStyle` defines the types of styles for the avatar.
- */
-typedef NS_ENUM(NSInteger, DBProfileAvatarStyle) {
-    /*!
-     @abstract Specifys that no avatar should be displayed.
-     */
-    DBProfileAvatarStyleNone,
-    /*!
-     @abstract Specifys that no avatar should be cropped to a circle.
-     */
-    DBProfileAvatarStyleRound,
-    /*!
-     @abstract Specifys that no avatar should be cropped to a rounded rect.
-     */
-    DBProfileAvatarStyleRoundedRect,
-};
 
 @protocol DBProfileAvatarViewDelegate <NSObject>
 

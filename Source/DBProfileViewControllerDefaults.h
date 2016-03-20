@@ -1,15 +1,15 @@
 //
 //  DBProfileViewControllerDefaults.h
-//  Pods
+//  DBProfileViewController
 //
 //  Created by Devon Boyer on 2016-03-16.
+//  Copyright (c) 2015 Devon Boyer. All rights reserved.
 //
+//  Released under an MIT license: http://opensource.org/licenses/MIT
 //
 
-#import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-#import "DBProfileViewController.h"
-#import "DBProfileAvatarView.h"
+#import "DBProfileViewControllerConstants.h"
 
 @interface DBProfileViewControllerDefaults : NSObject
 
@@ -17,11 +17,23 @@
 
 + (UIImage *)defaultBackBarButtonItemImageForTraitCollection:(UITraitCollection *)traitCollection;
 
+///---------------------------------------------
+/// @name Cover Photo Defaults
+///---------------------------------------------
+
 + (DBProfileCoverPhotoOptions)defaultCoverPhotoOptions;
 
 + (DBProfileCoverPhotoScrollAnimationStyle)defaultCoverPhotoScrollAnimationStyle;
 
 + (CGFloat)defaultCoverPhotoHeightMultiplier;
+
++ (BOOL)defaultCoverPhotoHidden;
+
++ (BOOL)defaultCoverPhotoMimicsNavigationBar;
+
+///---------------------------------------------
+/// @name Avatar Defaults
+///---------------------------------------------
 
 + (DBProfileAvatarAlignment)defaultAvatarAlignment;
 
@@ -31,14 +43,14 @@
 
 + (UIEdgeInsets)defaultAvatarInsets;
 
+///---------------------------------------------
+/// @name Other
+///---------------------------------------------
+
 + (CGFloat)defaultPullToRefreshTriggerDistance;
 
-+ (BOOL)defaultHidesSegmentedControlForSingleContentController;
-
-+ (BOOL)defaultCoverPhotoHidden;
-
-+ (BOOL)defaultCoverPhotoMimicsNavigationBar;
-
 + (BOOL)defaultAllowsPullToRefresh;
+
++ (BOOL)defaultHidesSegmentedControlForSingleContentController;
 
 @end
