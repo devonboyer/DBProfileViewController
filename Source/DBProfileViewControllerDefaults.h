@@ -31,6 +31,8 @@
 
 + (BOOL)defaultCoverPhotoMimicsNavigationBar;
 
+
+
 ///---------------------------------------------
 /// @name Avatar Defaults
 ///---------------------------------------------

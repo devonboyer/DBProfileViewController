@@ -46,13 +46,18 @@
 }
 
 - (void)configureDefaults {
-    UIColor *borderColor = [UIColor colorWithWhite:0 alpha:0.12];
+    UIColor *borderColor = [UIColor colorWithWhite:0 alpha:0.38];
     self.backgroundColor = [UIColor whiteColor];
     self.segmentedControl.tintColor = [UIColor grayColor];
     
     self.topBorderView.backgroundColor = borderColor;
     self.bottomBorderView.backgroundColor = borderColor;
     self.topBorderView.hidden = YES;
+}
+
+- (void)tintColorDidChange {
+    [super tintColorDidChange];
+    self.segmentedControl.tintColor = self.tintColor;
 }
 
 - (void)setSegmentedControl:(UISegmentedControl *)segmentedControl {

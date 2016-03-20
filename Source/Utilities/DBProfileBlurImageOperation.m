@@ -9,11 +9,7 @@
 //
 
 #import "DBProfileBlurImageOperation.h"
-#import "DBProfileImageEffects.h"
 #import <FXBlurView/FXBlurView.h>
-
-const NSInteger DBProfileBlurImageOperationNumberOfBlurredImages = 30;
-const CGFloat DBProfileBlurImageOperationMaxBlurRadius = 20.0;
 
 @interface DBProfileBlurImageOperation ()
 
@@ -24,19 +20,36 @@ const CGFloat DBProfileBlurImageOperationMaxBlurRadius = 20.0;
 @implementation DBProfileBlurImageOperation
 
 - (instancetype)initWithImageToBlur:(UIImage *)imageToBlur {
-    self = [super init];
+    self = [self init];
     if (self) {
         self.imageToBlur = imageToBlur;
     }
     return self;
 }
 
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        self.numberOfBlurredImages = 30;
+        self.maxBlurRadius = 20.0;
+        self.iterationsPerImage = 15;
+    }
+    return self;
+}
+
 - (void)start {
-    
     NSMutableDictionary *blurredImages = [[NSMutableDictionary alloc] init];
-    for (int i = 0; i <= DBProfileBlurImageOperationNumberOfBlurredImages; i++) {
-        CGFloat radius = DBProfileBlurImageOperationMaxBlurRadius * i/DBProfileBlurImageOperationNumberOfBlurredImages;
-        [blurredImages setObject:[self.imageToBlur blurredImageWithRadius:radius iterations:10 tintColor:[UIColor clearColor]] forKey:[@(i) stringValue]];
+    
+    for (int i = 0; i <= self.numberOfBlurredImages; i++) {
+        if (self.cancelled) {
+            break;
+        }
+        
+        CGFloat radius = self.maxBlurRadius * i/self.numberOfBlurredImages;
+        UIImage *blurredImage = [self.imageToBlur blurredImageWithRadius:radius
+                                                              iterations:self.iterationsPerImage
+                                                               tintColor:[UIColor clearColor]];
+        [blurredImages setObject:blurredImage forKey:[@(i) stringValue]];
     }
     
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -44,10 +57,6 @@ const CGFloat DBProfileBlurImageOperationMaxBlurRadius = 20.0;
             self.blurImageCompletionBlock(blurredImages);
         }
     });
-}
-
-- (void)cancel {
-    // TODO: Cancel blurring of any pending images
 }
 
 @end

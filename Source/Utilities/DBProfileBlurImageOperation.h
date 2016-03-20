@@ -10,12 +10,15 @@
 
 #import <Foundation/Foundation.h>
 
-extern const NSInteger DBProfileBlurImageOperationNumberOfBlurredImages;
-extern const CGFloat DBProfileBlurImageOperationMaxBlurRadius;
-
 @interface DBProfileBlurImageOperation : NSOperation
 
 - (instancetype)initWithImageToBlur:(UIImage *)imageToBlur;
+
+@property(nonatomic, assign) CGFloat maxBlurRadius;
+
+@property(nonatomic, assign) NSInteger iterationsPerImage;
+
+@property(nonatomic, assign) NSInteger numberOfBlurredImages;
 
 @property(nonatomic, copy) void (^blurImageCompletionBlock)(NSDictionary *blurredImages);
 

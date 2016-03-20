@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.3
+
+## Bug Fixes
+
+* Fixed a bug causing the view to be force scrolled to the top when an interactive pop gesture is cancelled.
+* Fixed a bug causing the container view's frame to be calculated incorrectly when vertically compact.
+* When using `coverPhotoMimicsNavigationBar` navigation bar no longer displays a subtitle when vertically compact.
+
 ## 1.0.2
 
 ## Bug Fixes
@@ -18,6 +26,7 @@
 * Renamed `profileViewController:didSelectCoverPhoto:` to `profileViewController:didSelectCoverPhotoView:` in `DBProfileViewControllerDelegate`
 * Renamed `setProfilePicture:animated:` to `setAvatarImage:animated:`
 * Renamed `setCoverPhoto:animated:` to `setCoverPhotoImage:animated:`
+* Removed `editProfileButton` from `DBProfileDetailsView`
 
 ### Added
 

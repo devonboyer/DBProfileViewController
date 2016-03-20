@@ -19,10 +19,7 @@
 #import "DBProfileImageEffects.h"
 #import "DBProfileBlurImageOperation.h"
 #import "DBProfileViewControllerDefaults.h"
-
-#pragma mark - Constants
-
-
+#import "DBProfileViewControllerUpdateContext.h"
 
 static const CGFloat DBProfileViewControllerNavigationBarHeightRegular = 64.0;
 static const CGFloat DBProfileViewControllerNavigationBarHeightCompact = 44.0;
@@ -39,17 +36,20 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
 
 @property (nonatomic, assign) Class segmentedControlClass;
 
-@property (nonatomic, assign) CGFloat oldDetailsViewHeight;
 @property (nonatomic, assign) NSUInteger indexForSelectedContentController;
-@property (nonatomic, getter=isUpdating) BOOL updating;
 @property (nonatomic, getter=isRefreshing) BOOL refreshing;
+
+// Updates
+@property (nonatomic, strong) DBProfileViewControllerUpdateContext *updateContext;
+@property (nonatomic, getter=isUpdating) BOOL updating;
+@property (nonatomic, assign) BOOL hasAppeared;
 
 // Data
 @property (nonatomic, strong) NSMutableArray<DBProfileContentController *> *contentControllers;
 @property (nonatomic, strong) NSMutableDictionary<NSString *, DBProfileContentControllerObserver *> *observers;
 @property (nonatomic, strong) NSCache *contentOffsetCache;
-@property (nonatomic, strong) NSDictionary *blurredImages;
 @property (nonatomic, strong) NSOperationQueue *operationQueue;
+@property (nonatomic, strong) NSDictionary *blurredImagesCache;
 
 // Views
 @property (nonatomic, strong) UIView *containerView;
@@ -148,7 +148,7 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
 - (void)loadView {
     [super loadView];
     
-    self.containerView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleWidth;
+    self.containerView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.containerView.frame = self.view.frame;
     [self.view addSubview:self.containerView];
     
@@ -171,18 +171,26 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
-    [self reloadData];
-    
-    // Scroll displayed content controller to top
-    if ([self.contentControllers count]) {
-        DBProfileContentController *displayedViewController = [self.contentControllers objectAtIndex:self.indexForSelectedContentController];
-        [self scrollContentControllerToTop:displayedViewController];
+    if (!self.hasAppeared) {
+        [self reloadData];
+        
+        // Scroll displayed content controller to top
+        if ([self.contentControllers count]) {
+            DBProfileContentController *displayedViewController = [self.contentControllers objectAtIndex:self.indexForSelectedContentController];
+            [self scrollContentControllerToTop:displayedViewController animated:NO];
+        }
     }
     
     if (self.coverPhotoMimicsNavigationBar) {
         [self.navigationController setNavigationBarHidden:YES animated:YES];
         [self.navigationController.interactivePopGestureRecognizer setDelegate:nil];
     }
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    
+    self.hasAppeared = YES;
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -249,6 +257,16 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     CGPoint contentOffset = scrollView.contentOffset;
     contentOffset.y -= MAX(scrollView.contentInset.top - _cachedContentInset.top, 0);
     scrollView.contentOffset = contentOffset;
+    
+    // If the size class is vertically compact then we won't display the subtitle in the navigation bar
+    switch (self.view.traitCollection.verticalSizeClass) {
+        case UIUserInterfaceSizeClassCompact:
+            self.navigationView.titleView.subtitleLabel.text = nil;
+            break;
+        default:
+            self.navigationView.titleView.subtitleLabel.text = [self subtitleForContentControllerAtIndex:self.indexForSelectedContentController];
+            break;
+    }
 }
 
 #pragma mark - Getters
@@ -385,9 +403,8 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
 
 - (void)beginUpdates {
     self.updating = YES;
-    
-    // Cache the heights of subviews before updates occur
-    self.oldDetailsViewHeight = [self.detailsView systemLayoutSizeFittingSize:UILayoutFittingCompressedSize].height;
+    self.updateContext = [[DBProfileViewControllerUpdateContext alloc] init];
+    self.updateContext.beforeUpdatesDetailsViewHeight = [self.detailsView systemLayoutSizeFittingSize:UILayoutFittingCompressedSize].height;
     [self.view invalidateIntrinsicContentSize];
 }
 
@@ -397,16 +414,15 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
         [self setIndexForSelectedContentController:self.indexForSelectedContentController];
         
         // Calculate the difference between heights of subviews from before updates to after updates
-        CGFloat oldHeight = self.oldDetailsViewHeight;
-        CGFloat newHeight = [self.detailsView systemLayoutSizeFittingSize:UILayoutFittingCompressedSize].height;
+        self.updateContext.afterUpdatesDetailsViewHeight = [self.detailsView systemLayoutSizeFittingSize:UILayoutFittingCompressedSize].height;
         
         // Adjust content offset to account for difference in heights of subviews from before updates to after updates
-        if (round(oldHeight) != round(newHeight)) {
+        if (round(self.updateContext.beforeUpdatesDetailsViewHeight) != round(self.updateContext.afterUpdatesDetailsViewHeight)) {
             DBProfileContentController *viewController = [self.contentControllers objectAtIndex:self.indexForSelectedContentController];
             UIScrollView *scrollView = [viewController contentScrollView];
             
             CGPoint contentOffset = scrollView.contentOffset;
-            contentOffset.y += (oldHeight - newHeight);
+            contentOffset.y += (self.updateContext.beforeUpdatesDetailsViewHeight - self.updateContext.afterUpdatesDetailsViewHeight);
             scrollView.contentOffset = contentOffset;
         }
         
@@ -448,8 +464,6 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
 - (void)setCoverPhotoImage:(UIImage *)coverPhotoImage animated:(BOOL)animated {
     if (!coverPhotoImage) return;
     
-    //[self.coverPhotoView setHeaderImage:coverPhotoImage animated:animated];
-    
     __weak DBProfileViewController *weakSelf = self;
     
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
@@ -470,7 +484,7 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
             
             DBProfileBlurImageOperation *operation = [[DBProfileBlurImageOperation alloc] initWithImageToBlur:croppedImage];
             [operation setBlurImageCompletionBlock:^(NSDictionary *blurredImages) {
-                weakSelf.blurredImages = blurredImages;
+                weakSelf.blurredImagesCache = blurredImages;
             }];
             [weakSelf.operationQueue addOperation:operation];
             
@@ -516,6 +530,8 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     [self.avatarView setSelected:NO animated:animated];
 }
 
+#pragma mark - Private Methods
+
 - (void)setIndexForSelectedContentController:(NSUInteger)indexForSelectedContentController {
     if (![self.contentControllers count]) return;
     
@@ -549,10 +565,17 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     
     // Update titles
     self.navigationView.titleView.titleLabel.text = self.title;
-    self.navigationView.titleView.subtitleLabel.text = [self subtitleForContentControllerAtIndex:self.indexForSelectedContentController];
+    
+    // If the size class is vertically compact then we won't display the subtitle in the navigation bar
+    switch (self.view.traitCollection.verticalSizeClass) {
+        case UIUserInterfaceSizeClassCompact:
+            self.navigationView.titleView.subtitleLabel.text = nil;
+            break;
+        default:
+            self.navigationView.titleView.subtitleLabel.text = [self subtitleForContentControllerAtIndex:self.indexForSelectedContentController];
+            break;
+    }
 }
-
-#pragma mark - Pull-To-Refresh Animations
 
 - (void)startRefreshAnimations {
     [self.activityIndicator startAnimating];
@@ -560,72 +583,6 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
 
 - (void)endRefreshAnimations {
     [self.activityIndicator stopAnimating];
-}
-
-#pragma mark - Delegate / Data Source
-
-- (void)didSelectCoverPhotoView:(DBProfileCoverPhotoView *)coverPhotoView {
-    // Inform delegate that the cover photo was selected
-    if ([self.delegate respondsToSelector:@selector(profileViewController:didSelectCoverPhotoView:)]) {
-        [self.delegate profileViewController:self didSelectCoverPhotoView:coverPhotoView];
-    }
-    
-    if (self.avatarView.isSelected) [self.avatarView setSelected:NO animated:YES];
-}
-
-- (void)didDeselectCoverPhotoView:(DBProfileCoverPhotoView *)coverPhotoView {
-    // Inform delegate that the cover photo was deselected
-    if ([self.delegate respondsToSelector:@selector(profileViewController:didDeselectCoverPhotoView:)]) {
-        [self.delegate profileViewController:self didDeselectCoverPhotoView:coverPhotoView];
-    }
-}
-
-- (void)didHighlightCoverPhotoView:(DBProfileCoverPhotoView *)coverPhotoView {
-    // Inform delegate that the cover photo was highlighted
-    if ([self.delegate respondsToSelector:@selector(profileViewController:didHighlightCoverPhotoView:)]) {
-        [self.delegate profileViewController:self didHighlightCoverPhotoView:coverPhotoView];
-    }
-    
-    if (self.avatarView.isSelected) [self.avatarView setSelected:NO animated:YES];
-}
-
-- (void)didUnhighlightCoverPhotoView:(DBProfileCoverPhotoView *)coverPhotoView {
-    // Inform delegate that the cover photo was unhighlighted
-    if ([self.delegate respondsToSelector:@selector(profileViewController:didUnhighlightCoverPhotoView:)]) {
-        [self.delegate profileViewController:self didUnhighlightCoverPhotoView:coverPhotoView];
-    }
-}
-
-- (void)didSelectAvatarView:(DBProfileAvatarView *)avatarView {
-    // Inform delegate that the profile picture was selected
-    if ([self.delegate respondsToSelector:@selector(profileViewController:didSelectAvatarView:)]) {
-        [self.delegate profileViewController:self didSelectAvatarView:avatarView];
-    }
-    
-    if (self.coverPhotoView.isSelected) [self.coverPhotoView setSelected:NO animated:YES];
-}
-
-- (void)didDeselectAvatarView:(DBProfileAvatarView *)avatarView {
-    // Inform delegate that the profile picture was deselected
-    if ([self.delegate respondsToSelector:@selector(profileViewController:didDeselectAvatarView:)]) {
-        [self.delegate profileViewController:self didDeselectAvatarView:avatarView];
-    }
-}
-
-- (void)didHighlightAvatarView:(DBProfileAvatarView *)avatarView {
-    // Inform delegate that the profile picture was highlighted
-    if ([self.delegate respondsToSelector:@selector(profileViewController:didHighlightAvatarView:)]) {
-        [self.delegate profileViewController:self didHighlightAvatarView:avatarView];
-    }
-    
-    if (self.coverPhotoView.isSelected) [self.coverPhotoView setSelected:NO animated:YES];
-}
-
-- (void)didUnhighlightAvatarView:(DBProfileAvatarView *)avatarView {
-    // Inform delegate that the profile picture was unhighlighted
-    if ([self.delegate respondsToSelector:@selector(profileViewController:didUnhighlightAvatarView:)]) {
-        [self.delegate profileViewController:self didUnhighlightAvatarView:avatarView];
-    }
 }
 
 - (void)notifyDelegateOfPullToRefreshOfContentControllerAtIndex:(NSInteger)index  {
@@ -694,7 +651,7 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
 
 - (void)buildContentController:(DBProfileContentController *)viewController {
     NSAssert(viewController, @"viewController cannot be nil");
-
+    
     UIScrollView *scrollView = [viewController contentScrollView];
     
     [self.coverPhotoView removeFromSuperview];
@@ -718,7 +675,7 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     } else {
         self.segmentedControlView.frame = CGRectZero;
     }
-
+    
     // Cover photo ?
     if (!self.coverPhotoHidden) {
         [scrollView addSubview:self.coverPhotoView];
@@ -774,7 +731,7 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     scrollView.delaysContentTouches = NO;
 }
 
-#pragma mark - Managing Content Offset
+#pragma mark - Content Offset / Inset
 
 - (void)cacheContentOffset:(CGPoint)contentOffset forContentControllerAtIndex:(NSInteger)index {
     NSString *key = [self uniqueKeyForContentControllerAtIndex:index];
@@ -792,9 +749,9 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     return key;
 }
 
-- (void)scrollContentControllerToTop:(DBProfileContentController *)viewController {
+- (void)scrollContentControllerToTop:(DBProfileContentController *)viewController animated:(BOOL)animated {
     UIScrollView *scrollView = [viewController contentScrollView];
-    [scrollView setContentOffset:CGPointMake(0, -scrollView.contentInset.top)];
+    [scrollView setContentOffset:CGPointMake(0, -scrollView.contentInset.top) animated:animated];
 }
 
 - (void)resetContentOffsetForScrollView:(UIScrollView *)scrollView {
@@ -802,8 +759,6 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     contentOffset.y = -(CGRectGetMaxY(self.navigationView.frame) + CGRectGetHeight(self.segmentedControlView.frame));
     [scrollView setContentOffset:contentOffset];
 }
-
-#pragma mark - Managing Content Inset
 
 - (void)adjustContentInsetForScrollView:(UIScrollView *)scrollView {
     CGFloat topInset = CGRectGetHeight(self.segmentedControlView.frame) + CGRectGetHeight(self.detailsView.frame) + CGRectGetHeight(self.coverPhotoView.frame);
@@ -826,7 +781,7 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     }
     
     if (scrollView.contentSize.height < minimumContentSizeHeight && ([self.contentControllers count] > 1 ||
-        ([self.contentControllers count] == 1 && !self.hidesSegmentedControlForSingleContentController))) {
+                                                                     ([self.contentControllers count] == 1 && !self.hidesSegmentedControlForSingleContentController))) {
         contentInset.bottom = minimumContentSizeHeight - scrollView.contentSize.height;
     }
     
@@ -843,6 +798,74 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
         topInset -= CGRectGetHeight(self.coverPhotoView.frame);
     }
     self.detailsViewTopConstraint.constant = -topInset;
+}
+
+#pragma mark - DBProfileCoverPhotoViewDelegate
+
+- (void)didSelectCoverPhotoView:(DBProfileCoverPhotoView *)coverPhotoView {
+    // Inform delegate that the cover photo was selected
+    if ([self.delegate respondsToSelector:@selector(profileViewController:didSelectCoverPhotoView:)]) {
+        [self.delegate profileViewController:self didSelectCoverPhotoView:coverPhotoView];
+    }
+    
+    if (self.avatarView.isSelected) [self.avatarView setSelected:NO animated:YES];
+}
+
+- (void)didDeselectCoverPhotoView:(DBProfileCoverPhotoView *)coverPhotoView {
+    // Inform delegate that the cover photo was deselected
+    if ([self.delegate respondsToSelector:@selector(profileViewController:didDeselectCoverPhotoView:)]) {
+        [self.delegate profileViewController:self didDeselectCoverPhotoView:coverPhotoView];
+    }
+}
+
+- (void)didHighlightCoverPhotoView:(DBProfileCoverPhotoView *)coverPhotoView {
+    // Inform delegate that the cover photo was highlighted
+    if ([self.delegate respondsToSelector:@selector(profileViewController:didHighlightCoverPhotoView:)]) {
+        [self.delegate profileViewController:self didHighlightCoverPhotoView:coverPhotoView];
+    }
+    
+    if (self.avatarView.isSelected) [self.avatarView setSelected:NO animated:YES];
+}
+
+- (void)didUnhighlightCoverPhotoView:(DBProfileCoverPhotoView *)coverPhotoView {
+    // Inform delegate that the cover photo was unhighlighted
+    if ([self.delegate respondsToSelector:@selector(profileViewController:didUnhighlightCoverPhotoView:)]) {
+        [self.delegate profileViewController:self didUnhighlightCoverPhotoView:coverPhotoView];
+    }
+}
+
+#pragma mark - DBProfileAvatarViewDelegate
+
+- (void)didSelectAvatarView:(DBProfileAvatarView *)avatarView {
+    // Inform delegate that the profile picture was selected
+    if ([self.delegate respondsToSelector:@selector(profileViewController:didSelectAvatarView:)]) {
+        [self.delegate profileViewController:self didSelectAvatarView:avatarView];
+    }
+    
+    if (self.coverPhotoView.isSelected) [self.coverPhotoView setSelected:NO animated:YES];
+}
+
+- (void)didDeselectAvatarView:(DBProfileAvatarView *)avatarView {
+    // Inform delegate that the profile picture was deselected
+    if ([self.delegate respondsToSelector:@selector(profileViewController:didDeselectAvatarView:)]) {
+        [self.delegate profileViewController:self didDeselectAvatarView:avatarView];
+    }
+}
+
+- (void)didHighlightAvatarView:(DBProfileAvatarView *)avatarView {
+    // Inform delegate that the profile picture was highlighted
+    if ([self.delegate respondsToSelector:@selector(profileViewController:didHighlightAvatarView:)]) {
+        [self.delegate profileViewController:self didHighlightAvatarView:avatarView];
+    }
+    
+    if (self.coverPhotoView.isSelected) [self.coverPhotoView setSelected:NO animated:YES];
+}
+
+- (void)didUnhighlightAvatarView:(DBProfileAvatarView *)avatarView {
+    // Inform delegate that the profile picture was unhighlighted
+    if ([self.delegate respondsToSelector:@selector(profileViewController:didUnhighlightAvatarView:)]) {
+        [self.delegate profileViewController:self didUnhighlightAvatarView:avatarView];
+    }
 }
 
 #pragma mark - DBProfileContentControllerObserverDelegate
@@ -862,7 +885,7 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     }
 }
 
-#pragma mark - Updating Subviews On Scroll
+#pragma mark - Scroll Animatons
 
 - (void)handlePullToRefreshWithScrollView:(UIScrollView *)scrollView {
     if (!self.allowsPullToRefresh) return;
@@ -955,14 +978,14 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
 }
 
 - (UIImage *)blurredImageAt:(CGFloat)percent {
-    NSNumber *keyNumber = @(round(percent * DBProfileBlurImageOperationNumberOfBlurredImages));
-    if ([self.blurredImages valueForKey:[keyNumber stringValue]]) {
-        return [self.blurredImages objectForKey:[keyNumber stringValue]];
+    NSNumber *keyNumber = @(round(percent * [self.blurredImagesCache count]));
+    if ([self.blurredImagesCache valueForKey:[keyNumber stringValue]]) {
+        return [self.blurredImagesCache objectForKey:[keyNumber stringValue]];
     }
     return nil;
 }
 
-#pragma mark - Updating Constraints
+#pragma mark - Auto Layout
 
 - (void)updateCoverPhotoViewLayoutConstraints {    
     if (self.coverPhotoViewBottomConstraint &&
@@ -1027,8 +1050,6 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     self.avatarViewLeftConstraint.constant = self.avatarInset.left - self.avatarInset.right;
     self.avatarViewTopConstraint.constant = self.avatarInset.top - self.avatarInset.bottom;
 }
-
-#pragma mark - Auto Layout
 
 - (void)configureNavigationViewLayoutConstraints {
     [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.navigationView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:[self topLayoutGuide] attribute:NSLayoutAttributeBottom multiplier:1 constant:0]];
