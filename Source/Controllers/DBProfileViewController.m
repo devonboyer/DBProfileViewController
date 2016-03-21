@@ -21,8 +21,10 @@
 #import "DBProfileViewControllerDefaults.h"
 #import "DBProfileViewControllerUpdateContext.h"
 
+#import <FXBlurView/FXBlurView.h>
+
 static const CGFloat DBProfileViewControllerNavigationBarHeightRegular = 64.0;
-static const CGFloat DBProfileViewControllerNavigationBarHeightCompact = 44.0;
+static const CGFloat DBProfileViewControllerNavigationBarHeightCompact = 32.0;
 
 static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProfileViewController.contentOffsetCache";
 static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileViewController.operationQueue";
@@ -32,6 +34,7 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     BOOL _shouldScrollToTop;
     CGPoint _sharedContentOffset;
     UIEdgeInsets _cachedContentInset;
+    UIImage *_coverPhotoImage;
 }
 
 @property (nonatomic, assign) Class segmentedControlClass;
@@ -242,6 +245,11 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
 
 - (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection {
     [super traitCollectionDidChange:previousTraitCollection];
+    
+    // Reset the navigation view constraints to allow the system to determine the height
+    [self.navigationView removeFromSuperview];
+    [self.view addSubview:self.navigationView];
+    [self configureNavigationViewLayoutConstraints];
     
     // The scroll view content inset needs to be recalculated for the new size class
     UIScrollView *scrollView = [[self.contentControllers objectAtIndex:self.indexForSelectedContentController] contentScrollView];
@@ -463,7 +471,7 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
 
 - (void)setCoverPhotoImage:(UIImage *)coverPhotoImage animated:(BOOL)animated {
     if (!coverPhotoImage) return;
-    
+        
     __weak DBProfileViewController *weakSelf = self;
     
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
@@ -474,6 +482,7 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
         dispatch_async( dispatch_get_main_queue(), ^{
             
             weakSelf.coverPhotoView.imageView.image = croppedImage;
+            _coverPhotoImage = croppedImage;
             
             if (animated) {
                 weakSelf.coverPhotoView.imageView.alpha = 0;
@@ -665,6 +674,8 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     self.avatarView.translatesAutoresizingMaskIntoConstraints = NO;
     self.segmentedControlView.translatesAutoresizingMaskIntoConstraints = NO;
     self.activityIndicator.translatesAutoresizingMaskIntoConstraints = NO;
+    
+    [self endRefreshing];
     
     [scrollView addSubview:self.detailsView];
     
@@ -924,13 +935,13 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
         if (self.coverPhotoOptions & DBProfileCoverPhotoOptionStretch) {
             self.coverPhotoViewHeightConstraint.constant = -contentOffset.y;
         }
-        distance *= 0.5;
+        distance *= 0.8;
     }
     
     if (self.coverPhotoScrollAnimationStyle == DBProfileCoverPhotoScrollAnimationStyleBlur) {
         if (self.automaticallyAdjustsScrollViewInsets) distance += [self.topLayoutGuide length];
         CGFloat percent = MAX(MIN(1 - (distance - fabs(contentOffset.y))/distance, 1), 0);
-        UIImage *blurredImage = [self blurredImageAt:percent];
+        UIImage *blurredImage = [self blurredImageWithPercent:percent];
         if (blurredImage) self.coverPhotoView.imageView.image = blurredImage;
     }
 }
@@ -969,7 +980,7 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     CGFloat titleViewOffsetPercent = 1 - contentOffset.y / titleViewOffset;
     
     if (self.view.traitCollection.verticalSizeClass == UIUserInterfaceSizeClassCompact) {
-        [self.navigationView.navigationBar setTitleVerticalPositionAdjustment:MAX(titleViewOffset * titleViewOffsetPercent, -4)
+        [self.navigationView.navigationBar setTitleVerticalPositionAdjustment:MAX(titleViewOffset * titleViewOffsetPercent, 0)
                                                                 forBarMetrics:UIBarMetricsCompact];
     } else {
         [self.navigationView.navigationBar setTitleVerticalPositionAdjustment:MAX(titleViewOffset * titleViewOffsetPercent, 0)
@@ -977,7 +988,7 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     }
 }
 
-- (UIImage *)blurredImageAt:(CGFloat)percent {
+- (UIImage *)blurredImageWithPercent:(CGFloat)percent {
     NSNumber *keyNumber = @(round(percent * [self.blurredImagesCache count]));
     if ([self.blurredImagesCache valueForKey:[keyNumber stringValue]]) {
         return [self.blurredImagesCache objectForKey:[keyNumber stringValue]];

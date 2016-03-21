@@ -7,6 +7,7 @@
 * Fixed a bug causing the view to be force scrolled to the top when an interactive pop gesture is cancelled.
 * Fixed a bug causing the container view's frame to be calculated incorrectly when vertically compact.
 * When using `coverPhotoMimicsNavigationBar` navigation bar no longer displays a subtitle when vertically compact.
+* If the selected content controller is changed while the activity indicator is animating it will now be stop animating.
 
 ## 1.0.2
 

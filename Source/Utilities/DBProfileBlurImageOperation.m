@@ -32,7 +32,7 @@
     if (self) {
         self.numberOfBlurredImages = 30;
         self.maxBlurRadius = 20.0;
-        self.iterationsPerImage = 15;
+        self.iterationsPerImage = 10;
     }
     return self;
 }
@@ -40,7 +40,7 @@
 - (void)start {
     NSMutableDictionary *blurredImages = [[NSMutableDictionary alloc] init];
     
-    for (int i = 0; i <= self.numberOfBlurredImages; i++) {
+    for (int i = 0; i < self.numberOfBlurredImages; i++) {
         if (self.cancelled) {
             break;
         }
