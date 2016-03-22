@@ -37,8 +37,25 @@
     _titleView.titleLabel.text = title;
 }
 
-- (void)setSubtitle:(NSString *)subtitle {
+- (void)setSubtitle:(NSString *)subtitle traitCollection:(UITraitCollection *)traitCollection {
     _titleView.subtitleLabel.text = subtitle;
+    
+    switch (traitCollection.verticalSizeClass) {
+        case UIUserInterfaceSizeClassCompact:
+            _titleView.subtitleLabel.text = nil;
+            break;
+        default:
+            _titleView.subtitleLabel.text = subtitle;
+            break;
+    }
+}
+
+- (void)setTitleVerticalPositionAdjustment:(CGFloat)adjustment traitCollection:(UITraitCollection *)traitCollection {
+    if (traitCollection.verticalSizeClass == UIUserInterfaceSizeClassCompact) {
+        [self setTitleVerticalPositionAdjustment:adjustment forBarMetrics:UIBarMetricsCompact];
+    } else {
+        [self setTitleVerticalPositionAdjustment:adjustment forBarMetrics:UIBarMetricsDefault];
+    }
 }
 
 @end

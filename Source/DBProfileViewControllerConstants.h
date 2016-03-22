@@ -10,6 +10,10 @@
 
 #import <Foundation/Foundation.h>
 
+NSBundle *DBProfileViewControllerBundle();
+
+CGFloat DBProfileViewControllerNavigationBarHeightForTraitCollection(UITraitCollection *traitCollection);
+
 /*!
  @abstract A constant value representing the size of the avatar when using `DBProfileAvatarSizeNormal`.
  */

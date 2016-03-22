@@ -20,11 +20,7 @@
 #import "DBProfileBlurImageOperation.h"
 #import "DBProfileViewControllerDefaults.h"
 #import "DBProfileViewControllerUpdateContext.h"
-
-#import <FXBlurView/FXBlurView.h>
-
-static const CGFloat DBProfileViewControllerNavigationBarHeightRegular = 64.0;
-static const CGFloat DBProfileViewControllerNavigationBarHeightCompact = 32.0;
+#import "UIBarButtonItem+DBProfileViewController.h"
 
 static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProfileViewController.contentOffsetCache";
 static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileViewController.operationQueue";
@@ -60,22 +56,22 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
 @property (nonatomic, strong) DBProfileCustomNavigationBar *customNavigationBar;
 @property (nonatomic, strong) DBProfileSegmentedControlView *segmentedControlView;
 
-// Constraints
-@property (nonatomic, strong) NSLayoutConstraint *detailsViewTopConstraint;
-@property (nonatomic, strong) NSLayoutConstraint *coverPhotoViewTopConstraint;
-@property (nonatomic, strong) NSLayoutConstraint *coverPhotoViewHeightConstraint;
-@property (nonatomic, strong) NSLayoutConstraint *coverPhotoViewBottomConstraint;
-@property (nonatomic, strong) NSLayoutConstraint *coverPhotoViewTopLayoutGuideConstraint;
-@property (nonatomic, strong) NSLayoutConstraint *coverPhotoViewTopSuperviewConstraint;
-@property (nonatomic, strong) NSLayoutConstraint *avatarViewTopConstraint;
-
 @end
 
 @implementation DBProfileViewController {
+    NSLayoutConstraint *_detailsViewTopConstraint;
+
     NSLayoutConstraint *_avatarViewSizeConstraint;
+    NSLayoutConstraint *_avatarViewTopConstraint;
     NSLayoutConstraint *_avatarViewLeftAlignmentConstraint;
     NSLayoutConstraint *_avatarViewRightAlignmentConstraint;
     NSLayoutConstraint *_avatarViewCenterAlignmentConstraint;
+    
+    NSLayoutConstraint *_coverPhotoViewHeightConstraint;
+    NSLayoutConstraint *_coverPhotoViewMimicNavigationBarConstraint;
+    NSLayoutConstraint *_coverPhotoViewTopConstraint;
+    NSLayoutConstraint *_coverPhotoViewTopLayoutGuideConstraint;
+    NSLayoutConstraint *_coverPhotoViewTopSuperviewConstraint;
 }
 
 #pragma mark - Initialization
@@ -222,7 +218,7 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     _avatarInset = [DBProfileViewControllerDefaults defaultAvatarInsets];
     _allowsPullToRefresh = [DBProfileViewControllerDefaults defaultAllowsPullToRefresh];
     
-    self.coverPhotoMimicsNavigationBarNavigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[DBProfileViewControllerDefaults defaultBackBarButtonItemImageForTraitCollection:self.traitCollection] style:UIBarButtonItemStylePlain target:self action:@selector(back)];
+    self.coverPhotoMimicsNavigationBarNavigationItem.leftBarButtonItem = [UIBarButtonItem db_backBarButtonItemWithTarget:self action:@selector(back)];
 }
 
 #pragma mark - Status Bar
@@ -261,15 +257,7 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     contentOffset.y -= MAX(scrollView.contentInset.top - _cachedContentInset.top, 0);
     scrollView.contentOffset = contentOffset;
     
-    // If the size class is vertically compact then we won't display the subtitle in the navigation bar
-    switch (self.view.traitCollection.verticalSizeClass) {
-        case UIUserInterfaceSizeClassCompact:
-            [self.customNavigationBar setSubtitle:nil];
-            break;
-        default:
-            [self.customNavigationBar setSubtitle:[self subtitleForContentControllerAtIndex:self.indexForSelectedContentController]];
-            break;
-    }
+    [self resetTitles];
 }
 
 #pragma mark - Getters
@@ -306,44 +294,33 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
 }
 
 - (void)setHidesSegmentedControlForSingleContentController:(BOOL)hidesSegmentedControlForSingleContentController {
-    if (_hidesSegmentedControlForSingleContentController == hidesSegmentedControlForSingleContentController) return;
     _hidesSegmentedControlForSingleContentController = hidesSegmentedControlForSingleContentController;
+    [self reloadData];
+}
+
+- (void)setDetailsView:(UIView *)detailsView {
+    NSAssert(detailsView, @"detailsView cannot be nil");
+    _detailsView = detailsView;
+    [self reloadData];
+}
+
+- (void)setAllowsPullToRefresh:(BOOL)allowsPullToRefresh {
+    _allowsPullToRefresh = allowsPullToRefresh;
     [self reloadData];
 }
 
 - (void)setCoverPhotoHeightMultiplier:(CGFloat)coverPhotoHeightMultiplier {
     NSAssert(coverPhotoHeightMultiplier > 0 && coverPhotoHeightMultiplier <= 1, @"`coverPhotoHeightMultiplier` must be greater than 0 or less than or equal to 1.");
-    if (_coverPhotoHeightMultiplier == coverPhotoHeightMultiplier) return;
     _coverPhotoHeightMultiplier = coverPhotoHeightMultiplier;
     [self.view setNeedsUpdateConstraints];
 }
 
-- (void)setAvatarSize:(DBProfileAvatarSize)avatarSize {
-    if (_avatarSize == avatarSize) return;
-    _avatarSize = avatarSize;
-    [self.view setNeedsUpdateConstraints];
-}
-
-- (void)setAvatarAlignment:(DBProfileAvatarAlignment)avatarAlignment {
-    if (_avatarAlignment == avatarAlignment) return;
-    _avatarAlignment = avatarAlignment;
-    [self.view setNeedsUpdateConstraints];
-}
-
-- (void)setAvatarInset:(UIEdgeInsets)avatarInset {
-    if (UIEdgeInsetsEqualToEdgeInsets(_avatarInset, avatarInset)) return;
-    _avatarInset = avatarInset;
-    [self.view setNeedsUpdateConstraints];
-}
-
 - (void)setCoverPhotoOptions:(DBProfileCoverPhotoOptions)coverPhotoOptions {
-    if (_coverPhotoOptions == coverPhotoOptions) return;
     _coverPhotoOptions = coverPhotoOptions;
     [self.view updateConstraintsIfNeeded];
 }
 
 - (void)setCoverPhotoHidden:(BOOL)coverPhotoHidden {
-    if (_coverPhotoHidden == coverPhotoHidden) return;
     _coverPhotoHidden = coverPhotoHidden;
     [self.view updateConstraintsIfNeeded];
 }
@@ -355,16 +332,19 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     [self.view updateConstraintsIfNeeded];
 }
 
-- (void)setDetailsView:(UIView *)detailsView {
-    NSAssert(detailsView, @"detailsView cannot be nil");
-    _detailsView = detailsView;
-    [self reloadData];
+- (void)setAvatarSize:(DBProfileAvatarSize)avatarSize {
+    _avatarSize = avatarSize;
+    [self.view setNeedsUpdateConstraints];
 }
 
-- (void)setAllowsPullToRefresh:(BOOL)allowsPullToRefresh {
-    if (_allowsPullToRefresh == allowsPullToRefresh) return;
-    _allowsPullToRefresh = allowsPullToRefresh;
-    [self reloadData];
+- (void)setAvatarAlignment:(DBProfileAvatarAlignment)avatarAlignment {
+    _avatarAlignment = avatarAlignment;
+    [self.view setNeedsUpdateConstraints];
+}
+
+- (void)setAvatarInset:(UIEdgeInsets)avatarInset {
+    _avatarInset = avatarInset;
+    [self.view setNeedsUpdateConstraints];
 }
 
 #pragma mark - Action Responders
@@ -565,18 +545,7 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     [self updateViewConstraints];
     [self.view layoutIfNeeded];
     
-    // Update titles
-    [self.customNavigationBar setTitle:self.title];
-    
-    // If the size class is vertically compact then we won't display the subtitle in the navigation bar
-    switch (self.view.traitCollection.verticalSizeClass) {
-        case UIUserInterfaceSizeClassCompact:
-            [self.customNavigationBar setSubtitle:nil];
-            break;
-        default:
-            [self.customNavigationBar setSubtitle:[self subtitleForContentControllerAtIndex:self.indexForSelectedContentController]];
-            break;
-    }
+    [self resetTitles];
 }
 
 - (void)startRefreshAnimations {
@@ -587,7 +556,7 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     [self.activityIndicator stopAnimating];
 }
 
-- (void)notifyDelegateOfPullToRefreshOfContentControllerAtIndex:(NSInteger)index  {
+- (void)notifyDelegateOfPullToRefreshForContentControllerAtIndex:(NSInteger)index  {
     // Inform delegate that the user has scrolled past the pull-to-refresh trigger distance
     if ([self respondsToSelector:@selector(profileViewController:didPullToRefreshContentControllerAtIndex:)]) {
         [self.delegate profileViewController:self didPullToRefreshContentControllerAtIndex:index];
@@ -672,18 +641,18 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     
     [scrollView addSubview:self.detailsView];
     
-    // Segmented control ?
+    // Add segmented control
     if ([self.contentControllers count] > 1 || !self.hidesSegmentedControlForSingleContentController) {
         [scrollView addSubview:self.segmentedControlView];
     } else {
         self.segmentedControlView.frame = CGRectZero;
     }
     
-    // Cover photo ?
+    // Add cover photo
     if (!self.coverPhotoHidden) {
         [scrollView addSubview:self.coverPhotoView];
         
-        // Pull-to-refresh ?
+        // Add pull-to-refresh
         if (self.allowsPullToRefresh) {
             [self.coverPhotoView addSubview:self.activityIndicator];
         }
@@ -721,7 +690,7 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     }
     
     if (self.coverPhotoMimicsNavigationBar && !(self.coverPhotoOptions & DBProfileCoverPhotoOptionExtend)) {
-        if ((scrollView.contentOffset.y + scrollView.contentInset.top) < CGRectGetHeight(self.coverPhotoView.frame) - self.coverPhotoViewBottomConstraint.constant) {
+        if ((scrollView.contentOffset.y + scrollView.contentInset.top) < CGRectGetHeight(self.coverPhotoView.frame) - _coverPhotoViewMimicNavigationBarConstraint.constant) {
             [scrollView insertSubview:self.avatarView aboveSubview:self.coverPhotoView];
         } else {
             [scrollView insertSubview:self.coverPhotoView aboveSubview:self.avatarView];
@@ -731,7 +700,7 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     scrollView.delaysContentTouches = NO;
 }
 
-#pragma mark - Content Offset / Inset
+#pragma mark - Helpers
 
 - (void)cacheContentOffset:(CGPoint)contentOffset forContentControllerAtIndex:(NSInteger)index {
     NSString *key = [self uniqueKeyForContentControllerAtIndex:index];
@@ -769,16 +738,7 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     contentInset.top = (self.automaticallyAdjustsScrollViewInsets) ? topInset + [self.topLayoutGuide length] : topInset;
     
     // Calculate scroll view bottom inset
-    CGFloat minimumContentSizeHeight = CGRectGetHeight(scrollView.frame) - CGRectGetHeight(self.segmentedControlView.frame);
-    
-    switch (self.view.traitCollection.verticalSizeClass) {
-        case UIUserInterfaceSizeClassCompact:
-            minimumContentSizeHeight -= DBProfileViewControllerNavigationBarHeightCompact;
-            break;
-        default:
-            minimumContentSizeHeight -= DBProfileViewControllerNavigationBarHeightRegular;
-            break;
-    }
+    CGFloat minimumContentSizeHeight = CGRectGetHeight(scrollView.frame) - CGRectGetHeight(self.segmentedControlView.frame) - DBProfileViewControllerNavigationBarHeightForTraitCollection(self.traitCollection);
     
     if (scrollView.contentSize.height < minimumContentSizeHeight && ([self.contentControllers count] > 1 ||
                                                                      ([self.contentControllers count] == 1 && !self.hidesSegmentedControlForSingleContentController))) {
@@ -788,7 +748,7 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     scrollView.contentInset = contentInset;
     
     // Calculate cover photo inset
-    self.coverPhotoViewTopConstraint.constant = -topInset;
+    _coverPhotoViewTopConstraint.constant = -topInset;
     
     // Calculate details view inset
     if (self.coverPhotoOptions & DBProfileCoverPhotoOptionExtend) {
@@ -797,7 +757,13 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     } else {
         topInset -= CGRectGetHeight(self.coverPhotoView.frame);
     }
-    self.detailsViewTopConstraint.constant = -topInset;
+    _detailsViewTopConstraint.constant = -topInset;
+}
+
+- (void)resetTitles {
+    [self.customNavigationBar setTitle:self.title];
+    [self.customNavigationBar setSubtitle:[self subtitleForContentControllerAtIndex:self.indexForSelectedContentController]
+                          traitCollection:self.traitCollection];
 }
 
 #pragma mark - DBProfileCoverPhotoViewDelegate
@@ -877,7 +843,7 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     [self handlePullToRefreshWithScrollView:scrollView];
     
     if (self.coverPhotoMimicsNavigationBar && !(self.coverPhotoOptions & DBProfileCoverPhotoOptionExtend)) {
-        if (contentOffset.y < CGRectGetHeight(self.coverPhotoView.frame) - self.coverPhotoViewBottomConstraint.constant) {
+        if (contentOffset.y < CGRectGetHeight(self.coverPhotoView.frame) - _coverPhotoViewMimicNavigationBarConstraint.constant) {
             [scrollView insertSubview:self.avatarView aboveSubview:self.coverPhotoView];
         } else {
             [scrollView insertSubview:self.coverPhotoView aboveSubview:self.avatarView];
@@ -895,7 +861,7 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
         [self startRefreshAnimations];
     } else if (!scrollView.isDragging && !self.refreshing && contentOffset.y < -[DBProfileViewControllerDefaults defaultPullToRefreshTriggerDistance]) {
         self.refreshing = YES;
-        [self notifyDelegateOfPullToRefreshOfContentControllerAtIndex:self.indexForSelectedContentController];
+        [self notifyDelegateOfPullToRefreshForContentControllerAtIndex:self.indexForSelectedContentController];
     }
     
     BOOL shouldEndRefreshAnimations = !self.refreshing && self.activityIndicator.isAnimating;
@@ -922,7 +888,7 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     
     if (contentOffset.y <= 0) {
         if (self.coverPhotoOptions & DBProfileCoverPhotoOptionStretch) {
-            self.coverPhotoViewHeightConstraint.constant = -contentOffset.y;
+            _coverPhotoViewHeightConstraint.constant = -contentOffset.y;
         }
         distance *= 0.8;
     }
@@ -967,14 +933,7 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     }
     
     CGFloat titleViewOffsetPercent = 1 - contentOffset.y / titleViewOffset;
-    
-    if (self.view.traitCollection.verticalSizeClass == UIUserInterfaceSizeClassCompact) {
-        [self.customNavigationBar setTitleVerticalPositionAdjustment:MAX(titleViewOffset * titleViewOffsetPercent, 0)
-                                                                forBarMetrics:UIBarMetricsCompact];
-    } else {
-        [self.customNavigationBar setTitleVerticalPositionAdjustment:MAX(titleViewOffset * titleViewOffsetPercent, 0)
-                                                            forBarMetrics:UIBarMetricsDefault];
-    }
+    [self.customNavigationBar setTitleVerticalPositionAdjustment:MAX(titleViewOffset * titleViewOffsetPercent, 0) traitCollection:self.traitCollection];
 }
 
 - (UIImage *)blurredImageWithPercent:(CGFloat)percent {
@@ -988,25 +947,18 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
 #pragma mark - Auto Layout
 
 - (void)updateCoverPhotoViewConstraints {
-    if (self.coverPhotoViewBottomConstraint &&
-        self.coverPhotoViewTopSuperviewConstraint &&
-        self.coverPhotoViewTopLayoutGuideConstraint) {
+    if (_coverPhotoViewMimicNavigationBarConstraint &&
+        _coverPhotoViewTopSuperviewConstraint &&
+        _coverPhotoViewTopLayoutGuideConstraint) {
         
-        switch (self.view.traitCollection.verticalSizeClass) {
-            case UIUserInterfaceSizeClassCompact:
-                self.coverPhotoViewBottomConstraint.constant = DBProfileViewControllerNavigationBarHeightCompact;
-                break;
-            default:
-                self.coverPhotoViewBottomConstraint.constant = DBProfileViewControllerNavigationBarHeightRegular;
-                break;
-        }
-        
+        _coverPhotoViewMimicNavigationBarConstraint.constant = DBProfileViewControllerNavigationBarHeightForTraitCollection(self.traitCollection);
+
         if (self.coverPhotoMimicsNavigationBar) {
-            [NSLayoutConstraint activateConstraints:@[self.coverPhotoViewBottomConstraint, self.coverPhotoViewTopSuperviewConstraint]];
-            [NSLayoutConstraint deactivateConstraints:@[self.coverPhotoViewTopLayoutGuideConstraint]];
+            [NSLayoutConstraint activateConstraints:@[_coverPhotoViewMimicNavigationBarConstraint, _coverPhotoViewTopSuperviewConstraint]];
+            [NSLayoutConstraint deactivateConstraints:@[_coverPhotoViewTopLayoutGuideConstraint]];
         } else {
-            [NSLayoutConstraint activateConstraints:@[self.coverPhotoViewTopLayoutGuideConstraint]];
-            [NSLayoutConstraint deactivateConstraints:@[self.coverPhotoViewBottomConstraint, self.coverPhotoViewTopSuperviewConstraint]];
+            [NSLayoutConstraint activateConstraints:@[_coverPhotoViewTopLayoutGuideConstraint]];
+            [NSLayoutConstraint deactivateConstraints:@[_coverPhotoViewMimicNavigationBarConstraint, _coverPhotoViewTopSuperviewConstraint]];
         }
     }
 }
@@ -1047,13 +999,33 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     _avatarViewRightAlignmentConstraint.constant = CGRectGetWidth(self.view.bounds) - avatarSize + self.avatarInset.left - self.avatarInset.right;
     _avatarViewLeftAlignmentConstraint.constant = self.avatarInset.left - self.avatarInset.right;
     _avatarViewSizeConstraint.constant = avatarSize;
-    self.avatarViewTopConstraint.constant = self.avatarInset.top - self.avatarInset.bottom;
+    _avatarViewTopConstraint.constant = self.avatarInset.top - self.avatarInset.bottom;
 }
 
 - (void)setupCustomNavigationBarConstraints {
-    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.customNavigationBar attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:[self topLayoutGuide] attribute:NSLayoutAttributeBottom multiplier:1 constant:0]];
-    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.customNavigationBar attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeLeft multiplier:1 constant:0]];
-    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.customNavigationBar attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeRight multiplier:1 constant:0]];
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.customNavigationBar
+                                                          attribute:NSLayoutAttributeTop
+                                                          relatedBy:NSLayoutRelationEqual
+                                                             toItem:[self topLayoutGuide]
+                                                          attribute:NSLayoutAttributeBottom
+                                                         multiplier:1
+                                                           constant:0]];
+    
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.customNavigationBar
+                                                          attribute:NSLayoutAttributeLeft
+                                                          relatedBy:NSLayoutRelationEqual
+                                                             toItem:self.view
+                                                          attribute:NSLayoutAttributeLeft
+                                                         multiplier:1
+                                                           constant:0]];
+    
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.customNavigationBar
+                                                          attribute:NSLayoutAttributeRight
+                                                          relatedBy:NSLayoutRelationEqual
+                                                             toItem:self.view
+                                                          attribute:NSLayoutAttributeRight
+                                                         multiplier:1
+                                                           constant:0]];
 }
 
 - (void)setUpConstraintsForScrollView:(UIScrollView *)scrollView {
@@ -1068,71 +1040,161 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     
     [scrollView addConstraint:[NSLayoutConstraint constraintWithItem:self.detailsView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:scrollView attribute:NSLayoutAttributeLeft multiplier:1 constant:0]];
     [scrollView addConstraint:[NSLayoutConstraint constraintWithItem:self.detailsView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:scrollView attribute:NSLayoutAttributeWidth multiplier:1 constant:0]];
-    self.detailsViewTopConstraint = [NSLayoutConstraint constraintWithItem:self.detailsView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:scrollView attribute:NSLayoutAttributeTop multiplier:1 constant:0];
-    [scrollView addConstraint:self.detailsViewTopConstraint];
+    _detailsViewTopConstraint = [NSLayoutConstraint constraintWithItem:self.detailsView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:scrollView attribute:NSLayoutAttributeTop multiplier:1 constant:0];
+    [scrollView addConstraint:_detailsViewTopConstraint];
     
     if (self.coverPhotoView.superview) {
         [self setUpCoverPhotoViewConstraintsForScrollView:scrollView];
         
-        [self.coverPhotoView addConstraint:[NSLayoutConstraint constraintWithItem:self.activityIndicator attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.coverPhotoView attribute:NSLayoutAttributeCenterX multiplier:1 constant:0]];
-        [self.coverPhotoView addConstraint:[NSLayoutConstraint constraintWithItem:self.activityIndicator attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self.coverPhotoView attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
+        [self.coverPhotoView addConstraint:[NSLayoutConstraint constraintWithItem:self.activityIndicator
+                                                                        attribute:NSLayoutAttributeCenterX
+                                                                        relatedBy:NSLayoutRelationEqual
+                                                                           toItem:self.coverPhotoView
+                                                                        attribute:NSLayoutAttributeCenterX
+                                                                       multiplier:1
+                                                                         constant:0]];
+        
+        [self.coverPhotoView addConstraint:[NSLayoutConstraint constraintWithItem:self.activityIndicator
+                                                                        attribute:NSLayoutAttributeCenterY
+                                                                        relatedBy:NSLayoutRelationEqual
+                                                                           toItem:self.coverPhotoView
+                                                                        attribute:NSLayoutAttributeCenterY
+                                                                       multiplier:1
+                                                                         constant:0]];
     }
     
     [self setUpAvatarViewConstraintsForScrollView:scrollView];
 }
 
 - (void)setUpCoverPhotoViewConstraintsForScrollView:(UIScrollView *)scrollView {
-    [scrollView addConstraint:[NSLayoutConstraint constraintWithItem:self.coverPhotoView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:scrollView attribute:NSLayoutAttributeLeft multiplier:1 constant:0]];
-    [scrollView addConstraint:[NSLayoutConstraint constraintWithItem:self.coverPhotoView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:scrollView attribute:NSLayoutAttributeWidth multiplier:1 constant:0]];
     
-    self.coverPhotoViewHeightConstraint = [NSLayoutConstraint constraintWithItem:self.coverPhotoView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeHeight multiplier:self.coverPhotoHeightMultiplier constant:0];
-    [self.view addConstraint:self.coverPhotoViewHeightConstraint];
+    [scrollView addConstraint:[NSLayoutConstraint constraintWithItem:self.coverPhotoView
+                                                           attribute:NSLayoutAttributeLeft
+                                                           relatedBy:NSLayoutRelationEqual
+                                                              toItem:scrollView
+                                                           attribute:NSLayoutAttributeLeft
+                                                          multiplier:1
+                                                            constant:0]];
     
-    self.coverPhotoViewTopConstraint = [NSLayoutConstraint constraintWithItem:self.coverPhotoView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:scrollView attribute:NSLayoutAttributeTop multiplier:1 constant:0];
-    self.coverPhotoViewTopConstraint.priority = UILayoutPriorityDefaultHigh;
-    [scrollView addConstraints:@[self.coverPhotoViewTopConstraint]];
+    [scrollView addConstraint:[NSLayoutConstraint constraintWithItem:self.coverPhotoView
+                                                           attribute:NSLayoutAttributeWidth
+                                                           relatedBy:NSLayoutRelationEqual
+                                                              toItem:scrollView
+                                                           attribute:NSLayoutAttributeWidth
+                                                          multiplier:1
+                                                            constant:0]];
     
-    self.coverPhotoViewBottomConstraint = [NSLayoutConstraint constraintWithItem:self.coverPhotoView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:self.view attribute:NSLayoutAttributeTop multiplier:1 constant:64];
-    [self.view addConstraint:self.coverPhotoViewBottomConstraint];
+    _coverPhotoViewHeightConstraint = [NSLayoutConstraint constraintWithItem:self.coverPhotoView
+                                                                   attribute:NSLayoutAttributeHeight
+                                                                   relatedBy:NSLayoutRelationEqual
+                                                                      toItem:self.view
+                                                                   attribute:NSLayoutAttributeHeight
+                                                                  multiplier:self.coverPhotoHeightMultiplier
+                                                                    constant:0];
+    [self.view addConstraint:_coverPhotoViewHeightConstraint];
     
-    self.coverPhotoViewTopLayoutGuideConstraint = [NSLayoutConstraint constraintWithItem:self.coverPhotoView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationLessThanOrEqual toItem:[self topLayoutGuide] attribute:NSLayoutAttributeBottom multiplier:1 constant:0];
-    self.coverPhotoViewTopLayoutGuideConstraint.priority = UILayoutPriorityDefaultHigh + 1;
-    [self.view addConstraint:self.coverPhotoViewTopLayoutGuideConstraint];
+    _coverPhotoViewTopConstraint = [NSLayoutConstraint constraintWithItem:self.coverPhotoView
+                                                                attribute:NSLayoutAttributeTop
+                                                                relatedBy:NSLayoutRelationEqual
+                                                                   toItem:scrollView
+                                                                attribute:NSLayoutAttributeTop
+                                                               multiplier:1
+                                                                 constant:0];
+    _coverPhotoViewTopConstraint.priority = UILayoutPriorityDefaultHigh;
+    [scrollView addConstraints:@[_coverPhotoViewTopConstraint]];
     
-    self.coverPhotoViewTopSuperviewConstraint = [NSLayoutConstraint constraintWithItem:self.coverPhotoView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationLessThanOrEqual toItem:self.view attribute:NSLayoutAttributeTop multiplier:1 constant:0];
-    self.coverPhotoViewTopSuperviewConstraint.priority = UILayoutPriorityDefaultHigh + 1;
-    [self.view addConstraint:self.coverPhotoViewTopSuperviewConstraint];
+    _coverPhotoViewMimicNavigationBarConstraint = [NSLayoutConstraint constraintWithItem:self.coverPhotoView
+                                                                               attribute:NSLayoutAttributeBottom
+                                                                               relatedBy:NSLayoutRelationGreaterThanOrEqual
+                                                                                  toItem:self.view attribute:NSLayoutAttributeTop
+                                                                              multiplier:1
+                                                                                constant:0];
+    [self.view addConstraint:_coverPhotoViewMimicNavigationBarConstraint];
+    
+    _coverPhotoViewTopLayoutGuideConstraint = [NSLayoutConstraint constraintWithItem:self.coverPhotoView
+                                                                           attribute:NSLayoutAttributeTop
+                                                                           relatedBy:NSLayoutRelationLessThanOrEqual
+                                                                              toItem:[self topLayoutGuide]
+                                                                           attribute:NSLayoutAttributeBottom
+                                                                          multiplier:1
+                                                                            constant:0];
+    _coverPhotoViewTopLayoutGuideConstraint.priority = UILayoutPriorityDefaultHigh + 1;
+    [self.view addConstraint:_coverPhotoViewTopLayoutGuideConstraint];
+    
+    _coverPhotoViewTopSuperviewConstraint = [NSLayoutConstraint constraintWithItem:self.coverPhotoView
+                                                                         attribute:NSLayoutAttributeTop
+                                                                         relatedBy:NSLayoutRelationLessThanOrEqual
+                                                                            toItem:self.view
+                                                                         attribute:NSLayoutAttributeTop
+                                                                        multiplier:1
+                                                                          constant:0];
+    _coverPhotoViewTopSuperviewConstraint.priority = UILayoutPriorityDefaultHigh + 1;
+    [self.view addConstraint:_coverPhotoViewTopSuperviewConstraint];
     
     if ([self.contentControllers count] > 1 || !self.hidesSegmentedControlForSingleContentController) {
-        [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.segmentedControlView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:self.coverPhotoView attribute:NSLayoutAttributeBottom multiplier:1 constant:0]];
+        [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.segmentedControlView
+                                                              attribute:NSLayoutAttributeTop
+                                                              relatedBy:NSLayoutRelationGreaterThanOrEqual
+                                                                 toItem:self.coverPhotoView
+                                                              attribute:NSLayoutAttributeBottom
+                                                             multiplier:1
+                                                               constant:0]];
     }
 }
 
 - (void)setUpAvatarViewConstraintsForScrollView:(UIScrollView *)scrollView {
-    [scrollView addConstraint:[NSLayoutConstraint constraintWithItem:self.avatarView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:self.avatarView attribute:NSLayoutAttributeWidth multiplier:1 constant:0]];
     
-    _avatarViewSizeConstraint = [NSLayoutConstraint constraintWithItem:self.avatarView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:DBProfileViewControllerAvatarSizeNormal];
+    [scrollView addConstraint:[NSLayoutConstraint constraintWithItem:self.avatarView
+                                                           attribute:NSLayoutAttributeHeight
+                                                           relatedBy:NSLayoutRelationEqual
+                                                              toItem:self.avatarView
+                                                           attribute:NSLayoutAttributeWidth
+                                                          multiplier:1
+                                                            constant:0]];
+    
+    _avatarViewSizeConstraint = [NSLayoutConstraint constraintWithItem:self.avatarView
+                                                             attribute:NSLayoutAttributeWidth
+                                                             relatedBy:NSLayoutRelationEqual
+                                                                toItem:nil attribute:NSLayoutAttributeNotAnAttribute
+                                                            multiplier:1
+                                                              constant:DBProfileViewControllerAvatarSizeNormal];
 
-    _avatarViewLeftAlignmentConstraint = [NSLayoutConstraint constraintWithItem:self.avatarView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:scrollView attribute:NSLayoutAttributeLeft multiplier:1 constant:0];
+    _avatarViewLeftAlignmentConstraint = [NSLayoutConstraint constraintWithItem:self.avatarView
+                                                                      attribute:NSLayoutAttributeLeft
+                                                                      relatedBy:NSLayoutRelationEqual
+                                                                         toItem:scrollView
+                                                                      attribute:NSLayoutAttributeLeft
+                                                                     multiplier:1
+                                                                       constant:0];
     _avatarViewLeftAlignmentConstraint.priority = UILayoutPriorityDefaultLow;
 
-    _avatarViewRightAlignmentConstraint = [NSLayoutConstraint constraintWithItem:self.avatarView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:scrollView attribute:NSLayoutAttributeLeft multiplier:1 constant:0];
+    _avatarViewRightAlignmentConstraint = [NSLayoutConstraint constraintWithItem:self.avatarView
+                                                                       attribute:NSLayoutAttributeLeft
+                                                                       relatedBy:NSLayoutRelationEqual
+                                                                          toItem:scrollView
+                                                                       attribute:NSLayoutAttributeLeft
+                                                                      multiplier:1
+                                                                        constant:0];
     _avatarViewRightAlignmentConstraint.priority = UILayoutPriorityDefaultLow;
 
-    _avatarViewCenterAlignmentConstraint = [NSLayoutConstraint constraintWithItem:self.avatarView attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:scrollView attribute:NSLayoutAttributeCenterX multiplier:1 constant:0];
+    _avatarViewCenterAlignmentConstraint = [NSLayoutConstraint constraintWithItem:self.avatarView
+                                                                        attribute:NSLayoutAttributeCenterX
+                                                                        relatedBy:NSLayoutRelationEqual
+                                                                           toItem:scrollView
+                                                                        attribute:NSLayoutAttributeCenterX
+                                                                       multiplier:1
+                                                                         constant:0];
     _avatarViewCenterAlignmentConstraint.priority = UILayoutPriorityDefaultLow;
 
-    self.avatarViewTopConstraint = [NSLayoutConstraint constraintWithItem:self.avatarView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.detailsView attribute:NSLayoutAttributeTop multiplier:1 constant:0];
+    _avatarViewTopConstraint = [NSLayoutConstraint constraintWithItem:self.avatarView
+                                                            attribute:NSLayoutAttributeTop
+                                                            relatedBy:NSLayoutRelationEqual
+                                                               toItem:self.detailsView
+                                                            attribute:NSLayoutAttributeTop
+                                                           multiplier:1
+                                                             constant:0];
     
-    [scrollView addConstraints:@[self.avatarViewTopConstraint,
-                                 _avatarViewSizeConstraint,
-                                 _avatarViewLeftAlignmentConstraint,
-                                 _avatarViewRightAlignmentConstraint,
-                                 _avatarViewCenterAlignmentConstraint]];
-    
-    [NSLayoutConstraint deactivateConstraints:@[_avatarViewLeftAlignmentConstraint,
-                                                _avatarViewRightAlignmentConstraint,
-                                                _avatarViewCenterAlignmentConstraint]];
+    [scrollView addConstraints:@[_avatarViewTopConstraint, _avatarViewSizeConstraint]];
 }
 
 @end

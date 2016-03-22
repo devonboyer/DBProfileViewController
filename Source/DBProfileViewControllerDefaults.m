@@ -8,17 +8,12 @@
 //  Released under an MIT license: http://opensource.org/licenses/MIT
 //
 #import "DBProfileViewControllerDefaults.h"
-#import "NSBundle+DBProfileViewController.h"
 
 @implementation DBProfileViewControllerDefaults
 
 + (UIColor *)defaultSegmentedControlTintColor {
     //return [UIColor grayColor];
     return [UIColor colorWithRed:29/255.0 green:161/255.0 blue:242/255.0 alpha:1];
-}
-
-+ (UIImage *)defaultBackBarButtonItemImageForTraitCollection:(UITraitCollection *)traitCollection {
-    return [UIImage imageNamed:@"db-profile-chevron" inBundle:[NSBundle db_resourcesBundle] compatibleWithTraitCollection:traitCollection];
 }
 
 + (DBProfileCoverPhotoOptions)defaultCoverPhotoOptions {

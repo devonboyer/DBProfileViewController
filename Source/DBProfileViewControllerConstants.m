@@ -9,6 +9,22 @@
 //
 
 #import "DBProfileViewControllerConstants.h"
+#import "DBProfileViewController.h"
+
+NSBundle *DBProfileViewControllerBundle() {
+    NSString *resourcePath = [NSBundle bundleForClass:[DBProfileViewController class]].resourcePath;
+    NSString *bundlePath = [resourcePath stringByAppendingPathComponent:@"DBProfileViewController.bundle"];
+    return [NSBundle bundleWithPath:bundlePath];
+}
+
+CGFloat DBProfileViewControllerNavigationBarHeightForTraitCollection(UITraitCollection *traitCollection) {
+    switch (traitCollection.verticalSizeClass) {
+        case UIUserInterfaceSizeClassCompact:
+            return 32;
+        default:
+            return 64;
+    }
+}
 
 const CGFloat DBProfileViewControllerAvatarSizeNormal = 72.0;
 

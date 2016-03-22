@@ -15,8 +15,6 @@
 
 + (UIColor *)defaultSegmentedControlTintColor;
 
-+ (UIImage *)defaultBackBarButtonItemImageForTraitCollection:(UITraitCollection *)traitCollection;
-
 ///---------------------------------------------
 /// @name Cover Photo Defaults
 ///---------------------------------------------
