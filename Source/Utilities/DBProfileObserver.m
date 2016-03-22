@@ -8,7 +8,6 @@
 //  Released under an MIT license: http://opensource.org/licenses/MIT
 //
 
-
 #import "DBProfileObserver.h"
 
 @implementation DBProfileObserver

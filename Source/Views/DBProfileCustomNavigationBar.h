@@ -12,9 +12,8 @@
 
 @class DBProfileTitleView;
 
-@interface DBProfileCustomNavigationBar : UIView
+@interface DBProfileCustomNavigationBar : UINavigationBar
 
-@property (nonatomic, strong, readonly) UINavigationBar *navigationBar;
 @property (nonatomic, strong, readonly) UINavigationItem *navigationItem;
 
 - (void)setTitle:(NSString *)title;

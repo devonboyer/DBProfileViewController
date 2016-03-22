@@ -27,15 +27,15 @@ typedef NS_OPTIONS(NSUInteger, DBProfileCoverPhotoOptions) {
     /*!
      @abstract No options are specified.
      */
-    DBProfileCoverPhotoOptionNone      = 1 << 0,
+    DBProfileCoverPhotoOptionNone = (1 << 0),
     /*!
      @abstract The cover photo will stretch with the scroll view.
      */
-    DBProfileCoverPhotoOptionStretch   = 1 << 1,
+    DBProfileCoverPhotoOptionStretch = (1 << 1),
     /*!
      @abstract The cover photo will extend beneath the details view.
      */
-    DBProfileCoverPhotoOptionExtend    = 1 << 2,
+    DBProfileCoverPhotoOptionExtend = (1 << 2),
 };
 
 /*!
