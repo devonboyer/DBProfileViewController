@@ -10,6 +10,7 @@
 #import "DBFollowersTableViewController.h"
 #import "DBPhotosTableViewController.h"
 #import "DBLikesTableViewController.h"
+#import "DBUserProfileDetailsView.h"
 
 static const NSInteger DBUserProfileNumberOfContentControllers = 3;
 
@@ -19,7 +20,7 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
     DBUserProfileContentControllerIndexLikes
 };
 
-@interface DBUserProfileViewController () <DBProfileViewControllerDelegate, DBProfileViewControllerDataSource>
+@interface DBUserProfileViewController () <DBProfileViewControllerDelegate, DBProfileViewControllerDataSource, DBUserProfileDetailsViewDelegate>
 
 @end
 
@@ -40,11 +41,12 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
     self.allowsPullToRefresh = YES;
     
     // Customize details view
-    DBProfileDetailsView *detailsView = (DBProfileDetailsView *)self.detailsView;
+    DBUserProfileDetailsView *detailsView = [[DBUserProfileDetailsView alloc] init];
     detailsView.nameLabel.text = @"DBProfileViewController";
     detailsView.usernameLabel.text = @"by @devboyer";
     detailsView.descriptionLabel.text = @"A customizable library for creating stunning user profiles.";
-    detailsView.contentInset = UIEdgeInsetsMake(60, 15, 15, 15);
+    detailsView.delegate = self;
+    self.detailsView = detailsView;
     
     // Set cover photo and avatar images
     [self setAvatarImage:[UIImage imageNamed:@"demo-avatar"] animated:NO];
@@ -83,6 +85,14 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
         default:
             break;
     }
+}
+
+#pragma mark - DBUserProfileDetailsViewDelegate
+
+- (void)userProfileDetailsViewDidShowSuggestedFollowers:(DBUserProfileDetailsView *)detailsView {
+    [self beginUpdates];
+    [detailsView invalidateIntrinsicContentSize];
+    [self endUpdates];
 }
 
 #pragma mark - DBProfileViewControllerDataSource

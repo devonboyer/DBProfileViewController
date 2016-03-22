@@ -31,8 +31,6 @@
 
 + (BOOL)defaultCoverPhotoMimicsNavigationBar;
 
-
-
 ///---------------------------------------------
 /// @name Avatar Defaults
 ///---------------------------------------------
@@ -54,5 +52,8 @@
 + (BOOL)defaultAllowsPullToRefresh;
 
 + (BOOL)defaultHidesSegmentedControlForSingleContentController;
+
+
+// navigationBarHeightForSizeClass interfaceIdiom
 
 @end

@@ -11,48 +11,32 @@
 #import "DBProfileAvatarView.h"
 #import "DBProfileViewControllerDefaults.h"
 
-@interface DBProfileAvatarView ()
-
-@property (nonatomic, strong) NSLayoutConstraint *imageViewWidthConstraint;
-
-@end
-
-@implementation DBProfileAvatarView
-
-#pragma mark - Initialization
+@implementation DBProfileAvatarView {
+    NSLayoutConstraint *_imageViewWidthConstraint;
+}
 
 - (instancetype)init {
     self = [super init];
     if (self) {
-        [self db_commonInit];
+        self.backgroundColor = [UIColor whiteColor];
+        self.clipsToBounds = YES;
+        self.userInteractionEnabled = YES;
+        self.layer.cornerRadius = 8;
+        
+        _imageView = [[UIImageView alloc] init];
+        self.imageView.contentMode = UIViewContentModeScaleAspectFill;
+        self.imageView.clipsToBounds = YES;
+        self.imageView.layer.cornerRadius = 6;
+        self.imageView.translatesAutoresizingMaskIntoConstraints = NO;
+
+        [self addSubview:self.imageView];
+        
+        [self setUpConstraints];
+        
+        self.style = [DBProfileViewControllerDefaults defaultAvatarStyle];
+        self.borderWidth = 3;
     }
     return self;
-}
-
-- (void)db_commonInit {
-    _imageView = [[UIImageView alloc] init];
-    
-    self.imageView.translatesAutoresizingMaskIntoConstraints = NO;
-    
-    [self addSubview:self.imageView];
-
-    [self configureImageViewLayoutConstraints];
-    [self configureDefaults];
-}
-
-- (void)configureDefaults {
-    self.userInteractionEnabled = YES;
-    
-    self.backgroundColor = [UIColor whiteColor];
-    self.layer.cornerRadius = 8;
-    self.clipsToBounds = YES;
-    
-    self.imageView.contentMode = UIViewContentModeScaleAspectFill;
-    self.imageView.clipsToBounds = YES;
-    self.imageView.layer.cornerRadius = 6;
-    
-    self.style = [DBProfileViewControllerDefaults defaultAvatarStyle];
-    self.borderWidth = 3;
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
@@ -78,7 +62,7 @@
 #pragma - Overrides
 
 - (void)updateConstraints {
-    self.imageViewWidthConstraint.constant = -2*self.borderWidth;
+    _imageViewWidthConstraint.constant = -2*self.borderWidth;
     [super updateConstraints];
 }
 
@@ -121,14 +105,12 @@
     [self updateConstraints];
 }
 
-#pragma mark - Auto Layout
-
-- (void)configureImageViewLayoutConstraints {
+- (void)setUpConstraints {
     [self addConstraint:[NSLayoutConstraint constraintWithItem:self.imageView attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterX multiplier:1 constant:0]];
     [self addConstraint:[NSLayoutConstraint constraintWithItem:self.imageView attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
     [self addConstraint:[NSLayoutConstraint constraintWithItem:self.imageView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:self.imageView attribute:NSLayoutAttributeWidth multiplier:1 constant:0]];
-    self.imageViewWidthConstraint = [NSLayoutConstraint constraintWithItem:self.imageView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeWidth multiplier:1 constant:0];
-    [self addConstraint:self.imageViewWidthConstraint];
+    _imageViewWidthConstraint = [NSLayoutConstraint constraintWithItem:self.imageView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeWidth multiplier:1 constant:0];
+    [self addConstraint:_imageViewWidthConstraint];
 }
 
 @end

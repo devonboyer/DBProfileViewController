@@ -10,12 +10,11 @@
 
 #import <UIKit/UIKit.h>
 
-/*!
- @class DBProfileSegmentedControlView
- @abstract The `DBProfileSegmentedControlView` class displays a segmented control.
- */
 @interface DBProfileSegmentedControlView : UIView
 
 @property (nonatomic, strong) UISegmentedControl *segmentedControl;
+
+@property (nonatomic, assign) BOOL showsTopBorder;
+@property (nonatomic, assign) BOOL showsBottomBorder;
 
 @end

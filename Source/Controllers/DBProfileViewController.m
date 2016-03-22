@@ -9,13 +9,13 @@
 //
 
 #import "DBProfileViewController.h"
-#import "DBProfileContentControllerObserver.h"
+#import "DBProfileObserver.h"
 #import "DBProfileDetailsView.h"
 #import "DBProfileAvatarView.h"
 #import "DBProfileCoverPhotoView.h"
 #import "DBProfileTitleView.h"
 #import "DBProfileSegmentedControlView.h"
-#import "DBProfileNavigationView.h"
+#import "DBProfileCustomNavigationBar.h"
 #import "DBProfileImageEffects.h"
 #import "DBProfileBlurImageOperation.h"
 #import "DBProfileViewControllerDefaults.h"
@@ -29,7 +29,7 @@ static const CGFloat DBProfileViewControllerNavigationBarHeightCompact = 32.0;
 static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProfileViewController.contentOffsetCache";
 static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileViewController.operationQueue";
 
-@interface DBProfileViewController () <DBProfileCoverPhotoViewDelegate, DBProfileAvatarViewDelegate, DBProfileContentControllerObserverDelegate>
+@interface DBProfileViewController () <DBProfileCoverPhotoViewDelegate, DBProfileAvatarViewDelegate, DBProfileScrollViewObserverDelegate>
 {
     BOOL _shouldScrollToTop;
     CGPoint _sharedContentOffset;
@@ -49,7 +49,7 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
 
 // Data
 @property (nonatomic, strong) NSMutableArray<DBProfileContentController *> *contentControllers;
-@property (nonatomic, strong) NSMutableDictionary<NSString *, DBProfileContentControllerObserver *> *observers;
+@property (nonatomic, strong) NSMutableDictionary<NSString *, DBProfileObserver *> *observers;
 @property (nonatomic, strong) NSCache *contentOffsetCache;
 @property (nonatomic, strong) NSOperationQueue *operationQueue;
 @property (nonatomic, strong) NSDictionary *blurredImagesCache;
@@ -57,7 +57,7 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
 // Views
 @property (nonatomic, strong) UIView *containerView;
 @property (nonatomic, strong) UIActivityIndicatorView *activityIndicator;
-@property (nonatomic, strong) DBProfileNavigationView *navigationView;
+@property (nonatomic, strong) DBProfileCustomNavigationBar *navigationView;
 @property (nonatomic, strong) DBProfileSegmentedControlView *segmentedControlView;
 
 // Constraints
@@ -117,7 +117,7 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     _segmentedControlView = [[DBProfileSegmentedControlView alloc] init];
     _avatarView = [[DBProfileAvatarView alloc] init];
     _coverPhotoView = [[DBProfileCoverPhotoView alloc] init];
-    _navigationView = [[DBProfileNavigationView alloc] init];
+    _navigationView = [[DBProfileCustomNavigationBar alloc] init];
     _activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
 
     NSCache *contentOffsetCache = [[NSCache alloc] init];
@@ -203,8 +203,8 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
 }
 
 - (void)updateViewConstraints {
-    [self updateCoverPhotoViewLayoutConstraints];
-    [self updateAvatarViewLayoutConstraints];
+    [self updateCoverPhotoViewConstraints];
+    [self updateAvatarViewConstraints];
     [super updateViewConstraints];
 }
 
@@ -269,10 +269,10 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     // If the size class is vertically compact then we won't display the subtitle in the navigation bar
     switch (self.view.traitCollection.verticalSizeClass) {
         case UIUserInterfaceSizeClassCompact:
-            self.navigationView.titleView.subtitleLabel.text = nil;
+            [self.navigationView setSubtitle:nil];
             break;
         default:
-            self.navigationView.titleView.subtitleLabel.text = [self subtitleForContentControllerAtIndex:self.indexForSelectedContentController];
+            [self.navigationView setSubtitle:[self subtitleForContentControllerAtIndex:self.indexForSelectedContentController]];
             break;
     }
 }
@@ -356,7 +356,7 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
 - (void)setCoverPhotoMimicsNavigationBar:(BOOL)coverPhotoMimicsNavigationBar {
     _coverPhotoMimicsNavigationBar = coverPhotoMimicsNavigationBar;
     self.navigationView.hidden = !coverPhotoMimicsNavigationBar;
-    self.coverPhotoView.overlayView.hidden = !coverPhotoMimicsNavigationBar;
+    self.coverPhotoView.shouldApplyTint = coverPhotoMimicsNavigationBar;
     [self.view updateConstraintsIfNeeded];
 }
 
@@ -412,7 +412,7 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
 - (void)beginUpdates {
     self.updating = YES;
     self.updateContext = [[DBProfileViewControllerUpdateContext alloc] init];
-    self.updateContext.beforeUpdatesDetailsViewHeight = [self.detailsView systemLayoutSizeFittingSize:UILayoutFittingCompressedSize].height;
+    self.updateContext.beforeUpdatesDetailsViewHeight = CGRectGetHeight(self.detailsView.frame);
     [self.view invalidateIntrinsicContentSize];
 }
 
@@ -422,7 +422,7 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
         [self setIndexForSelectedContentController:self.indexForSelectedContentController];
         
         // Calculate the difference between heights of subviews from before updates to after updates
-        self.updateContext.afterUpdatesDetailsViewHeight = [self.detailsView systemLayoutSizeFittingSize:UILayoutFittingCompressedSize].height;
+        self.updateContext.afterUpdatesDetailsViewHeight = CGRectGetHeight(self.detailsView.frame);
         
         // Adjust content offset to account for difference in heights of subviews from before updates to after updates
         if (round(self.updateContext.beforeUpdatesDetailsViewHeight) != round(self.updateContext.afterUpdatesDetailsViewHeight)) {
@@ -550,8 +550,7 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
         [self hideContentController:hideVC];
         NSString *key = [self uniqueKeyForContentControllerAtIndex:_indexForSelectedContentController];
         if ([self.observers valueForKey:key]) {
-            DBProfileContentControllerObserver *observer = self.observers[key];
-            [observer stopObserving];
+            DBProfileScrollViewObserver *observer = self.observers[key];
             [self.observers removeObjectForKey:key];
         }
     }
@@ -564,7 +563,7 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     if (displayVC) {
         [self displayContentViewController:displayVC];
         NSString *key = [self uniqueKeyForContentControllerAtIndex:indexForSelectedContentController];
-        DBProfileContentControllerObserver *observer = [[DBProfileContentControllerObserver alloc] initWithContentController:displayVC delegate:self];
+        DBProfileScrollViewObserver *observer = [[DBProfileScrollViewObserver alloc] initWithTargetView:[displayVC contentScrollView] delegate:self];
         [observer startObserving];
         self.observers[key] = observer;
     }
@@ -573,15 +572,15 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     [self.view layoutIfNeeded];
     
     // Update titles
-    self.navigationView.titleView.titleLabel.text = self.title;
+    [self.navigationView setTitle:self.title];
     
     // If the size class is vertically compact then we won't display the subtitle in the navigation bar
     switch (self.view.traitCollection.verticalSizeClass) {
         case UIUserInterfaceSizeClassCompact:
-            self.navigationView.titleView.subtitleLabel.text = nil;
+            [self.navigationView setSubtitle:nil];
             break;
         default:
-            self.navigationView.titleView.subtitleLabel.text = [self subtitleForContentControllerAtIndex:self.indexForSelectedContentController];
+            [self.navigationView setSubtitle:[self subtitleForContentControllerAtIndex:self.indexForSelectedContentController]];
             break;
     }
 }
@@ -879,9 +878,9 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     }
 }
 
-#pragma mark - DBProfileContentControllerObserverDelegate
+#pragma mark - DBProfileScrollViewObserverDelegate
 
-- (void)contentControllerObserver:(DBProfileContentControllerObserver *)observer contentControllerScrollViewDidScroll:(UIScrollView *)scrollView {
+- (void)observedScrollViewDidScroll:(UIScrollView *)scrollView {
     CGPoint contentOffset = scrollView.contentOffset;
     contentOffset.y += scrollView.contentInset.top;
     [self updateSubviewsWithContentOffset:contentOffset];
@@ -998,7 +997,7 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
 
 #pragma mark - Auto Layout
 
-- (void)updateCoverPhotoViewLayoutConstraints {    
+- (void)updateCoverPhotoViewConstraints {
     if (self.coverPhotoViewBottomConstraint &&
         self.coverPhotoViewTopSuperviewConstraint &&
         self.coverPhotoViewTopLayoutGuideConstraint) {
@@ -1022,7 +1021,7 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     }
 }
 
-- (void)updateAvatarViewLayoutConstraints {
+- (void)updateAvatarViewConstraints {
     if (self.avatarViewLeftConstraint && self.avatarViewCenterXConstraint) {
         switch (self.avatarAlignment) {
             case DBProfileAvatarAlignmentLeft:

@@ -10,10 +10,6 @@
 
 #import <UIKit/UIKit.h>
 
-/*!
- @class DBProfileTitleView
- @abstract The `DBProfileTitleView` class displays a profile's title and subtitle.
- */
 @interface DBProfileTitleView : UIView
 
 @property (nonatomic, strong, readonly) UILabel *titleLabel;

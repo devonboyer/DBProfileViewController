@@ -10,54 +10,49 @@
 
 #import "DBProfileSegmentedControlView.h"
 
-@interface DBProfileSegmentedControlView ()
-
-@property (nonatomic, strong) UIView *topBorderView;
-@property (nonatomic, strong) UIView *bottomBorderView;
-
-@end
-
-@implementation DBProfileSegmentedControlView
-
-#pragma mark - Initialization
+@implementation DBProfileSegmentedControlView {
+    UIView *_topBorderView;
+    UIView *_bottomBorderView;
+}
 
 - (instancetype)init {
     self = [super init];
     if (self) {
-        [self db_commonInit];
+        self.backgroundColor = [UIColor whiteColor];
+
+        _topBorderView = [[UIView alloc] init];
+        _bottomBorderView = [[UIView alloc] init];
+        
+        [self addSubview:_topBorderView];
+        [self addSubview:_bottomBorderView];
+        
+        _topBorderView.translatesAutoresizingMaskIntoConstraints = NO;
+        _bottomBorderView.translatesAutoresizingMaskIntoConstraints = NO;
+        
+        [self setUpConstraints];
+        
+        UIColor *borderColor = [UIColor colorWithWhite:0 alpha:0.38];
+        _topBorderView.backgroundColor = borderColor;
+        _bottomBorderView.backgroundColor = borderColor;
+        
+        self.showsTopBorder = NO;
     }
     return self;
-}
-
-- (void)db_commonInit {
-    _topBorderView = [[UIView alloc] init];
-    _bottomBorderView = [[UIView alloc] init];
-    
-    [self addSubview:self.topBorderView];
-    [self addSubview:self.bottomBorderView];
-
-    [self.topBorderView setTranslatesAutoresizingMaskIntoConstraints:NO];
-    [self.bottomBorderView setTranslatesAutoresizingMaskIntoConstraints:NO];
-
-    [self configureTopBorderViewLayoutConstraints];
-    [self configureBottomBorderViewLayoutConstraints];
-    
-    [self configureDefaults];
-}
-
-- (void)configureDefaults {
-    UIColor *borderColor = [UIColor colorWithWhite:0 alpha:0.38];
-    self.backgroundColor = [UIColor whiteColor];
-    self.segmentedControl.tintColor = [UIColor grayColor];
-    
-    self.topBorderView.backgroundColor = borderColor;
-    self.bottomBorderView.backgroundColor = borderColor;
-    self.topBorderView.hidden = YES;
 }
 
 - (void)tintColorDidChange {
     [super tintColorDidChange];
     self.segmentedControl.tintColor = self.tintColor;
+}
+
+- (void)setShowsTopBorder:(BOOL)showsTopBorder {
+    _showsTopBorder = showsTopBorder;
+    _topBorderView.hidden = !showsTopBorder;
+}
+
+- (void)setShowsBottomBorder:(BOOL)showsBottomBorder {
+    _showsBottomBorder = showsBottomBorder;
+    _bottomBorderView.hidden = !showsBottomBorder;
 }
 
 - (void)setSegmentedControl:(UISegmentedControl *)segmentedControl {
@@ -69,12 +64,7 @@
     self.segmentedControl.selectedSegmentIndex = UISegmentedControlNoSegment;
     
     [self addSubview:self.segmentedControl];
-    [self configureSegmentedControlLayoutConstraints];
-}
-
-#pragma mark - Auto Layout
-
-- (void)configureSegmentedControlLayoutConstraints {
+    
     [self addConstraint:[NSLayoutConstraint constraintWithItem:self.segmentedControl attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterX multiplier:1 constant:0]];
     [self addConstraint:[NSLayoutConstraint constraintWithItem:self.segmentedControl attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
     [self addConstraint:[NSLayoutConstraint constraintWithItem:self.segmentedControl attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeWidth multiplier:0.9 constant:0]];
@@ -82,18 +72,16 @@
     [self addConstraint:[NSLayoutConstraint constraintWithItem:self.segmentedControl attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeBottom multiplier:1 constant:-10]];
 }
 
-- (void)configureTopBorderViewLayoutConstraints {
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.topBorderView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTop multiplier:1 constant:0]];
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.topBorderView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeLeft multiplier:1 constant:0]];
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.topBorderView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeWidth multiplier:1 constant:0]];
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.topBorderView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:0.5]];
-}
-
-- (void)configureBottomBorderViewLayoutConstraints {
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.bottomBorderView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeBottom multiplier:1 constant:-0.5]];
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.bottomBorderView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeLeft multiplier:1 constant:0]];
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.bottomBorderView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeWidth multiplier:1 constant:0]];
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.bottomBorderView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:0.5]];
+- (void)setUpConstraints {
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:_topBorderView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTop multiplier:1 constant:0]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:_topBorderView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeLeft multiplier:1 constant:0]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:_topBorderView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeWidth multiplier:1 constant:0]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:_topBorderView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:0.5]];
+    
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:_bottomBorderView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeBottom multiplier:1 constant:-0.5]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:_bottomBorderView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeLeft multiplier:1 constant:0]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:_bottomBorderView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeWidth multiplier:1 constant:0]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:_bottomBorderView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:0.5]];
 }
 
 @end
