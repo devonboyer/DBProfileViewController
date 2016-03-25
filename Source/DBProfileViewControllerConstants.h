@@ -15,6 +15,11 @@ NSBundle *DBProfileViewControllerBundle();
 CGFloat DBProfileViewControllerNavigationBarHeightForTraitCollection(UITraitCollection *traitCollection);
 
 /*!
+ @abstract A constant value representing the max blur radius that will be applied to a cover photo.
+ */
+extern const CGFloat DBProfileViewControllerCoverPhotoMaxBlurRadius;
+
+/*!
  @abstract A constant value representing the size of the avatar when using `DBProfileAvatarSizeNormal`.
  */
 extern const CGFloat DBProfileViewControllerAvatarSizeNormal;

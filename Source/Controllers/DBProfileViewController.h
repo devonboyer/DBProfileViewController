@@ -176,13 +176,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, assign) BOOL coverPhotoMimicsNavigationBar;
 
-/*!
- @abstract Sets the cover photo.
- @param coverPhoto The image to set as the cover photo.
- @param animated YES if setting the cover photo should be animated, NO otherwise.
- */
-- (void)setCoverPhotoImage:(UIImage *)coverPhotoImage animated:(BOOL)animated;
-
 ///---------------------------------------------
 /// @name Configuring Avatar View
 ///---------------------------------------------
@@ -209,13 +202,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, assign) UIEdgeInsets avatarInset;
 
-/*!
- @abstract Sets the avatar image.
- @param avatarImage The image to set as the avatar.
- @param animated YES if setting the avatar image should be animated, NO otherwise.
- */
-- (void)setAvatarImage:(UIImage *)avatarImage animated:(BOOL)animated;
-
 ///----------------------------------------------
 /// @name Configuring Pull-To-Refresh
 ///----------------------------------------------
@@ -235,6 +221,13 @@ NS_ASSUME_NONNULL_BEGIN
  @abstract Hides the pull-to-refresh indicator if it is currently animating.
  */
 - (void)endRefreshing;
+
+@end
+
+@interface DBProfileViewController (Deprecated)
+
+- (void)setCoverPhotoImage:(UIImage *)image animated:(BOOL)animated __deprecated;
+- (void)setAvatarImage:(UIImage *)avatarImage animated:(BOOL)animated __deprecated;
 
 @end
 

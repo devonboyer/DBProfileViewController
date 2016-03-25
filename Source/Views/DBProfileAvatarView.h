@@ -13,27 +13,11 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class DBProfileAvatarView;
-
-@protocol DBProfileAvatarViewDelegate <NSObject>
-
-- (void)didSelectAvatarView:(DBProfileAvatarView *)avatarView;
-- (void)didDeselectAvatarView:(DBProfileAvatarView *)avatarView;
-- (void)didHighlightAvatarView:(DBProfileAvatarView *)avatarView;
-- (void)didUnhighlightAvatarView:(DBProfileAvatarView *)avatarView;
-
-@end
-
 /*!
  @class DBProfileAvatarView
  @abstract The `DBProfileAvatarView` class displays an avatar image.
  */
 @interface DBProfileAvatarView : DBProfileSelectableView
-
-/*!
- @abstract The The object that acts as the view's delegate.
- */
-@property (nonatomic, weak) id<DBProfileAvatarViewDelegate> delegate;
 
 /*!
  @abstract Specifies the style.
@@ -55,6 +39,13 @@ NS_ASSUME_NONNULL_BEGIN
  @abstract The image view that displays the avatar image.
  */
 @property (nonatomic, strong, readonly) UIImageView *imageView;
+
+/*!
+ @abstract Sets the avatar image.
+ @param avatarImage The image to set as the avatar.
+ @param animated YES if setting the avatar image should be animated, NO otherwise.
+ */
+- (void)setAvatarImage:(UIImage *)image animated:(BOOL)animated;
 
 @end
 

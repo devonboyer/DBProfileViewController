@@ -26,6 +26,8 @@ CGFloat DBProfileViewControllerNavigationBarHeightForTraitCollection(UITraitColl
     }
 }
 
+const CGFloat DBProfileViewControllerCoverPhotoMaxBlurRadius = 10.0;
+
 const CGFloat DBProfileViewControllerAvatarSizeNormal = 72.0;
 
 const CGFloat DBProfileViewControllerAvatarSizeLarge = 92.0;

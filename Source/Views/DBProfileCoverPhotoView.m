@@ -10,8 +10,11 @@
 
 #import "DBProfileCoverPhotoView.h"
 #import "DBProfileTintedImageView.h"
+#import "DBProfileCoverPhotoView_Private.h"
 
-@implementation DBProfileCoverPhotoView
+@implementation DBProfileCoverPhotoView {
+    DBProfileTintedImageView *_imageView;
+}
 
 - (instancetype)init {
     self = [super init];
@@ -33,11 +36,6 @@
     return self;
 }
 
-- (void)setShouldApplyTint:(BOOL)shouldApplyTint {
-    _shouldApplyTint = shouldApplyTint;
-    ((DBProfileTintedImageView *)self.imageView).shouldApplyTint = shouldApplyTint;
-}
-
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
     [super setSelected:selected animated:animated];
     
@@ -55,6 +53,43 @@
         [self.delegate didHighlightCoverPhotoView:self];
     } else if (!highlighted && [self.delegate respondsToSelector:@selector(didUnhighlightCoverPhotoView:)]) {
         [self.delegate didUnhighlightCoverPhotoView:self];
+    }
+}
+
+- (BOOL)shouldApplyTint {
+    return _imageView.shouldApplyTint;
+}
+
+- (BOOL)shouldCropImageBeforeBlurring {
+    return _imageView.shouldCropImageBeforeBlurring;
+}
+
+- (CGFloat)blurRadius {
+    return _imageView.blurRadius;
+}
+
+- (void)setShouldApplyTint:(BOOL)shouldApplyTint {
+    _imageView.shouldApplyTint = shouldApplyTint;
+}
+
+- (void)setShouldCropImageBeforeBlurring:(BOOL)shouldCropImageBeforeBlurring {
+    _imageView.shouldCropImageBeforeBlurring = shouldCropImageBeforeBlurring;
+}
+
+- (void)setBlurRadius:(CGFloat)blurRadius {
+    _imageView.blurRadius = blurRadius;
+}
+
+- (void)setCoverPhotoImage:(UIImage *)image animated:(BOOL)animated {
+    if (!image) return;
+    
+    self.imageView.image = image;
+    
+    if (animated) {
+        self.imageView.alpha = 0;
+        [UIView animateWithDuration: 0.3 animations:^{
+            self.imageView.alpha = 1;
+        }];
     }
 }
 

@@ -12,17 +12,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class DBProfileCoverPhotoView;
-
-@protocol DBProfileCoverPhotoViewDelegate <NSObject>
-
-- (void)didSelectCoverPhotoView:(DBProfileCoverPhotoView *)coverPhotoView;
-- (void)didDeselectCoverPhotoView:(DBProfileCoverPhotoView *)coverPhotoView;
-- (void)didHighlightCoverPhotoView:(DBProfileCoverPhotoView *)coverPhotoView;
-- (void)didUnhighlightCoverPhotoView:(DBProfileCoverPhotoView *)coverPhotoView;
-
-@end
-
 /*!
  @class DBProfileCoverPhotoView
  @abstract The `DBProfileCoverPhotoView` class displays a cover photo.
@@ -30,16 +19,20 @@ NS_ASSUME_NONNULL_BEGIN
 @interface DBProfileCoverPhotoView : DBProfileSelectableView
 
 /*!
- @abstract The The object that acts as the view's delegate.
- */
-@property (nonatomic, weak) id<DBProfileCoverPhotoViewDelegate> delegate;
-
-/*!
  @abstract The image view that displays the cover photo image.
  */
 @property (nonatomic, strong, readonly) UIImageView *imageView;
 
 @property (nonatomic, assign) BOOL shouldApplyTint;
+@property (nonatomic, assign) BOOL shouldCropImageBeforeBlurring;
+@property (nonatomic, assign) CGFloat blurRadius;
+
+/*!
+ @abstract Sets the cover photo image.
+ @param coverPhoto The image to set as the cover photo image.
+ @param animated YES if setting the cover photo image should be animated, NO otherwise.
+ */
+- (void)setCoverPhotoImage:(UIImage *)image animated:(BOOL)animated;
 
 @end
 

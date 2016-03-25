@@ -12,18 +12,17 @@
 #import "DBProfileObserver.h"
 #import "DBProfileDetailsView.h"
 #import "DBProfileAvatarView.h"
+#import "DBProfileAvatarView_Private.h"
 #import "DBProfileCoverPhotoView.h"
+#import "DBProfileCoverPhotoView_Private.h"
 #import "DBProfileTitleView.h"
 #import "DBProfileSegmentedControlView.h"
 #import "DBProfileCustomNavigationBar.h"
-#import "DBProfileImageEffects.h"
-#import "DBProfileBlurImageOperation.h"
 #import "DBProfileViewControllerDefaults.h"
 #import "DBProfileViewControllerUpdateContext.h"
 #import "UIBarButtonItem+DBProfileViewController.h"
 
 static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProfileViewController.contentOffsetCache";
-static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileViewController.operationQueue";
 
 @interface DBProfileViewController () <DBProfileCoverPhotoViewDelegate, DBProfileAvatarViewDelegate, DBProfileScrollViewObserverDelegate>
 {
@@ -47,8 +46,6 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
 @property (nonatomic, strong) NSMutableArray<DBProfileContentController *> *contentControllers;
 @property (nonatomic, strong) NSMutableDictionary<NSString *, DBProfileObserver *> *observers;
 @property (nonatomic, strong) NSCache *contentOffsetCache;
-@property (nonatomic, strong) NSOperationQueue *operationQueue;
-@property (nonatomic, strong) NSDictionary *blurredImagesCache;
 
 // Views
 @property (nonatomic, strong) UIView *containerView;
@@ -122,12 +119,7 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     contentOffsetCache.countLimit = 10;
     _contentOffsetCache = contentOffsetCache;
     
-    self.operationQueue = [[NSOperationQueue alloc] init];
-    self.operationQueue.maxConcurrentOperationCount = 10;
-    self.operationQueue.name = DBProfileViewControllerOperationQueueName;
-    
     self.containerView = [[UIView alloc] init];
-    
     self.segmentedControlClass = [UISegmentedControl class];
     
     self.coverPhotoView.delegate = self;
@@ -172,6 +164,8 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     if (!self.hasAppeared) {
         [self reloadData];
         
+        [self.view setNeedsUpdateConstraints];
+        
         // Scroll displayed content controller to top
         if ([self.contentControllers count]) {
             DBProfileContentController *displayedViewController = [self.contentControllers objectAtIndex:self.indexForSelectedContentController];
@@ -189,12 +183,6 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     [super viewDidAppear:animated];
     
     self.hasAppeared = YES;
-}
-
-- (void)viewWillDisappear:(BOOL)animated {
-    [super viewWillDisappear:animated];
-    
-    [self.operationQueue cancelAllOperations];
 }
 
 - (void)updateViewConstraints {
@@ -442,51 +430,6 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     
     // Display selected content view controller
     [self setIndexForSelectedContentController:self.indexForSelectedContentController];
-}
-
-- (void)setCoverPhotoImage:(UIImage *)coverPhotoImage animated:(BOOL)animated {
-    if (!coverPhotoImage) return;
-        
-    __weak DBProfileViewController *weakSelf = self;
-    
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        
-        UIImage *croppedImage = [DBProfileImageEffects imageWithImage:coverPhotoImage
-                                                         scaledToSize:CGSizeMake(CGRectGetWidth(self.view.frame), CGRectGetHeight(self.view.frame) *self.coverPhotoHeightMultiplier)];
-                
-        dispatch_async( dispatch_get_main_queue(), ^{
-            
-            weakSelf.coverPhotoView.imageView.image = croppedImage;
-            _coverPhotoImage = croppedImage;
-            
-            if (animated) {
-                weakSelf.coverPhotoView.imageView.alpha = 0;
-                [UIView animateWithDuration: 0.3 animations:^{
-                    weakSelf.coverPhotoView.imageView.alpha = 1;
-                }];
-            }
-            
-            DBProfileBlurImageOperation *operation = [[DBProfileBlurImageOperation alloc] initWithImageToBlur:croppedImage];
-            [operation setBlurImageCompletionBlock:^(NSDictionary *blurredImages) {
-                weakSelf.blurredImagesCache = blurredImages;
-            }];
-            [weakSelf.operationQueue addOperation:operation];
-            
-        });
-    });
-}
-
-- (void)setAvatarImage:(UIImage *)avatarImage animated:(BOOL)animated {
-    if (!avatarImage) return;
-    
-    self.avatarView.imageView.image = avatarImage;
-    
-    if (animated) {
-        self.avatarView.imageView.alpha = 0;
-        [UIView animateWithDuration: 0.3 animations:^{
-            self.avatarView.imageView.alpha = 1;
-        }];
-    }
 }
 
 - (void)endRefreshing {
@@ -877,7 +820,7 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
 
 - (void)updateSubviewsWithContentOffset:(CGPoint)contentOffset {
     [self updateCoverPhotoViewWithContentOffset:contentOffset];
-    [self updateAvatarImageViewWithContentOffset:contentOffset];
+    [self updateAvatarViewWithContentOffset:contentOffset];
     [self updateTitleViewWithContentOffset:contentOffset];
 }
 
@@ -896,12 +839,11 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     if (self.coverPhotoScrollAnimationStyle == DBProfileCoverPhotoScrollAnimationStyleBlur) {
         if (self.automaticallyAdjustsScrollViewInsets) distance += [self.topLayoutGuide length];
         CGFloat percent = MAX(MIN(1 - (distance - fabs(contentOffset.y))/distance, 1), 0);
-        UIImage *blurredImage = [self blurredImageWithPercent:percent];
-        if (blurredImage) self.coverPhotoView.imageView.image = blurredImage;
+        self.coverPhotoView.blurRadius = percent * DBProfileViewControllerCoverPhotoMaxBlurRadius;
     }
 }
 
-- (void)updateAvatarImageViewWithContentOffset:(CGPoint)contentOffset {
+- (void)updateAvatarViewWithContentOffset:(CGPoint)contentOffset {
     if (self.coverPhotoHidden || self.isUpdating) return;
     CGFloat coverPhotoOffset = CGRectGetHeight(self.coverPhotoView.frame);
     CGFloat coverPhotoOffsetPercent = 0;
@@ -934,14 +876,6 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
     
     CGFloat titleViewOffsetPercent = 1 - contentOffset.y / titleViewOffset;
     [self.customNavigationBar setTitleVerticalPositionAdjustment:MAX(titleViewOffset * titleViewOffsetPercent, 0) traitCollection:self.traitCollection];
-}
-
-- (UIImage *)blurredImageWithPercent:(CGFloat)percent {
-    NSNumber *keyNumber = @(round(percent * [self.blurredImagesCache count]));
-    if ([self.blurredImagesCache valueForKey:[keyNumber stringValue]]) {
-        return [self.blurredImagesCache objectForKey:[keyNumber stringValue]];
-    }
-    return nil;
 }
 
 #pragma mark - Auto Layout
@@ -1195,6 +1129,18 @@ static NSString * const DBProfileViewControllerOperationQueueName = @"DBProfileV
                                                              constant:0];
     
     [scrollView addConstraints:@[_avatarViewTopConstraint, _avatarViewSizeConstraint]];
+}
+
+@end
+
+@implementation DBProfileViewController (Deprecated)
+
+- (void)setCoverPhotoImage:(UIImage *)coverPhotoImage animated:(BOOL)animated {
+    [self.coverPhotoView setCoverPhotoImage:coverPhotoImage animated:animated];
+}
+
+- (void)setAvatarImage:(UIImage *)avatarImage animated:(BOOL)animated {
+    [self.avatarView setAvatarImage:avatarImage animated:animated];
 }
 
 @end

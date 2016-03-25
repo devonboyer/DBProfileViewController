@@ -10,6 +10,7 @@
 
 #import "DBProfileAvatarView.h"
 #import "DBProfileViewControllerDefaults.h"
+#import "DBProfileAvatarView_Private.h"
 
 @implementation DBProfileAvatarView {
     NSLayoutConstraint *_imageViewWidthConstraint;
@@ -103,6 +104,19 @@
 - (void)setBorderWidth:(CGFloat)borderWidth {
     _borderWidth = borderWidth;
     [self updateConstraints];
+}
+
+- (void)setAvatarImage:(UIImage *)image animated:(BOOL)animated {
+    if (!image) return;
+    
+    self.imageView.image = image;
+    
+    if (animated) {
+        self.imageView.alpha = 0;
+        [UIView animateWithDuration: 0.3 animations:^{
+            self.imageView.alpha = 1;
+        }];
+    }
 }
 
 - (void)setUpConstraints {
