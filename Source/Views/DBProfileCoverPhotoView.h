@@ -23,8 +23,19 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, strong, readonly) UIImageView *imageView;
 
+/*!
+ @abstract YES if a tint should be applied to the image view, NO otherwise.
+ */
 @property (nonatomic, assign) BOOL shouldApplyTint;
+
+/*!
+ @abstract YES if images should be cropped to the view's frame before blurring, NO otherwise.
+ */
 @property (nonatomic, assign) BOOL shouldCropImageBeforeBlurring;
+
+/*!
+ @abstract Specifies the blur radius for the image.
+ */
 @property (nonatomic, assign) CGFloat blurRadius;
 
 /*!

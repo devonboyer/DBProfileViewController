@@ -7,7 +7,18 @@
 * Fixed a bug causing the view to be force scrolled to the top when an interactive pop gesture is cancelled.
 * Fixed a bug causing the container view's frame to be calculated incorrectly when vertically compact.
 * When using `coverPhotoMimicsNavigationBar` navigation bar no longer displays a subtitle when vertically compact.
-* If the selected content controller is changed while the activity indicator is animating it will now be stop animating.
+* If the selected content controller is changed while the activity indicator is animating it will now stop animating.
+
+### Public API Changes
+
+* Deprecated `setCoverPhotoImage:animated:` instead use `setCoverPhotoImage:animated:` of `DBCoverPhotoView`
+* Deprecated `setAvatarImage:animated:` instead use `setAvatarImage:animated:` of `DBAvatarView`
+
+### Added
+
+* Added `shouldApplyTint` property to `DBCoverPhotoView`
+* Added `shouldCropImageBeforeBlurring` property to `DBCoverPhotoView`
+* Added `blurRadius` property to `DBCoverPhotoView`
 
 ## 1.0.2
 

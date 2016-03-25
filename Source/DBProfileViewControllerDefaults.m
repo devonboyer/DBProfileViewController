@@ -12,7 +12,6 @@
 @implementation DBProfileViewControllerDefaults
 
 + (UIColor *)defaultSegmentedControlTintColor {
-    //return [UIColor grayColor];
     return [UIColor colorWithRed:29/255.0 green:161/255.0 blue:242/255.0 alpha:1];
 }
 

@@ -26,6 +26,7 @@ CGFloat DBProfileViewControllerNavigationBarHeightForTraitCollection(UITraitColl
     }
 }
 
+// Increasing will reduce performance when blurring cover photo
 const CGFloat DBProfileViewControllerCoverPhotoMaxBlurRadius = 10.0;
 
 const CGFloat DBProfileViewControllerAvatarSizeNormal = 72.0;

@@ -49,8 +49,9 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
     self.detailsView = detailsView;
     
     // Set cover photo and avatar images
-    [self setAvatarImage:[UIImage imageNamed:@"demo-avatar"] animated:NO];
-    [self setCoverPhotoImage:[UIImage imageNamed:@"demo-header"] animated:NO];
+    [self.coverPhotoView setCoverPhotoImage:[UIImage imageNamed:@"demo-header"] animated:NO];
+    [self.avatarView setAvatarImage:[UIImage imageNamed:@"demo-avatar"] animated:NO];
+    
     [self setStyle:self.style];
 }
 
@@ -89,11 +90,12 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
 
 #pragma mark - DBUserProfileDetailsViewDelegate
 
-- (void)userProfileDetailsViewDidShowSuggestedFollowers:(DBUserProfileDetailsView *)detailsView {
+- (void)userProfileDetailsView:(DBUserProfileDetailsView *)detailsView didShowSupplementaryView:(UIView *)view {
     [self beginUpdates];
     [detailsView invalidateIntrinsicContentSize];
     [self endUpdates];
 }
+
 
 #pragma mark - DBProfileViewControllerDataSource
 

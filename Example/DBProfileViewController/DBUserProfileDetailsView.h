@@ -12,7 +12,7 @@
 
 @protocol DBUserProfileDetailsViewDelegate <NSObject>
 
-- (void)userProfileDetailsViewDidShowSuggestedFollowers:(DBUserProfileDetailsView *)detailsView;
+- (void)userProfileDetailsView:(DBUserProfileDetailsView *)detailsView didShowSupplementaryView:(UIView *)view;
 
 @end
 

@@ -79,11 +79,11 @@
 
 - (void)edit {
     self.showingSupplementaryView = !self.showingSupplementaryView;
-    [self showSuggestedFollowersView];
-    [self.delegate userProfileDetailsViewDidShowSuggestedFollowers:self];
+    [self showSupplementaryView];
+    [self.delegate userProfileDetailsView:self didShowSupplementaryView:self.supplementaryView];
 }
 
-- (void)showSuggestedFollowersView {
+- (void)showSupplementaryView {
     self.supplementaryViewHeightConstraint.constant = self.showingSupplementaryView ? 200 : 0;
 }
 
@@ -106,10 +106,10 @@
 }
 
 - (void)configureContentViewLayoutConstraints {
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.contentView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.supplementaryView attribute:NSLayoutAttributeBottom multiplier:1 constant:10]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.contentView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.supplementaryView attribute:NSLayoutAttributeBottom multiplier:1 constant:8]];
     [self addConstraint:[NSLayoutConstraint constraintWithItem:self.contentView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeLeft multiplier:1 constant:15]];
     [self addConstraint:[NSLayoutConstraint constraintWithItem:self.contentView attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeRight multiplier:1 constant:-15]];
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.contentView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeBottom multiplier:1 constant:0]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.contentView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeBottom multiplier:1 constant:-8]];
 }
 
 - (void)configureNameLabelLayoutConstraints {
