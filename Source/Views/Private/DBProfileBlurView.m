@@ -147,7 +147,6 @@
 
 - (CGFloat)blurRadiusForStage:(NSInteger)stage
 {
-    NSLog(@"%@", @(stage * (self.maxBlurRadius / self.numberOfStages)));
     return stage * (self.maxBlurRadius / self.numberOfStages);
 }
 
