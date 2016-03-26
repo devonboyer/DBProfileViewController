@@ -13,7 +13,6 @@
 @interface DBProfileTintedImageView : UIImageView
 
 @property (nonatomic, assign) BOOL shouldApplyTint;
-@property (nonatomic, assign) BOOL shouldCropImageBeforeBlurring;
-@property (nonatomic, assign) CGFloat blurRadius;
 
 @end
+

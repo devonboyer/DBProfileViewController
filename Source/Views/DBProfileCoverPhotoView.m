@@ -9,11 +9,35 @@
 //
 
 #import "DBProfileCoverPhotoView.h"
+#import "DBProfileBlurView.h"
 #import "DBProfileTintedImageView.h"
 #import "DBProfileCoverPhotoView_Private.h"
 
+UIImage *DBProfileImageByScalingImageToSize(UIImage *image, CGSize size) {
+    CGFloat oldWidth = image.size.width;
+    CGFloat oldHeight = image.size.height;
+    
+    CGFloat scaleFactor = (oldWidth > oldHeight) ? size.width / oldWidth : size.height / oldHeight;
+    
+    CGFloat newHeight = oldHeight * scaleFactor;
+    CGFloat newWidth = oldWidth * scaleFactor;
+    CGSize newSize = CGSizeMake(newWidth, newHeight);
+    
+    if ([[UIScreen mainScreen] respondsToSelector:@selector(scale)]) {
+        UIGraphicsBeginImageContextWithOptions(newSize, NO, [[UIScreen mainScreen] scale]);
+    } else {
+        UIGraphicsBeginImageContext(newSize);
+    }
+    
+    [image drawInRect:CGRectMake(0, 0, newSize.width, newSize.height)];
+    UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    return newImage;
+}
+
 @implementation DBProfileCoverPhotoView {
-    DBProfileTintedImageView *_imageView;
+    DBProfileBlurView *_blurView;
 }
 
 - (instancetype)init {
@@ -23,15 +47,9 @@
         self.userInteractionEnabled = YES;
         self.clipsToBounds = YES;
         
-        _imageView = [[DBProfileTintedImageView alloc] init];
-        
-        self.imageView.translatesAutoresizingMaskIntoConstraints = NO;
-        self.imageView.contentMode = UIViewContentModeScaleAspectFill;
-        self.imageView.clipsToBounds = YES;
-        
-        [self addSubview:self.imageView];
-        
-        [self setUpConstraints];
+        _blurView = [[DBProfileBlurView alloc] init];
+        _blurView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        [self addSubview:_blurView];
     }
     return self;
 }
@@ -56,48 +74,14 @@
     }
 }
 
-- (BOOL)shouldApplyTint {
-    return _imageView.shouldApplyTint;
-}
-
-- (BOOL)shouldCropImageBeforeBlurring {
-    return _imageView.shouldCropImageBeforeBlurring;
-}
-
-- (CGFloat)blurRadius {
-    return _imageView.blurRadius;
-}
-
-- (void)setShouldApplyTint:(BOOL)shouldApplyTint {
-    _imageView.shouldApplyTint = shouldApplyTint;
-}
-
-- (void)setShouldCropImageBeforeBlurring:(BOOL)shouldCropImageBeforeBlurring {
-    _imageView.shouldCropImageBeforeBlurring = shouldCropImageBeforeBlurring;
-}
-
 - (void)setBlurRadius:(CGFloat)blurRadius {
-    _imageView.blurRadius = blurRadius;
+    _blurView.stage = round(blurRadius);
 }
 
 - (void)setCoverPhotoImage:(UIImage *)image animated:(BOOL)animated {
     if (!image) return;
-    
-    self.imageView.image = image;
-    
-    if (animated) {
-        self.imageView.alpha = 0;
-        [UIView animateWithDuration: 0.3 animations:^{
-            self.imageView.alpha = 1;
-        }];
-    }
-}
-
-- (void)setUpConstraints {
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.imageView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeLeft multiplier:1 constant:0]];
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.imageView attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeRight multiplier:1 constant:0]];
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.imageView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTop multiplier:1 constant:0]];
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.imageView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeBottom multiplier:1 constant:0]];
+        
+    _blurView.snapshot = image;
 }
 
 @end

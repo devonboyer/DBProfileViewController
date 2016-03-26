@@ -14,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /*!
  @class DBProfileDetailsView
- @abstract The `DBProfileDetailsView` class displays profile details such as name, username, and description.
+ @abstract The `DBProfileDetailsView` class provides a default implementation for displaying basic profile details such as name, username, and description.
  */
 @interface DBProfileDetailsView : UIView
 
