@@ -92,6 +92,13 @@
                                                           [self updateAsynchronously:NO completion:nil];
                                                       }];
         
+        [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidBecomeActiveNotification
+                                                          object:nil
+                                                           queue:nil
+                                                      usingBlock:^(NSNotification * _Nonnull note) {
+                                                          [self updateAsynchronously:NO completion:nil];
+                                                      }];
+        
         self.lock = [[NSLock alloc] init];
     }
     return self;
