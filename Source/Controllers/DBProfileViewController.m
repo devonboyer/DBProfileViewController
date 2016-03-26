@@ -76,7 +76,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 - (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        [self db_commonInit];
+        [self setUp];
     }
     return self;
 }
@@ -84,7 +84,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 - (instancetype)initWithCoder:(NSCoder *)aDecoder {
     self = [super initWithCoder:aDecoder];
     if (self) {
-        [self db_commonInit];
+        [self setUp];
     }
     return self;
 }
@@ -101,12 +101,12 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 - (instancetype)init {
     self = [super init];
     if (self) {
-        [self db_commonInit];
+        [self setUp];
     }
     return self;
 }
 
-- (void)db_commonInit {
+- (void)setUp {
     _detailsView = [[DBProfileDetailsView alloc] init];
     _segmentedControlView = [[DBProfileSegmentedControlView alloc] init];
     _avatarView = [[DBProfileAvatarView alloc] init];
@@ -827,24 +827,35 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 - (void)updateCoverPhotoViewWithContentOffset:(CGPoint)contentOffset {
     if (self.isUpdating) return;
     
-    CGFloat distance = (CGRectGetHeight(self.view.frame) * self.coverPhotoHeightMultiplier) - CGRectGetMaxY(self.customNavigationBar.frame);
+    CGFloat distance = [self coverPhotoViewOffset] - CGRectGetMaxY(self.customNavigationBar.frame);
     
-    if (contentOffset.y <= 0) {
-        if (self.coverPhotoOptions & DBProfileCoverPhotoOptionStretch) {
-            _coverPhotoViewHeightConstraint.constant = -contentOffset.y;
-        }
+    if (contentOffset.y <= 0 && self.coverPhotoOptions & DBProfileCoverPhotoOptionStretch) {
+        _coverPhotoViewHeightConstraint.constant = -contentOffset.y;
+    }
+    else {
+        _coverPhotoViewHeightConstraint.constant = 0;
     }
     
     if (self.coverPhotoScrollAnimationStyle == DBProfileCoverPhotoScrollAnimationStyleBlur) {
         if (self.automaticallyAdjustsScrollViewInsets) distance += [self.topLayoutGuide length];
-        CGFloat percent = MAX(MIN(1 - (distance - fabs(contentOffset.y))/distance, 1), 0);
-        self.coverPhotoView.blurView.stage = round(percent * self.coverPhotoView.blurView.numberOfStages);
+        
+        if (contentOffset.y <= 0) {
+            CGFloat percent = MAX(MIN(1 - (distance - fabs(contentOffset.y))/distance, 1), 0);
+            self.coverPhotoView.blurView.stage = round(percent * self.coverPhotoView.blurView.numberOfStages);
+        }
+        else if (contentOffset.y >= [self titleViewOffset]) {
+            CGFloat percent = MAX(MIN(1 - (50 - fabs(contentOffset.y - [self titleViewOffset]))/50, 1), 0);
+            self.coverPhotoView.blurView.stage = round(percent * self.coverPhotoView.blurView.numberOfStages);
+        }
+        else {
+            self.coverPhotoView.blurView.stage = 0;
+        }
     }
 }
 
 - (void)updateAvatarViewWithContentOffset:(CGPoint)contentOffset {
     if (self.coverPhotoHidden || self.isUpdating) return;
-    CGFloat coverPhotoOffset = CGRectGetHeight(self.coverPhotoView.frame);
+    CGFloat coverPhotoOffset = [self coverPhotoViewOffset];
     CGFloat coverPhotoOffsetPercent = 0;
     if (self.coverPhotoMimicsNavigationBar) {
         coverPhotoOffset -= CGRectGetMaxY(self.customNavigationBar.frame);
@@ -865,7 +876,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 
 - (void)updateTitleViewWithContentOffset:(CGPoint)contentOffset {
     if (!self.coverPhotoMimicsNavigationBar) return;
-    CGFloat titleViewOffset = ((CGRectGetHeight(self.coverPhotoView.frame) - CGRectGetMaxY(self.customNavigationBar.frame)) + CGRectGetHeight(self.segmentedControlView.frame));
+    CGFloat titleViewOffset = [self titleViewOffset];
     
     if (!(self.coverPhotoOptions & DBProfileCoverPhotoOptionExtend)) {
         const CGFloat padding = 30.0;
@@ -875,6 +886,14 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     
     CGFloat titleViewOffsetPercent = 1 - contentOffset.y / titleViewOffset;
     [self.customNavigationBar setTitleVerticalPositionAdjustment:MAX(titleViewOffset * titleViewOffsetPercent, 0) traitCollection:self.traitCollection];
+}
+
+- (CGFloat)coverPhotoViewOffset {
+    return CGRectGetHeight(self.view.frame) * self.coverPhotoHeightMultiplier;
+}
+
+- (CGFloat)titleViewOffset {
+    return (([self coverPhotoViewOffset] - CGRectGetMaxY(self.customNavigationBar.frame)) + CGRectGetHeight(self.segmentedControlView.frame));
 }
 
 #pragma mark - Auto Layout
@@ -965,15 +984,60 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     NSAssert(scrollView, @"");
     
     if (self.segmentedControlView.superview) {
-        [scrollView addConstraint:[NSLayoutConstraint constraintWithItem:self.segmentedControlView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:scrollView attribute:NSLayoutAttributeLeft multiplier:1 constant:0]];
-        [scrollView addConstraint:[NSLayoutConstraint constraintWithItem:self.segmentedControlView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:scrollView attribute:NSLayoutAttributeWidth multiplier:1 constant:0]];
-        [scrollView addConstraint:[NSLayoutConstraint constraintWithItem:self.segmentedControlView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:self.detailsView attribute:NSLayoutAttributeBottom multiplier:1 constant:0]];
-        [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.segmentedControlView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:[self topLayoutGuide] attribute:NSLayoutAttributeBottom multiplier:1 constant:0]];
+        [scrollView addConstraint:[NSLayoutConstraint constraintWithItem:self.segmentedControlView
+                                                               attribute:NSLayoutAttributeLeft
+                                                               relatedBy:NSLayoutRelationEqual
+                                                                  toItem:scrollView
+                                   
+                                                               attribute:NSLayoutAttributeLeft multiplier:1 constant:0]];
+        [scrollView addConstraint:[NSLayoutConstraint constraintWithItem:self.segmentedControlView
+                                                               attribute:NSLayoutAttributeWidth
+                                                               relatedBy:NSLayoutRelationEqual
+                                                                  toItem:scrollView
+                                                               attribute:NSLayoutAttributeWidth
+                                                              multiplier:1
+                                                                constant:0]];
+        
+        [scrollView addConstraint:[NSLayoutConstraint constraintWithItem:self.segmentedControlView
+                                                               attribute:NSLayoutAttributeTop
+                                                               relatedBy:NSLayoutRelationGreaterThanOrEqual
+                                                                  toItem:self.detailsView
+                                                               attribute:NSLayoutAttributeBottom
+                                                              multiplier:1
+                                                                constant:0]];
+        
+        [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.segmentedControlView
+                                                              attribute:NSLayoutAttributeTop
+                                                              relatedBy:NSLayoutRelationGreaterThanOrEqual
+                                                                 toItem:[self topLayoutGuide]
+                                                              attribute:NSLayoutAttributeBottom
+                                                             multiplier:1
+                                                               constant:0]];
     }
     
-    [scrollView addConstraint:[NSLayoutConstraint constraintWithItem:self.detailsView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:scrollView attribute:NSLayoutAttributeLeft multiplier:1 constant:0]];
-    [scrollView addConstraint:[NSLayoutConstraint constraintWithItem:self.detailsView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:scrollView attribute:NSLayoutAttributeWidth multiplier:1 constant:0]];
-    _detailsViewTopConstraint = [NSLayoutConstraint constraintWithItem:self.detailsView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:scrollView attribute:NSLayoutAttributeTop multiplier:1 constant:0];
+    [scrollView addConstraint:[NSLayoutConstraint constraintWithItem:self.detailsView
+                                                           attribute:NSLayoutAttributeLeft
+                                                           relatedBy:NSLayoutRelationEqual
+                                                              toItem:scrollView
+                                                           attribute:NSLayoutAttributeLeft
+                                                          multiplier:1
+                                                            constant:0]];
+    
+    [scrollView addConstraint:[NSLayoutConstraint constraintWithItem:self.detailsView
+                                                           attribute:NSLayoutAttributeWidth
+                                                           relatedBy:NSLayoutRelationEqual
+                                                              toItem:scrollView
+                                                           attribute:NSLayoutAttributeWidth
+                                                          multiplier:1
+                                                            constant:0]];
+    
+    _detailsViewTopConstraint = [NSLayoutConstraint constraintWithItem:self.detailsView
+                                                             attribute:NSLayoutAttributeTop
+                                                             relatedBy:NSLayoutRelationEqual
+                                                                toItem:scrollView
+                                                             attribute:NSLayoutAttributeTop
+                                                            multiplier:1
+                                                              constant:0];
     [scrollView addConstraint:_detailsViewTopConstraint];
     
     if (self.coverPhotoView.superview) {

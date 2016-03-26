@@ -15,6 +15,7 @@
 @property (nonatomic, assign) NSUInteger numberOfStages;
 @property (nonatomic, assign) NSInteger stage;
 @property (nonatomic, assign) CGFloat maxBlurRadius;
+@property (nonatomic, assign) BOOL shouldInterpolateStages;
 
 - (void)updateAsynchronously:(BOOL)async completion:(void (^)())completion;
 

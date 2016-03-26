@@ -110,7 +110,6 @@
 
 - (void)setAvatarImage:(UIImage *)image animated:(BOOL)animated {
     if (!image) return;
-    
     self.imageView.image = image;
     
     if (animated) {

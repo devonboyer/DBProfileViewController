@@ -11,9 +11,6 @@
 #import "DBProfileSelectableView.h"
 #import "DBProfileBlurView.h"
 
-UIImage *DBProfileImageByScalingImageToSize(UIImage *image, CGSize size);
-UIImage *DBProfileImageByScalingImage(UIImage *image, CGFloat maxWidth, CGFloat maxHeight);
-
 NS_ASSUME_NONNULL_BEGIN
 
 /*!
@@ -28,7 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong, readonly) DBProfileBlurView *blurView;
 
 /*!
- @abstract YES if a tint should be applied to the image view, NO otherwise.
+ @abstract YES if a tint should be applied, NO otherwise.
  */
 @property (nonatomic, assign) BOOL shouldApplyTint;
 

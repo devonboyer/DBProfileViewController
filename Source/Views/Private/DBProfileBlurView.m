@@ -59,9 +59,10 @@
 
 @interface DBProfileBlurView () {
     UIImageView *_imageView;
+    UIImageView *_interpolatedImageView;
 }
 
-@property (nonatomic, strong) NSLock *lock;
+@property (nonatomic, strong) DBProfileBlurStageCache *cache;
 
 @end
 
@@ -75,15 +76,22 @@
         self.backgroundColor = [UIColor whiteColor];
         self.tintColor = [UIColor clearColor];
 
-        self.maxBlurRadius = 60.0;
+        self.maxBlurRadius = 20.0;
         self.iterations = 3;
-        self.numberOfStages = 20;
+        self.numberOfStages = 15;
+        self.shouldInterpolateStages = YES;
         
         _imageView = [[UIImageView alloc] init];
         _imageView.contentMode = UIViewContentModeScaleAspectFill;
         _imageView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         _imageView.clipsToBounds = YES;
         [self addSubview:_imageView];
+        
+        _interpolatedImageView = [[UIImageView alloc] init];
+        _interpolatedImageView.contentMode = UIViewContentModeScaleAspectFill;
+        _interpolatedImageView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        _interpolatedImageView.clipsToBounds = YES;
+        [self addSubview:_interpolatedImageView];
         
         [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidReceiveMemoryWarningNotification
                                                           object:nil
@@ -99,7 +107,7 @@
                                                           [self updateAsynchronously:NO completion:nil];
                                                       }];
         
-        self.lock = [[NSLock alloc] init];
+        self.cache = [[DBProfileBlurStageCache alloc] init];
     }
     return self;
 }
@@ -112,14 +120,18 @@
 - (void)setStage:(NSInteger)stage {
     _stage = stage;
     
-    [self.lock lock];
     if (stage == 0) {
         _imageView.image = self.snapshot;
     } else {
         UIImage *blurredImage = [self blurredSnapshot:self.snapshot stage:stage];
         if (blurredImage) _imageView.image = blurredImage;
+        
+        if (self.shouldInterpolateStages) {
+            UIImage *blurredImage = [self blurredSnapshot:self.snapshot stage:stage + 1];
+            _interpolatedImageView.image = blurredImage;
+            _interpolatedImageView.alpha = 0.1;
+        }
     }
-    [self.lock unlock];
 }
 
 - (void)setSnapshot:(UIImage *)snapshot {
@@ -135,6 +147,7 @@
 
 - (CGFloat)blurRadiusForStage:(NSInteger)stage
 {
+    NSLog(@"%@", @(stage * (self.maxBlurRadius / self.numberOfStages)));
     return stage * (self.maxBlurRadius / self.numberOfStages);
 }
 
@@ -143,7 +156,7 @@
     DBProfileBlurStageCacheKey *key = [[DBProfileBlurStageCacheKey alloc] initWithImage:snapshot
                                                                               tintColor:self.tintColor
                                                                                   stage:stage];
-    return [[DBProfileBlurStageCache sharedCache] objectForKey:key];
+    return [self.cache objectForKey:key];
 }
 
 - (void)updateAsynchronously:(BOOL)async completion:(void (^)())completion
@@ -159,7 +172,7 @@
                 UIImage *blurredImage = [snapshot blurredImageWithRadius:[self blurRadiusForStage:stage]
                                                               iterations:self.iterations
                                                                tintColor:self.tintColor];
-                [[DBProfileBlurStageCache sharedCache] setObject:blurredImage forKey:key];
+                [self.cache setObject:blurredImage forKey:key];
             }
         };
         

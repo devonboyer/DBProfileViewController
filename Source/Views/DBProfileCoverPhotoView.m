@@ -12,7 +12,16 @@
 #import "DBProfileTintedImageView.h"
 #import "DBProfileCoverPhotoView_Private.h"
 
-UIImage *DBProfileImageByScalingImageToSize(UIImage *image, CGSize newSize){
+UIImage *DBProfileImageByScalingImageToSize(UIImage *image, CGSize size){
+    
+    CGFloat oldWidth = image.size.width;
+    CGFloat oldHeight = image.size.height;
+    
+    CGFloat scaleFactor = (oldWidth > oldHeight) ? size.width / oldWidth : size.height / oldHeight;
+    
+    CGFloat newHeight = oldHeight * scaleFactor;
+    CGFloat newWidth = oldWidth * scaleFactor;
+    CGSize newSize = CGSizeMake(newWidth, newHeight);
     
     if ([[UIScreen mainScreen] respondsToSelector:@selector(scale)]) {
         UIGraphicsBeginImageContextWithOptions(newSize, NO, [[UIScreen mainScreen] scale]);
@@ -27,19 +36,6 @@ UIImage *DBProfileImageByScalingImageToSize(UIImage *image, CGSize newSize){
     return newImage;
 }
 
-UIImage *DBProfileImageByScalingImage(UIImage *image, CGFloat maxWidth, CGFloat maxHeight) {
-    CGFloat oldWidth = image.size.width;
-    CGFloat oldHeight = image.size.height;
-    
-    CGFloat scaleFactor = (oldWidth > oldHeight) ? maxWidth / oldWidth : maxHeight / oldHeight;
-    
-    CGFloat newHeight = oldHeight * scaleFactor;
-    CGFloat newWidth = oldWidth * scaleFactor;
-    CGSize newSize = CGSizeMake(newWidth, newHeight);
-    
-    return DBProfileImageByScalingImageToSize(image,newSize);
-}
-
 @implementation DBProfileCoverPhotoView {
     DBProfileBlurView *_blurView;
     DBProfileTintedImageView *_tintView;
@@ -51,6 +47,7 @@ UIImage *DBProfileImageByScalingImage(UIImage *image, CGFloat maxWidth, CGFloat 
         self.backgroundColor = [UIColor whiteColor];
         self.userInteractionEnabled = YES;
         self.clipsToBounds = YES;
+        self.shouldCropImageBeforeBlurring = YES;
         
         _blurView = [[DBProfileBlurView alloc] init];
         _blurView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
@@ -92,7 +89,15 @@ UIImage *DBProfileImageByScalingImage(UIImage *image, CGFloat maxWidth, CGFloat 
 
 - (void)setCoverPhotoImage:(UIImage *)image animated:(BOOL)animated {
     if (!image) return;
-    _blurView.snapshot = image;
+    CGSize coverPhotoSize = _blurView.frame.size;
+    _blurView.snapshot = (self.shouldCropImageBeforeBlurring) ? DBProfileImageByScalingImageToSize(image, coverPhotoSize) : image;
+    
+    if (animated) {
+        _blurView.alpha = 0;
+        [UIView animateWithDuration: 0.3 animations:^{
+            _blurView.alpha = 1;
+        }];
+    }
 }
 
 @end
