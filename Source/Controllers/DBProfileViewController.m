@@ -827,19 +827,18 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 - (void)updateCoverPhotoViewWithContentOffset:(CGPoint)contentOffset {
     if (self.isUpdating) return;
     
-    CGFloat distance = CGRectGetHeight(self.coverPhotoView.frame) - CGRectGetMaxY(self.customNavigationBar.frame);
+    CGFloat distance = (CGRectGetHeight(self.view.frame) * self.coverPhotoHeightMultiplier) - CGRectGetMaxY(self.customNavigationBar.frame);
     
     if (contentOffset.y <= 0) {
         if (self.coverPhotoOptions & DBProfileCoverPhotoOptionStretch) {
             _coverPhotoViewHeightConstraint.constant = -contentOffset.y;
         }
-        distance *= 0.5;
     }
     
     if (self.coverPhotoScrollAnimationStyle == DBProfileCoverPhotoScrollAnimationStyleBlur) {
         if (self.automaticallyAdjustsScrollViewInsets) distance += [self.topLayoutGuide length];
         CGFloat percent = MAX(MIN(1 - (distance - fabs(contentOffset.y))/distance, 1), 0);
-        self.coverPhotoView.blurRadius = percent * 20;
+        self.coverPhotoView.blurView.stage = round(percent * self.coverPhotoView.blurView.numberOfStages);
     }
 }
 

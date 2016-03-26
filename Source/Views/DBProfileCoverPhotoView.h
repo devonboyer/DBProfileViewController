@@ -9,6 +9,10 @@
 //
 
 #import "DBProfileSelectableView.h"
+#import "DBProfileBlurView.h"
+
+UIImage *DBProfileImageByScalingImageToSize(UIImage *image, CGSize size);
+UIImage *DBProfileImageByScalingImage(UIImage *image, CGFloat maxWidth, CGFloat maxHeight);
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -21,7 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 /*!
  @abstract The image view that displays the cover photo image.
  */
-@property (nonatomic, strong, readonly) UIImageView *imageView;
+@property (nonatomic, strong, readonly) DBProfileBlurView *blurView;
 
 /*!
  @abstract YES if a tint should be applied to the image view, NO otherwise.
@@ -32,11 +36,6 @@ NS_ASSUME_NONNULL_BEGIN
  @abstract YES if images should be cropped to the view's frame before blurring, NO otherwise.
  */
 @property (nonatomic, assign) BOOL shouldCropImageBeforeBlurring;
-
-/*!
- @abstract Specifies the blur radius for the image.
- */
-@property (nonatomic, assign) CGFloat blurRadius;
 
 /*!
  @abstract Sets the cover photo image.

@@ -7,25 +7,24 @@
 //
 
 #import "DBProfileBlurView.h"
-#import "DBProfileTintedImageView.h"
 #import <FXBlurView/FXBlurView.h>
 
-@interface DBBlurStageCacheKey : NSObject
+@interface DBProfileBlurStageCacheKey : NSObject
 
 @property (nonatomic, strong) UIImage *image;
 @property (nonatomic, strong) UIColor *tintColor;
-@property (nonatomic, assign) CGFloat radius;
+@property (nonatomic, assign) NSUInteger stage;
 
 @end
 
-@implementation DBBlurStageCacheKey
+@implementation DBProfileBlurStageCacheKey
 
-- (instancetype)initWithImage:(UIImage *)image tintColor:(UIColor *)tintColor radius:(CGFloat)radius {
+- (instancetype)initWithImage:(UIImage *)image tintColor:(UIColor *)tintColor stage:(NSUInteger)stage {
     self = [super init];
     if (self) {
         _image = image;
         _tintColor = tintColor;
-        _radius = radius;
+        _stage = stage;
     }
     return self;
 }
@@ -37,15 +36,15 @@
     __typeof(self) castObject = object;
     return ([_image isEqual:castObject.image]
             && [_tintColor isEqual:castObject.tintColor]
-            && _radius == castObject.radius);
+            && _stage == castObject.stage);
 }
 
 @end
 
-@interface DBBlurStageCache : NSCache
+@interface DBProfileBlurStageCache : NSCache
 @end
 
-@implementation DBBlurStageCache
+@implementation DBProfileBlurStageCache
 
 + (instancetype)sharedCache {
     static dispatch_once_t pred;
@@ -59,8 +58,10 @@
 @end
 
 @interface DBProfileBlurView () {
-    DBProfileTintedImageView *_imageView;
+    UIImageView *_imageView;
 }
+
+@property (nonatomic, strong) NSLock *lock;
 
 @end
 
@@ -74,11 +75,11 @@
         self.backgroundColor = [UIColor whiteColor];
         self.tintColor = [UIColor clearColor];
 
-        self.maxBlurRadius = 80.0;
+        self.maxBlurRadius = 60.0;
         self.iterations = 3;
         self.numberOfStages = 20;
         
-        _imageView = [[DBProfileTintedImageView alloc] init];
+        _imageView = [[UIImageView alloc] init];
         _imageView.contentMode = UIViewContentModeScaleAspectFill;
         _imageView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         _imageView.clipsToBounds = YES;
@@ -90,6 +91,8 @@
                                                       usingBlock:^(NSNotification * _Nonnull note) {
                                                           [self updateAsynchronously:NO completion:nil];
                                                       }];
+        
+        self.lock = [[NSLock alloc] init];
     }
     return self;
 }
@@ -102,30 +105,20 @@
 - (void)setStage:(NSInteger)stage {
     _stage = stage;
     
-    UIImage *snapshot = [self snapshotOfUnderlyingView];
-    UIImage *blurredImage = [self blurredSnapshot:snapshot radius:[self blurRadiusForStage:stage]];
-    if (blurredImage) _imageView.image = blurredImage;
+    [self.lock lock];
+    if (stage == 0) {
+        _imageView.image = self.snapshot;
+    } else {
+        UIImage *blurredImage = [self blurredSnapshot:self.snapshot stage:stage];
+        if (blurredImage) _imageView.image = blurredImage;
+    }
+    [self.lock unlock];
 }
 
 - (void)setSnapshot:(UIImage *)snapshot {
     _snapshot = snapshot;
+    _imageView.image = snapshot;
     [self updateAsynchronously:YES completion:nil];
-}
-
-- (void)setTintColor:(UIColor *)tintColor
-{
-    [super setTintColor:tintColor];
-    if (self.snapshot) [self updateAsynchronously:YES completion:nil];
-}
-
-- (UIView *)underlyingView
-{
-    return self.superview;
-}
-
-- (UIImage *)snapshotOfUnderlyingView
-{
-    return self.snapshot;
 }
 
 - (BOOL)shouldUpdate
@@ -138,28 +131,28 @@
     return stage * (self.maxBlurRadius / self.numberOfStages);
 }
 
-- (UIImage *)blurredSnapshot:(UIImage *)snapshot radius:(CGFloat)radius
+- (UIImage *)blurredSnapshot:(UIImage *)snapshot stage:(CGFloat)stage
 {
-    DBBlurStageCacheKey *key = [[DBBlurStageCacheKey alloc] initWithImage:snapshot
-                                                                tintColor:self.tintColor
-                                                                   radius:radius];
-    return [[DBBlurStageCache sharedCache] objectForKey:key];
+    DBProfileBlurStageCacheKey *key = [[DBProfileBlurStageCacheKey alloc] initWithImage:snapshot
+                                                                              tintColor:self.tintColor
+                                                                                  stage:stage];
+    return [[DBProfileBlurStageCache sharedCache] objectForKey:key];
 }
 
 - (void)updateAsynchronously:(BOOL)async completion:(void (^)())completion
 {
     if ([self shouldUpdate]) {
-        UIImage *snapshot = [self snapshotOfUnderlyingView];
+        UIImage *snapshot = self.snapshot;
         
         void (^block)() = ^void(){
-            for (NSInteger stage = 0; stage < self.numberOfStages; stage++) {
-                DBBlurStageCacheKey *key = [[DBBlurStageCacheKey alloc] initWithImage:snapshot
-                                                                            tintColor:self.tintColor
-                                                                               radius:[self blurRadiusForStage:stage]];
+            for (NSInteger stage = 0; stage <= self.numberOfStages; stage++) {
+                DBProfileBlurStageCacheKey *key = [[DBProfileBlurStageCacheKey alloc] initWithImage:snapshot
+                                                                                          tintColor:self.tintColor
+                                                                                              stage:stage];
                 UIImage *blurredImage = [snapshot blurredImageWithRadius:[self blurRadiusForStage:stage]
                                                               iterations:self.iterations
                                                                tintColor:self.tintColor];
-                [[DBBlurStageCache sharedCache] setObject:blurredImage forKey:key];
+                [[DBProfileBlurStageCache sharedCache] setObject:blurredImage forKey:key];
             }
         };
         

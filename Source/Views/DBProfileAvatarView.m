@@ -45,7 +45,8 @@
     
     if (selected && [self.delegate respondsToSelector:@selector(didSelectAvatarView:)]) {
         [self.delegate didSelectAvatarView:self];
-    } else if (!selected && [self.delegate respondsToSelector:@selector(didDeselectAvatarView:)]) {
+    }
+    else if (!selected && [self.delegate respondsToSelector:@selector(didDeselectAvatarView:)]) {
         [self.delegate didDeselectAvatarView:self];
     }
 }
@@ -55,7 +56,8 @@
     
     if (highlighted && [self.delegate respondsToSelector:@selector(didHighlightAvatarView:)]) {
         [self.delegate didHighlightAvatarView:self];
-    } else if (!highlighted && [self.delegate respondsToSelector:@selector(didUnhighlightAvatarView:)]) {
+    }
+    else if (!highlighted && [self.delegate respondsToSelector:@selector(didUnhighlightAvatarView:)]) {
         [self.delegate didUnhighlightAvatarView:self];
     }
 }

@@ -11,7 +11,6 @@
 @interface DBProfileBlurView : UIView
 
 @property (nonatomic, strong) UIImage *snapshot;
-
 @property (nonatomic, assign) NSUInteger iterations;
 @property (nonatomic, assign) NSUInteger numberOfStages;
 @property (nonatomic, assign) NSInteger stage;
