@@ -32,6 +32,10 @@ The table below details the most important classes and is hyperlinked directly t
     </tr>
     <tr><th colspan="2" style="text-align:center;">Views</th></tr>
     <tr>
+        <td><a href="Source/Views/DBProfileDetailsView.h">DBProfileDetailsView</a></td>
+        <td>A configurable view that displays profile details.</td>
+    </tr>
+    <tr>
         <td><a href="Source/Views/DBProfileCoverPhotoView.h">DBProfileCoverPhotoView</a></td>
         <td>A configurable view that displays a cover photo image.</td>
     </tr>
