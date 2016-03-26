@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.4
+
+## Bug Fixes
+
+* Performance improvements for blurring cover photo.
+
 ## 1.0.3
 
 ## Bug Fixes
