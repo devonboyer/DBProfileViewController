@@ -41,12 +41,17 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
     self.allowsPullToRefresh = YES;
     
     // Customize details view
-    DBUserProfileDetailsView *detailsView = [[DBUserProfileDetailsView alloc] init];
+//    DBUserProfileDetailsView *detailsView = [[DBUserProfileDetailsView alloc] init];
+//    detailsView.nameLabel.text = @"DBProfileViewController";
+//    detailsView.usernameLabel.text = @"by @devboyer";
+//    detailsView.descriptionLabel.text = @"A customizable library for creating stunning user profiles.";
+//    detailsView.delegate = self;
+//    self.detailsView = detailsView;
+    
+    DBProfileDetailsView *detailsView = (DBProfileDetailsView *)self.detailsView;
     detailsView.nameLabel.text = @"DBProfileViewController";
     detailsView.usernameLabel.text = @"by @devboyer";
     detailsView.descriptionLabel.text = @"A customizable library for creating stunning user profiles.";
-    detailsView.delegate = self;
-    self.detailsView = detailsView;
     
     // Set cover photo and avatar images
     [self.coverPhotoView setCoverPhotoImage:[UIImage imageNamed:@"demo-header"] animated:NO];

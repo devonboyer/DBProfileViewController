@@ -24,11 +24,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong, readonly) UIView *contentView;
 
 /*!
- @abstract The distance that the content view is inset from the enclosing view.
- */
-@property (nonatomic, assign) UIEdgeInsets contentInset;
-
-/*!
  @abstract The label used to display a screen name.
  */
 @property (nonatomic, strong, readonly) UILabel *nameLabel;
