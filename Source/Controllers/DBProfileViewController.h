@@ -24,7 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 /*!
  @class DBProfileViewController
  @abstract The `DBProfileViewController` class is a view controller that is specialized to display a profile interface.
- @discussion This class manages and displays a collection of content controllers as well as a `DBProfileCoverPhotoView`, `DBProfilePictureView` and `DBProfileDetailsView`.
+ @discussion This class manages and displays a collection of content controllers and customizable subviews associated with a profile interface.
  */
 @interface DBProfileViewController : UIViewController
 
@@ -37,6 +37,13 @@ NS_ASSUME_NONNULL_BEGIN
  @param segmentedControlClass Specify the custom UISegmentedControl subclass you want to use, or specify nil to use the standard UISegmentedControl class.
 */
 - (instancetype)initWithSegmentedControlClass:(nullable Class)segmentedControlClass;
+
+/*!
+ @abstract Initializes a newly created profile view controller.
+ @param segmentedControlClass Specify the custom UISegmentedControl subclass you want to use, or specify nil to use the standard UISegmentedControl class.
+ @param avatarViewClass Specify the custom UIView subclass you want to use, or specify nil to use the standard DBProfileAvatarView class.
+ */
+- (instancetype)initWithSegmentedControlClass:(nullable Class)segmentedControlClass avatarViewClass:(nullable Class)avatarViewClass;
 
 /*!
  @abstract The object that acts as the view controller's delegate.
@@ -56,7 +63,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) UIView *detailsView;
 
 /*!
- @abstract The navigation item used to represent the profile view controller's navigation bar when using `coverPhotoMimicsNavigationBar`
+ @abstract The navigation item used to represent the profile view controller's navigation item when using `coverPhotoMimicsNavigationBar`
  */
 @property (nonatomic, strong, readonly) UINavigationItem *coverPhotoMimicsNavigationBarNavigationItem;
 
@@ -165,12 +172,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) DBProfileCoverPhotoOptions coverPhotoOptions;
 
 /*!
- @abstract The animation style for the cover photo while scrolling.
- @discussion The default is `DBProfileCoverPhotoScrollAnimationStyleBlur`.
- */
-@property (nonatomic, assign) DBProfileCoverPhotoScrollAnimationStyle coverPhotoScrollAnimationStyle;
-
-/*!
  @abstract YES if the cover photo should mimic a navigation bar when the view is scrolled, NO otherwise.
  @discussion The default is YES. When this property is set to YES you should set `automaticallyAdjustsScrollViewInsets` to NO, otherwise set `automaticallyAdjustsScrollViewInsets` to YES.
  */
@@ -183,7 +184,7 @@ NS_ASSUME_NONNULL_BEGIN
 /*!
  @abstract A view that is displays an avatar image.
  */
-@property (nonatomic, strong, readonly) DBProfileAvatarView *avatarView;
+@property (nonatomic, strong, readonly) DBProfileAvatarView *avatarView; // change to UIView
 
 /*!
  @abstract Specifies the alignment for the avatar.

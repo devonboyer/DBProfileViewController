@@ -8,7 +8,6 @@
 //  Released under an MIT license: http://opensource.org/licenses/MIT
 //
 
-#import "DBProfileSelectableView.h"
 #import "DBProfileBlurView.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -17,17 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
  @class DBProfileCoverPhotoView
  @abstract The `DBProfileCoverPhotoView` class displays a cover photo.
  */
-@interface DBProfileCoverPhotoView : DBProfileSelectableView
-
-/*!
- @abstract The image view that displays the cover photo image.
- */
-@property (nonatomic, strong, readonly) DBProfileBlurView *blurView;
-
-/*!
- @abstract YES if a tint should be applied, NO otherwise.
- */
-@property (nonatomic, assign) BOOL shouldApplyTint;
+@interface DBProfileCoverPhotoView : DBProfileBlurView
 
 /*!
  @abstract YES if images should be cropped to the view's frame before blurring, NO otherwise.

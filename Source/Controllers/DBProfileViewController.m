@@ -33,6 +33,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 }
 
 @property (nonatomic, assign) Class segmentedControlClass;
+@property (nonatomic, assign) Class avatarViewClass;
 
 @property (nonatomic, assign) NSUInteger indexForSelectedContentController;
 @property (nonatomic, getter=isRefreshing) BOOL refreshing;
@@ -44,7 +45,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 
 // Data
 @property (nonatomic, strong) NSMutableArray<DBProfileContentController *> *contentControllers;
-@property (nonatomic, strong) NSMutableDictionary<NSString *, DBProfileObserver *> *observers;
+@property (nonatomic, strong) NSMutableDictionary<NSString *, DBProfileObserver *> *scrollViewObservers;
 @property (nonatomic, strong) NSCache *contentOffsetCache;
 
 // Views
@@ -56,6 +57,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 @end
 
 @implementation DBProfileViewController {
+    // Constraints for customizing subviews
     NSLayoutConstraint *_detailsViewTopConstraint;
 
     NSLayoutConstraint *_avatarViewSizeConstraint;
@@ -93,7 +95,16 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     NSAssert([segmentedControlClass isSubclassOfClass:[UISegmentedControl class]], @"segmentedControlClass must inherit from UISegmentedControl");
     self = [self init];
     if (self) {
-        self.segmentedControlClass = (segmentedControlClass) ? segmentedControlClass : [UISegmentedControl class];
+        self.segmentedControlClass = segmentedControlClass ? segmentedControlClass : [UISegmentedControl class];
+    }
+    return self;
+}
+
+- (instancetype)initWithSegmentedControlClass:(Class)segmentedControlClass avatarViewClass:(Class)avatarViewClass {
+    NSAssert([avatarViewClass isSubclassOfClass:[UIView class]], @"avatarViewClass must inherit from UIView");
+    self = [self initWithSegmentedControlClass:segmentedControlClass];
+    if (self) {
+        self.avatarViewClass = avatarViewClass ? avatarViewClass : [DBProfileAvatarView class];
     }
     return self;
 }
@@ -121,7 +132,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     
     self.containerView = [[UIView alloc] init];
     self.segmentedControlClass = [UISegmentedControl class];
-    
+    self.avatarViewClass = [DBProfileAvatarView class];
     self.coverPhotoView.delegate = self;
     self.avatarView.delegate = self;
     
@@ -199,7 +210,6 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     _coverPhotoOptions = [DBProfileViewControllerDefaults defaultCoverPhotoOptions];
     _coverPhotoHidden = [DBProfileViewControllerDefaults defaultCoverPhotoHidden];
     _coverPhotoMimicsNavigationBar = [DBProfileViewControllerDefaults defaultCoverPhotoMimicsNavigationBar];
-    _coverPhotoScrollAnimationStyle = [DBProfileViewControllerDefaults defaultCoverPhotoScrollAnimationStyle];
     _coverPhotoHeightMultiplier = [DBProfileViewControllerDefaults defaultCoverPhotoHeightMultiplier];
     _avatarAlignment = [DBProfileViewControllerDefaults defaultAvatarAlignment];
     _avatarSize = [DBProfileViewControllerDefaults defaultAvatarSize];
@@ -265,11 +275,11 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     return _contentControllers;
 }
 
-- (NSMutableDictionary *)observers {
-    if (!_observers) {
-        _observers = [NSMutableDictionary dictionary];
+- (NSMutableDictionary *)scrollViewObservers {
+    if (!_scrollViewObservers) {
+        _scrollViewObservers = [NSMutableDictionary dictionary];
     }
-    return _observers;
+    return _scrollViewObservers;
 }
 
 #pragma mark - Setters
@@ -279,6 +289,13 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     
     UISegmentedControl *segmentedControl = [[segmentedControlClass alloc] init];
     self.segmentedControlView.segmentedControl = segmentedControl;
+}
+
+- (void)setAvatarViewClass:(Class)avatarViewClass {
+    _avatarViewClass = avatarViewClass;
+    
+    DBProfileAvatarView *avatarView = [[avatarViewClass alloc] init];
+    _avatarView = avatarView;
 }
 
 - (void)setHidesSegmentedControlForSingleContentController:(BOOL)hidesSegmentedControlForSingleContentController {
@@ -316,7 +333,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 - (void)setCoverPhotoMimicsNavigationBar:(BOOL)coverPhotoMimicsNavigationBar {
     _coverPhotoMimicsNavigationBar = coverPhotoMimicsNavigationBar;
     self.customNavigationBar.hidden = !coverPhotoMimicsNavigationBar;
-    self.coverPhotoView.shouldApplyTint = coverPhotoMimicsNavigationBar;
+    self.coverPhotoView.imageView.shouldApplyTint = coverPhotoMimicsNavigationBar;
     [self.view updateConstraintsIfNeeded];
 }
 
@@ -344,29 +361,17 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 - (void)changeContentController {
     NSInteger selectedSegmentIndex = [self.segmentedControl selectedSegmentIndex];
     
-    NSInteger oldIndexForSelectedContentController = self.indexForSelectedContentController;
-    
-    // Inform delegate that the currently selected content controller will be deselected
-    if ([self.delegate respondsToSelector:@selector(profileViewController:willDeselectContentControllerAtIndex:)]) {
-        [self.delegate profileViewController:self willDeselectContentControllerAtIndex:oldIndexForSelectedContentController];
-    }
-    
     // Inform delegate that the chosen content controller will be selected
     if ([self.delegate respondsToSelector:@selector(profileViewController:willSelectContentControllerAtIndex:)]) {
-        [self.delegate profileViewController:self willSelectContentControllerAtIndex:selectedSegmentIndex];
+        [self.delegate profileViewController:self willShowContentControllerAtIndex:selectedSegmentIndex];
     }
     
     self.indexForSelectedContentController = selectedSegmentIndex;
     [self updateViewConstraints];
     
-    // Inform delegate that the previously selected content controller is now deselected
-    if ([self.delegate respondsToSelector:@selector(profileViewController:didDeselectContentControllerAtIndex:)]) {
-        [self.delegate profileViewController:self didDeselectContentControllerAtIndex:oldIndexForSelectedContentController];
-    }
-    
     // Inform delegate that the chosen content controller is now selected
     if ([self.delegate respondsToSelector:@selector(profileViewController:didSelectContentControllerAtIndex:)]) {
-        [self.delegate profileViewController:self didSelectContentControllerAtIndex:selectedSegmentIndex];
+        [self.delegate profileViewController:self didShowContentControllerAtIndex:selectedSegmentIndex];
     }
 }
 
@@ -407,9 +412,9 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 }
 
 - (void)reloadData {
-    NSInteger numberOfSegments = [self numberOfContentControllers];
+    NSInteger numberOfSegments = [self _numberOfContentControllers];
     
-    [self.observers removeAllObjects];
+    [self.scrollViewObservers removeAllObjects];
     
     if ([self.contentControllers count] > 0) {
         [self hideContentController:[self.contentControllers objectAtIndex:self.indexForSelectedContentController]];
@@ -420,11 +425,11 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     
     for (NSInteger i = 0; i < numberOfSegments; i++) {
         // Reload content view controllers
-        DBProfileContentController *contentController = [self contentControllerAtIndex:i];
+        DBProfileContentController *contentController = [self _contentControllerAtIndex:i];
         [self.contentControllers addObject:contentController];
         
         // Reload segmented control
-        NSString *title = [self titleForContentControllerAtIndex:i];
+        NSString *title = [self _titleForContentControllerAtIndex:i];
         [self.segmentedControl insertSegmentWithTitle:title atIndex:i animated:NO];
     }
     
@@ -467,8 +472,8 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     if (hideVC) {
         [self hideContentController:hideVC];
         NSString *key = [self uniqueKeyForContentControllerAtIndex:_indexForSelectedContentController];
-        if ([self.observers valueForKey:key]) {
-            [self.observers removeObjectForKey:key];
+        if ([self.scrollViewObservers valueForKey:key]) {
+            [self.scrollViewObservers removeObjectForKey:key];
         }
     }
     
@@ -482,7 +487,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
         NSString *key = [self uniqueKeyForContentControllerAtIndex:indexForSelectedContentController];
         DBProfileScrollViewObserver *observer = [[DBProfileScrollViewObserver alloc] initWithTargetView:[displayVC contentScrollView] delegate:self];
         [observer startObserving];
-        self.observers[key] = observer;
+        self.scrollViewObservers[key] = observer;
     }
     
     [self updateViewConstraints];
@@ -500,31 +505,30 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 }
 
 - (void)notifyDelegateOfPullToRefreshForContentControllerAtIndex:(NSInteger)index  {
-    // Inform delegate that the user has scrolled past the pull-to-refresh trigger distance
     if ([self respondsToSelector:@selector(profileViewController:didPullToRefreshContentControllerAtIndex:)]) {
         [self.delegate profileViewController:self didPullToRefreshContentControllerAtIndex:index];
     }
 }
 
-- (NSInteger)numberOfContentControllers {
+- (NSInteger)_numberOfContentControllers {
     NSInteger numberOfContentControllers = [self.dataSource numberOfContentControllersForProfileViewController:self];
     NSAssert(numberOfContentControllers > 0, @"numberOfContentControllers must be greater than 0");
     return numberOfContentControllers;
 }
 
-- (DBProfileContentController *)contentControllerAtIndex:(NSInteger)index  {
+- (DBProfileContentController *)_contentControllerAtIndex:(NSInteger)index  {
     DBProfileContentController *contentController = [self.dataSource profileViewController:self contentControllerAtIndex:index];
     NSAssert(contentController, @"contentController cannot be nil");
     return contentController;
 }
 
-- (NSString *)titleForContentControllerAtIndex:(NSInteger)index  {
+- (NSString *)_titleForContentControllerAtIndex:(NSInteger)index  {
     NSString *title = [self.dataSource profileViewController:self titleForContentControllerAtIndex:index];
     NSAssert([title length], @"title for contentController cannot be nil");
     return title;
 }
 
-- (NSString *)subtitleForContentControllerAtIndex:(NSInteger)index  {
+- (NSString *)_subtitleForContentControllerAtIndex:(NSInteger)index  {
     NSString *subtitle = [self.dataSource profileViewController:self subtitleForContentControllerAtIndex:index];
     return subtitle;
 }
@@ -656,7 +660,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 }
 
 - (NSString *)uniqueKeyForContentControllerAtIndex:(NSInteger)index {
-    NSMutableString *key = [[NSMutableString alloc] initWithString:[self titleForContentControllerAtIndex:index]];
+    NSMutableString *key = [[NSMutableString alloc] initWithString:[self _titleForContentControllerAtIndex:index]];
     [key appendFormat:@"-%@", @(index)];
     return key;
 }
@@ -705,14 +709,13 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 
 - (void)resetTitles {
     [self.customNavigationBar setTitle:self.title];
-    [self.customNavigationBar setSubtitle:[self subtitleForContentControllerAtIndex:self.indexForSelectedContentController]
+    [self.customNavigationBar setSubtitle:[self _subtitleForContentControllerAtIndex:self.indexForSelectedContentController]
                           traitCollection:self.traitCollection];
 }
 
 #pragma mark - DBProfileCoverPhotoViewDelegate
 
 - (void)didSelectCoverPhotoView:(DBProfileCoverPhotoView *)coverPhotoView {
-    // Inform delegate that the cover photo was selected
     if ([self.delegate respondsToSelector:@selector(profileViewController:didSelectCoverPhotoView:)]) {
         [self.delegate profileViewController:self didSelectCoverPhotoView:coverPhotoView];
     }
@@ -721,14 +724,12 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 }
 
 - (void)didDeselectCoverPhotoView:(DBProfileCoverPhotoView *)coverPhotoView {
-    // Inform delegate that the cover photo was deselected
     if ([self.delegate respondsToSelector:@selector(profileViewController:didDeselectCoverPhotoView:)]) {
         [self.delegate profileViewController:self didDeselectCoverPhotoView:coverPhotoView];
     }
 }
 
 - (void)didHighlightCoverPhotoView:(DBProfileCoverPhotoView *)coverPhotoView {
-    // Inform delegate that the cover photo was highlighted
     if ([self.delegate respondsToSelector:@selector(profileViewController:didHighlightCoverPhotoView:)]) {
         [self.delegate profileViewController:self didHighlightCoverPhotoView:coverPhotoView];
     }
@@ -737,7 +738,6 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 }
 
 - (void)didUnhighlightCoverPhotoView:(DBProfileCoverPhotoView *)coverPhotoView {
-    // Inform delegate that the cover photo was unhighlighted
     if ([self.delegate respondsToSelector:@selector(profileViewController:didUnhighlightCoverPhotoView:)]) {
         [self.delegate profileViewController:self didUnhighlightCoverPhotoView:coverPhotoView];
     }
@@ -746,7 +746,6 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 #pragma mark - DBProfileAvatarViewDelegate
 
 - (void)didSelectAvatarView:(DBProfileAvatarView *)avatarView {
-    // Inform delegate that the profile picture was selected
     if ([self.delegate respondsToSelector:@selector(profileViewController:didSelectAvatarView:)]) {
         [self.delegate profileViewController:self didSelectAvatarView:avatarView];
     }
@@ -755,14 +754,12 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 }
 
 - (void)didDeselectAvatarView:(DBProfileAvatarView *)avatarView {
-    // Inform delegate that the profile picture was deselected
     if ([self.delegate respondsToSelector:@selector(profileViewController:didDeselectAvatarView:)]) {
         [self.delegate profileViewController:self didDeselectAvatarView:avatarView];
     }
 }
 
 - (void)didHighlightAvatarView:(DBProfileAvatarView *)avatarView {
-    // Inform delegate that the profile picture was highlighted
     if ([self.delegate respondsToSelector:@selector(profileViewController:didHighlightAvatarView:)]) {
         [self.delegate profileViewController:self didHighlightAvatarView:avatarView];
     }
@@ -771,7 +768,6 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 }
 
 - (void)didUnhighlightAvatarView:(DBProfileAvatarView *)avatarView {
-    // Inform delegate that the profile picture was unhighlighted
     if ([self.delegate respondsToSelector:@selector(profileViewController:didUnhighlightAvatarView:)]) {
         [self.delegate profileViewController:self didUnhighlightAvatarView:avatarView];
     }
@@ -779,10 +775,14 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 
 #pragma mark - DBProfileScrollViewObserverDelegate
 
-- (void)observedScrollViewDidScroll:(UIScrollView *)scrollView {
+- (void)observedScrollViewDidScroll:(UIScrollView *)scrollView
+{
     CGPoint contentOffset = scrollView.contentOffset;
     contentOffset.y += scrollView.contentInset.top;
-    [self updateSubviewsWithContentOffset:contentOffset];
+    
+    [self updateCoverPhotoViewWithContentOffset:contentOffset];
+    [self updateAvatarViewWithContentOffset:contentOffset];
+    [self updateTitleViewWithContentOffset:contentOffset];
     [self handlePullToRefreshWithScrollView:scrollView];
     
     if (self.coverPhotoMimicsNavigationBar && !(self.coverPhotoOptions & DBProfileCoverPhotoOptionExtend)) {
@@ -794,10 +794,12 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     }
 }
 
-#pragma mark - Scroll Animatons
+#pragma mark - Scroll Animations
 
-- (void)handlePullToRefreshWithScrollView:(UIScrollView *)scrollView {
+- (void)handlePullToRefreshWithScrollView:(UIScrollView *)scrollView
+{
     if (!self.allowsPullToRefresh) return;
+    
     CGPoint contentOffset = scrollView.contentOffset;
     contentOffset.y += scrollView.contentInset.top;
     if (scrollView.isDragging && contentOffset.y < 0) {
@@ -818,64 +820,64 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     self.activityIndicator.alpha = (contentOffset.y > 0) ? 1 - contentOffset.y / 20 : 1;
 }
 
-- (void)updateSubviewsWithContentOffset:(CGPoint)contentOffset {
-    [self updateCoverPhotoViewWithContentOffset:contentOffset];
-    [self updateAvatarViewWithContentOffset:contentOffset];
-    [self updateTitleViewWithContentOffset:contentOffset];
-}
-
-- (void)updateCoverPhotoViewWithContentOffset:(CGPoint)contentOffset {
+- (void)updateCoverPhotoViewWithContentOffset:(CGPoint)contentOffset
+{
     if (self.isUpdating) return;
     
-    CGFloat distance = [self coverPhotoViewOffset] - CGRectGetMaxY(self.customNavigationBar.frame);
-    
-    if (contentOffset.y <= 0 && self.coverPhotoOptions & DBProfileCoverPhotoOptionStretch) {
+    if (contentOffset.y < 0 && self.coverPhotoOptions & DBProfileCoverPhotoOptionStretch) {
         _coverPhotoViewHeightConstraint.constant = -contentOffset.y;
     }
     else {
         _coverPhotoViewHeightConstraint.constant = 0;
     }
     
-    if (self.coverPhotoScrollAnimationStyle == DBProfileCoverPhotoScrollAnimationStyleBlur) {
-        if (self.automaticallyAdjustsScrollViewInsets) distance += [self.topLayoutGuide length];
+    CGFloat maxBlurOffset = CGRectGetHeight(self.coverPhotoView.frame) - CGRectGetMaxY(self.customNavigationBar.frame);
+    
+    if (self.coverPhotoView.isBlurEnabled) {
+        if (self.automaticallyAdjustsScrollViewInsets) maxBlurOffset += [self.topLayoutGuide length];
+        
+        CGFloat percentScrolled = 0;
         
         if (contentOffset.y <= 0) {
-            CGFloat percent = MAX(MIN(1 - (distance - fabs(contentOffset.y))/distance, 1), 0);
-            self.coverPhotoView.blurView.stage = round(percent * self.coverPhotoView.blurView.numberOfStages);
+             percentScrolled = MAX(MIN(1 - (maxBlurOffset - fabs(contentOffset.y))/maxBlurOffset, 1), 0);
         }
         else if (contentOffset.y >= [self titleViewOffset]) {
-            CGFloat percent = MAX(MIN(1 - (50 - fabs(contentOffset.y - [self titleViewOffset]))/50, 1), 0);
-            self.coverPhotoView.blurView.stage = round(percent * self.coverPhotoView.blurView.numberOfStages);
+            percentScrolled = MAX(MIN(1 - (50 - fabs(contentOffset.y - [self titleViewOffset]))/50, 1), 0);
         }
-        else {
-            self.coverPhotoView.blurView.stage = 0;
-        }
+        
+        self.coverPhotoView.percentScrolled = percentScrolled;
     }
 }
 
-- (void)updateAvatarViewWithContentOffset:(CGPoint)contentOffset {
+- (void)updateAvatarViewWithContentOffset:(CGPoint)contentOffset
+{
     if (self.coverPhotoHidden || self.isUpdating) return;
+    
     CGFloat coverPhotoOffset = [self coverPhotoViewOffset];
-    CGFloat coverPhotoOffsetPercent = 0;
+    CGFloat percentScrolled = 0;
+    
     if (self.coverPhotoMimicsNavigationBar) {
         coverPhotoOffset -= CGRectGetMaxY(self.customNavigationBar.frame);
     }
-    coverPhotoOffsetPercent = MIN(1, contentOffset.y / coverPhotoOffset);
+    percentScrolled = MIN(1, contentOffset.y / coverPhotoOffset);
 
     if (self.coverPhotoOptions & DBProfileCoverPhotoOptionExtend) {
-        CGFloat alpha = 1 - coverPhotoOffsetPercent * 1.10;
+        CGFloat alpha = 1 - percentScrolled;
         self.avatarView.alpha = self.detailsView.alpha = alpha;
-    } else {
-        CGFloat avatarScaleFactor = MIN(1 - coverPhotoOffsetPercent * 0.3, 1);
+    }
+    else {
+        CGFloat avatarScaleFactor = MIN(1 - percentScrolled * 0.3, 1);
         CGAffineTransform avatarTransform = CGAffineTransformMakeScale(avatarScaleFactor, avatarScaleFactor);
         CGFloat avatarOffset = self.avatarInset.bottom + self.avatarInset.top;
-        avatarTransform = CGAffineTransformTranslate(avatarTransform, 0, MAX(avatarOffset * coverPhotoOffsetPercent, 0));
+        avatarTransform = CGAffineTransformTranslate(avatarTransform, 0, MAX(avatarOffset * percentScrolled, 0));
         self.avatarView.transform = avatarTransform;
     }
 }
 
-- (void)updateTitleViewWithContentOffset:(CGPoint)contentOffset {
+- (void)updateTitleViewWithContentOffset:(CGPoint)contentOffset
+{
     if (!self.coverPhotoMimicsNavigationBar) return;
+    
     CGFloat titleViewOffset = [self titleViewOffset];
     
     if (!(self.coverPhotoOptions & DBProfileCoverPhotoOptionExtend)) {
@@ -884,8 +886,8 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
         titleViewOffset += (CGRectGetHeight(self.avatarView.frame) + avatarOffset + padding);
     }
     
-    CGFloat titleViewOffsetPercent = 1 - contentOffset.y / titleViewOffset;
-    [self.customNavigationBar setTitleVerticalPositionAdjustment:MAX(titleViewOffset * titleViewOffsetPercent, 0) traitCollection:self.traitCollection];
+    CGFloat percentScrolled = 1 - contentOffset.y / titleViewOffset;
+    [self.customNavigationBar setTitleVerticalPositionAdjustment:MAX(titleViewOffset * percentScrolled, 0) traitCollection:self.traitCollection];
 }
 
 - (CGFloat)coverPhotoViewOffset {

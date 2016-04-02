@@ -12,9 +12,7 @@
 #import "DBProfileViewControllerDefaults.h"
 #import "DBProfileAvatarView_Private.h"
 
-@implementation DBProfileAvatarView {
-    NSLayoutConstraint *_imageViewWidthConstraint;
-}
+@implementation DBProfileAvatarView
 
 - (instancetype)init {
     self = [super init];
@@ -22,20 +20,25 @@
         self.backgroundColor = [UIColor whiteColor];
         self.clipsToBounds = YES;
         self.userInteractionEnabled = YES;
+        self.layoutMargins = UIEdgeInsetsMake(4, 4, 4, 4);
         self.layer.cornerRadius = 8;
-        
+
+        _contentView = [[UIView alloc] init];
+        self.contentView.translatesAutoresizingMaskIntoConstraints = NO;
+
+        [self addSubview:self.contentView];
+
         _imageView = [[UIImageView alloc] init];
+        self.imageView.translatesAutoresizingMaskIntoConstraints = NO;
         self.imageView.contentMode = UIViewContentModeScaleAspectFill;
         self.imageView.clipsToBounds = YES;
         self.imageView.layer.cornerRadius = 6;
-        self.imageView.translatesAutoresizingMaskIntoConstraints = NO;
 
-        [self addSubview:self.imageView];
+        [self.contentView addSubview:self.imageView];
         
         [self setUpConstraints];
         
         self.style = [DBProfileViewControllerDefaults defaultAvatarStyle];
-        self.borderWidth = 3;
     }
     return self;
 }
@@ -62,23 +65,11 @@
     }
 }
 
-#pragma - Overrides
-
-- (void)updateConstraints {
-    _imageViewWidthConstraint.constant = -2*self.borderWidth;
-    [super updateConstraints];
-}
-
 #pragma mark - Setters
 
 - (void)setStyle:(DBProfileAvatarStyle)style {
     _style = style;
     [self layoutSubviews];
-}
-
-- (void)setBorderColor:(UIColor *)borderColor {
-    _borderColor = borderColor;
-    self.backgroundColor = borderColor;
 }
 
 - (void)layoutSubviews {
@@ -103,11 +94,6 @@
     }
 }
 
-- (void)setBorderWidth:(CGFloat)borderWidth {
-    _borderWidth = borderWidth;
-    [self updateConstraints];
-}
-
 - (void)setAvatarImage:(UIImage *)image animated:(BOOL)animated {
     if (!image) return;
     self.imageView.image = image;
@@ -121,11 +107,16 @@
 }
 
 - (void)setUpConstraints {
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.imageView attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterX multiplier:1 constant:0]];
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.imageView attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.imageView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:self.imageView attribute:NSLayoutAttributeWidth multiplier:1 constant:0]];
-    _imageViewWidthConstraint = [NSLayoutConstraint constraintWithItem:self.imageView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeWidth multiplier:1 constant:0];
-    [self addConstraint:_imageViewWidthConstraint];
+    
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.contentView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTopMargin multiplier:1 constant:0]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.contentView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeBottomMargin multiplier:1 constant:0]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.contentView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeLeftMargin multiplier:1 constant:0]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.contentView attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeRightMargin multiplier:1 constant:0]];
+    
+    [self.contentView addConstraint:[NSLayoutConstraint constraintWithItem:self.imageView attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.contentView attribute:NSLayoutAttributeCenterX multiplier:1 constant:0]];
+    [self.contentView addConstraint:[NSLayoutConstraint constraintWithItem:self.imageView attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self.contentView attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
+    [self.contentView addConstraint:[NSLayoutConstraint constraintWithItem:self.imageView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:self.imageView attribute:NSLayoutAttributeWidth multiplier:1 constant:0]];
+    [self.contentView addConstraint:[NSLayoutConstraint constraintWithItem:self.imageView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self.contentView attribute:NSLayoutAttributeWidth multiplier:1 constant:0]];
 }
 
 @end

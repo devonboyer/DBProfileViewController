@@ -8,7 +8,7 @@
 //  Released under an MIT license: http://opensource.org/licenses/MIT
 //
 
-#import "DBProfileSelectableView.h"
+#import "DBProfileAccessoryView.h"
 #import "DBProfileViewControllerConstants.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -17,28 +17,23 @@ NS_ASSUME_NONNULL_BEGIN
  @class DBProfileAvatarView
  @abstract The `DBProfileAvatarView` class displays an avatar image.
  */
-@interface DBProfileAvatarView : DBProfileSelectableView
+@interface DBProfileAvatarView : DBProfileAccessoryView
+
+/*!
+ @abstract The content view of is the default superview for content displayed by the view.
+ */
+@property (nonatomic, strong, readonly) UIView *contentView;
+
+/*!
+ @abstract The image view that displays the avatar image.
+ */
+@property (nonatomic, strong, readonly) UIImageView *imageView;
 
 /*!
  @abstract Specifies the style.
  @discussion The default is `DBProfileAvatarStyleRoundedRect`.
  */
 @property (nonatomic, assign) DBProfileAvatarStyle style;
-
-/*!
- @abstract The border width for the avatar.
- */
-@property (nonatomic, assign) CGFloat borderWidth;
-
-/*!
- @abstract The border color for the avatar.
- */
-@property (nonatomic, strong) UIColor *borderColor;
-
-/*!
- @abstract The image view that displays the avatar image.
- */
-@property (nonatomic, strong, readonly) UIImageView *imageView;
 
 /*!
  @abstract Sets the avatar image.

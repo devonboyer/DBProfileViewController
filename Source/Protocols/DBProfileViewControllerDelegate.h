@@ -26,32 +26,31 @@ NS_ASSUME_NONNULL_BEGIN
 @optional
 
 /*!
- @abstract Tells the delegate that a specified content controller is about to be selected.
- @param profileViewController The profile view controller where the selection was made.
+ @abstract Tells the delegate that a specified content controller is about to be displayed.
+ @param profileViewController The profile view controller that is showing the content controller.
  @prarm index The index locating the content controller in the profile view controller.
  */
-- (void)profileViewController:(DBProfileViewController *)profileViewController willSelectContentControllerAtIndex:(NSInteger)index;
+- (void)profileViewController:(DBProfileViewController *)profileViewController willShowContentControllerAtIndex:(NSInteger)index;
 
 /*!
- @abstract Tells the delegate that a specified content controller is now selected.
- @param profileViewController The profile view controller where the selection was made.
+ @abstract Tells the delegate that a specified content controller is now displayed.
+ @param profileViewController The profile view controller that is showing the content controller.
  @prarm index The index locating the content controller in the profile view controller.
  */
-- (void)profileViewController:(DBProfileViewController *)profileViewController didSelectContentControllerAtIndex:(NSInteger)index;
+- (void)profileViewController:(DBProfileViewController *)profileViewController didShowContentControllerAtIndex:(NSInteger)index;
 
 /*!
- @abstract Tells the delegate that a specified content controller is about to be deselected.
- @param profileViewController The profile view controller where the selection was made.
+ @abstract Tells the delegate that the user has triggered a pull-to-refresh.
+ @param profileViewController The profile view controller that triggered a pull-to-refresh.
  @prarm index The index locating the content controller in the profile view controller.
  */
-- (void)profileViewController:(DBProfileViewController *)profileViewController willDeselectContentControllerAtIndex:(NSInteger)index;
+- (void)profileViewController:(DBProfileViewController *)profileViewController didPullToRefreshContentControllerAtIndex:(NSInteger)index;
 
-/*!
- @abstract Tells the delegate that a specified content controller is now deselected.
- @param profileViewController The profile view controller where the selection was made.
- @prarm index The index locating the content controller in the profile view controller.
- */
-- (void)profileViewController:(DBProfileViewController *)profileViewController didDeselectContentControllerAtIndex:(NSInteger)index;
+// need long press and tap for cover photo and avatar view
+
+
+
+// Deprecated?
 
 /*!
  @abstract Tells the delegate that the avatar has been selected.
@@ -80,13 +79,6 @@ NS_ASSUME_NONNULL_BEGIN
  @prarm profilePictureView The cover photo view that was deselected.
  */
 - (void)profileViewController:(DBProfileViewController *)profileViewController didDeselectCoverPhotoView:(DBProfileCoverPhotoView *)coverPhotoView;
-
-/*!
- @abstract Tells the delegate that the user has triggered a pull-to-refresh.
- @param profileViewController The profile view controller that triggered a pull-to-refresh.
- @prarm index The index locating the content controller in the profile view controller.
- */
-- (void)profileViewController:(DBProfileViewController *)profileViewController didPullToRefreshContentControllerAtIndex:(NSInteger)index;
 
 /*!
  @abstract Tells the delegate that the avatar was highlighted.

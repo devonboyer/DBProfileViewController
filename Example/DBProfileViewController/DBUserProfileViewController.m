@@ -37,7 +37,6 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
     // Customize profile appearance
     self.coverPhotoOptions = DBProfileCoverPhotoOptionStretch;
     self.avatarInset = UIEdgeInsetsMake(0, 15, DBProfileViewControllerAvatarSizeNormal/2.0 - 10, 0);
-    self.avatarView.borderWidth = 4;
     self.allowsPullToRefresh = YES;
     
     // Customize details view
@@ -70,14 +69,13 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
     
     switch (style) {
         case DBUserProfileViewControllerStyle1:
-            self.coverPhotoScrollAnimationStyle = DBProfileCoverPhotoScrollAnimationStyleNone;
+            self.coverPhotoView.blurEnabled = NO;
             self.automaticallyAdjustsScrollViewInsets = YES;
             self.coverPhotoMimicsNavigationBar = NO;
         case DBUserProfileViewControllerStyle2:
             self.avatarView.style = DBProfileAvatarStyleRoundedRect;
             self.avatarSize = DBProfileAvatarSizeNormal;
             self.avatarAlignment = DBProfileAvatarAlignmentLeft;
-            self.avatarView.borderWidth = 4;
             break;
         case DBUserProfileViewControllerStyle3:
             self.avatarView.style = DBProfileAvatarStyleRound;
@@ -100,7 +98,6 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
     [detailsView invalidateIntrinsicContentSize];
     [self endUpdates];
 }
-
 
 #pragma mark - DBProfileViewControllerDataSource
 
@@ -161,7 +158,9 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
     [profileViewController deselectAvatarViewAnimated:YES];
 }
 
-- (void)profileViewController:(DBProfileViewController *)viewController didSelectContentControllerAtIndex:(NSInteger)index { }
+- (void)profileViewController:(DBProfileViewController *)profileViewController willShowContentControllerAtIndex:(NSInteger)index { }
+
+- (void)profileViewController:(DBProfileViewController *)profileViewController didShowContentControllerAtIndex:(NSInteger)index { }
 
 - (void)profileViewController:(DBProfileViewController *)viewController didPullToRefreshContentControllerAtIndex:(NSInteger)index {
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{

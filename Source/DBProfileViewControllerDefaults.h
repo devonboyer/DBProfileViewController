@@ -21,8 +21,6 @@
 
 + (DBProfileCoverPhotoOptions)defaultCoverPhotoOptions;
 
-+ (DBProfileCoverPhotoScrollAnimationStyle)defaultCoverPhotoScrollAnimationStyle;
-
 + (CGFloat)defaultCoverPhotoHeightMultiplier;
 
 + (BOOL)defaultCoverPhotoHidden;

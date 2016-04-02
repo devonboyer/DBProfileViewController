@@ -43,20 +43,6 @@ typedef NS_OPTIONS(NSUInteger, DBProfileCoverPhotoOptions) {
 };
 
 /*!
- @abstract The `DBProfileCoverPhotoScrollAnimationStyle` defines the animation style for the cover photo while scrolling.
- */
-typedef NS_ENUM(NSInteger, DBProfileCoverPhotoScrollAnimationStyle) {
-    /*!
-     @abstract No animation while scrolling.
-     */
-    DBProfileCoverPhotoScrollAnimationStyleNone,
-    /*!
-     @abstract The cover photo is blurred while scrolling.
-     */
-    DBProfileCoverPhotoScrollAnimationStyleBlur
-};
-
-/*!
  @abstract The `DBProfileAvatarSize` defines the size of the the avatar.
  */
 typedef NS_ENUM(NSInteger, DBProfileAvatarSize) {

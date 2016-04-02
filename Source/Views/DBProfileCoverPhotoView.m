@@ -12,7 +12,7 @@
 #import "DBProfileTintedImageView.h"
 #import "DBProfileCoverPhotoView_Private.h"
 
-UIImage *DBProfileImageByScalingImageToSize(UIImage *image, CGSize size){
+UIImage *DBProfileImageByScalingImageToSize(UIImage *image, CGSize size) {
     
     CGFloat oldWidth = image.size.width;
     CGFloat oldHeight = image.size.height;
@@ -36,10 +36,7 @@ UIImage *DBProfileImageByScalingImageToSize(UIImage *image, CGSize size){
     return newImage;
 }
 
-@implementation DBProfileCoverPhotoView {
-    DBProfileBlurView *_blurView;
-    DBProfileTintedImageView *_tintView;
-}
+@implementation DBProfileCoverPhotoView
 
 - (instancetype)init {
     self = [super init];
@@ -48,14 +45,6 @@ UIImage *DBProfileImageByScalingImageToSize(UIImage *image, CGSize size){
         self.userInteractionEnabled = YES;
         self.clipsToBounds = YES;
         self.shouldCropImageBeforeBlurring = YES;
-        
-        _blurView = [[DBProfileBlurView alloc] init];
-        _blurView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-        [self addSubview:_blurView];
-        
-        _tintView = [[DBProfileTintedImageView alloc] init];
-        _tintView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-        [_blurView addSubview:_tintView];
     }
     return self;
 }
@@ -82,20 +71,14 @@ UIImage *DBProfileImageByScalingImageToSize(UIImage *image, CGSize size){
     }
 }
 
-- (void)setShouldApplyTint:(BOOL)shouldApplyTint {
-    _shouldApplyTint = shouldApplyTint;
-    _tintView.shouldApplyTint = shouldApplyTint;
-}
-
 - (void)setCoverPhotoImage:(UIImage *)image animated:(BOOL)animated {
     if (!image) return;
-    CGSize coverPhotoSize = _blurView.frame.size;
-    _blurView.snapshot = (self.shouldCropImageBeforeBlurring) ? DBProfileImageByScalingImageToSize(image, coverPhotoSize) : image;
+    self.initialImage = (self.shouldCropImageBeforeBlurring) ? DBProfileImageByScalingImageToSize(image, self.frame.size) : image;
     
     if (animated) {
-        _blurView.alpha = 0;
+        self.imageView.alpha = 0;
         [UIView animateWithDuration: 0.3 animations:^{
-            _blurView.alpha = 1;
+            self.imageView.alpha = 1;
         }];
     }
 }

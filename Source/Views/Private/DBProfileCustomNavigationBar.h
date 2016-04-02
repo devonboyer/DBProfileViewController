@@ -10,16 +10,12 @@
 
 #import <UIKit/UIKit.h>
 
-@class DBProfileTitleView;
-
 @interface DBProfileCustomNavigationBar : UINavigationBar
 
 @property (nonatomic, strong, readonly) UINavigationItem *navigationItem;
 
 - (void)setTitle:(NSString *)title;
-
 - (void)setSubtitle:(NSString *)subtitle traitCollection:(UITraitCollection *)traitCollection;
-
 - (void)setTitleVerticalPositionAdjustment:(CGFloat)adjustment traitCollection:(UITraitCollection *)traitCollection;
 
 @end

@@ -15,4 +15,9 @@
 @property (nonatomic, strong, readonly) UILabel *titleLabel;
 @property (nonatomic, strong, readonly) UILabel *subtitleLabel;
 
+@property (nonatomic, assign) BOOL wantsShadowForLabels;
+
+- (void)setTitle:(NSString *)title;
+- (void)setSubtitle:(NSString *)subtitle;
+
 @end

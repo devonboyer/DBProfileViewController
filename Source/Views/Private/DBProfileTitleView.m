@@ -38,8 +38,30 @@
         self.subtitleLabel.textColor = [UIColor whiteColor];
         self.subtitleLabel.font = [UIFont systemFontOfSize:14];
         self.subtitleLabel.textAlignment = NSTextAlignmentCenter;
+
+        self.wantsShadowForLabels = YES;
     }
     return self;
+}
+
+- (void)setWantsShadowForLabels:(BOOL)wantsShadowForLabels {
+    _wantsShadowForLabels = wantsShadowForLabels;
+    
+    if (wantsShadowForLabels) {
+        UIColor *shadowColor = [UIColor colorWithWhite:0 alpha:0.32];
+        self.titleLabel.shadowColor = shadowColor;
+        self.titleLabel.shadowOffset = CGSizeMake(1,1);
+        self.subtitleLabel.shadowColor = shadowColor;
+        self.subtitleLabel.shadowOffset = CGSizeMake(1,1);
+    }
+}
+
+- (void)setTitle:(NSString *)title {
+    self.titleLabel.text = title;
+}
+
+- (void)setSubtitle:(NSString *)subtitle {
+    self.subtitleLabel.text = subtitle;
 }
 
 - (void)setUpConstraints {

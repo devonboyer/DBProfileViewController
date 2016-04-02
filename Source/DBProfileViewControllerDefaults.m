@@ -19,10 +19,6 @@
     return DBProfileCoverPhotoOptionStretch;
 }
 
-+ (DBProfileCoverPhotoScrollAnimationStyle)defaultCoverPhotoScrollAnimationStyle {
-    return DBProfileCoverPhotoScrollAnimationStyleBlur;
-}
-
 + (CGFloat)defaultCoverPhotoHeightMultiplier {
     return 0.18;
 }

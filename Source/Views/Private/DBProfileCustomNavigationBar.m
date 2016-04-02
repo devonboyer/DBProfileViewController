@@ -34,18 +34,17 @@
     return self;
 }
 - (void)setTitle:(NSString *)title {
+    [_titleView setTitle:title];
     _titleView.titleLabel.text = title;
 }
 
 - (void)setSubtitle:(NSString *)subtitle traitCollection:(UITraitCollection *)traitCollection {
-    _titleView.subtitleLabel.text = subtitle;
-    
     switch (traitCollection.verticalSizeClass) {
         case UIUserInterfaceSizeClassCompact:
-            _titleView.subtitleLabel.text = nil;
+            [_titleView setSubtitle:nil];
             break;
         default:
-            _titleView.subtitleLabel.text = subtitle;
+            [_titleView setSubtitle:subtitle];
             break;
     }
 }

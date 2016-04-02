@@ -1,9 +1,11 @@
 //
 //  DBProfileBlurView.m
-//  Pods
+//  DBProfileViewController
 //
 //  Created by Devon Boyer on 2016-03-25.
+//  Copyright (c) 2015 Devon Boyer. All rights reserved.
 //
+//  Released under an MIT license: http://opensource.org/licenses/MIT
 //
 
 #import "DBProfileBlurView.h"
@@ -58,11 +60,14 @@
 @end
 
 @interface DBProfileBlurView () {
-    UIImageView *_imageView;
     UIImageView *_interpolatedImageView;
 }
 
 @property (nonatomic, strong) DBProfileBlurStageCache *cache;
+@property (nonatomic, assign) NSUInteger iterations;
+@property (nonatomic, assign) NSInteger stage;
+
+- (void)updateAsync:(BOOL)async completion:(void (^)())completion;
 
 @end
 
@@ -75,36 +80,39 @@
         self.clipsToBounds = YES;
         self.backgroundColor = [UIColor whiteColor];
         self.tintColor = [UIColor clearColor];
-
+        
+        self.blurEnabled = YES;
+        self.iterations = 5;
         self.maxBlurRadius = 20.0;
-        self.iterations = 3;
-        self.numberOfStages = 15;
+        self.numberOfStages = 20;
         self.shouldInterpolateStages = YES;
         
-        _imageView = [[UIImageView alloc] init];
+        _imageView = [[DBProfileTintedImageView alloc] init];
         _imageView.contentMode = UIViewContentModeScaleAspectFill;
         _imageView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         _imageView.clipsToBounds = YES;
         [self addSubview:_imageView];
-        
-        _interpolatedImageView = [[UIImageView alloc] init];
+
+        _interpolatedImageView = [[DBProfileTintedImageView alloc] init];
         _interpolatedImageView.contentMode = UIViewContentModeScaleAspectFill;
         _interpolatedImageView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         _interpolatedImageView.clipsToBounds = YES;
         [self addSubview:_interpolatedImageView];
-        
+
         [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidReceiveMemoryWarningNotification
                                                           object:nil
                                                            queue:nil
                                                       usingBlock:^(NSNotification * _Nonnull note) {
-                                                          [self updateAsynchronously:NO completion:nil];
+                                                          // The cache is automatically emptied when app receives a memory warning so we need to refill the cache so the blur effect still works
+                                                          [self updateAsync:YES completion:nil];
                                                       }];
         
         [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidBecomeActiveNotification
                                                           object:nil
                                                            queue:nil
                                                       usingBlock:^(NSNotification * _Nonnull note) {
-                                                          [self updateAsynchronously:NO completion:nil];
+                                                          // The cache is automatically emptied when app enters the background so we need to refill the cache when the app becomes active
+                                                          [self updateAsync:YES completion:nil];
                                                       }];
         
         self.cache = [[DBProfileBlurStageCache alloc] init];
@@ -121,28 +129,46 @@
     _stage = stage;
     
     if (stage == 0) {
-        _imageView.image = self.snapshot;
+        _imageView.image = self.initialImage;
     } else {
-        UIImage *blurredImage = [self blurredSnapshot:self.snapshot stage:stage];
+        UIImage *blurredImage = [self blurredImageForStage:stage];
         if (blurredImage) _imageView.image = blurredImage;
-        
-        if (self.shouldInterpolateStages) {
-            UIImage *blurredImage = [self blurredSnapshot:self.snapshot stage:stage + 1];
-            _interpolatedImageView.image = blurredImage;
-            _interpolatedImageView.alpha = 0.1;
-        }
     }
 }
 
-- (void)setSnapshot:(UIImage *)snapshot {
-    _snapshot = snapshot;
-    _imageView.image = snapshot;
-    [self updateAsynchronously:YES completion:nil];
+- (void)setPercentScrolled:(CGFloat)percentScrolled
+{
+    _percentScrolled = percentScrolled;
+    
+    if (!self.isBlurEnabled) return;
+    
+    self.stage = round(percentScrolled * self.numberOfStages);
+    
+    // We will use a second image view to interpolate the blur between stages to create a smoother transition
+    if (self.shouldInterpolateStages) {
+        UIImage *blurredImage = [self blurredImageForStage:self.stage + 1];
+        if (blurredImage) _interpolatedImageView.image = blurredImage;
+        _interpolatedImageView.alpha = (percentScrolled * self.numberOfStages) - self.stage;
+    }
+}
+
+- (void)setInitialImage:(UIImage *)initialImage {
+    _initialImage = initialImage;
+    _imageView.image = initialImage;
+    [self updateAsync:YES completion:nil];
+}
+
+- (void)tintColorDidChange
+{
+    [super tintColorDidChange];
+    
+    // We need to update the cached images to use the new tint color for blurring
+    [self updateAsync:YES completion:nil];
 }
 
 - (BOOL)shouldUpdate
 {
-    return YES;
+    return self.initialImage != nil;
 }
 
 - (CGFloat)blurRadiusForStage:(NSInteger)stage
@@ -150,27 +176,29 @@
     return stage * (self.maxBlurRadius / self.numberOfStages);
 }
 
-- (UIImage *)blurredSnapshot:(UIImage *)snapshot stage:(CGFloat)stage
+- (UIImage *)blurredImageForStage:(CGFloat)stage
 {
-    DBProfileBlurStageCacheKey *key = [[DBProfileBlurStageCacheKey alloc] initWithImage:snapshot
+    DBProfileBlurStageCacheKey *key = [[DBProfileBlurStageCacheKey alloc] initWithImage:self.initialImage
                                                                               tintColor:self.tintColor
                                                                                   stage:stage];
     return [self.cache objectForKey:key];
 }
 
-- (void)updateAsynchronously:(BOOL)async completion:(void (^)())completion
+- (void)updateAsync:(BOOL)async completion:(void (^)())completion
 {
+    [self.cache removeAllObjects];
+    
     if ([self shouldUpdate]) {
-        UIImage *snapshot = self.snapshot;
+        UIImage *initialImage = self.initialImage;
         
         void (^block)() = ^void(){
             for (NSInteger stage = 0; stage <= self.numberOfStages; stage++) {
-                DBProfileBlurStageCacheKey *key = [[DBProfileBlurStageCacheKey alloc] initWithImage:snapshot
+                DBProfileBlurStageCacheKey *key = [[DBProfileBlurStageCacheKey alloc] initWithImage:initialImage
                                                                                           tintColor:self.tintColor
                                                                                               stage:stage];
-                UIImage *blurredImage = [snapshot blurredImageWithRadius:[self blurRadiusForStage:stage]
-                                                              iterations:self.iterations
-                                                               tintColor:self.tintColor];
+                UIImage *blurredImage = [initialImage blurredImageWithRadius:[self blurRadiusForStage:stage]
+                                                                  iterations:self.iterations
+                                                                   tintColor:self.tintColor];
                 [self.cache setObject:blurredImage forKey:key];
             }
         };
