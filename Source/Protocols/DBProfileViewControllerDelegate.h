@@ -45,60 +45,34 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)profileViewController:(DBProfileViewController *)profileViewController didPullToRefreshContentControllerAtIndex:(NSInteger)index;
 
-
-- (void)profileViewController:(DBProfileViewController *)profileViewController didSelectAccessoryView:(DBProfileAccessoryView *)accessoryView;
-- (void)profileViewController:(DBProfileViewController *)profileViewController didDeselectAccessoryView:(DBProfileAccessoryView *)accessoryView;
-- (void)profileViewController:(DBProfileViewController *)profileViewController didHighlightAccessoryView:(DBProfileAccessoryView *)accessoryView;
-- (void)profileViewController:(DBProfileViewController *)profileViewController didUnhighlightAccessoryView:(DBProfileAccessoryView *)accessoryView;
-
-
 /*!
- @abstract Tells the delegate that the avatar has been selected.
+ @abstract Tells the delegate that the accessory view has been selected.
  @param profileViewController The profile view controller where the selection was made.
  @prarm avatarView The avatar view that was selected.
  */
 
+- (void)profileViewController:(DBProfileViewController *)profileViewController didSelectAccessoryView:(DBProfileAccessoryView *)accessoryView;
+
 /*!
- @abstract Tells the delegate that the avatar photo has been deselected.
+ @abstract Tells the delegate that the accessory view has been deselected.
  @param profileViewController The profile view controller where the selection was made.
- @prarm avatarView The avatar view that was deselected.
+ @prarm avatarView The accessory view that was deselected.
  */
+- (void)profileViewController:(DBProfileViewController *)profileViewController didDeselectAccessoryView:(DBProfileAccessoryView *)accessoryView;
 
 /*!
- @abstract Tells the delegate that the cover photo has been selected.
- @param profileViewController The profile view controller where the selection was made.
- @prarm profilePictureView The cover photo view that was selected.
+ @abstract Tells the delegate that the accessory view was highlighted.
+ @param profileViewController The profile view controller that highlighted the accessory view.
+ @prarm avatarView The accessory view that was highlighted.
  */
+- (void)profileViewController:(DBProfileViewController *)profileViewController didHighlightAccessoryView:(DBProfileAccessoryView *)accessoryView;
 
 /*!
- @abstract Tells the delegate that the cover photo has been deselected.
- @param profileViewController The profile view controller where the selection was made.
- @prarm profilePictureView The cover photo view that was deselected.
+ @abstract Tells the delegate that the accessory view was unhighlighted.
+ @param profileViewController The profile view controller that unhighlighted the accessory view.
+ @prarm avatarView The accessory viewthat was unhighlighted.
  */
-
-/*!
- @abstract Tells the delegate that the avatar was highlighted.
- @param profileViewController The profile view controller that highlighted the avatar.
- @prarm avatarView The avatar view that was highlighted.
- */
-
-/*!
- @abstract Tells the delegate that the avatar was unhighlighted.
- @param profileViewController The profile view controller that unhighlighted the avatar.
- @prarm avatarView The avatar view that was unhighlighted.
- */
-
-/*!
- @abstract Tells the delegate that the cover photo was highlighted.
- @param profileViewController The profile view controller that highlighted the cover photo.
- @prarm coverPhotoView The cover photo view that was highlighted.
- */
-
-/*!
- @abstract Tells the delegate that the cover photo was unhighlighted.
- @param profileViewController The profile view controller that unhighlighted the cover photo.
- @prarm coverPhotoView The cover photo view that was unhighlighted.
- */
+- (void)profileViewController:(DBProfileViewController *)profileViewController didUnhighlightAccessoryView:(DBProfileAccessoryView *)accessoryView;
 
 @end
 

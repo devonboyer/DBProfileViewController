@@ -91,13 +91,13 @@
         _imageView.contentMode = UIViewContentModeScaleAspectFill;
         _imageView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         _imageView.clipsToBounds = YES;
-        [self addSubview:_imageView];
+        [self.contentView addSubview:_imageView];
 
         _interpolatedImageView = [[DBProfileTintedImageView alloc] init];
         _interpolatedImageView.contentMode = UIViewContentModeScaleAspectFill;
         _interpolatedImageView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         _interpolatedImageView.clipsToBounds = YES;
-        [self addSubview:_interpolatedImageView];
+        [self.contentView addSubview:_interpolatedImageView];
 
         [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidReceiveMemoryWarningNotification
                                                           object:nil

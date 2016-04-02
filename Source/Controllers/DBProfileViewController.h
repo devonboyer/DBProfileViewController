@@ -24,7 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 /*!
  @class DBProfileViewController
  @abstract The `DBProfileViewController` class is a view controller that is specialized to display a profile interface.
- @discussion This class manages and displays a collection of content controllers and customizable subviews associated with a profile interface.
+ @discussion This class manages and displays a collection of content controllers and customizable accessory views associated with a profile interface.
  */
 @interface DBProfileViewController : UIViewController
 

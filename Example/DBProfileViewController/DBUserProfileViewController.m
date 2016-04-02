@@ -40,17 +40,17 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
     self.allowsPullToRefresh = YES;
     
     // Customize details view
-//    DBUserProfileDetailsView *detailsView = [[DBUserProfileDetailsView alloc] init];
-//    detailsView.nameLabel.text = @"DBProfileViewController";
-//    detailsView.usernameLabel.text = @"by @devboyer";
-//    detailsView.descriptionLabel.text = @"A customizable library for creating stunning user profiles.";
-//    detailsView.delegate = self;
-//    self.detailsView = detailsView;
-    
-    DBProfileDetailsView *detailsView = (DBProfileDetailsView *)self.detailsView;
+    DBUserProfileDetailsView *detailsView = [[DBUserProfileDetailsView alloc] init];
     detailsView.nameLabel.text = @"DBProfileViewController";
     detailsView.usernameLabel.text = @"by @devboyer";
     detailsView.descriptionLabel.text = @"A customizable library for creating stunning user profiles.";
+    detailsView.delegate = self;
+    self.detailsView = detailsView;
+    
+//    DBProfileDetailsView *detailsView = (DBProfileDetailsView *)self.detailsView;
+//    detailsView.nameLabel.text = @"DBProfileViewController";
+//    detailsView.usernameLabel.text = @"by @devboyer";
+//    detailsView.descriptionLabel.text = @"A customizable library for creating stunning user profiles.";
     
     DBProfileAvatarView *avatarView = (DBProfileAvatarView *)self.avatarView;
     [avatarView setAvatarImage:[UIImage imageNamed:@"demo-avatar"] animated:NO];

@@ -39,7 +39,7 @@
         self.subtitleLabel.font = [UIFont systemFontOfSize:14];
         self.subtitleLabel.textAlignment = NSTextAlignmentCenter;
 
-        self.wantsShadowForLabels = YES;
+        self.wantsShadowForLabels = NO;
     }
     return self;
 }

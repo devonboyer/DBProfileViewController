@@ -21,11 +21,6 @@ NS_ASSUME_NONNULL_BEGIN
 @interface DBProfileAvatarView : DBProfileAccessoryView
 
 /*!
- @abstract The content view of is the default superview for content displayed by the view.
- */
-@property (nonatomic, strong, readonly) UIView *contentView;
-
-/*!
  @abstract The image view that displays the avatar image.
  */
 @property (nonatomic, strong, readonly) UIImageView *imageView;
