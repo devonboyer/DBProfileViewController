@@ -20,7 +20,7 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
     DBUserProfileContentControllerIndexLikes
 };
 
-@interface DBUserProfileViewController () <DBProfileViewControllerDelegate, DBProfileViewControllerDataSource, DBUserProfileDetailsViewDelegate>
+@interface DBUserProfileViewController () <DBProfileViewControllerDataSource, DBProfileViewControllerDelegate, DBUserProfileDetailsViewDelegate>
 
 @end
 

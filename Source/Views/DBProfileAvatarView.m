@@ -13,7 +13,8 @@
 
 @implementation DBProfileAvatarView
 
-- (instancetype)init {
+- (instancetype)init
+{
     self = [super init];
     if (self) {
         self.backgroundColor = [UIColor whiteColor];
@@ -45,6 +46,8 @@
 {
     [super layoutSubviews];
     
+    [self updateConstraints];
+    
     self.hidden = NO;
     switch (self.style) {
         case DBProfileAvatarStyleRound:
@@ -52,7 +55,6 @@
             self.imageView.layer.cornerRadius = CGRectGetWidth(self.imageView.frame) / 2;
             break;
         case DBProfileAvatarStyleRoundedRect:
-            // FIXME: Corner radius should depend on border width
             self.layer.cornerRadius = 6;
             self.imageView.layer.cornerRadius = 4;
             break;
