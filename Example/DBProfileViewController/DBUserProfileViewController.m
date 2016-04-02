@@ -52,9 +52,11 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
     detailsView.usernameLabel.text = @"by @devboyer";
     detailsView.descriptionLabel.text = @"A customizable library for creating stunning user profiles.";
     
+    DBProfileAvatarView *avatarView = (DBProfileAvatarView *)self.avatarView;
+    [avatarView setAvatarImage:[UIImage imageNamed:@"demo-avatar"] animated:NO];
+    
     // Set cover photo and avatar images
     [self.coverPhotoView setCoverPhotoImage:[UIImage imageNamed:@"demo-header"] animated:NO];
-    [self.avatarView setAvatarImage:[UIImage imageNamed:@"demo-avatar"] animated:NO];
     
     [self setStyle:self.style];
 }
@@ -63,6 +65,7 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
     _style = style;
     
     DBProfileDetailsView *detailsView = (DBProfileDetailsView *)self.detailsView;
+    DBProfileAvatarView *avatarView = (DBProfileAvatarView *)self.avatarView;
 
     self.automaticallyAdjustsScrollViewInsets = NO;
     self.coverPhotoMimicsNavigationBar = YES;
@@ -73,12 +76,12 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
             self.automaticallyAdjustsScrollViewInsets = YES;
             self.coverPhotoMimicsNavigationBar = NO;
         case DBUserProfileViewControllerStyle2:
-            self.avatarView.style = DBProfileAvatarStyleRoundedRect;
+            avatarView.style = DBProfileAvatarStyleRoundedRect;
             self.avatarSize = DBProfileAvatarSizeNormal;
             self.avatarAlignment = DBProfileAvatarAlignmentLeft;
             break;
         case DBUserProfileViewControllerStyle3:
-            self.avatarView.style = DBProfileAvatarStyleRound;
+            avatarView.style = DBProfileAvatarStyleRound;
             self.avatarSize = DBProfileAvatarSizeLarge;
             self.avatarAlignment = DBProfileAvatarAlignmentCenter;
             
@@ -150,12 +153,8 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
 
 #pragma mark - DBProfileViewControllerDelegate
 
-- (void)profileViewController:(DBProfileViewController *)profileViewController didSelectCoverPhotoView:(DBProfileCoverPhotoView *)coverPhotoView {
-    [profileViewController deselectCoverPhotoViewAnimated:YES];
-}
-
-- (void)profileViewController:(DBProfileViewController *)profileViewController didSelectAvatarView:(DBProfileAvatarView *)avatarView {
-    [profileViewController deselectAvatarViewAnimated:YES];
+- (void)profileViewController:(DBProfileViewController *)profileViewController didSelectAccessoryView:(DBProfileAccessoryView *)accessoryView {
+    [profileViewController deselectAccessoryView:accessoryView animated:YES];
 }
 
 - (void)profileViewController:(DBProfileViewController *)profileViewController willShowContentControllerAtIndex:(NSInteger)index { }

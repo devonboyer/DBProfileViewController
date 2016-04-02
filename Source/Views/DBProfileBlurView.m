@@ -103,7 +103,7 @@
                                                           object:nil
                                                            queue:nil
                                                       usingBlock:^(NSNotification * _Nonnull note) {
-                                                          // The cache is automatically emptied when app receives a memory warning so we need to refill the cache so the blur effect still works
+                                                          // The cache is automatically emptied when the app receives a memory warning so we need to refill the cache so the blur effect still works
                                                           [self updateAsync:YES completion:nil];
                                                       }];
         
@@ -111,7 +111,7 @@
                                                           object:nil
                                                            queue:nil
                                                       usingBlock:^(NSNotification * _Nonnull note) {
-                                                          // The cache is automatically emptied when app enters the background so we need to refill the cache when the app becomes active
+                                                          // The cache is automatically emptied when the app enters the background so we need to refill the cache when the app becomes active
                                                           [self updateAsync:YES completion:nil];
                                                       }];
         

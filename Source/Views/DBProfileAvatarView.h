@@ -15,7 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 /*!
  @class DBProfileAvatarView
- @abstract The `DBProfileAvatarView` class displays an avatar image.
+ @abstract The `DBProfileAvatarView` class provides a default implementation for displaying an avatar.
+
  */
 @interface DBProfileAvatarView : DBProfileAccessoryView
 

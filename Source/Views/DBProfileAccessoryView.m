@@ -8,6 +8,7 @@
 //  Released under an MIT license: http://opensource.org/licenses/MIT
 //
 #import "DBProfileAccessoryView.h"
+#import "DBProfileAccessoryView_Private.h"
 
 @interface DBProfileAccessoryView () <UIGestureRecognizerDelegate>
 
@@ -83,6 +84,13 @@
     } else {
         [UIView performWithoutAnimation:animationBlock];
     }
+    
+    if (selected && [self.delegate respondsToSelector:@selector(accessoryViewWasSelected:)]) {
+        [self.delegate accessoryViewWasSelected:self];
+    }
+    else if (!selected && [self.delegate respondsToSelector:@selector(accessoryViewWasDeselected:)]) {
+        [self.delegate accessoryViewWasDeselected:self];
+    }
 }
 
 #pragma mark - Highlighting
@@ -109,6 +117,13 @@
         [UIView animateWithDuration:0.12 animations:animationBlock];
     } else {
         [UIView performWithoutAnimation:animationBlock];
+    }
+    
+    if (highlighted && [self.delegate respondsToSelector:@selector(accessoryViewDidHighlight:)]) {
+        [self.delegate accessoryViewDidHighlight:self];
+    }
+    else if (!highlighted && [self.delegate respondsToSelector:@selector(accessoryViewDidUnhighlight:)]) {
+        [self.delegate accessoryViewDidUnhighlight:self];
     }
 }
 

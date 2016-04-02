@@ -10,7 +10,6 @@
 
 #import "DBProfileAvatarView.h"
 #import "DBProfileViewControllerDefaults.h"
-#import "DBProfileAvatarView_Private.h"
 
 @implementation DBProfileAvatarView
 
@@ -41,28 +40,6 @@
         self.style = [DBProfileViewControllerDefaults defaultAvatarStyle];
     }
     return self;
-}
-
-- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
-    [super setSelected:selected animated:animated];
-    
-    if (selected && [self.delegate respondsToSelector:@selector(didSelectAvatarView:)]) {
-        [self.delegate didSelectAvatarView:self];
-    }
-    else if (!selected && [self.delegate respondsToSelector:@selector(didDeselectAvatarView:)]) {
-        [self.delegate didDeselectAvatarView:self];
-    }
-}
-
-- (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated {
-    [super setHighlighted:highlighted animated:animated];
-    
-    if (highlighted && [self.delegate respondsToSelector:@selector(didHighlightAvatarView:)]) {
-        [self.delegate didHighlightAvatarView:self];
-    }
-    else if (!highlighted && [self.delegate respondsToSelector:@selector(didUnhighlightAvatarView:)]) {
-        [self.delegate didUnhighlightAvatarView:self];
-    }
 }
 
 #pragma mark - Setters

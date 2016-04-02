@@ -10,6 +10,11 @@
 
 #import <UIKit/UIKit.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
+/*!
+ @class DBProfileAccessoryView
+ */
 @interface DBProfileAccessoryView : UIView
 
 @property (nonatomic, strong, readonly) UIView *selectedBackgroundView;
@@ -23,3 +28,5 @@
 - (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated;
 
 @end
+
+NS_ASSUME_NONNULL_END

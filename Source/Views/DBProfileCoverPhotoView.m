@@ -10,7 +10,6 @@
 
 #import "DBProfileCoverPhotoView.h"
 #import "DBProfileTintedImageView.h"
-#import "DBProfileCoverPhotoView_Private.h"
 
 UIImage *DBProfileImageByScalingImageToSize(UIImage *image, CGSize size) {
     
@@ -47,28 +46,6 @@ UIImage *DBProfileImageByScalingImageToSize(UIImage *image, CGSize size) {
         self.shouldCropImageBeforeBlurring = YES;
     }
     return self;
-}
-
-- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
-    [super setSelected:selected animated:animated];
-    
-    if (selected && [self.delegate respondsToSelector:@selector(didSelectCoverPhotoView:)]) {
-        [self.delegate didSelectCoverPhotoView:self];
-    }
-    else if (!selected && [self.delegate respondsToSelector:@selector(didDeselectCoverPhotoView:)]) {
-        [self.delegate didDeselectCoverPhotoView:self];
-    }
-}
-
-- (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated {
-    [super setHighlighted:highlighted animated:animated];
-    
-    if (highlighted && [self.delegate respondsToSelector:@selector(didHighlightCoverPhotoView:)]) {
-        [self.delegate didHighlightCoverPhotoView:self];
-    }
-    else if (!highlighted && [self.delegate respondsToSelector:@selector(didUnhighlightCoverPhotoView:)]) {
-        [self.delegate didUnhighlightCoverPhotoView:self];
-    }
 }
 
 - (void)setCoverPhotoImage:(UIImage *)image animated:(BOOL)animated {

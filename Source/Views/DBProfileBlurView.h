@@ -11,6 +11,11 @@
 #import "DBProfileAccessoryView.h"
 #import "DBProfileTintedImageView.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
+/*!
+ @class DBProfileBlurView
+ */
 @interface DBProfileBlurView : DBProfileAccessoryView
 
 @property (nonatomic, strong, readonly) DBProfileTintedImageView *imageView;
@@ -23,3 +28,5 @@
 @property (nonatomic, strong) UIImage *initialImage;
 
 @end
+
+NS_ASSUME_NONNULL_END
