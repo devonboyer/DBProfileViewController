@@ -9,9 +9,9 @@
 //
 
 #import "DBProfileCoverPhotoView.h"
-#import "DBProfileTintedImageView.h"
+#import "DBProfileTintView.h"
 
-UIImage *DBProfileImageByScalingImageToSize(UIImage *image, CGSize size) {
+UIImage *DBProfileImageByCroppingImageToSize(UIImage *image, CGSize size) {
     
     CGFloat oldWidth = image.size.width;
     CGFloat oldHeight = image.size.height;
@@ -35,6 +35,14 @@ UIImage *DBProfileImageByScalingImageToSize(UIImage *image, CGSize size) {
     return newImage;
 }
 
+@interface DBProfileCoverPhotoView () {
+    UIImage *_originalImage;
+}
+
+@property (nonatomic, strong) DBProfileTintView *tintView;
+
+@end
+
 @implementation DBProfileCoverPhotoView
 
 - (instancetype)init {
@@ -43,14 +51,34 @@ UIImage *DBProfileImageByScalingImageToSize(UIImage *image, CGSize size) {
         self.backgroundColor = [UIColor whiteColor];
         self.userInteractionEnabled = YES;
         self.clipsToBounds = YES;
-        self.shouldCropImageBeforeBlurring = YES;
+        _shouldCropImageBeforeBlurring = YES;
+        
+        _tintView = [[DBProfileTintView alloc] init];
+        _tintView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        _tintView.frame = self.frame;
+        [self addSubview:_tintView];
     }
     return self;
 }
 
-- (void)setCoverPhotoImage:(UIImage *)image animated:(BOOL)animated {
+- (void)setShouldApplyTint:(BOOL)shouldApplyTint {
+    _shouldApplyTint = shouldApplyTint;
+    self.tintView.hidden = !shouldApplyTint;
+}
+
+- (void)setShouldCropImageBeforeBlurring:(BOOL)shouldCropImageBeforeBlurring
+{
+    _shouldCropImageBeforeBlurring = shouldCropImageBeforeBlurring;
+    [self setCoverPhotoImage:_originalImage animated:NO];
+}
+
+- (void)setCoverPhotoImage:(UIImage *)image animated:(BOOL)animated
+{
     if (!image) return;
-    self.initialImage = (self.shouldCropImageBeforeBlurring) ? DBProfileImageByScalingImageToSize(image, self.frame.size) : image;
+    _originalImage = image;
+    
+    if (!image) return;
+    self.initialImage = (self.shouldCropImageBeforeBlurring) ? DBProfileImageByCroppingImageToSize(image, self.frame.size) : image;
     
     if (animated) {
         self.imageView.alpha = 0;

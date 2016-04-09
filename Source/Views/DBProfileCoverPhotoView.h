@@ -19,7 +19,14 @@ NS_ASSUME_NONNULL_BEGIN
 @interface DBProfileCoverPhotoView : DBProfileBlurView
 
 /*!
+ @abstract YES if tint should be applied, NO otherwise
+ @discussion The default is YES
+ */
+@property (nonatomic, assign) BOOL shouldApplyTint;
+
+/*!
  @abstract YES if images should be cropped to the view's frame before blurring, NO otherwise.
+ @discussion The default is YES
  */
 @property (nonatomic, assign) BOOL shouldCropImageBeforeBlurring;
 

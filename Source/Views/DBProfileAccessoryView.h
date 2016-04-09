@@ -9,6 +9,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "DBProfileAccessoryViewLayoutAttributes.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -56,6 +57,10 @@ NS_ASSUME_NONNULL_BEGIN
  @param animated YES if the transition should be animated, NO otherwise.
  */
 - (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated;
+
+@property (nonatomic, strong, readonly) DBProfileAccessoryViewLayoutAttributes *layoutAttributes;
+
+- (void)applyLayoutAttributes:(DBProfileAccessoryViewLayoutAttributes *)layoutAttributes;
 
 @end
 

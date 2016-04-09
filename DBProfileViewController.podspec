@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = "DBProfileViewController"
-  s.version          = "1.0.4"
+  s.version          = "2.0.0"
   s.summary          = "A customizable library for creating stunning user profiles."
   s.homepage         = "https://github.com/devonboyer/DBProfileViewController"
   s.license          = 'MIT'

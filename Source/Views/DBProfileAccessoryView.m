@@ -96,8 +96,6 @@
     [self insertSubview:selectedBackgroundView aboveSubview:_contentView];
 }
 
-#pragma mark - Action Responders
-
 - (void)handleHighlightedLongPressGesture:(UILongPressGestureRecognizer *)gestureRecognizer
 {
     switch (gestureRecognizer.state) {
@@ -184,6 +182,14 @@
     else if (!highlighted && [self.delegate respondsToSelector:@selector(accessoryViewDidUnhighlight:)]) {
         [self.delegate accessoryViewDidUnhighlight:self];
     }
+}
+
+- (void)applyLayoutAttributes:(DBProfileAccessoryViewLayoutAttributes *)layoutAttributes
+{
+    _layoutAttributes = layoutAttributes;
+    
+    self.hidden = layoutAttributes.hidden;
+    self.alpha = layoutAttributes.alpha;
 }
 
 #pragma mark - UIGestureRecognizerDelegate

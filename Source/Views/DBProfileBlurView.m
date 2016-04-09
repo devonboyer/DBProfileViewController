@@ -21,7 +21,8 @@
 
 @implementation DBProfileBlurStageCacheKey
 
-- (instancetype)initWithImage:(UIImage *)image tintColor:(UIColor *)tintColor stage:(NSUInteger)stage {
+- (instancetype)initWithImage:(UIImage *)image tintColor:(UIColor *)tintColor stage:(NSUInteger)stage
+{
     self = [super init];
     if (self) {
         _image = image;
@@ -48,13 +49,20 @@
 
 @implementation DBProfileBlurStageCache
 
-+ (instancetype)sharedCache {
-    static dispatch_once_t pred;
-    static id sharedInstance = nil;
-    dispatch_once(&pred, ^{
-        sharedInstance = [[[self class] alloc] init];
-    });
-    return sharedInstance;
+- (UIImage *)blurredImageForImage:(UIImage *)image tintColor:(UIColor *)tintColor stage:(NSUInteger)stage
+{
+    DBProfileBlurStageCacheKey *key = [[DBProfileBlurStageCacheKey alloc] initWithImage:image
+                                                                              tintColor:tintColor
+                                                                                  stage:stage];
+    return [self objectForKey:key];
+}
+
+- (void)setBlurredImage:(UIImage *)blurredImage forImage:(UIImage *)image tintColor:(UIColor *)tintColor stage:(NSUInteger)stage
+{
+    DBProfileBlurStageCacheKey *key = [[DBProfileBlurStageCacheKey alloc] initWithImage:image
+                                                                              tintColor:tintColor
+                                                                                  stage:stage];
+    [self setObject:blurredImage forKey:key];
 }
 
 @end
@@ -87,13 +95,13 @@
         self.numberOfStages = 20;
         self.shouldInterpolateStages = YES;
         
-        _imageView = [[DBProfileTintedImageView alloc] init];
+        _imageView = [[UIImageView alloc] init];
         _imageView.contentMode = UIViewContentModeScaleAspectFill;
         _imageView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         _imageView.clipsToBounds = YES;
         [self.contentView addSubview:_imageView];
 
-        _interpolatedImageView = [[DBProfileTintedImageView alloc] init];
+        _interpolatedImageView = [[UIImageView alloc] init];
         _interpolatedImageView.contentMode = UIViewContentModeScaleAspectFill;
         _interpolatedImageView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         _interpolatedImageView.clipsToBounds = YES;
@@ -178,28 +186,29 @@
 
 - (UIImage *)blurredImageForStage:(CGFloat)stage
 {
-    DBProfileBlurStageCacheKey *key = [[DBProfileBlurStageCacheKey alloc] initWithImage:self.initialImage
-                                                                              tintColor:self.tintColor
-                                                                                  stage:stage];
-    return [self.cache objectForKey:key];
+    return [self.cache blurredImageForImage:self.initialImage
+                                  tintColor:self.tintColor
+                                      stage:stage];
 }
 
 - (void)updateAsync:(BOOL)async completion:(void (^)())completion
 {
-    [self.cache removeAllObjects];
-    
     if ([self shouldUpdate]) {
+        
+        [self.cache removeAllObjects];
+
         UIImage *initialImage = self.initialImage;
         
         void (^block)() = ^void(){
             for (NSInteger stage = 0; stage <= self.numberOfStages; stage++) {
-                DBProfileBlurStageCacheKey *key = [[DBProfileBlurStageCacheKey alloc] initWithImage:initialImage
-                                                                                          tintColor:self.tintColor
-                                                                                              stage:stage];
                 UIImage *blurredImage = [initialImage blurredImageWithRadius:[self blurRadiusForStage:stage]
                                                                   iterations:self.iterations
                                                                    tintColor:self.tintColor];
-                [self.cache setObject:blurredImage forKey:key];
+                
+                [self.cache setBlurredImage:blurredImage
+                                   forImage:initialImage
+                                  tintColor:self.tintColor
+                                      stage:stage];
             }
         };
         

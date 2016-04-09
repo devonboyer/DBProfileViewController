@@ -23,13 +23,7 @@
         self.tintColor = [UIColor whiteColor];
         self.translucent = YES;
         self.clipsToBounds = YES;
-        
-        _navigationItem = [[UINavigationItem alloc] init];
         _titleView = [[DBProfileTitleView alloc] init];
-        
-        self.items = @[self.navigationItem];
-
-        self.navigationItem.titleView = _titleView;
     }
     return self;
 }
@@ -55,6 +49,12 @@
     } else {
         [self setTitleVerticalPositionAdjustment:adjustment forBarMetrics:UIBarMetricsDefault];
     }
+}
+
+- (void)setItems:(NSArray<UINavigationItem *> *)items
+{
+    [super setItems:items];
+    [items firstObject].titleView = _titleView;
 }
 
 @end

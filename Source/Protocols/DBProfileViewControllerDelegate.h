@@ -50,7 +50,6 @@ NS_ASSUME_NONNULL_BEGIN
  @param profileViewController The profile view controller where the selection was made.
  @prarm avatarView The avatar view that was selected.
  */
-
 - (void)profileViewController:(DBProfileViewController *)profileViewController didSelectAccessoryView:(DBProfileAccessoryView *)accessoryView;
 
 /*!

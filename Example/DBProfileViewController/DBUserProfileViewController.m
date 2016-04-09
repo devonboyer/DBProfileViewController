@@ -77,13 +77,13 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
             self.coverPhotoMimicsNavigationBar = NO;
         case DBUserProfileViewControllerStyle2:
             avatarView.style = DBProfileAvatarStyleRoundedRect;
-            self.avatarSize = DBProfileAvatarSizeNormal;
-            self.avatarAlignment = DBProfileAvatarAlignmentLeft;
+            avatarView.layoutAttributes.alignment = DBProfileAccessoryAlignmentLeft;
+            avatarView.layoutAttributes.size = DBProfileAccessorySizeNormal;
             break;
         case DBUserProfileViewControllerStyle3:
+            avatarView.layoutAttributes.alignment = DBProfileAccessoryAlignmentCenter;
             avatarView.style = DBProfileAvatarStyleRound;
-            self.avatarSize = DBProfileAvatarSizeLarge;
-            self.avatarAlignment = DBProfileAvatarAlignmentCenter;
+            avatarView.layoutAttributes.size = DBProfileAccessorySizeLarge;
             
             detailsView.nameLabel.textAlignment = NSTextAlignmentCenter;
             detailsView.usernameLabel.textAlignment = NSTextAlignmentCenter;
