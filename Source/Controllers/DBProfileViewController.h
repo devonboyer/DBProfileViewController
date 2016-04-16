@@ -20,14 +20,14 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /*!
- @abstract A constant value that identifies avatar accessory view.
+ @abstract A constant value that identifies the avatar accessory view.
  */
 extern NSString * const DBProfileAccessoryKindAvatar;
 
 /*!
- @abstract A constant value that identifies cover photo accessory view.
+ @abstract A constant value that identifies the header accessory view.
  */
-extern NSString * const DBProfileAccessoryKindCoverPhoto;
+extern NSString * const DBProfileAccessoryKindHeader;
 
 /*!
  @abstract A constant value representing the size of the avatar when using `DBProfileAvatarLayoutSizeNormal`.

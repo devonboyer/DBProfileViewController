@@ -47,7 +47,7 @@ typedef NS_ENUM(NSInteger, DBProfileAvatarLayoutAlignment) {
     DBProfileAvatarLayoutAlignmentCenter,
 };
 
-@interface DBProfileAvatarLayoutAttributes : DBProfileAccessoryViewLayoutAttributes
+@interface DBProfileAvatarViewLayoutAttributes : DBProfileAccessoryViewLayoutAttributes
 
 @property (nonatomic, assign) DBProfileAvatarLayoutSize size;
 
@@ -57,24 +57,24 @@ typedef NS_ENUM(NSInteger, DBProfileAvatarLayoutAlignment) {
 
 @end
 
-typedef NS_ENUM(NSInteger, DBProfileCoverPhotoLayoutStyle) {
-    DBProfileCoverPhotoLayoutStyleNone,
-    DBProfileCoverPhotoLayoutStyleNavigation,
+typedef NS_ENUM(NSInteger, DBProfileHeaderLayoutStyle) {
+    DBProfileHeaderLayoutStyleNone,
+    DBProfileHeaderLayoutStyleNavigation,
 };
 
-typedef NS_OPTIONS(NSUInteger, DBProfileCoverPhotoLayoutOptions) {
-    DBProfileCoverPhotoLayoutOptionNone = (1 << 0),
-    DBProfileCoverPhotoLayoutOptionStretch = (1 << 1),
-    DBProfileCoverPhotoLayoutOptionExtend = (1 << 2),
+typedef NS_OPTIONS(NSUInteger, DBProfileHeaderLayoutOptions) {
+    DBProfileHeaderLayoutOptionNone = (1 << 0),
+    DBProfileHeaderLayoutOptionStretch = (1 << 1),
+    DBProfileHeaderLayoutOptionExtend = (1 << 2),
 };
 
-@interface DBProfileCoverPhotoLayoutAttributes : DBProfileAccessoryViewLayoutAttributes
+@interface DBProfileHeaderViewLayoutAttributes : DBProfileAccessoryViewLayoutAttributes
 
 @property (nonatomic, strong, readonly) UINavigationItem *navigationItem;
 
-@property (nonatomic, assign) DBProfileCoverPhotoLayoutStyle style;
+@property (nonatomic, assign) DBProfileHeaderLayoutStyle style;
 
-@property (nonatomic, assign) DBProfileCoverPhotoLayoutOptions options;
+@property (nonatomic, assign) DBProfileHeaderLayoutOptions options;
 
 // Constraints - don't touch
 @property (nonatomic, strong) NSLayoutConstraint *navigationConstraint;

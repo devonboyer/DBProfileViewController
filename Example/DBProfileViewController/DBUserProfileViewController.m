@@ -54,7 +54,7 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
     [avatarView setAvatarImage:[UIImage imageNamed:@"demo-avatar"] animated:NO];
     
     // Set cover photo and avatar images
-    DBProfileCoverPhotoView *coverPhotoView = (DBProfileCoverPhotoView *)[self accessoryViewOfKind:DBProfileAccessoryKindCoverPhoto];
+    DBProfileCoverPhotoView *coverPhotoView = (DBProfileCoverPhotoView *)[self accessoryViewOfKind:DBProfileAccessoryKindHeader];
     [coverPhotoView setCoverPhotoImage:[UIImage imageNamed:@"demo-header"] animated:NO];
     
     [self setStyle:self.style];
@@ -65,25 +65,26 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
     
     DBProfileAvatarView *avatarView = (DBProfileAvatarView *)[self accessoryViewOfKind:DBProfileAccessoryKindAvatar];
     
-    DBProfileAvatarLayoutAttributes *avatarLayoutAttributes = (DBProfileAvatarLayoutAttributes *)[self layoutAtttributesForAccessoryViewOfKind:DBProfileAccessoryKindAvatar];
-    DBProfileCoverPhotoLayoutAttributes *coverPhotoLayoutAttributes = (DBProfileCoverPhotoLayoutAttributes *)[self layoutAtttributesForAccessoryViewOfKind:DBProfileAccessoryKindCoverPhoto];
+    DBProfileHeaderViewLayoutAttributes *headerViewLayoutAttributes = (DBProfileHeaderViewLayoutAttributes *)[self layoutAtttributesForAccessoryViewOfKind:DBProfileAccessoryKindHeader];
+    
+    DBProfileAvatarViewLayoutAttributes *avatarViewLayoutAttributes = (DBProfileAvatarViewLayoutAttributes *)[self layoutAtttributesForAccessoryViewOfKind:DBProfileAccessoryKindAvatar];
     
     self.automaticallyAdjustsScrollViewInsets = NO;
-    coverPhotoLayoutAttributes.style = DBProfileCoverPhotoLayoutStyleNavigation;
+    headerViewLayoutAttributes.style = DBProfileHeaderLayoutStyleNavigation;
     
     switch (style) {
         case DBUserProfileViewControllerStyle1:
             self.automaticallyAdjustsScrollViewInsets = YES;
-            coverPhotoLayoutAttributes.style = DBProfileCoverPhotoLayoutStyleNone;
+            headerViewLayoutAttributes.style = DBProfileHeaderLayoutStyleNone;
         case DBUserProfileViewControllerStyle2:
             avatarView.style = DBProfileAvatarStyleRoundedRect;
-            avatarLayoutAttributes.alignment = DBProfileAvatarLayoutAlignmentLeft;
-            avatarLayoutAttributes.size = DBProfileAvatarLayoutSizeNormal;
+            avatarViewLayoutAttributes.alignment = DBProfileAvatarLayoutAlignmentLeft;
+            avatarViewLayoutAttributes.size = DBProfileAvatarLayoutSizeNormal;
             break;
         case DBUserProfileViewControllerStyle3: {
             avatarView.style = DBProfileAvatarStyleRound;
-            avatarLayoutAttributes.alignment = DBProfileAvatarLayoutAlignmentCenter;
-            avatarLayoutAttributes.size = DBProfileAvatarLayoutSizeLarge;
+            avatarViewLayoutAttributes.alignment = DBProfileAvatarLayoutAlignmentCenter;
+            avatarViewLayoutAttributes.size = DBProfileAvatarLayoutSizeLarge;
             
             DBProfileDetailsView *detailsView = (DBProfileDetailsView *)self.detailsView;
             detailsView.nameLabel.textAlignment = NSTextAlignmentCenter;

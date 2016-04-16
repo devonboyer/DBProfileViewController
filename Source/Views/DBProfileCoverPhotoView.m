@@ -88,11 +88,11 @@ UIImage *DBProfileImageByCroppingImageToSize(UIImage *image, CGSize size) {
     }
 }
 
-- (void)applyLayoutAttributes:(DBProfileCoverPhotoLayoutAttributes *)layoutAttributes
+- (void)applyLayoutAttributes:(DBProfileHeaderViewLayoutAttributes *)layoutAttributes
 {
     [super applyLayoutAttributes:layoutAttributes];
     
-    if (layoutAttributes.style == DBProfileCoverPhotoLayoutStyleNone) {
+    if (layoutAttributes.style == DBProfileHeaderLayoutStyleNone) {
         self.shouldApplyTint = NO;
         self.blurEnabled = NO;
     }

@@ -39,7 +39,7 @@
 
 @end
 
-@implementation DBProfileAvatarLayoutAttributes
+@implementation DBProfileAvatarViewLayoutAttributes
 
 - (instancetype)init
 {
@@ -54,15 +54,15 @@
 
 @end
 
-@implementation DBProfileCoverPhotoLayoutAttributes
+@implementation DBProfileHeaderViewLayoutAttributes
 
 - (instancetype)init
 {
     self = [super init];
     if (self) {
         _navigationItem = [[UINavigationItem alloc] init];
-        _style = DBProfileCoverPhotoLayoutStyleNavigation;
-        _options = DBProfileCoverPhotoLayoutOptionStretch;
+        _style = DBProfileHeaderLayoutStyleNavigation;
+        _options = DBProfileHeaderLayoutOptionStretch;
     }
     return self;
 }

@@ -32,7 +32,7 @@ CGFloat DBProfileViewControllerNavigationBarHeightForTraitCollection(UITraitColl
 }
 
 NSString * const DBProfileAccessoryKindAvatar = @"DBProfileAccessoryKindAvatar";
-NSString * const DBProfileAccessoryKindCoverPhoto = @"DBProfileAccessoryKindCoverPhoto";
+NSString * const DBProfileAccessoryKindHeader = @"DBProfileAccessoryKindHeader";
 
 const CGFloat DBProfileViewControllerAvatarSizeNormal = 72.0;
 const CGFloat DBProfileViewControllerAvatarSizeLarge = 92.0;
@@ -183,8 +183,8 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
         }
     }
     
-    DBProfileCoverPhotoLayoutAttributes *layoutAttributes = (DBProfileCoverPhotoLayoutAttributes *)[self layoutAtttributesForAccessoryViewOfKind:DBProfileAccessoryKindCoverPhoto];
-    if (layoutAttributes.style == DBProfileCoverPhotoLayoutStyleNavigation) {
+    DBProfileHeaderViewLayoutAttributes *layoutAttributes = (DBProfileHeaderViewLayoutAttributes *)[self layoutAtttributesForAccessoryViewOfKind:DBProfileAccessoryKindHeader];
+    if (layoutAttributes.style == DBProfileHeaderLayoutStyleNavigation) {
         [self.navigationController setNavigationBarHidden:YES animated:YES];
         [self.navigationController.interactivePopGestureRecognizer setDelegate:nil];
     }
@@ -206,15 +206,15 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 - (void)configureDefaults
 {
     [self registerClass:[DBProfileAvatarView class] forAccessoryViewOfKind:DBProfileAccessoryKindAvatar];
-    [self registerClass:[DBProfileCoverPhotoView class] forAccessoryViewOfKind:DBProfileAccessoryKindCoverPhoto];
+    [self registerClass:[DBProfileCoverPhotoView class] forAccessoryViewOfKind:DBProfileAccessoryKindHeader];
     
     [self segmentedControl].tintColor = [UIColor colorWithRed:29/255.0 green:161/255.0 blue:242/255.0 alpha:1];
 
     _hidesSegmentedControlForSingleContentController = YES;
     _allowsPullToRefresh = YES;
     
-    DBProfileCoverPhotoLayoutAttributes *layoutAttributes = (DBProfileCoverPhotoLayoutAttributes *)[self layoutAtttributesForAccessoryViewOfKind:DBProfileAccessoryKindCoverPhoto];
-    if (layoutAttributes.style == DBProfileCoverPhotoLayoutStyleNavigation) {
+    DBProfileHeaderViewLayoutAttributes *layoutAttributes = (DBProfileHeaderViewLayoutAttributes *)[self layoutAtttributesForAccessoryViewOfKind:DBProfileAccessoryKindHeader];
+    if (layoutAttributes.style == DBProfileHeaderLayoutStyleNavigation) {
         layoutAttributes.navigationItem.leftBarButtonItem = [UIBarButtonItem db_backBarButtonItemWithTarget:self action:@selector(back)];
     }
 }
@@ -310,9 +310,9 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     return [self accessoryViewOfKind:DBProfileAccessoryKindAvatar];
 }
 
-- (DBProfileCoverPhotoView *)coverPhotoView
+- (DBProfileCoverPhotoView *)headerView
 {
-    return (DBProfileCoverPhotoView *)[self accessoryViewOfKind:DBProfileAccessoryKindCoverPhoto];
+    return (DBProfileCoverPhotoView *)[self accessoryViewOfKind:DBProfileAccessoryKindHeader];
 }
 
 #pragma mark - Setters
@@ -371,11 +371,11 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 
 + (Class)layoutAttributesClassForAccessoryViewOfKind:(NSString *)accessoryViewKind
 {
-    if ([accessoryViewKind isEqualToString:DBProfileAccessoryKindCoverPhoto]) {
-        return [DBProfileCoverPhotoLayoutAttributes class];
+    if ([accessoryViewKind isEqualToString:DBProfileAccessoryKindHeader]) {
+        return [DBProfileHeaderViewLayoutAttributes class];
     }
     else if ([accessoryViewKind isEqualToString:DBProfileAccessoryKindAvatar]) {
-        return [DBProfileAvatarLayoutAttributes class];
+        return [DBProfileAvatarViewLayoutAttributes class];
     }
     
     return [DBProfileAccessoryViewLayoutAttributes class];
@@ -383,9 +383,9 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 
 - (void)registerClass:(Class)viewClass forAccessoryViewOfKind:(NSString *)accessoryViewKind
 {
-    NSAssert(accessoryViewKind == DBProfileAccessoryKindAvatar || accessoryViewKind == DBProfileAccessoryKindCoverPhoto, @"invalid accessoryViewKind");
+    NSAssert(accessoryViewKind == DBProfileAccessoryKindAvatar || accessoryViewKind == DBProfileAccessoryKindHeader, @"invalid accessoryViewKind");
     
-    if (accessoryViewKind == DBProfileAccessoryKindCoverPhoto) {
+    if (accessoryViewKind == DBProfileAccessoryKindHeader) {
         NSAssert([viewClass isSubclassOfClass:[DBProfileCoverPhotoView class]], @"viewClass must inherit from DBProfileCoverPhotoView");
     }
     else if (accessoryViewKind == DBProfileAccessoryKindAvatar) {
@@ -401,11 +401,11 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     
     Class layoutAttributesClass = [[self class] layoutAttributesClassForAccessoryViewOfKind:accessoryViewKind];
     
-    if (accessoryViewKind == DBProfileAccessoryKindCoverPhoto) {
-        NSAssert([layoutAttributesClass isSubclassOfClass:[DBProfileCoverPhotoLayoutAttributes class]], @"layoutAttributesClass must inherit from DBProfileCoverPhotoLayoutAttributes");
+    if (accessoryViewKind == DBProfileAccessoryKindHeader) {
+        NSAssert([layoutAttributesClass isSubclassOfClass:[DBProfileHeaderViewLayoutAttributes class]], @"layoutAttributesClass must inherit from DBProfileHeaderViewLayoutAttributes");
     }
     else if (accessoryViewKind == DBProfileAccessoryKindAvatar) {
-        NSAssert([layoutAttributesClass isSubclassOfClass:[DBProfileAvatarLayoutAttributes class]], @"layoutAttributesClass must inherit from DBProfileAvatarLayoutAttributes");
+        NSAssert([layoutAttributesClass isSubclassOfClass:[DBProfileAvatarViewLayoutAttributes class]], @"layoutAttributesClass must inherit from DBProfileAvatarViewLayoutAttributes");
     }
     
     DBProfileAccessoryViewLayoutAttributes *layoutAttributes = [layoutAttributesClass layoutAttributesForAccessoryViewOfKind:accessoryViewKind];
@@ -415,8 +415,8 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     [accessoryView applyLayoutAttributes:layoutAttributes];
     [accessoryView setDelegate:self];
     
-    if ([accessoryViewKind isEqualToString:DBProfileAccessoryKindCoverPhoto]) {
-        DBProfileCoverPhotoLayoutAttributes *layoutAttributes = (DBProfileCoverPhotoLayoutAttributes *)[self layoutAtttributesForAccessoryViewOfKind:DBProfileAccessoryKindCoverPhoto];
+    if ([accessoryViewKind isEqualToString:DBProfileAccessoryKindHeader]) {
+        DBProfileHeaderViewLayoutAttributes *layoutAttributes = (DBProfileHeaderViewLayoutAttributes *)[self layoutAtttributesForAccessoryViewOfKind:DBProfileAccessoryKindHeader];
         [self.customNavigationBar setItems:@[layoutAttributes.navigationItem]];
     }
 }
@@ -424,7 +424,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 - (DBProfileAccessoryView *)accessoryViewOfKind:(NSString *)accessoryViewKind
 {
     NSAssert(accessoryViewKind == DBProfileAccessoryKindAvatar ||
-             accessoryViewKind == DBProfileAccessoryKindCoverPhoto, @"invalid accessory kind");
+             accessoryViewKind == DBProfileAccessoryKindHeader, @"invalid accessory kind");
     return [self.registeredAccessoryViews objectForKey:accessoryViewKind];
 }
 
@@ -496,8 +496,8 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     [self setIndexForDisplayedContentController:self.indexForDisplayedContentController];
     
     // Hide navigation bar
-    DBProfileCoverPhotoLayoutAttributes *layoutAttributes = (DBProfileCoverPhotoLayoutAttributes *)[self layoutAtttributesForAccessoryViewOfKind:DBProfileAccessoryKindCoverPhoto];
-    self.customNavigationBar.hidden = layoutAttributes.style != DBProfileCoverPhotoLayoutStyleNavigation;
+    DBProfileHeaderViewLayoutAttributes *layoutAttributes = (DBProfileHeaderViewLayoutAttributes *)[self layoutAtttributesForAccessoryViewOfKind:DBProfileAccessoryKindHeader];
+    self.customNavigationBar.hidden = layoutAttributes.style != DBProfileHeaderLayoutStyleNavigation;
     
     // Apply layout attributes to accessory views
     for (NSString *accessoryViewKind in [self.registeredAccessoryViews allKeys]) {
@@ -621,13 +621,13 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     
     UIScrollView *scrollView = [viewController contentScrollView];
     
-    [self.coverPhotoView removeFromSuperview];
+    [self.headerView removeFromSuperview];
     [self.detailsView removeFromSuperview];
     [self.avatarView removeFromSuperview];
     [self.segmentedControlView removeFromSuperview];
     [self.activityIndicator removeFromSuperview];
     
-    self.coverPhotoView.translatesAutoresizingMaskIntoConstraints = NO;
+    self.headerView.translatesAutoresizingMaskIntoConstraints = NO;
     self.detailsView.translatesAutoresizingMaskIntoConstraints = NO;
     self.avatarView.translatesAutoresizingMaskIntoConstraints = NO;
     self.segmentedControlView.translatesAutoresizingMaskIntoConstraints = NO;
@@ -637,7 +637,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     
     [scrollView addSubview:self.detailsView];
     
-    DBProfileCoverPhotoLayoutAttributes *coverPhotoLayoutAttributes = (DBProfileCoverPhotoLayoutAttributes *)[self layoutAtttributesForAccessoryViewOfKind:DBProfileAccessoryKindCoverPhoto];
+    DBProfileHeaderViewLayoutAttributes *headerViewLayoutAttributes = (DBProfileHeaderViewLayoutAttributes *)[self layoutAtttributesForAccessoryViewOfKind:DBProfileAccessoryKindHeader];
     
     // Add segmented control
     if ([self.contentControllers count] > 1 || !self.hidesSegmentedControlForSingleContentController) {
@@ -647,19 +647,19 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     }
     
     // Add cover photo
-    if (!coverPhotoLayoutAttributes.hidden) {
-        [scrollView addSubview:self.coverPhotoView];
+    if (!headerViewLayoutAttributes.hidden) {
+        [scrollView addSubview:self.headerView];
         
         // Add pull-to-refresh
         if (self.allowsPullToRefresh) {
-            [self.coverPhotoView addSubview:self.activityIndicator];
+            [self.headerView addSubview:self.activityIndicator];
         }
         
-        if (coverPhotoLayoutAttributes.options & DBProfileCoverPhotoLayoutOptionExtend) {
-            [scrollView insertSubview:self.detailsView aboveSubview:self.coverPhotoView];
+        if (headerViewLayoutAttributes.options & DBProfileHeaderLayoutOptionExtend) {
+            [scrollView insertSubview:self.detailsView aboveSubview:self.headerView];
         }
     } else {
-        self.coverPhotoView.frame = CGRectZero;
+        self.headerView.frame = CGRectZero;
     }
     
     [scrollView addSubview:self.avatarView];
@@ -688,12 +688,12 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
         [scrollView setContentOffset:_sharedContentOffset];
     }
     
-    if (coverPhotoLayoutAttributes.style == DBProfileCoverPhotoLayoutStyleNavigation &&
-        !(coverPhotoLayoutAttributes.options & DBProfileCoverPhotoLayoutOptionExtend)) {
-        if ((scrollView.contentOffset.y + scrollView.contentInset.top) < CGRectGetHeight(self.coverPhotoView.frame) - coverPhotoLayoutAttributes.navigationConstraint.constant) {
-            [scrollView insertSubview:self.avatarView aboveSubview:self.coverPhotoView];
+    if (headerViewLayoutAttributes.style == DBProfileHeaderLayoutStyleNavigation &&
+        !(headerViewLayoutAttributes.options & DBProfileHeaderLayoutOptionExtend)) {
+        if ((scrollView.contentOffset.y + scrollView.contentInset.top) < CGRectGetHeight(self.headerView.frame) - headerViewLayoutAttributes.navigationConstraint.constant) {
+            [scrollView insertSubview:self.avatarView aboveSubview:self.headerView];
         } else {
-            [scrollView insertSubview:self.coverPhotoView aboveSubview:self.avatarView];
+            [scrollView insertSubview:self.headerView aboveSubview:self.avatarView];
         }
     }
     
@@ -735,13 +735,13 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 
 - (void)adjustContentInsetForScrollView:(UIScrollView *)scrollView
 {
-    DBProfileCoverPhotoLayoutAttributes *coverPhotoLayoutAttributes = (DBProfileCoverPhotoLayoutAttributes *)[self layoutAtttributesForAccessoryViewOfKind:DBProfileAccessoryKindCoverPhoto];
+    DBProfileHeaderViewLayoutAttributes *headerViewLayoutAttributes = (DBProfileHeaderViewLayoutAttributes *)[self layoutAtttributesForAccessoryViewOfKind:DBProfileAccessoryKindHeader];
 
-    CGFloat topInset = CGRectGetHeight(self.segmentedControlView.frame) + CGRectGetHeight(self.detailsView.frame) + CGRectGetHeight(self.coverPhotoView.frame);
+    CGFloat topInset = CGRectGetHeight(self.segmentedControlView.frame) + CGRectGetHeight(self.detailsView.frame) + CGRectGetHeight(self.headerView.frame);
     
     // Calculate scroll view top inset
     UIEdgeInsets contentInset = scrollView.contentInset;
-    if (coverPhotoLayoutAttributes.options & DBProfileCoverPhotoLayoutOptionExtend) topInset -= CGRectGetHeight(self.detailsView.frame);
+    if (headerViewLayoutAttributes.options & DBProfileHeaderLayoutOptionExtend) topInset -= CGRectGetHeight(self.detailsView.frame);
     contentInset.top = (self.automaticallyAdjustsScrollViewInsets) ? topInset + [self.topLayoutGuide length] : topInset;
     
     // Calculate scroll view bottom inset
@@ -755,14 +755,14 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     scrollView.contentInset = contentInset;
     
     // Calculate cover photo inset
-    coverPhotoLayoutAttributes.topConstraint.constant = -topInset;
+    headerViewLayoutAttributes.topConstraint.constant = -topInset;
     
     // Calculate details view inset
-    if (coverPhotoLayoutAttributes.options & DBProfileCoverPhotoLayoutOptionExtend) {
-        topInset -= (CGRectGetHeight(self.coverPhotoView.frame) - CGRectGetHeight(self.detailsView.frame));
-        [scrollView insertSubview:self.detailsView aboveSubview:self.coverPhotoView];
+    if (headerViewLayoutAttributes.options & DBProfileHeaderLayoutOptionExtend) {
+        topInset -= (CGRectGetHeight(self.headerView.frame) - CGRectGetHeight(self.detailsView.frame));
+        [scrollView insertSubview:self.detailsView aboveSubview:self.headerView];
     } else {
-        topInset -= CGRectGetHeight(self.coverPhotoView.frame);
+        topInset -= CGRectGetHeight(self.headerView.frame);
     }
     _detailsViewTopConstraint.constant = -topInset;
 }
@@ -773,14 +773,14 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
                           traitCollection:self.traitCollection];
 }
 
-- (CGFloat)_coverPhotoViewOffset
+- (CGFloat)_headerViewOffset
 {
-    return CGRectGetHeight(self.coverPhotoView.frame);
+    return CGRectGetHeight(self.headerView.frame);
 }
 
 - (CGFloat)_titleViewOffset
 {
-    return (([self _coverPhotoViewOffset] - CGRectGetMaxY(self.customNavigationBar.frame)) + CGRectGetHeight(self.segmentedControlView.frame));
+    return (([self _headerViewOffset] - CGRectGetMaxY(self.customNavigationBar.frame)) + CGRectGetHeight(self.segmentedControlView.frame));
 }
 
 - (NSInteger)_numberOfContentControllers {
@@ -881,27 +881,27 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     if ([accessoryKind isEqualToString:DBProfileAccessoryKindAvatar]) {
         [self updateAvatarViewWithContentOffset:contentOffset];
     }
-    else if ([accessoryKind isEqualToString:DBProfileAccessoryKindCoverPhoto]) {
-        [self updateCoverPhotoViewWithContentOffset:contentOffset];
+    else if ([accessoryKind isEqualToString:DBProfileAccessoryKindHeader]) {
+        [self updateHeaderViewWithContentOffset:contentOffset];
     }
 }
 
-- (void)updateCoverPhotoViewWithContentOffset:(CGPoint)contentOffset
+- (void)updateHeaderViewWithContentOffset:(CGPoint)contentOffset
 {
     if (self.isUpdating) return;
     
-    DBProfileCoverPhotoLayoutAttributes *coverPhotoLayoutAttributes = (DBProfileCoverPhotoLayoutAttributes *)[self layoutAtttributesForAccessoryViewOfKind:DBProfileAccessoryKindCoverPhoto];
+    DBProfileHeaderViewLayoutAttributes *headerViewLayoutAttributes = (DBProfileHeaderViewLayoutAttributes *)[self layoutAtttributesForAccessoryViewOfKind:DBProfileAccessoryKindHeader];
     
-    if (contentOffset.y < 0 && coverPhotoLayoutAttributes.options & DBProfileCoverPhotoLayoutOptionStretch) {
-        coverPhotoLayoutAttributes.heightConstraint.constant = -contentOffset.y;
+    if (contentOffset.y < 0 && headerViewLayoutAttributes.options & DBProfileHeaderLayoutOptionStretch) {
+        headerViewLayoutAttributes.heightConstraint.constant = -contentOffset.y;
     }
     else {
-        coverPhotoLayoutAttributes.heightConstraint.constant = 0;
+        headerViewLayoutAttributes.heightConstraint.constant = 0;
     }
     
-    CGFloat maxBlurOffset = [self _coverPhotoViewOffset] - CGRectGetMaxY(self.customNavigationBar.frame);
+    CGFloat maxBlurOffset = [self _headerViewOffset] - CGRectGetMaxY(self.customNavigationBar.frame);
     
-    if (self.coverPhotoView.isBlurEnabled) {
+    if (self.headerView.isBlurEnabled) {
         if (self.automaticallyAdjustsScrollViewInsets) maxBlurOffset += [self.topLayoutGuide length];
         
         CGFloat percentScrolled = 0;
@@ -913,33 +913,33 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
             percentScrolled = MAX(MIN(1 - (50 - fabs(contentOffset.y - [self _titleViewOffset]))/50, 1), 0);
         }
         
-        self.coverPhotoView.percentScrolled = percentScrolled;
+        self.headerView.percentScrolled = percentScrolled;
     }
 }
 
 - (void)updateAvatarViewWithContentOffset:(CGPoint)contentOffset
 {
-    DBProfileCoverPhotoLayoutAttributes *coverPhotoLayoutAttributes = (DBProfileCoverPhotoLayoutAttributes *)[self layoutAtttributesForAccessoryViewOfKind:DBProfileAccessoryKindCoverPhoto];
+    DBProfileHeaderViewLayoutAttributes *headerViewLayoutAttributes = (DBProfileHeaderViewLayoutAttributes *)[self layoutAtttributesForAccessoryViewOfKind:DBProfileAccessoryKindHeader];
     
-    DBProfileAvatarLayoutAttributes *avatarLayoutAttributes = (DBProfileAvatarLayoutAttributes *)[self layoutAtttributesForAccessoryViewOfKind:DBProfileAccessoryKindAvatar];
+    DBProfileAvatarViewLayoutAttributes *avatarViewLayoutAttributes = (DBProfileAvatarViewLayoutAttributes *)[self layoutAtttributesForAccessoryViewOfKind:DBProfileAccessoryKindAvatar];
     
-    CGFloat coverPhotoOffset = [self _coverPhotoViewOffset];
+    CGFloat headerOffset = [self _headerViewOffset];
     CGFloat percentScrolled = 0;
     
-    if (coverPhotoLayoutAttributes.style == DBProfileCoverPhotoLayoutStyleNavigation) {
-        coverPhotoOffset -= CGRectGetMaxY(self.customNavigationBar.frame);
+    if (headerViewLayoutAttributes.style == DBProfileHeaderLayoutStyleNavigation) {
+        headerOffset -= CGRectGetMaxY(self.customNavigationBar.frame);
     }
     
-    percentScrolled = MIN(1, contentOffset.y / coverPhotoOffset);
+    percentScrolled = MIN(1, contentOffset.y / headerOffset);
 
-    if (coverPhotoLayoutAttributes.options & DBProfileCoverPhotoLayoutOptionExtend) {
+    if (headerViewLayoutAttributes.options & DBProfileHeaderLayoutOptionExtend) {
         CGFloat alpha = 1 - percentScrolled;
         self.avatarView.alpha = self.detailsView.alpha = alpha;
     }
     else {
         CGFloat avatarScaleFactor = MIN(1 - percentScrolled * 0.3, 1);
         CGAffineTransform avatarTransform = CGAffineTransformMakeScale(avatarScaleFactor, avatarScaleFactor);
-        CGFloat avatarOffset = avatarLayoutAttributes.insets.bottom + avatarLayoutAttributes.insets.top;
+        CGFloat avatarOffset = avatarViewLayoutAttributes.insets.bottom + avatarViewLayoutAttributes.insets.top;
         avatarTransform = CGAffineTransformTranslate(avatarTransform, 0, MAX(avatarOffset * percentScrolled, 0));
         self.avatarView.transform = avatarTransform;
     }
@@ -947,17 +947,17 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 
 - (void)updateTitleViewWithContentOffset:(CGPoint)contentOffset
 {
-    DBProfileCoverPhotoLayoutAttributes *coverPhotoLayoutAttributes = (DBProfileCoverPhotoLayoutAttributes *)[self layoutAtttributesForAccessoryViewOfKind:DBProfileAccessoryKindCoverPhoto];
+    DBProfileHeaderViewLayoutAttributes *headerViewLayoutAttributes = (DBProfileHeaderViewLayoutAttributes *)[self layoutAtttributesForAccessoryViewOfKind:DBProfileAccessoryKindHeader];
     
-    DBProfileAvatarLayoutAttributes *avatarLayoutAttributes = (DBProfileAvatarLayoutAttributes *)[self layoutAtttributesForAccessoryViewOfKind:DBProfileAccessoryKindAvatar];
+    DBProfileAvatarViewLayoutAttributes *avatarViewLayoutAttributes = (DBProfileAvatarViewLayoutAttributes *)[self layoutAtttributesForAccessoryViewOfKind:DBProfileAccessoryKindAvatar];
 
-    if (coverPhotoLayoutAttributes.style != DBProfileCoverPhotoLayoutStyleNavigation) return;
+    if (headerViewLayoutAttributes.style != DBProfileHeaderLayoutStyleNavigation) return;
     
     CGFloat titleViewOffset = [self _titleViewOffset];
     
-    if (!(coverPhotoLayoutAttributes.options & DBProfileCoverPhotoLayoutOptionExtend)) {
+    if (!(headerViewLayoutAttributes.options & DBProfileHeaderLayoutOptionExtend)) {
         const CGFloat padding = 30.0;
-        CGFloat avatarOffset = avatarLayoutAttributes.insets.top - avatarLayoutAttributes.insets.bottom;
+        CGFloat avatarOffset = avatarViewLayoutAttributes.insets.top - avatarViewLayoutAttributes.insets.bottom;
         titleViewOffset += (CGRectGetHeight(self.avatarView.frame) + avatarOffset + padding);
     }
     
@@ -977,13 +977,13 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     [self updateTitleViewWithContentOffset:contentOffset];
     [self handlePullToRefreshWithScrollView:scrollView];
     
-    DBProfileCoverPhotoLayoutAttributes *layoutAttributes = (DBProfileCoverPhotoLayoutAttributes *)[self layoutAtttributesForAccessoryViewOfKind:DBProfileAccessoryKindCoverPhoto];
+    DBProfileHeaderViewLayoutAttributes *layoutAttributes = (DBProfileHeaderViewLayoutAttributes *)[self layoutAtttributesForAccessoryViewOfKind:DBProfileAccessoryKindHeader];
 
-    if (layoutAttributes.style == DBProfileCoverPhotoLayoutStyleNavigation && !(layoutAttributes.options & DBProfileCoverPhotoLayoutOptionExtend)) {
-        if (contentOffset.y < CGRectGetHeight(self.coverPhotoView.frame) - layoutAttributes.navigationConstraint.constant) {
-            [scrollView insertSubview:self.avatarView aboveSubview:self.coverPhotoView];
+    if (layoutAttributes.style == DBProfileHeaderLayoutStyleNavigation && !(layoutAttributes.options & DBProfileHeaderLayoutOptionExtend)) {
+        if (contentOffset.y < CGRectGetHeight(self.headerView.frame) - layoutAttributes.navigationConstraint.constant) {
+            [scrollView insertSubview:self.avatarView aboveSubview:self.headerView];
         } else {
-            [scrollView insertSubview:self.coverPhotoView aboveSubview:self.avatarView];
+            [scrollView insertSubview:self.headerView aboveSubview:self.avatarView];
         }
     }
 }
@@ -992,13 +992,13 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 
 - (void)updateAccessoryViewConstraints
 {
-    [self updateCoverPhotoViewConstraints];
+    [self updateHeaderViewConstraints];
     [self updateAvatarViewConstraints];
 }
 
-- (void)updateCoverPhotoViewConstraints
+- (void)updateHeaderViewConstraints
 {
-    DBProfileCoverPhotoLayoutAttributes *layoutAttributes = (DBProfileCoverPhotoLayoutAttributes *)[self layoutAtttributesForAccessoryViewOfKind:DBProfileAccessoryKindCoverPhoto];
+    DBProfileHeaderViewLayoutAttributes *layoutAttributes = (DBProfileHeaderViewLayoutAttributes *)[self layoutAtttributesForAccessoryViewOfKind:DBProfileAccessoryKindHeader];
 
     if (layoutAttributes.navigationConstraint &&
         layoutAttributes.topSuperviewConstraint &&
@@ -1006,7 +1006,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
         
         layoutAttributes.navigationConstraint.constant = DBProfileViewControllerNavigationBarHeightForTraitCollection(self.traitCollection);
 
-        if (layoutAttributes.style == DBProfileCoverPhotoLayoutStyleNavigation) {
+        if (layoutAttributes.style == DBProfileHeaderLayoutStyleNavigation) {
             [NSLayoutConstraint activateConstraints:@[layoutAttributes.navigationConstraint, layoutAttributes.topSuperviewConstraint]];
             [NSLayoutConstraint deactivateConstraints:@[layoutAttributes.topLayoutGuideConstraint]];
         }
@@ -1015,7 +1015,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
             [NSLayoutConstraint deactivateConstraints:@[layoutAttributes.navigationConstraint, layoutAttributes.topSuperviewConstraint]];
         }
         
-        if (!(layoutAttributes.options & DBProfileCoverPhotoLayoutOptionStretch)) {
+        if (!(layoutAttributes.options & DBProfileHeaderLayoutOptionStretch)) {
             [NSLayoutConstraint deactivateConstraints:@[layoutAttributes.topLayoutGuideConstraint, layoutAttributes.topSuperviewConstraint]];
         }
     }
@@ -1024,7 +1024,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 
 - (void)updateAvatarViewConstraints
 {
-    DBProfileAvatarLayoutAttributes *layoutAttributes = (DBProfileAvatarLayoutAttributes *)[self layoutAtttributesForAccessoryViewOfKind:DBProfileAccessoryKindAvatar];
+    DBProfileAvatarViewLayoutAttributes *layoutAttributes = (DBProfileAvatarViewLayoutAttributes *)[self layoutAtttributesForAccessoryViewOfKind:DBProfileAccessoryKindAvatar];
 
     if (layoutAttributes.leftConstraint && layoutAttributes.rightConstraint && layoutAttributes.centerXConstraint) {
         switch (layoutAttributes.alignment) {
@@ -1148,40 +1148,40 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
                                                               constant:0];
     [scrollView addConstraint:_detailsViewTopConstraint];
     
-    if (self.coverPhotoView.superview) {
-        [self setUpCoverPhotoViewConstraintsForScrollView:scrollView];
+    if (self.headerView.superview) {
+        [self setUpHeaderViewConstraintsForScrollView:scrollView];
         
-        DBProfileAccessoryView *coverPhotoView = [self accessoryViewOfKind:DBProfileAccessoryKindCoverPhoto];
+        DBProfileAccessoryView *headerView = [self accessoryViewOfKind:DBProfileAccessoryKindHeader];
         
         NSArray *activityIndicatorConstraints = @[[NSLayoutConstraint constraintWithItem:self.activityIndicator
                                                                                attribute:NSLayoutAttributeCenterX
                                                                                relatedBy:NSLayoutRelationEqual
-                                                                                  toItem:self.coverPhotoView
+                                                                                  toItem:headerView
                                                                                attribute:NSLayoutAttributeCenterX
                                                                               multiplier:1
                                                                                 constant:0],
                                                   [NSLayoutConstraint constraintWithItem:self.activityIndicator
                                                                                attribute:NSLayoutAttributeCenterY
                                                                                relatedBy:NSLayoutRelationEqual
-                                                                                  toItem:self.coverPhotoView
+                                                                                  toItem:headerView
                                                                                attribute:NSLayoutAttributeCenterY
                                                                               multiplier:1
                                                                                 constant:0]];
-        [coverPhotoView addConstraints:activityIndicatorConstraints];
+        [headerView addConstraints:activityIndicatorConstraints];
     }
     
     [self setUpAvatarViewConstraintsForScrollView:scrollView];
 }
 
-- (void)setUpCoverPhotoViewConstraintsForScrollView:(UIScrollView *)scrollView
+- (void)setUpHeaderViewConstraintsForScrollView:(UIScrollView *)scrollView
 {
     NSAssert(scrollView, @"scrollView cannot be nil");
     
-    DBProfileAccessoryView *coverPhotoView = [self accessoryViewOfKind:DBProfileAccessoryKindCoverPhoto];
+    DBProfileAccessoryView *headerView = [self accessoryViewOfKind:DBProfileAccessoryKindHeader];
     
-    DBProfileCoverPhotoLayoutAttributes *layoutAttributes = (DBProfileCoverPhotoLayoutAttributes *)[self layoutAtttributesForAccessoryViewOfKind:DBProfileAccessoryKindCoverPhoto];
+    DBProfileHeaderViewLayoutAttributes *layoutAttributes = (DBProfileHeaderViewLayoutAttributes *)[self layoutAtttributesForAccessoryViewOfKind:DBProfileAccessoryKindHeader];
     
-    layoutAttributes.leftConstraint = [NSLayoutConstraint constraintWithItem:coverPhotoView
+    layoutAttributes.leftConstraint = [NSLayoutConstraint constraintWithItem:headerView
                                                                    attribute:NSLayoutAttributeLeft
                                                                    relatedBy:NSLayoutRelationEqual
                                                                       toItem:scrollView
@@ -1189,7 +1189,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
                                                                   multiplier:1
                                                                     constant:0];
     
-    layoutAttributes.widthConstraint = [NSLayoutConstraint constraintWithItem:coverPhotoView
+    layoutAttributes.widthConstraint = [NSLayoutConstraint constraintWithItem:headerView
                                                                     attribute:NSLayoutAttributeWidth
                                                                     relatedBy:NSLayoutRelationEqual
                                                                        toItem:scrollView
@@ -1197,7 +1197,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
                                                                    multiplier:1
                                                                      constant:0];
     
-    layoutAttributes.heightConstraint = [NSLayoutConstraint constraintWithItem:coverPhotoView
+    layoutAttributes.heightConstraint = [NSLayoutConstraint constraintWithItem:headerView
                                                                      attribute:NSLayoutAttributeHeight
                                                                      relatedBy:NSLayoutRelationEqual
                                                                         toItem:self.view
@@ -1205,7 +1205,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
                                                                     multiplier:0.18
                                                                       constant:0];
     
-    layoutAttributes.topConstraint = [NSLayoutConstraint constraintWithItem:coverPhotoView
+    layoutAttributes.topConstraint = [NSLayoutConstraint constraintWithItem:headerView
                                                                   attribute:NSLayoutAttributeTop
                                                                   relatedBy:NSLayoutRelationEqual
                                                                      toItem:scrollView
@@ -1215,7 +1215,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     
     layoutAttributes.topConstraint.priority = UILayoutPriorityDefaultHigh;
 
-    layoutAttributes.navigationConstraint = [NSLayoutConstraint constraintWithItem:coverPhotoView
+    layoutAttributes.navigationConstraint = [NSLayoutConstraint constraintWithItem:headerView
                                                                          attribute:NSLayoutAttributeBottom
                                                                          relatedBy:NSLayoutRelationGreaterThanOrEqual
                                                                             toItem:self.view
@@ -1223,7 +1223,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
                                                                         multiplier:1
                                                                           constant:0];
     
-    layoutAttributes.topLayoutGuideConstraint = [NSLayoutConstraint constraintWithItem:coverPhotoView
+    layoutAttributes.topLayoutGuideConstraint = [NSLayoutConstraint constraintWithItem:headerView
                                                                            attribute:NSLayoutAttributeTop
                                                                            relatedBy:NSLayoutRelationLessThanOrEqual
                                                                               toItem:[self topLayoutGuide]
@@ -1233,7 +1233,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     
     layoutAttributes.topLayoutGuideConstraint.priority = UILayoutPriorityDefaultHigh+1;
     
-    layoutAttributes.topSuperviewConstraint = [NSLayoutConstraint constraintWithItem:coverPhotoView
+    layoutAttributes.topSuperviewConstraint = [NSLayoutConstraint constraintWithItem:headerView
                                                                          attribute:NSLayoutAttributeTop
                                                                          relatedBy:NSLayoutRelationLessThanOrEqual
                                                                             toItem:self.view
@@ -1256,7 +1256,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
         [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.segmentedControlView
                                                               attribute:NSLayoutAttributeTop
                                                               relatedBy:NSLayoutRelationGreaterThanOrEqual
-                                                                 toItem:coverPhotoView
+                                                                 toItem:headerView
                                                               attribute:NSLayoutAttributeBottom
                                                              multiplier:1
                                                                constant:0]];
@@ -1269,7 +1269,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     
     DBProfileAccessoryView *avatarView = [self accessoryViewOfKind:DBProfileAccessoryKindAvatar];
     
-    DBProfileAvatarLayoutAttributes *layoutAttributes = (DBProfileAvatarLayoutAttributes *)[self layoutAtttributesForAccessoryViewOfKind:DBProfileAccessoryKindAvatar];
+    DBProfileAvatarViewLayoutAttributes *layoutAttributes = (DBProfileAvatarViewLayoutAttributes *)[self layoutAtttributesForAccessoryViewOfKind:DBProfileAccessoryKindAvatar];
     
     layoutAttributes.heightConstraint = [NSLayoutConstraint constraintWithItem:avatarView
                                                                      attribute:NSLayoutAttributeHeight
