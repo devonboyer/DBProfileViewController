@@ -20,6 +20,8 @@
 
 @property (nonatomic, assign) BOOL hidden;
 
+@property (nonatomic, assign) CGFloat percentTransitioned;
+
 // Constraints - don't touch
 @property (nonatomic, strong) NSLayoutConstraint *leadingConstraint;
 @property (nonatomic, strong) NSLayoutConstraint *trailingConstraint;

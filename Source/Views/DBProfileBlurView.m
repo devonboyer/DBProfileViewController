@@ -230,4 +230,15 @@
     }
 }
 
+- (void)applyLayoutAttributes:(DBProfileHeaderViewLayoutAttributes *)layoutAttributes
+{
+    [super applyLayoutAttributes:layoutAttributes];
+    
+    if (layoutAttributes.style == DBProfileHeaderLayoutStyleNone) {
+        self.blurEnabled = NO;
+    }
+    
+    self.percentScrolled = layoutAttributes.percentTransitioned;
+}
+
 @end

@@ -94,7 +94,6 @@ UIImage *DBProfileImageByCroppingImageToSize(UIImage *image, CGSize size) {
     
     if (layoutAttributes.style == DBProfileHeaderLayoutStyleNone) {
         self.shouldApplyTint = NO;
-        self.blurEnabled = NO;
     }
 }
 

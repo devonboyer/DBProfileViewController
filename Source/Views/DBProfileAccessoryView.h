@@ -58,6 +58,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated;
 
+/*!
+ @abstract Applies the specified layout attributes to the view.
+ @param layoutAttributes The layout attributes to apply.
+ */
 - (void)applyLayoutAttributes:(DBProfileAccessoryViewLayoutAttributes *)layoutAttributes;
 
 @end
