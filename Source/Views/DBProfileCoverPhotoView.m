@@ -45,6 +45,8 @@ UIImage *DBProfileImageByCroppingImageToSize(UIImage *image, CGSize size) {
 
 @implementation DBProfileCoverPhotoView
 
+@dynamic layoutAttributes;
+
 - (instancetype)init {
     self = [super init];
     if (self) {
@@ -85,6 +87,15 @@ UIImage *DBProfileImageByCroppingImageToSize(UIImage *image, CGSize size) {
         [UIView animateWithDuration: 0.3 animations:^{
             self.imageView.alpha = 1;
         }];
+    }
+}
+
+- (void)applyLayoutAttributes:(DBProfileCoverPhotoLayoutAttributes *)layoutAttributes
+{
+    [super applyLayoutAttributes:layoutAttributes];
+    
+    if (layoutAttributes.style == DBProfileCoverPhotoLayoutStyleNone) {
+        self.shouldApplyTint = NO;
     }
 }
 

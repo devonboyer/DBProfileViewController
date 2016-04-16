@@ -187,9 +187,6 @@
 - (void)applyLayoutAttributes:(DBProfileAccessoryViewLayoutAttributes *)layoutAttributes
 {
     _layoutAttributes = layoutAttributes;
-    
-    self.hidden = layoutAttributes.hidden;
-    self.alpha = layoutAttributes.alpha;
 }
 
 #pragma mark - UIGestureRecognizerDelegate

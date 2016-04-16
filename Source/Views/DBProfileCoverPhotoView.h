@@ -18,6 +18,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface DBProfileCoverPhotoView : DBProfileBlurView
 
+@property (nonatomic, strong, readonly) DBProfileCoverPhotoLayoutAttributes *layoutAttributes;
+
 /*!
  @abstract YES if tint should be applied, NO otherwise
  @discussion The default is YES

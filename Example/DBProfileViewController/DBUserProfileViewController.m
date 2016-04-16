@@ -35,8 +35,6 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
     self.dataSource = self;
     
     // Customize profile appearance
-    self.coverPhotoOptions = DBProfileCoverPhotoOptionStretch;
-    self.avatarInset = UIEdgeInsetsMake(0, 15, DBProfileViewControllerAvatarSizeNormal/2.0 - 10, 0);
     self.allowsPullToRefresh = YES;
     
     // Customize details view
@@ -52,11 +50,12 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
 //    detailsView.usernameLabel.text = @"by @devboyer";
 //    detailsView.descriptionLabel.text = @"A customizable library for creating stunning user profiles.";
     
-    DBProfileAvatarView *avatarView = (DBProfileAvatarView *)self.avatarView;
+    DBProfileAvatarView *avatarView = (DBProfileAvatarView *)[self accessoryViewOfKind:DBProfileAccessoryKindAvatar];
     [avatarView setAvatarImage:[UIImage imageNamed:@"demo-avatar"] animated:NO];
     
     // Set cover photo and avatar images
-    [self.coverPhotoView setCoverPhotoImage:[UIImage imageNamed:@"demo-header"] animated:NO];
+    DBProfileCoverPhotoView *coverPhotoView = (DBProfileCoverPhotoView *)[self accessoryViewOfKind:DBProfileAccessoryKindCoverPhoto];
+    [coverPhotoView setCoverPhotoImage:[UIImage imageNamed:@"demo-header"] animated:NO];
     
     [self setStyle:self.style];
 }
@@ -65,26 +64,27 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
     _style = style;
     
     DBProfileDetailsView *detailsView = (DBProfileDetailsView *)self.detailsView;
-    DBProfileAvatarView *avatarView = (DBProfileAvatarView *)self.avatarView;
+    DBProfileAvatarView *avatarView = (DBProfileAvatarView *)[self accessoryViewOfKind:DBProfileAccessoryKindAvatar];
+    DBProfileCoverPhotoView *coverPhotoView = (DBProfileCoverPhotoView *)[self accessoryViewOfKind:DBProfileAccessoryKindCoverPhoto];
 
     self.automaticallyAdjustsScrollViewInsets = NO;
-    self.coverPhotoMimicsNavigationBar = YES;
+    coverPhotoView.layoutAttributes.style = DBProfileCoverPhotoLayoutStyleNavigation;
     
     switch (style) {
         case DBUserProfileViewControllerStyle1:
-            self.coverPhotoView.blurEnabled = NO;
+            coverPhotoView.blurEnabled = NO;
             self.automaticallyAdjustsScrollViewInsets = YES;
-            self.coverPhotoMimicsNavigationBar = NO;
+            coverPhotoView.layoutAttributes.style = DBProfileCoverPhotoLayoutStyleNone;
         case DBUserProfileViewControllerStyle2:
             avatarView.style = DBProfileAvatarStyleRoundedRect;
-            avatarView.layoutAttributes.alignment = DBProfileAccessoryAlignmentLeft;
-            avatarView.layoutAttributes.size = DBProfileAccessorySizeNormal;
+            avatarView.layoutAttributes.alignment = DBProfileAvatarLayoutAlignmentLeft;
+            avatarView.layoutAttributes.size = DBProfileAvatarLayoutSizeNormal;
             break;
         case DBUserProfileViewControllerStyle3:
-            avatarView.layoutAttributes.alignment = DBProfileAccessoryAlignmentCenter;
             avatarView.style = DBProfileAvatarStyleRound;
-            avatarView.layoutAttributes.size = DBProfileAccessorySizeLarge;
-            
+            avatarView.layoutAttributes.alignment = DBProfileAvatarLayoutAlignmentCenter;
+            avatarView.layoutAttributes.size = DBProfileAvatarLayoutSizeLarge;
+
             detailsView.nameLabel.textAlignment = NSTextAlignmentCenter;
             detailsView.usernameLabel.textAlignment = NSTextAlignmentCenter;
             detailsView.descriptionLabel.textAlignment = NSTextAlignmentCenter;

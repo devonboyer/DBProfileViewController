@@ -15,15 +15,17 @@
 #import "DBProfileViewControllerDataSource.h"
 #import "DBProfileViewControllerConstants.h"
 
-@class DBProfileViewController;
-@class DBProfileCoverPhotoView;
 @class DBProfileAccessoryView;
+@class DBProfileAccessoryViewLayoutAttributes;
 
 NS_ASSUME_NONNULL_BEGIN
 
-// Accessory Kinds
-extern NSString * const DBProfileViewControllerAccessoryKindAvatar;
-extern NSString * const DBProfileViewControllerAccessoryKindCoverPhoto;
+extern NSString * const DBProfileAccessoryKindAvatar;
+extern NSString * const DBProfileAccessoryKindCoverPhoto;
+
+extern const CGFloat DBProfileViewControllerAvatarSizeNormal;
+extern const CGFloat DBProfileViewControllerAvatarSizeLarge;
+extern const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance;
 
 /*!
  @class DBProfileViewController
@@ -31,8 +33,6 @@ extern NSString * const DBProfileViewControllerAccessoryKindCoverPhoto;
  @discussion This class manages and displays a collection of content controllers and customizable accessory views associated with a profile interface.
  */
 @interface DBProfileViewController : UIViewController
-
-+ (Class)layoutAttributesClassForAccessoryOfKind:(NSString *)accessoryKind;
 
 ///---------------------------------------------
 /// @name Creating Profile View Controllers
@@ -84,12 +84,18 @@ extern NSString * const DBProfileViewControllerAccessoryKindCoverPhoto;
 /// @name Configuring Accessory Views
 ///---------------------------------------------
 
++ (Class)layoutAttributesClassForAccessoryViewOfKind:(NSString *)accessoryViewKind;
+
 /*!
  @abstract An array of `DBProfileAccessoryView` instances managed by the profile view controller.
  */
 @property (nonatomic, strong, readonly) NSArray<DBProfileAccessoryView *> *accessoryViews;
 
-- (void)registerClass:(Class)viewClass forAccessoryViewOfKind:(NSString *)accessoryKind;
+- (DBProfileAccessoryView *)accessoryViewOfKind:(NSString *)accessoryViewKind;
+
+- (DBProfileAccessoryViewLayoutAttributes *)layoutAtttributesForAccessoryViewOfKind:(NSString *)accessoryViewKind;
+
+- (void)registerClass:(Class)viewClass forAccessoryViewOfKind:(NSString *)accessoryViewKind;
 
 ///----------------------------------------------
 /// @name Configuring Pull-To-Refresh
@@ -112,6 +118,37 @@ extern NSString * const DBProfileViewControllerAccessoryKindCoverPhoto;
 - (void)endRefreshing;
 
 ///---------------------------------------------
+/// @name Showing Content Controllers
+///---------------------------------------------
+
+/*!
+ @abstract The index of the selected content controller.
+ */
+@property (nonatomic, assign, readonly) NSUInteger indexForDisplayedContentController;
+
+/*!
+ @abstract Selects a content controller in the profile view controller at the specified index.
+ @param index An index identifying a content controller in the profile view controller.
+ */
+- (void)showContentControllerAtIndex:(NSInteger)index;
+
+///---------------------------------------------
+/// @name Managing Accessory View Selections
+///---------------------------------------------
+
+/*!
+ @abstract Selects the accessory view.
+ @param animated YES if setting selecting the accessory view should be animated, NO otherwise.
+ */
+- (void)selectAccessoryView:(DBProfileAccessoryView *)accessoryView animated:(BOOL)animated;
+
+/*!
+ @abstract Deselects the accessory view.
+ @param animated YES if setting deselecting the accessory view should be animated, NO otherwise.
+ */
+- (void)deselectAccessoryView:(DBProfileAccessoryView *)accessoryView animated:(BOOL)animated;
+
+///---------------------------------------------
 /// @name Reloading the Profile View Controller
 ///---------------------------------------------
 
@@ -132,41 +169,6 @@ extern NSString * const DBProfileViewControllerAccessoryKindCoverPhoto;
  @abstract Reloads the content controllers of the profile view controller by rebuilding the view heirarchy.
  */
 - (void)reloadData;
-
-///---------------------------------------------
-/// @name Managing Selections
-///---------------------------------------------
-
-/*!
- @abstract The index of the selected content controller.
- */
-@property (nonatomic, assign, readonly) NSUInteger indexForSelectedContentController;
-
-/*!
- @abstract Selects a content controller in the profile view controller at the specified index.
- @param index An index identifying a content controller in the profile view controller.
- */
-- (void)selectContentControllerAtIndex:(NSInteger)index;
-
-/*!
- @abstract Selects the accessory view.
- @param animated YES if setting selecting the accessory view should be animated, NO otherwise.
- */
-- (void)selectAccessoryView:(DBProfileAccessoryView *)accessoryView animated:(BOOL)animated;
-
-/*!
- @abstract Deselects the accessory view.
- @param animated YES if setting deselecting the accessory view should be animated, NO otherwise.
- */
-- (void)deselectAccessoryView:(DBProfileAccessoryView *)accessoryView animated:(BOOL)animated;
-
-// use layout attributes instead
-@property (nonatomic, strong, readonly) DBProfileCoverPhotoView *coverPhotoView;
-@property (nonatomic, strong, readonly) DBProfileAccessoryView *avatarView;
-@property (nonatomic, assign) CGFloat coverPhotoHeightMultiplier;
-@property (nonatomic, assign) DBProfileCoverPhotoOptions coverPhotoOptions;
-@property (nonatomic, assign) BOOL coverPhotoMimicsNavigationBar;
-@property (nonatomic, assign) UIEdgeInsets avatarInset;
 
 @end
 

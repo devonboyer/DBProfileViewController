@@ -2,28 +2,15 @@
 //  DBProfileAccessoryViewLayoutAttributes.h
 //  Pods
 //
-//  Created by Devon Boyer on 2016-04-07.
+//  Created by Devon Boyer on 2016-04-15.
 //
 //
 
 #import <Foundation/Foundation.h>
-#import "DBProfileViewControllerConstants.h"
 
-typedef NS_ENUM(NSInteger, DBProfileAccessorySize) {
-    DBProfileAccessorySizeNormal,
-    DBProfileAccessorySizeLarge,
-};
-
-typedef NS_ENUM(NSInteger, DBProfileAccessoryAlignment) {
-    DBProfileAccessoryAlignmentLeft,
-    DBProfileAccessoryAlignmentRight,
-    DBProfileAccessoryAlignmentCenter,
-};
-
-// view model for DBProfileAccessoryView to specify customization layout
 @interface DBProfileAccessoryViewLayoutAttributes : NSObject
 
-+ (instancetype)layoutAttributesForAccessoryViewOfKind:(NSString *)accessoryKind;
++ (instancetype)layoutAttributesForAccessoryViewOfKind:(NSString *)accessoryViewKind;
 
 @property (nonatomic, strong, readonly) NSString *representedAccessoryKind;
 
@@ -31,24 +18,69 @@ typedef NS_ENUM(NSInteger, DBProfileAccessoryAlignment) {
 
 @property (nonatomic, assign) CGRect bounds;
 
-@property (nonatomic, assign) CGFloat alpha;
-
 @property (nonatomic, assign) BOOL hidden;
 
-@property (nonatomic, assign) DBProfileAccessoryAlignment alignment;
-
-@property (nonatomic, assign) DBProfileAccessorySize size;
+// Constraints - don't touch
+@property (nonatomic, strong) NSLayoutConstraint *leadingConstraint;
+@property (nonatomic, strong) NSLayoutConstraint *trailingConstraint;
+@property (nonatomic, strong) NSLayoutConstraint *leftConstraint;
+@property (nonatomic, strong) NSLayoutConstraint *rightConstraint;
+@property (nonatomic, strong) NSLayoutConstraint *topConstraint;
+@property (nonatomic, strong) NSLayoutConstraint *bottomConstraint;
+@property (nonatomic, strong) NSLayoutConstraint *widthConstraint;
+@property (nonatomic, strong) NSLayoutConstraint *heightConstraint;
+@property (nonatomic, strong) NSLayoutConstraint *centerXConstraint;
+@property (nonatomic, strong) NSLayoutConstraint *centerYConstraint;
+@property (nonatomic, strong) NSLayoutConstraint *firstBaselineConstraint;
+@property (nonatomic, strong) NSLayoutConstraint *lastBaselineConstraint;
 
 @end
+
+typedef NS_ENUM(NSInteger, DBProfileAvatarLayoutSize) {
+    DBProfileAvatarLayoutSizeNormal,
+    DBProfileAvatarLayoutSizeLarge,
+};
+
+typedef NS_ENUM(NSInteger, DBProfileAvatarLayoutAlignment) {
+    DBProfileAvatarLayoutAlignmentLeft,
+    DBProfileAvatarLayoutAlignmentRight,
+    DBProfileAvatarLayoutAlignmentCenter,
+};
+
+@interface DBProfileAvatarLayoutAttributes : DBProfileAccessoryViewLayoutAttributes
+
+@property (nonatomic, assign) DBProfileAvatarLayoutSize size;
+
+@property (nonatomic, assign) DBProfileAvatarLayoutAlignment alignment;
+
+@property (nonatomic, assign) UIEdgeInsets insets;
+
+@end
+
+typedef NS_ENUM(NSInteger, DBProfileCoverPhotoLayoutStyle) {
+    DBProfileCoverPhotoLayoutStyleNone,
+    DBProfileCoverPhotoLayoutStyleNavigation,
+};
+
+typedef NS_OPTIONS(NSUInteger, DBProfileCoverPhotoLayoutOptions) {
+    DBProfileCoverPhotoLayoutOptionNone = (1 << 0),
+    DBProfileCoverPhotoLayoutOptionStretch = (1 << 1),
+    DBProfileCoverPhotoLayoutOptionExtend = (1 << 2),
+};
 
 @interface DBProfileCoverPhotoLayoutAttributes : DBProfileAccessoryViewLayoutAttributes
 
-+ (instancetype)layoutAttributes;
-
 @property (nonatomic, strong, readonly) UINavigationItem *navigationItem;
 
-@property (nonatomic, assign) DBProfileCoverPhotoOptions options;
+@property (nonatomic, assign) DBProfileCoverPhotoLayoutStyle style;
 
-@property (nonatomic, assign) BOOL mimicsNavigationBar;
+@property (nonatomic, assign) DBProfileCoverPhotoLayoutOptions options;
+
+// Constraints - don't touch
+@property (nonatomic, strong) NSLayoutConstraint *navigationConstraint;
+@property (nonatomic, strong) NSLayoutConstraint *topLayoutGuideConstraint;
+@property (nonatomic, strong) NSLayoutConstraint *topSuperviewConstraint;
 
 @end
+
+

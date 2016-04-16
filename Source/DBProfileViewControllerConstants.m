@@ -25,7 +25,3 @@ CGFloat DBProfileViewControllerNavigationBarHeightForTraitCollection(UITraitColl
             return 64;
     }
 }
-
-const CGFloat DBProfileViewControllerAvatarSizeNormal = 72.0;
-
-const CGFloat DBProfileViewControllerAvatarSizeLarge = 92.0;

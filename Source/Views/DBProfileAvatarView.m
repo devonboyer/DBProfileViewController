@@ -9,9 +9,10 @@
 //
 
 #import "DBProfileAvatarView.h"
-#import "DBProfileViewControllerDefaults.h"
 
 @implementation DBProfileAvatarView
+
+@dynamic layoutAttributes;
 
 - (instancetype)init
 {
@@ -31,7 +32,7 @@
         
         [self setUpConstraints];
         
-        self.style = [DBProfileViewControllerDefaults defaultAvatarStyle];
+        self.style = DBProfileAvatarStyleRound;
     }
     return self;
 }
@@ -52,7 +53,7 @@
     switch (self.style) {
         case DBProfileAvatarStyleRound:
             self.layer.cornerRadius = CGRectGetWidth(self.bounds) / 2;
-            self.imageView.layer.cornerRadius = CGRectGetWidth(self.imageView.frame) / 2;
+            self.imageView.layer.cornerRadius = (CGRectGetWidth(self.frame) - self.layoutMargins.left - self.layoutMargins.right) / 2;
             break;
         case DBProfileAvatarStyleRoundedRect:
             self.layer.cornerRadius = 6;

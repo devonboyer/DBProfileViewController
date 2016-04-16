@@ -2,12 +2,12 @@
 //  DBProfileAccessoryViewLayoutAttributes.m
 //  Pods
 //
-//  Created by Devon Boyer on 2016-04-07.
+//  Created by Devon Boyer on 2016-04-15.
 //
 //
 
 #import "DBProfileAccessoryViewLayoutAttributes.h"
-#include "DBProfileViewController.h"
+#import "DBProfileViewController.h"
 
 @implementation DBProfileAccessoryViewLayoutAttributes
 
@@ -32,10 +32,22 @@
     if (self) {
         _frame = CGRectZero;
         _bounds = CGRectZero;
-        _alpha = 1.0;
         _hidden = NO;
-        _alignment = DBProfileAccessoryAlignmentLeft;
-        _size = DBProfileAccessorySizeNormal;
+    }
+    return self;
+}
+
+@end
+
+@implementation DBProfileAvatarLayoutAttributes
+
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        _size = DBProfileAvatarLayoutSizeNormal;
+        _alignment = DBProfileAvatarLayoutAlignmentLeft;
+        _insets = UIEdgeInsetsMake(0, 15, DBProfileViewControllerAvatarSizeNormal/2.0 - 15, 0);
     }
     return self;
 }
@@ -44,18 +56,13 @@
 
 @implementation DBProfileCoverPhotoLayoutAttributes
 
-+ (instancetype)layoutAttributes
-{
-    return [super layoutAttributesForAccessoryViewOfKind:DBProfileViewControllerAccessoryKindCoverPhoto];
-}
-
 - (instancetype)init
 {
     self = [super init];
     if (self) {
         _navigationItem = [[UINavigationItem alloc] init];
-        _options = DBProfileCoverPhotoOptionStretch;
-        _mimicsNavigationBar = YES;
+        _style = DBProfileCoverPhotoLayoutStyleNavigation;
+        _options = DBProfileCoverPhotoLayoutOptionStretch;
     }
     return self;
 }
