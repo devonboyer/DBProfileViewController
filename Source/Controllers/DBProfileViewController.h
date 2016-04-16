@@ -13,18 +13,35 @@
 #import "DBProfileContentPresenting.h"
 #import "DBProfileViewControllerDelegate.h"
 #import "DBProfileViewControllerDataSource.h"
-#import "DBProfileViewControllerConstants.h"
 
 @class DBProfileAccessoryView;
 @class DBProfileAccessoryViewLayoutAttributes;
 
 NS_ASSUME_NONNULL_BEGIN
 
+/*!
+ @abstract A constant value that identifies avatar accessory view.
+ */
 extern NSString * const DBProfileAccessoryKindAvatar;
+
+/*!
+ @abstract A constant value that identifies cover photo accessory view.
+ */
 extern NSString * const DBProfileAccessoryKindCoverPhoto;
 
+/*!
+ @abstract A constant value representing the size of the avatar when using `DBProfileAvatarLayoutSizeNormal`.
+ */
 extern const CGFloat DBProfileViewControllerAvatarSizeNormal;
+
+/*!
+ @abstract A constant value representing the size of the avatar when using `DBProfileAvatarLayoutSizeLarge`.
+ */
 extern const CGFloat DBProfileViewControllerAvatarSizeLarge;
+
+/*!
+ @abstract A constant value representing the content offset needed to trigger a pull-to-refresh.
+ */
 extern const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance;
 
 /*!
@@ -84,17 +101,34 @@ extern const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance;
 /// @name Configuring Accessory Views
 ///---------------------------------------------
 
-+ (Class)layoutAttributesClassForAccessoryViewOfKind:(NSString *)accessoryViewKind;
-
 /*!
  @abstract An array of `DBProfileAccessoryView` instances managed by the profile view controller.
  */
 @property (nonatomic, strong, readonly) NSArray<DBProfileAccessoryView *> *accessoryViews;
 
+/*!
+ @abstract Returns the class to use when creating layout attributes objects.
+ @param accessoryViewKind A string that identifies the type of the accessory view
+ */
++ (Class)layoutAttributesClassForAccessoryViewOfKind:(NSString *)accessoryViewKind;
+
+/*!
+ @abstract Returns the accessory view for the specified accessory view kind.
+ @param accessoryViewKind A string that identifies the type of the accessory view
+ */
 - (DBProfileAccessoryView *)accessoryViewOfKind:(NSString *)accessoryViewKind;
 
+/*!
+ @abstract Returns thelayout attributes for the specified accessory view kind.
+ @param accessoryViewKind A string that identifies the type of the accessory view
+ */
 - (DBProfileAccessoryViewLayoutAttributes *)layoutAtttributesForAccessoryViewOfKind:(NSString *)accessoryViewKind;
 
+/*!
+ @abstract Registers a class for use in creating accessory views.
+ @param viewClass The class to use for the accessory view.
+ @param accessoryViewKind A string that identifies the type of the accessory view
+ */
 - (void)registerClass:(Class)viewClass forAccessoryViewOfKind:(NSString *)accessoryViewKind;
 
 ///----------------------------------------------

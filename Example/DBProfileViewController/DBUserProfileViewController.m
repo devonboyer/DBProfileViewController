@@ -63,32 +63,35 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
 - (void)setStyle:(DBUserProfileViewControllerStyle)style {
     _style = style;
     
-    DBProfileDetailsView *detailsView = (DBProfileDetailsView *)self.detailsView;
     DBProfileAvatarView *avatarView = (DBProfileAvatarView *)[self accessoryViewOfKind:DBProfileAccessoryKindAvatar];
-    DBProfileCoverPhotoView *coverPhotoView = (DBProfileCoverPhotoView *)[self accessoryViewOfKind:DBProfileAccessoryKindCoverPhoto];
-
+    
+    DBProfileAvatarLayoutAttributes *avatarLayoutAttributes = (DBProfileAvatarLayoutAttributes *)[self layoutAtttributesForAccessoryViewOfKind:DBProfileAccessoryKindAvatar];
+    DBProfileCoverPhotoLayoutAttributes *coverPhotoLayoutAttributes = (DBProfileCoverPhotoLayoutAttributes *)[self layoutAtttributesForAccessoryViewOfKind:DBProfileAccessoryKindCoverPhoto];
+    
     self.automaticallyAdjustsScrollViewInsets = NO;
-    coverPhotoView.layoutAttributes.style = DBProfileCoverPhotoLayoutStyleNavigation;
+    coverPhotoLayoutAttributes.style = DBProfileCoverPhotoLayoutStyleNavigation;
     
     switch (style) {
         case DBUserProfileViewControllerStyle1:
-            coverPhotoView.blurEnabled = NO;
             self.automaticallyAdjustsScrollViewInsets = YES;
-            coverPhotoView.layoutAttributes.style = DBProfileCoverPhotoLayoutStyleNone;
+            coverPhotoLayoutAttributes.style = DBProfileCoverPhotoLayoutStyleNone;
         case DBUserProfileViewControllerStyle2:
             avatarView.style = DBProfileAvatarStyleRoundedRect;
-            avatarView.layoutAttributes.alignment = DBProfileAvatarLayoutAlignmentLeft;
-            avatarView.layoutAttributes.size = DBProfileAvatarLayoutSizeNormal;
+            avatarLayoutAttributes.alignment = DBProfileAvatarLayoutAlignmentLeft;
+            avatarLayoutAttributes.size = DBProfileAvatarLayoutSizeNormal;
             break;
-        case DBUserProfileViewControllerStyle3:
+        case DBUserProfileViewControllerStyle3: {
             avatarView.style = DBProfileAvatarStyleRound;
-            avatarView.layoutAttributes.alignment = DBProfileAvatarLayoutAlignmentCenter;
-            avatarView.layoutAttributes.size = DBProfileAvatarLayoutSizeLarge;
-
+            avatarLayoutAttributes.alignment = DBProfileAvatarLayoutAlignmentCenter;
+            avatarLayoutAttributes.size = DBProfileAvatarLayoutSizeLarge;
+            
+            DBProfileDetailsView *detailsView = (DBProfileDetailsView *)self.detailsView;
             detailsView.nameLabel.textAlignment = NSTextAlignmentCenter;
             detailsView.usernameLabel.textAlignment = NSTextAlignmentCenter;
             detailsView.descriptionLabel.textAlignment = NSTextAlignmentCenter;
+            
             break;
+        }
         default:
             break;
     }

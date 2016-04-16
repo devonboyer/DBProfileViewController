@@ -45,8 +45,6 @@ UIImage *DBProfileImageByCroppingImageToSize(UIImage *image, CGSize size) {
 
 @implementation DBProfileCoverPhotoView
 
-@dynamic layoutAttributes;
-
 - (instancetype)init {
     self = [super init];
     if (self) {
@@ -96,6 +94,7 @@ UIImage *DBProfileImageByCroppingImageToSize(UIImage *image, CGSize size) {
     
     if (layoutAttributes.style == DBProfileCoverPhotoLayoutStyleNone) {
         self.shouldApplyTint = NO;
+        self.blurEnabled = NO;
     }
 }
 

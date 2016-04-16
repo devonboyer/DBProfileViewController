@@ -12,8 +12,6 @@
 
 @implementation DBProfileAvatarView
 
-@dynamic layoutAttributes;
-
 - (instancetype)init
 {
     self = [super init];

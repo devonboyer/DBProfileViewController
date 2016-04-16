@@ -9,7 +9,7 @@
 //
 
 #import "UIBarButtonItem+DBProfileViewController.h"
-#import "DBProfileViewControllerConstants.h"
+#import "NSBundle+DBProfileViewController.h"
 
 @implementation UIBarButtonItem (DBProfileViewController)
 
@@ -17,8 +17,8 @@
     NSString *regularImageName = @"db-profile-chevron";
     NSString *landscapeImageName = @"db-profile-chevron";
     
-    UIImage *image = [UIImage imageNamed:regularImageName inBundle:DBProfileViewControllerBundle() compatibleWithTraitCollection:nil];
-    UIImage *landscapeImage = [UIImage imageNamed:landscapeImageName inBundle:DBProfileViewControllerBundle() compatibleWithTraitCollection:nil];
+    UIImage *image = [UIImage imageNamed:regularImageName inBundle:[NSBundle db_profileViewControllerBundle] compatibleWithTraitCollection:nil];
+    UIImage *landscapeImage = [UIImage imageNamed:landscapeImageName inBundle:[NSBundle db_profileViewControllerBundle] compatibleWithTraitCollection:nil];
     UIBarButtonItem *item = [[UIBarButtonItem alloc] initWithImage:image
                                                landscapeImagePhone:landscapeImage
                                                              style:UIBarButtonItemStyleDone

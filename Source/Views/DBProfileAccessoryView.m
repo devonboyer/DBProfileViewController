@@ -36,37 +36,35 @@
         _highlightedLongPressGestureRecognizer.delegate = self;
         [self addGestureRecognizer:_highlightedLongPressGestureRecognizer];
         
-        [self addConstraint:[NSLayoutConstraint constraintWithItem:self.contentView
-                                                         attribute:NSLayoutAttributeTop
-                                                         relatedBy:NSLayoutRelationEqual
-                                                            toItem:self
-                                                         attribute:NSLayoutAttributeTopMargin
-                                                        multiplier:1
-                                                          constant:0]];
-        
-        [self addConstraint:[NSLayoutConstraint constraintWithItem:self.contentView
-                                                         attribute:NSLayoutAttributeBottom
-                                                         relatedBy:NSLayoutRelationEqual
-                                                            toItem:self
-                                                         attribute:NSLayoutAttributeBottomMargin
-                                                        multiplier:1
-                                                          constant:0]];
-        
-        [self addConstraint:[NSLayoutConstraint constraintWithItem:self.contentView
-                                                         attribute:NSLayoutAttributeLeft
-                                                         relatedBy:NSLayoutRelationEqual
-                                                            toItem:self
-                                                         attribute:NSLayoutAttributeLeftMargin
-                                                        multiplier:1
-                                                          constant:0]];
-        
-        [self addConstraint:[NSLayoutConstraint constraintWithItem:self.contentView
-                                                         attribute:NSLayoutAttributeRight
-                                                         relatedBy:NSLayoutRelationEqual
-                                                            toItem:self
-                                                         attribute:NSLayoutAttributeRightMargin
-                                                        multiplier:1
-                                                          constant:0]];
+        NSArray *constraints = @[[NSLayoutConstraint constraintWithItem:self.contentView
+                                                              attribute:NSLayoutAttributeTop
+                                                              relatedBy:NSLayoutRelationEqual
+                                                                 toItem:self
+                                                              attribute:NSLayoutAttributeTopMargin
+                                                             multiplier:1
+                                                               constant:0],
+                                 [NSLayoutConstraint constraintWithItem:self.contentView
+                                                              attribute:NSLayoutAttributeBottom
+                                                              relatedBy:NSLayoutRelationEqual
+                                                                 toItem:self
+                                                              attribute:NSLayoutAttributeBottomMargin
+                                                             multiplier:1
+                                                               constant:0],
+                                 [NSLayoutConstraint constraintWithItem:self.contentView
+                                                              attribute:NSLayoutAttributeLeft
+                                                              relatedBy:NSLayoutRelationEqual
+                                                                 toItem:self
+                                                              attribute:NSLayoutAttributeLeftMargin
+                                                             multiplier:1
+                                                               constant:0],
+                                 [NSLayoutConstraint constraintWithItem:self.contentView
+                                                              attribute:NSLayoutAttributeRight
+                                                              relatedBy:NSLayoutRelationEqual
+                                                                 toItem:self
+                                                              attribute:NSLayoutAttributeRightMargin
+                                                             multiplier:1
+                                                               constant:0]];
+        [self addConstraints:constraints];
     }
     return self;
 }
@@ -186,7 +184,7 @@
 
 - (void)applyLayoutAttributes:(DBProfileAccessoryViewLayoutAttributes *)layoutAttributes
 {
-    _layoutAttributes = layoutAttributes;
+    // override in subclass
 }
 
 #pragma mark - UIGestureRecognizerDelegate

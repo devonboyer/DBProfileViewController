@@ -58,8 +58,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated;
 
-@property (nonatomic, strong, readonly) DBProfileAccessoryViewLayoutAttributes *layoutAttributes;
-
 - (void)applyLayoutAttributes:(DBProfileAccessoryViewLayoutAttributes *)layoutAttributes;
 
 @end

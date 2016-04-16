@@ -9,7 +9,6 @@
 //
 
 #import "DBProfileAccessoryView.h"
-#import "DBProfileViewControllerConstants.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -37,8 +36,6 @@ typedef NS_ENUM(NSInteger, DBProfileAvatarStyle) {
 
  */
 @interface DBProfileAvatarView : DBProfileAccessoryView
-
-@property (nonatomic, strong, readonly) DBProfileAvatarLayoutAttributes *layoutAttributes;
 
 /*!
  @abstract The image view that displays the avatar image.
