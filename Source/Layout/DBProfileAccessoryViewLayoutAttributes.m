@@ -1,9 +1,11 @@
 //
 //  DBProfileAccessoryViewLayoutAttributes.m
-//  Pods
+//  DBProfileViewController
 //
 //  Created by Devon Boyer on 2016-04-15.
+//  Copyright (c) 2015 Devon Boyer. All rights reserved.
 //
+//  Released under an MIT license: http://opensource.org/licenses/MIT
 //
 
 #import "DBProfileAccessoryViewLayoutAttributes.h"
@@ -45,9 +47,8 @@
 {
     self = [super init];
     if (self) {
-        _size = DBProfileAvatarLayoutSizeNormal;
         _alignment = DBProfileAvatarLayoutAlignmentLeft;
-        _insets = UIEdgeInsetsMake(0, 15, DBProfileViewControllerAvatarSizeNormal/2.0 - 15, 0);
+        _insets = UIEdgeInsetsMake(0, 15, 72/2.0 - 15, 0);
     }
     return self;
 }

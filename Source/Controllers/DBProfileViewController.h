@@ -30,21 +30,6 @@ extern NSString * const DBProfileAccessoryKindAvatar;
 extern NSString * const DBProfileAccessoryKindHeader;
 
 /*!
- @abstract A constant value representing the size of the avatar when using `DBProfileAvatarLayoutSizeNormal`.
- */
-extern const CGFloat DBProfileViewControllerAvatarSizeNormal;
-
-/*!
- @abstract A constant value representing the size of the avatar when using `DBProfileAvatarLayoutSizeLarge`.
- */
-extern const CGFloat DBProfileViewControllerAvatarSizeLarge;
-
-/*!
- @abstract A constant value representing the content offset needed to trigger a pull-to-refresh.
- */
-extern const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance;
-
-/*!
  @class DBProfileViewController
  @abstract The `DBProfileViewController` class is a view controller that is specialized to display a profile interface.
  @discussion This class manages and displays a collection of content controllers and customizable accessory views associated with a profile interface.
@@ -93,9 +78,8 @@ extern const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance;
 /*!
  @abstract A view that is displayed above the content controllers.
  @discussion The default is an instance of `DBProfileDetailsView`.
- @warning The `detailsView` cannot be nil.
  */
-@property (nonatomic, strong) UIView *detailsView;
+@property (nonatomic, strong, nullable) UIView *detailsView;
 
 ///---------------------------------------------
 /// @name Configuring Accessory Views
@@ -104,7 +88,7 @@ extern const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance;
 /*!
  @abstract An array of `DBProfileAccessoryView` instances managed by the profile view controller.
  */
-@property (nonatomic, strong, readonly) NSArray<DBProfileAccessoryView *> *accessoryViews;
+@property (nonatomic, strong, readonly) NSArray<__kindof DBProfileAccessoryView *> *accessoryViews;
 
 /*!
  @abstract Returns the class to use when creating layout attributes objects.
@@ -116,13 +100,13 @@ extern const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance;
  @abstract Returns the accessory view for the specified accessory view kind.
  @param accessoryViewKind A string that identifies the type of the accessory view
  */
-- (DBProfileAccessoryView *)accessoryViewOfKind:(NSString *)accessoryViewKind;
+- (__kindof DBProfileAccessoryView *)accessoryViewOfKind:(NSString *)accessoryViewKind;
 
 /*!
  @abstract Returns thelayout attributes for the specified accessory view kind.
  @param accessoryViewKind A string that identifies the type of the accessory view
  */
-- (DBProfileAccessoryViewLayoutAttributes *)layoutAtttributesForAccessoryViewOfKind:(NSString *)accessoryViewKind;
+- (__kindof DBProfileAccessoryViewLayoutAttributes *)layoutAttributesForAccessoryViewOfKind:(NSString *)accessoryViewKind;
 
 /*!
  @abstract Registers a class for use in creating accessory views.

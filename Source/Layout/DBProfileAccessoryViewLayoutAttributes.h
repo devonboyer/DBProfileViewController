@@ -1,9 +1,11 @@
 //
 //  DBProfileAccessoryViewLayoutAttributes.h
-//  Pods
+//  DBProfileViewController
 //
 //  Created by Devon Boyer on 2016-04-15.
+//  Copyright (c) 2015 Devon Boyer. All rights reserved.
 //
+//  Released under an MIT license: http://opensource.org/licenses/MIT
 //
 
 #import <Foundation/Foundation.h>
@@ -14,13 +16,15 @@
 
 @property (nonatomic, strong, readonly) NSString *representedAccessoryKind;
 
-@property (nonatomic, assign) CGRect frame;
+@property (nonatomic, assign) CGRect frame; // not implemented yet
 
-@property (nonatomic, assign) CGRect bounds;
+@property (nonatomic, assign) CGRect bounds; // not implemented yet
 
-@property (nonatomic, assign) BOOL hidden;
+@property (nonatomic, assign) BOOL hidden; // not implemented yet
 
-@property (nonatomic, assign) CGFloat percentTransitioned;
+@property (nonatomic, assign) CGSize referenceSize; // not implemented yet
+
+@property (nonatomic, assign) CGFloat percentTransitioned; // only implemented for DBProfileAccessoryKindHeader
 
 // Constraints - don't touch
 @property (nonatomic, strong) NSLayoutConstraint *leadingConstraint;
@@ -38,10 +42,6 @@
 
 @end
 
-typedef NS_ENUM(NSInteger, DBProfileAvatarLayoutSize) {
-    DBProfileAvatarLayoutSizeNormal,
-    DBProfileAvatarLayoutSizeLarge,
-};
 
 typedef NS_ENUM(NSInteger, DBProfileAvatarLayoutAlignment) {
     DBProfileAvatarLayoutAlignmentLeft,
@@ -50,8 +50,6 @@ typedef NS_ENUM(NSInteger, DBProfileAvatarLayoutAlignment) {
 };
 
 @interface DBProfileAvatarViewLayoutAttributes : DBProfileAccessoryViewLayoutAttributes
-
-@property (nonatomic, assign) DBProfileAvatarLayoutSize size;
 
 @property (nonatomic, assign) DBProfileAvatarLayoutAlignment alignment;
 

@@ -65,9 +65,9 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
     
     DBProfileAvatarView *avatarView = (DBProfileAvatarView *)[self accessoryViewOfKind:DBProfileAccessoryKindAvatar];
     
-    DBProfileHeaderViewLayoutAttributes *headerViewLayoutAttributes = (DBProfileHeaderViewLayoutAttributes *)[self layoutAtttributesForAccessoryViewOfKind:DBProfileAccessoryKindHeader];
+    DBProfileHeaderViewLayoutAttributes *headerViewLayoutAttributes = [self layoutAttributesForAccessoryViewOfKind:DBProfileAccessoryKindHeader];
     
-    DBProfileAvatarViewLayoutAttributes *avatarViewLayoutAttributes = (DBProfileAvatarViewLayoutAttributes *)[self layoutAtttributesForAccessoryViewOfKind:DBProfileAccessoryKindAvatar];
+    DBProfileAvatarViewLayoutAttributes *avatarViewLayoutAttributes = [self layoutAttributesForAccessoryViewOfKind:DBProfileAccessoryKindAvatar];
     
     self.automaticallyAdjustsScrollViewInsets = NO;
     headerViewLayoutAttributes.style = DBProfileHeaderLayoutStyleNavigation;
@@ -79,12 +79,10 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
         case DBUserProfileViewControllerStyle2:
             avatarView.style = DBProfileAvatarStyleRoundedRect;
             avatarViewLayoutAttributes.alignment = DBProfileAvatarLayoutAlignmentLeft;
-            avatarViewLayoutAttributes.size = DBProfileAvatarLayoutSizeNormal;
             break;
         case DBUserProfileViewControllerStyle3: {
             avatarView.style = DBProfileAvatarStyleRound;
             avatarViewLayoutAttributes.alignment = DBProfileAvatarLayoutAlignmentCenter;
-            avatarViewLayoutAttributes.size = DBProfileAvatarLayoutSizeLarge;
             
             DBProfileDetailsView *detailsView = (DBProfileDetailsView *)self.detailsView;
             detailsView.nameLabel.textAlignment = NSTextAlignmentCenter;
@@ -157,7 +155,26 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
 
 #pragma mark - DBProfileViewControllerDelegate
 
-- (void)profileViewController:(DBProfileViewController *)profileViewController didSelectAccessoryView:(DBProfileAccessoryView *)accessoryView {
+- (CGSize)profileViewController:(DBProfileViewController *)profileViewController referenceSizeForAccessoryViewOfKind:(NSString *)accessoryViewKind
+{
+    if ([accessoryViewKind isEqualToString:DBProfileAccessoryKindAvatar]) {
+        switch (self.style) {
+            case DBUserProfileViewControllerStyle1:
+            case DBUserProfileViewControllerStyle2:
+                return CGSizeMake(0, 72);
+            case DBUserProfileViewControllerStyle3:
+                return CGSizeMake(0, 92);
+        }
+    }
+    else if ([accessoryViewKind isEqualToString:DBProfileAccessoryKindHeader]) {
+        return CGSizeMake(0, 120);
+    }
+    
+    return CGSizeZero;
+}
+
+- (void)profileViewController:(DBProfileViewController *)profileViewController didSelectAccessoryView:(DBProfileAccessoryView *)accessoryView forAccessoryViewOfKind:(nonnull NSString *)accessoryViewKind
+{
     [profileViewController deselectAccessoryView:accessoryView animated:YES];
 }
 
@@ -165,7 +182,8 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
 
 - (void)profileViewController:(DBProfileViewController *)profileViewController didShowContentControllerAtIndex:(NSInteger)index { }
 
-- (void)profileViewController:(DBProfileViewController *)viewController didPullToRefreshContentControllerAtIndex:(NSInteger)index {
+- (void)profileViewController:(DBProfileViewController *)viewController didPullToRefreshContentControllerAtIndex:(NSInteger)index
+{
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [self endRefreshing];
     });

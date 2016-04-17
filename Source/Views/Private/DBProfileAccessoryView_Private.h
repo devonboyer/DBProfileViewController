@@ -10,6 +10,7 @@
 
 @protocol DBProfileAccessoryViewDelegate <NSObject>
 
+- (BOOL)accessoryViewShouldHighlight:(DBProfileAccessoryView *)accessoryView;
 - (void)accessoryViewDidHighlight:(DBProfileAccessoryView *)accessoryView;
 - (void)accessoryViewDidUnhighlight:(DBProfileAccessoryView *)accessoryView;
 - (void)accessoryViewWasSelected:(DBProfileAccessoryView *)accessoryView;

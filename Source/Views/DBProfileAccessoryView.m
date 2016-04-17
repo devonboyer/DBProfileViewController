@@ -96,6 +96,9 @@
 
 - (void)handleHighlightedLongPressGesture:(UILongPressGestureRecognizer *)gestureRecognizer
 {
+    // Check if this view should be highlighted
+    if (![self.delegate accessoryViewShouldHighlight:self]) return;
+    
     switch (gestureRecognizer.state) {
         case UIGestureRecognizerStateBegan:
             [self setHighlighted:YES animated:YES];

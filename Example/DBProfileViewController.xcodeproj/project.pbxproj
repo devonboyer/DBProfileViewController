@@ -24,6 +24,11 @@
 		6702AD221C5D8242008D014D /* demo-avatar.png in Resources */ = {isa = PBXBuildFile; fileRef = 6702AD201C5D8242008D014D /* demo-avatar.png */; };
 		672EF5CF1C49E9B60035567E /* DBUserProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 672EF5CE1C49E9B60035567E /* DBUserProfileViewController.m */; };
 		672EF5D61C4B09AA0035567E /* DBDemoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 672EF5D51C4B09AA0035567E /* DBDemoViewController.m */; };
+		67500F7A1CC2073B00088442 /* DBAccountSummaryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 67500F791CC2073B00088442 /* DBAccountSummaryViewController.m */; };
+		67500F7D1CC2077600088442 /* DBCreditCardView.m in Sources */ = {isa = PBXBuildFile; fileRef = 67500F7C1CC2077600088442 /* DBCreditCardView.m */; };
+		67500F801CC2078C00088442 /* DBTransactionsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 67500F7F1CC2078C00088442 /* DBTransactionsViewController.m */; };
+		67500F831CC207AA00088442 /* DBTransactionTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 67500F821CC207AA00088442 /* DBTransactionTableViewCell.m */; };
+		67500F861CC20E9E00088442 /* DBTransactionsSectionHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = 67500F851CC20E9E00088442 /* DBTransactionsSectionHeader.m */; };
 		675B0F921C42A1C4000AADC6 /* DBFollowersTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 675B0F911C42A1C4000AADC6 /* DBFollowersTableViewController.m */; };
 		675B0F951C42A1D4000AADC6 /* DBPhotosTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 675B0F941C42A1D4000AADC6 /* DBPhotosTableViewController.m */; };
 		675B0F981C42A1E0000AADC6 /* DBLikesTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 675B0F971C42A1E0000AADC6 /* DBLikesTableViewController.m */; };
@@ -69,6 +74,16 @@
 		672EF5CE1C49E9B60035567E /* DBUserProfileViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBUserProfileViewController.m; sourceTree = "<group>"; };
 		672EF5D41C4B09AA0035567E /* DBDemoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBDemoViewController.h; sourceTree = "<group>"; };
 		672EF5D51C4B09AA0035567E /* DBDemoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBDemoViewController.m; sourceTree = "<group>"; };
+		67500F781CC2073B00088442 /* DBAccountSummaryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBAccountSummaryViewController.h; sourceTree = "<group>"; };
+		67500F791CC2073B00088442 /* DBAccountSummaryViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBAccountSummaryViewController.m; sourceTree = "<group>"; };
+		67500F7B1CC2077600088442 /* DBCreditCardView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBCreditCardView.h; sourceTree = "<group>"; };
+		67500F7C1CC2077600088442 /* DBCreditCardView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBCreditCardView.m; sourceTree = "<group>"; };
+		67500F7E1CC2078C00088442 /* DBTransactionsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBTransactionsViewController.h; sourceTree = "<group>"; };
+		67500F7F1CC2078C00088442 /* DBTransactionsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBTransactionsViewController.m; sourceTree = "<group>"; };
+		67500F811CC207AA00088442 /* DBTransactionTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBTransactionTableViewCell.h; sourceTree = "<group>"; };
+		67500F821CC207AA00088442 /* DBTransactionTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBTransactionTableViewCell.m; sourceTree = "<group>"; };
+		67500F841CC20E9E00088442 /* DBTransactionsSectionHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBTransactionsSectionHeader.h; sourceTree = "<group>"; };
+		67500F851CC20E9E00088442 /* DBTransactionsSectionHeader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBTransactionsSectionHeader.m; sourceTree = "<group>"; };
 		675B0F901C42A1C4000AADC6 /* DBFollowersTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBFollowersTableViewController.h; sourceTree = "<group>"; };
 		675B0F911C42A1C4000AADC6 /* DBFollowersTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBFollowersTableViewController.m; sourceTree = "<group>"; };
 		675B0F931C42A1D4000AADC6 /* DBPhotosTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBPhotosTableViewController.h; sourceTree = "<group>"; };
@@ -155,6 +170,7 @@
 				6003F59D195388D20070C39A /* DBAppDelegate.m */,
 				675D5BA11C3FDCCC009E44CE /* Main.storyboard */,
 				675D5B9F1C3FCB72009E44CE /* Launch Screen.storyboard */,
+				67500F771CC206E800088442 /* Banking */,
 				67E47C921C9FB38E00635AFD /* DBUserProfileDetailsView.h */,
 				67E47C931C9FB38E00635AFD /* DBUserProfileDetailsView.m */,
 				672EF5D41C4B09AA0035567E /* DBDemoViewController.h */,
@@ -222,6 +238,23 @@
 				6702AD201C5D8242008D014D /* demo-avatar.png */,
 			);
 			name = Assets;
+			sourceTree = "<group>";
+		};
+		67500F771CC206E800088442 /* Banking */ = {
+			isa = PBXGroup;
+			children = (
+				67500F781CC2073B00088442 /* DBAccountSummaryViewController.h */,
+				67500F791CC2073B00088442 /* DBAccountSummaryViewController.m */,
+				67500F7E1CC2078C00088442 /* DBTransactionsViewController.h */,
+				67500F7F1CC2078C00088442 /* DBTransactionsViewController.m */,
+				67500F841CC20E9E00088442 /* DBTransactionsSectionHeader.h */,
+				67500F851CC20E9E00088442 /* DBTransactionsSectionHeader.m */,
+				67500F811CC207AA00088442 /* DBTransactionTableViewCell.h */,
+				67500F821CC207AA00088442 /* DBTransactionTableViewCell.m */,
+				67500F7B1CC2077600088442 /* DBCreditCardView.h */,
+				67500F7C1CC2077600088442 /* DBCreditCardView.m */,
+			);
+			path = Banking;
 			sourceTree = "<group>";
 		};
 		D3AD4117CFFC22FBB649D7E9 /* Pods */ = {
@@ -437,11 +470,16 @@
 			files = (
 				675B0F981C42A1E0000AADC6 /* DBLikesTableViewController.m in Sources */,
 				6003F59E195388D20070C39A /* DBAppDelegate.m in Sources */,
+				67500F801CC2078C00088442 /* DBTransactionsViewController.m in Sources */,
 				675B0F921C42A1C4000AADC6 /* DBFollowersTableViewController.m in Sources */,
+				67500F7A1CC2073B00088442 /* DBAccountSummaryViewController.m in Sources */,
 				672EF5D61C4B09AA0035567E /* DBDemoViewController.m in Sources */,
+				67500F7D1CC2077600088442 /* DBCreditCardView.m in Sources */,
 				67E47C941C9FB38E00635AFD /* DBUserProfileDetailsView.m in Sources */,
 				672EF5CF1C49E9B60035567E /* DBUserProfileViewController.m in Sources */,
+				67500F861CC20E9E00088442 /* DBTransactionsSectionHeader.m in Sources */,
 				675B0F951C42A1D4000AADC6 /* DBPhotosTableViewController.m in Sources */,
+				67500F831CC207AA00088442 /* DBTransactionTableViewCell.m in Sources */,
 				6003F59A195388D20070C39A /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
