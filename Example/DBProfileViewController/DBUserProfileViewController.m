@@ -34,6 +34,10 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
     self.delegate = self;
     self.dataSource = self;
     
+    // Register accessory views
+    [self registerClass:[DBProfileAvatarView class] forAccessoryViewOfKind:DBProfileAccessoryKindAvatar];
+    [self registerClass:[DBProfileCoverPhotoView class] forAccessoryViewOfKind:DBProfileAccessoryKindHeader];
+    
     // Customize profile appearance
     self.allowsPullToRefresh = YES;
     
@@ -69,12 +73,10 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
     
     DBProfileAvatarViewLayoutAttributes *avatarViewLayoutAttributes = [self layoutAttributesForAccessoryViewOfKind:DBProfileAccessoryKindAvatar];
     
-    self.automaticallyAdjustsScrollViewInsets = NO;
     headerViewLayoutAttributes.style = DBProfileHeaderLayoutStyleNavigation;
     
     switch (style) {
         case DBUserProfileViewControllerStyle1:
-            self.automaticallyAdjustsScrollViewInsets = YES;
             headerViewLayoutAttributes.style = DBProfileHeaderLayoutStyleNone;
         case DBUserProfileViewControllerStyle2:
             avatarView.style = DBProfileAvatarStyleRoundedRect;

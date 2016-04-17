@@ -187,9 +187,12 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     
     DBProfileHeaderViewLayoutAttributes *layoutAttributes = [self layoutAttributesForAccessoryViewOfKind:DBProfileAccessoryKindHeader];
     if (layoutAttributes.style == DBProfileHeaderLayoutStyleNavigation) {
+        layoutAttributes.navigationItem.leftBarButtonItem = [UIBarButtonItem db_backBarButtonItemWithTarget:self action:@selector(back)];
         [self.navigationController setNavigationBarHidden:YES animated:YES];
         [self.navigationController.interactivePopGestureRecognizer setDelegate:nil];
     }
+    
+    self.automaticallyAdjustsScrollViewInsets = layoutAttributes.style != DBProfileHeaderLayoutStyleNavigation;
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -207,18 +210,10 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 
 - (void)configureDefaults
 {
-    [self registerClass:[DBProfileAvatarView class] forAccessoryViewOfKind:DBProfileAccessoryKindAvatar];
-    [self registerClass:[DBProfileCoverPhotoView class] forAccessoryViewOfKind:DBProfileAccessoryKindHeader];
-    
     [self segmentedControl].tintColor = [UIColor colorWithRed:29/255.0 green:161/255.0 blue:242/255.0 alpha:1];
 
     _hidesSegmentedControlForSingleContentController = YES;
     _allowsPullToRefresh = YES;
-    
-    DBProfileHeaderViewLayoutAttributes *layoutAttributes = [self layoutAttributesForAccessoryViewOfKind:DBProfileAccessoryKindHeader];
-    if (layoutAttributes.style == DBProfileHeaderLayoutStyleNavigation) {
-        layoutAttributes.navigationItem.leftBarButtonItem = [UIBarButtonItem db_backBarButtonItemWithTarget:self action:@selector(back)];
-    }
 }
 
 #pragma mark - Status Bar
@@ -772,7 +767,8 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     return [self.registeredAccessoryViews objectForKey:accessoryViewKind];
 }
 
-- (void)_resetTitles {
+- (void)_resetTitles
+{
     [self.customNavigationBar setTitle:self.title];
     [self.customNavigationBar setSubtitle:[self _subtitleForContentControllerAtIndex:self.indexForDisplayedContentController]
                           traitCollection:self.traitCollection];
