@@ -173,7 +173,7 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
     return CGSizeZero;
 }
 
-- (void)profileViewController:(DBProfileViewController *)profileViewController didSelectAccessoryView:(DBProfileAccessoryView *)accessoryView forAccessoryViewOfKind:(nonnull NSString *)accessoryViewKind
+- (void)profileViewController:(DBProfileViewController *)profileViewController didSelectAccessoryView:(__kindof DBProfileAccessoryView *)accessoryView forAccessoryViewOfKind:(nonnull NSString *)accessoryViewKind
 {
     [profileViewController deselectAccessoryView:accessoryView animated:YES];
 }

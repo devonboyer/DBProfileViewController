@@ -42,7 +42,6 @@
 
 @end
 
-
 typedef NS_ENUM(NSInteger, DBProfileAvatarLayoutAlignment) {
     DBProfileAvatarLayoutAlignmentLeft,
     DBProfileAvatarLayoutAlignmentRight,

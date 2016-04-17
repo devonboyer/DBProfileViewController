@@ -387,7 +387,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 
 - (void)registerClass:(Class)viewClass forAccessoryViewOfKind:(NSString *)accessoryViewKind
 {
-    NSAssert(accessoryViewKind == DBProfileAccessoryKindAvatar || accessoryViewKind == DBProfileAccessoryKindHeader, @"invalid accessoryViewKind");
+    NSAssert(accessoryViewKind == DBProfileAccessoryKindAvatar || accessoryViewKind == DBProfileAccessoryKindHeader, @"invalid accessory view kind");
     
     NSAssert([viewClass isSubclassOfClass:[DBProfileAccessoryView class]], @"viewClass must inherit from DBProfileAccessoryView");
     
@@ -396,6 +396,9 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 
     // Register the accessory view
     DBProfileAccessoryView *accessoryView = [[viewClass alloc] init];
+    accessoryView.representedAccessoryKind = accessoryViewKind;
+    accessoryView.delegate = self;
+
     [self.registeredAccessoryViews setObject:accessoryView forKey:accessoryViewKind];
     
     Class layoutAttributesClass = [[self class] layoutAttributesClassForAccessoryViewOfKind:accessoryViewKind];
@@ -412,7 +415,6 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     
     // Apply layout attributes
     [accessoryView applyLayoutAttributes:layoutAttributes];
-    [accessoryView setDelegate:self];
     
     if ([accessoryViewKind isEqualToString:DBProfileAccessoryKindHeader]) {
         DBProfileHeaderViewLayoutAttributes *layoutAttributes = [self layoutAttributesForAccessoryViewOfKind:DBProfileAccessoryKindHeader];
@@ -422,13 +424,13 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 
 - (DBProfileAccessoryView *)accessoryViewOfKind:(NSString *)accessoryViewKind
 {
-    NSAssert(accessoryViewKind == DBProfileAccessoryKindAvatar ||
-             accessoryViewKind == DBProfileAccessoryKindHeader, @"invalid accessory kind");
+    NSAssert(accessoryViewKind == DBProfileAccessoryKindAvatar || accessoryViewKind == DBProfileAccessoryKindHeader, @"invalid accessory view kind");
     return [self.registeredAccessoryViews objectForKey:accessoryViewKind];
 }
 
 - (DBProfileAccessoryViewLayoutAttributes *)layoutAttributesForAccessoryViewOfKind:(NSString *)accessoryViewKind
 {
+    NSAssert(accessoryViewKind == DBProfileAccessoryKindAvatar || accessoryViewKind == DBProfileAccessoryKindHeader, @"invalid accessory view kind");
     return [self.accessoryViewLayoutAttributes objectForKey:accessoryViewKind];
 }
 
@@ -621,14 +623,14 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     UIScrollView *scrollView = [viewController contentScrollView];
     
     [self.headerView removeFromSuperview];
-    [self.detailsView removeFromSuperview];
     [self.avatarView removeFromSuperview];
+    [self.detailsView removeFromSuperview];
     [self.segmentedControlView removeFromSuperview];
     [self.activityIndicator removeFromSuperview];
     
     self.headerView.translatesAutoresizingMaskIntoConstraints = NO;
-    self.detailsView.translatesAutoresizingMaskIntoConstraints = NO;
     self.avatarView.translatesAutoresizingMaskIntoConstraints = NO;
+    self.detailsView.translatesAutoresizingMaskIntoConstraints = NO;
     self.segmentedControlView.translatesAutoresizingMaskIntoConstraints = NO;
     self.activityIndicator.translatesAutoresizingMaskIntoConstraints = NO;
     
@@ -805,12 +807,33 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     return subtitle;
 }
 
+- (CGSize)_referenceSizeForAccessoryViewOfKind:(NSString *)accessoryViewKind
+{
+    CGSize referenceSize;
+    if ([accessoryViewKind isEqualToString:DBProfileAccessoryKindHeader]) {
+        referenceSize = CGSizeMake(0, CGRectGetHeight([self frameForContentController]) * 0.18);
+    }
+    else if ([accessoryViewKind isEqualToString:DBProfileAccessoryKindAvatar]) {
+        referenceSize = CGSizeMake(0, DBProfileViewControllerDefaultAvatarSize);
+    }
+    
+    if ([self.delegate respondsToSelector:@selector(profileViewController:referenceSizeForAccessoryViewOfKind:)]) {
+        referenceSize = [self.delegate profileViewController:self referenceSizeForAccessoryViewOfKind:accessoryViewKind];
+    }
+//    else {
+//        DBProfileAccessoryViewLayoutAttributes *layoutAttributes = [self layoutAttributesForAccessoryViewOfKind:accessoryViewKind];
+//        referenceSize = layoutAttributes.referenceSize;
+//    }
+    
+    return referenceSize;
+}
+
 #pragma mark - DBProfileAccessoryViewDelegate
 
 - (BOOL)accessoryViewShouldHighlight:(DBProfileAccessoryView *)accessoryView
 {
     if ([self.delegate respondsToSelector:@selector(profileViewController:shouldHighlightAccessoryView:forAccessoryViewOfKind:)]) {
-        return [self.delegate profileViewController:self shouldHighlightAccessoryView:accessoryView forAccessoryViewOfKind:@""];
+        return [self.delegate profileViewController:self shouldHighlightAccessoryView:accessoryView forAccessoryViewOfKind:accessoryView.representedAccessoryKind];
     }
     return YES;
 }
@@ -818,7 +841,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 - (void)accessoryViewDidHighlight:(DBProfileAccessoryView *)accessoryView
 {
     if ([self.delegate respondsToSelector:@selector(profileViewController:didHighlightAccessoryView:forAccessoryViewOfKind:)]) {
-        [self.delegate profileViewController:self didHighlightAccessoryView:accessoryView forAccessoryViewOfKind:@""];
+        [self.delegate profileViewController:self didHighlightAccessoryView:accessoryView forAccessoryViewOfKind:accessoryView.representedAccessoryKind];
     }
     
     for (DBProfileAccessoryView *view in self.accessoryViews) {
@@ -831,14 +854,14 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 - (void)accessoryViewDidUnhighlight:(DBProfileAccessoryView *)accessoryView
 {
     if ([self.delegate respondsToSelector:@selector(profileViewController:didUnhighlightAccessoryView:forAccessoryViewOfKind:)]) {
-        [self.delegate profileViewController:self didUnhighlightAccessoryView:accessoryView forAccessoryViewOfKind:@""];
+        [self.delegate profileViewController:self didUnhighlightAccessoryView:accessoryView forAccessoryViewOfKind:accessoryView.representedAccessoryKind];
     }
 }
 
 - (void)accessoryViewWasSelected:(DBProfileAccessoryView *)accessoryView
 {
     if ([self.delegate respondsToSelector:@selector(profileViewController:didSelectAccessoryView:forAccessoryViewOfKind:)]) {
-        [self.delegate profileViewController:self didSelectAccessoryView:accessoryView forAccessoryViewOfKind:@""];
+        [self.delegate profileViewController:self didSelectAccessoryView:accessoryView forAccessoryViewOfKind:accessoryView.representedAccessoryKind];
     }
     
     for (DBProfileAccessoryView *view in self.accessoryViews) {
@@ -851,7 +874,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 - (void)accessoryViewWasDeselected:(DBProfileAccessoryView *)accessoryView
 {
     if ([self.delegate respondsToSelector:@selector(profileViewController:didDeselectAccessoryView:forAccessoryViewOfKind:)]) {
-        [self.delegate profileViewController:self didDeselectAccessoryView:accessoryView forAccessoryViewOfKind:@""];
+        [self.delegate profileViewController:self didDeselectAccessoryView:accessoryView forAccessoryViewOfKind:accessoryView.representedAccessoryKind];
     }
 }
 
@@ -899,10 +922,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     
     DBProfileHeaderViewLayoutAttributes *layoutAttributes = [self layoutAttributesForAccessoryViewOfKind:DBProfileAccessoryKindHeader];
     
-    CGSize referenceSize = CGSizeMake(0, CGRectGetHeight([self frameForContentController]) * 0.18);
-    if ([self.delegate respondsToSelector:@selector(profileViewController:referenceSizeForAccessoryViewOfKind:)]) {
-        referenceSize = [self.delegate profileViewController:self referenceSizeForAccessoryViewOfKind:DBProfileAccessoryKindHeader];
-    }
+    CGSize referenceSize = [self _referenceSizeForAccessoryViewOfKind:DBProfileAccessoryKindHeader];
     
     if (contentOffset.y < 0 && layoutAttributes.options & DBProfileHeaderLayoutOptionStretch) {
         layoutAttributes.heightConstraint.constant = referenceSize.height - contentOffset.y;
@@ -1057,10 +1077,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
         }
     }
     
-    CGSize referenceSize = CGSizeMake(0, DBProfileViewControllerDefaultAvatarSize);
-    if ([self.delegate respondsToSelector:@selector(profileViewController:referenceSizeForAccessoryViewOfKind:)]) {
-        referenceSize = [self.delegate profileViewController:self referenceSizeForAccessoryViewOfKind:DBProfileAccessoryKindAvatar];
-    }
+    CGSize referenceSize = [self _referenceSizeForAccessoryViewOfKind:DBProfileAccessoryKindAvatar];
         
     layoutAttributes.widthConstraint.constant = MAX(referenceSize.width, referenceSize.height);
     layoutAttributes.leftConstraint.constant = layoutAttributes.insets.left - layoutAttributes.insets.right;
@@ -1208,10 +1225,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
                                                                    multiplier:1
                                                                      constant:0];
     
-    CGSize referenceSize = CGSizeMake(0, CGRectGetHeight([self frameForContentController]) * 0.18);
-    if ([self.delegate respondsToSelector:@selector(profileViewController:referenceSizeForAccessoryViewOfKind:)]) {
-        referenceSize = [self.delegate profileViewController:self referenceSizeForAccessoryViewOfKind:DBProfileAccessoryKindHeader];
-    }
+    CGSize referenceSize = [self _referenceSizeForAccessoryViewOfKind:DBProfileAccessoryKindHeader];
     
     layoutAttributes.heightConstraint = [NSLayoutConstraint constraintWithItem:headerView
                                                                      attribute:NSLayoutAttributeHeight
