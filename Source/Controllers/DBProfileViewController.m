@@ -647,8 +647,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
         self.segmentedControlView.frame = CGRectZero;
     }
     
-    // Add cover photo
-    if (!headerViewLayoutAttributes.hidden) {
+    if ([self hasRegisteredAccessoryViewOfKind:DBProfileAccessoryKindHeader]) {
         [scrollView addSubview:self.headerView];
         
         // Add pull-to-refresh
@@ -659,11 +658,11 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
         if (headerViewLayoutAttributes.options & DBProfileHeaderLayoutOptionExtend) {
             [scrollView insertSubview:self.detailsView aboveSubview:self.headerView];
         }
-    } else {
-        self.headerView.frame = CGRectZero;
     }
     
-    [scrollView addSubview:self.avatarView];
+    if ([self hasRegisteredAccessoryViewOfKind:DBProfileAccessoryKindAvatar]) {
+        [scrollView addSubview:self.avatarView];
+    }
     
     [self setUpConstraintsForScrollView:scrollView];
     
@@ -766,6 +765,11 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
         topInset -= CGRectGetHeight(self.headerView.frame);
     }
     _detailsViewTopConstraint.constant = -topInset;
+}
+
+- (BOOL)hasRegisteredAccessoryViewOfKind:(NSString *)accessoryViewKind
+{
+    return [self.registeredAccessoryViews objectForKey:accessoryViewKind];
 }
 
 - (void)_resetTitles {
@@ -904,22 +908,21 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     self.activityIndicator.alpha = (contentOffset.y > 0) ? 1 - contentOffset.y / 20 : 1;
 }
 
-- (void)updateAccessoryViewOfKind:(NSString *)accessoryKind withContentOffset:(CGPoint)contentOffset
+- (void)updateAccessoryViewsWithContentOffset:(CGPoint)contentOffset
 {
     if (self.isUpdating) return;
-
-    if ([accessoryKind isEqualToString:DBProfileAccessoryKindAvatar]) {
-        [self updateAvatarViewWithContentOffset:contentOffset];
-    }
-    else if ([accessoryKind isEqualToString:DBProfileAccessoryKindHeader]) {
+    
+    if ([self hasRegisteredAccessoryViewOfKind:DBProfileAccessoryKindHeader]) {
         [self updateHeaderViewWithContentOffset:contentOffset];
+    }
+    
+    if ([self hasRegisteredAccessoryViewOfKind:DBProfileAccessoryKindAvatar]) {
+        [self updateAvatarViewWithContentOffset:contentOffset];
     }
 }
 
 - (void)updateHeaderViewWithContentOffset:(CGPoint)contentOffset
 {
-    if (self.isUpdating) return;
-    
     DBProfileHeaderViewLayoutAttributes *layoutAttributes = [self layoutAttributesForAccessoryViewOfKind:DBProfileAccessoryKindHeader];
     
     CGSize referenceSize = [self _referenceSizeForAccessoryViewOfKind:DBProfileAccessoryKindHeader];
@@ -1002,10 +1005,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     CGPoint contentOffset = scrollView.contentOffset;
     contentOffset.y += scrollView.contentInset.top;
     
-    for (NSString *accessoryKind in [self.registeredAccessoryViews allKeys]) {
-        [self updateAccessoryViewOfKind:accessoryKind withContentOffset:contentOffset];
-    }
-
+    [self updateAccessoryViewsWithContentOffset:contentOffset];
     [self updateTitleViewWithContentOffset:contentOffset];
     [self handlePullToRefreshWithScrollView:scrollView];
     
@@ -1024,8 +1024,13 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 
 - (void)updateAccessoryViewConstraints
 {
-    [self updateHeaderViewConstraints];
-    [self updateAvatarViewConstraints];
+    if ([self hasRegisteredAccessoryViewOfKind:DBProfileAccessoryKindHeader]) {
+        [self updateHeaderViewConstraints];
+    }
+    
+    if ([self hasRegisteredAccessoryViewOfKind:DBProfileAccessoryKindAvatar]) {
+        [self updateAvatarViewConstraints];
+    }
 }
 
 - (void)updateHeaderViewConstraints
@@ -1172,7 +1177,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
                                                               constant:0];
     [scrollView addConstraint:_detailsViewTopConstraint];
     
-    if (self.headerView.superview) {
+    if ([self hasRegisteredAccessoryViewOfKind:DBProfileAccessoryKindHeader]) {
         [self setUpHeaderViewConstraintsForScrollView:scrollView];
         
         DBProfileAccessoryView *headerView = [self accessoryViewOfKind:DBProfileAccessoryKindHeader];
@@ -1198,7 +1203,9 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 
     }
     
-    [self setUpAvatarViewConstraintsForScrollView:scrollView];
+    if ([self hasRegisteredAccessoryViewOfKind:DBProfileAccessoryKindAvatar]) {
+        [self setUpAvatarViewConstraintsForScrollView:scrollView];
+    }
 }
 
 - (void)setUpHeaderViewConstraintsForScrollView:(UIScrollView *)scrollView

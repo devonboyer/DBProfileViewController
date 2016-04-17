@@ -96,9 +96,6 @@
 
 - (void)handleHighlightedLongPressGesture:(UILongPressGestureRecognizer *)gestureRecognizer
 {
-    // Check if this view should be highlighted
-    if (![self.delegate accessoryViewShouldHighlight:self]) return;
-    
     switch (gestureRecognizer.state) {
         case UIGestureRecognizerStateBegan:
             [self setHighlighted:YES animated:YES];
@@ -134,11 +131,13 @@
         }
     };
     
-    if (animated) {
-        [UIView animateWithDuration:0.12 animations:animationBlock];
-    }
-    else {
-        [UIView performWithoutAnimation:animationBlock];
+    if ([self.delegate accessoryViewShouldHighlight:self]) {
+        if (animated) {
+            [UIView animateWithDuration:0.12 animations:animationBlock];
+        }
+        else {
+            [UIView performWithoutAnimation:animationBlock];
+        }
     }
     
     if (selected && [self.delegate respondsToSelector:@selector(accessoryViewWasSelected:)]) {
@@ -158,7 +157,7 @@
 
 - (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated
 {
-    if (_highlighted == highlighted) return;
+    if (_highlighted == highlighted || ![self.delegate accessoryViewShouldHighlight:self]) return;
     _highlighted = highlighted;
     
     if (self.isSelected) return;
@@ -173,7 +172,8 @@
     
     if (animated) {
         [UIView animateWithDuration:0.12 animations:animationBlock];
-    } else {
+    }
+    else {
         [UIView performWithoutAnimation:animationBlock];
     }
     
