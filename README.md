@@ -10,40 +10,10 @@
 
 ## Overview
 
-A customizable library for displaying a user profile interface consisting of a cover photo, profile picture, segmented control, and an array of content view controllers. It was designed to address two use cases simultaneously:
+A customizable library for displaying a collection of content controllers and customizable accessory views associated with a profile interface. It was designed to address two use cases simultaneously:
 
 1. Provide good looking, high quality implementations of familiar profile experiences out of the box. By default a `DBProfileViewController` is styled to look much like a Twitter profile.
-2. Enable quick and easy customization of the user experience via properties which change the appearance and behaviour of the cover photo and profile picture.
-
-## Quick Start
-
-The table below details the most important classes and is hyperlinked directly to the current header file. All classes are fully documented.
-
-<table>
-    <tr><th colspan="2" style="text-align:center;">Controllers</th></tr>
-    <tr>
-        <td><a href="Source/Controllers/DBProfileViewController.h">DBProfileViewController</a></td>
-        <td>A view controller that is specialized to display a profile interface.</td>
-    </tr>
-    <tr><th colspan="2" style="text-align:center;">Protocols</th></tr>
-    <tr>
-        <td><a href="Source/Protocols/DBProfileContentPresenting.h">DBProfileContentPresenting</a></td>
-        <td>A protocol that is adopted by classes that are to be displayed as content controllers of a <a       href="Source/Controllers/DBProfileViewController.h">DBProfileViewController</a>.</td>
-    </tr>
-    <tr><th colspan="2" style="text-align:center;">Views</th></tr>
-    <tr>
-        <td><a href="Source/Views/DBProfileDetailsView.h">DBProfileDetailsView</a></td>
-        <td>A configurable view that displays profile details.</td>
-    </tr>
-    <tr>
-        <td><a href="Source/Views/DBProfileCoverPhotoView.h">DBProfileCoverPhotoView</a></td>
-        <td>A configurable view that displays a cover photo image.</td>
-    </tr>
-    <tr>
-        <td><a href="Source/Views/DBProfileAvatarView.h">DBProfileAvatarView</a></td>
-        <td>A configurable view that displays an avatar image.</td>
-    </tr>
-</table>
+2. Enable quick and easy customization of the user experience via layout attributes which change the appearance and behaviour of the accessory views.
 
 ## Installation
 
@@ -69,6 +39,34 @@ $ pod install
 ```
 
 These instructions will setup your local CocoaPods environment and import DBProfileViewController into your project.
+
+## Getting Started
+
+1. Subclass - Subclass DBProfileViewController
+2. Implement - The controller declares delegate and data source protocols. Your subclasses must implement these protocols.
+3. Customize - The controller uses layout attributes to allow for effortless customization of accessory views.
+
+## Content Controllers
+
+View controllers that you wish too use as content controllers of a `DBProfileViewController` must conform to the `DBProfileContentPresenting` protocol.
+
+## Accessory Views
+
+There are 2 types of supported accessory views: `DBProfileAccessoryKindAvatar` and `DBProfileAccessoryKindHeader`. You must register the class you would like to use for a specfied accessory kind. For covenience, the library includes `DBProfileCoverAvatarView` and `DBProfileCoverPhotoView` which provide sample implementations for an avatar view and header view, respectively.
+
+```
+[self registerClass:[DBProfileAvatarView class] forAccessoryViewOfKind:DBProfileAccessoryKindAvatar];
+[self registerClass:[DBProfileCoverPhotoView class] forAccessoryViewOfKind:DBProfileAccessoryKindHeader];
+```
+
+### Layout Attributes
+
+To customize the appearance and behaviour of accessory views you can change the associated layout attributes for the accessory view. The `DBProfileAccessoryViewLayoutAttributes` object manages the layout-related attributes for an accessory view in a profile view controller.
+
+```
+DBProfileHeaderViewLayoutAttributes *layoutAttributes = [self layoutAttributesForAccessoryViewOfKind:DBProfileAccessoryKindHeader];
+layoutAttributes.style = DBProfileHeaderLayoutStyleNavigation;
+```
 
 ## Author
 
