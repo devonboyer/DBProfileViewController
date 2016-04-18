@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.0.0
+
+### Public API Changes
+
+This version introduces accessory views and layout attributes. An accessory view is an abstraction of the cover photo and avatar views. Many previously configurable properties of the cover photo and avatar views are now managed through the associated layout attributes object.
+
 ## 1.0.4
 
 ## Bug Fixes
