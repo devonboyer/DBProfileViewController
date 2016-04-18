@@ -96,6 +96,12 @@ NS_ASSUME_NONNULL_BEGIN
  shouldHighlightAccessoryView:(__kindof DBProfileAccessoryView *)accessoryView
        forAccessoryViewOfKind:(NSString *)accessoryViewKind;
 
+/*!
+ @abstract Asks the delegate for the size of the accessory view kind.
+ @param profileViewController The profile view controller that unhighlighted the accessory view.
+ @param accessoryViewKind A string that identifies the type of the accessory view
+ @return The size of the header.
+ */
 - (CGSize)profileViewController:(DBProfileViewController *)profileViewController referenceSizeForAccessoryViewOfKind:(NSString *)accessoryViewKind;
 
 @end
