@@ -11,7 +11,6 @@
 #import "DBProfileViewController.h"
 #import "DBProfileObserver.h"
 #import "DBProfileDetailsView.h"
-#import "DBProfileAccessoryView.h"
 #import "DBProfileAccessoryView_Private.h"
 #import "DBProfileAvatarView.h"
 #import "DBProfileCoverPhotoView.h"
@@ -19,10 +18,10 @@
 #import "DBProfileSegmentedControlView.h"
 #import "DBProfileCustomNavigationBar.h"
 #import "DBProfileViewControllerUpdateContext.h"
-#import "DBProfileAccessoryViewLayoutAttributes.h"
 #import "UIBarButtonItem+DBProfileViewController.h"
 
-CGFloat DBProfileViewControllerNavigationBarHeightForTraitCollection(UITraitCollection *traitCollection) {
+static CGFloat DBProfileViewControllerNavigationBarHeightForTraitCollection(UITraitCollection *traitCollection)
+{
     switch (traitCollection.verticalSizeClass) {
         case UIUserInterfaceSizeClassCompact:
             return 32;
@@ -33,10 +32,6 @@ CGFloat DBProfileViewControllerNavigationBarHeightForTraitCollection(UITraitColl
 
 NSString * const DBProfileAccessoryKindAvatar = @"DBProfileAccessoryKindAvatar";
 NSString * const DBProfileAccessoryKindHeader = @"DBProfileAccessoryKindHeader";
-
-static const CGFloat DBProfileViewControllerDefaultAvatarSize = 72.0;
-
-static const CGFloat DBProfileViewControllerDefaultHeaderSize = 120.0;
 
 static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
 
@@ -408,13 +403,12 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     DBProfileAccessoryViewLayoutAttributes *layoutAttributes = [layoutAttributesClass layoutAttributesForAccessoryViewOfKind:accessoryViewKind];
     [self.accessoryViewLayoutAttributes setObject:layoutAttributes forKey:accessoryViewKind];
     
-    // Apply layout attributes
-    [accessoryView applyLayoutAttributes:layoutAttributes];
-    
     if ([accessoryViewKind isEqualToString:DBProfileAccessoryKindHeader]) {
         DBProfileHeaderViewLayoutAttributes *layoutAttributes = [self layoutAttributesForAccessoryViewOfKind:DBProfileAccessoryKindHeader];
         [self.customNavigationBar setItems:@[layoutAttributes.navigationItem]];
     }
+    
+    [self invalidateLayoutAttributesForAccessoryViewOfKind:accessoryViewKind];
 }
 
 - (DBProfileAccessoryView *)accessoryViewOfKind:(NSString *)accessoryViewKind
@@ -427,6 +421,12 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 {
     NSAssert(accessoryViewKind == DBProfileAccessoryKindAvatar || accessoryViewKind == DBProfileAccessoryKindHeader, @"invalid accessory view kind");
     return [self.accessoryViewLayoutAttributes objectForKey:accessoryViewKind];
+}
+
+- (void)invalidateLayoutAttributesForAccessoryViewOfKind:(NSString *)accessoryViewKind
+{
+    DBProfileAccessoryView *accessoryView = [self accessoryViewOfKind:accessoryViewKind];
+    [accessoryView applyLayoutAttributes:[self layoutAttributesForAccessoryViewOfKind:accessoryViewKind]];
 }
 
 - (void)beginUpdates
@@ -495,11 +495,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     DBProfileHeaderViewLayoutAttributes *layoutAttributes = [self layoutAttributesForAccessoryViewOfKind:DBProfileAccessoryKindHeader];
     self.customNavigationBar.hidden = layoutAttributes.style != DBProfileHeaderLayoutStyleNavigation;
     
-    // Apply layout attributes to accessory views
-    for (NSString *accessoryViewKind in [self.registeredAccessoryViews allKeys]) {
-        DBProfileAccessoryView *accessoryView = [self accessoryViewOfKind:accessoryViewKind];
-        [accessoryView applyLayoutAttributes:[self layoutAttributesForAccessoryViewOfKind:accessoryViewKind]];
-    }
+    [self invalidateLayoutAttributesForAccessoryViewOfKind:DBProfileAccessoryKindHeader];
 }
 
 - (void)endRefreshing
@@ -810,20 +806,14 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 - (CGSize)_referenceSizeForAccessoryViewOfKind:(NSString *)accessoryViewKind
 {
     CGSize referenceSize;
-    if ([accessoryViewKind isEqualToString:DBProfileAccessoryKindHeader]) {
-        referenceSize = CGSizeMake(0, CGRectGetHeight([self frameForContentController]) * 0.18);
-    }
-    else if ([accessoryViewKind isEqualToString:DBProfileAccessoryKindAvatar]) {
-        referenceSize = CGSizeMake(0, DBProfileViewControllerDefaultAvatarSize);
-    }
     
     if ([self.delegate respondsToSelector:@selector(profileViewController:referenceSizeForAccessoryViewOfKind:)]) {
         referenceSize = [self.delegate profileViewController:self referenceSizeForAccessoryViewOfKind:accessoryViewKind];
     }
-//    else {
-//        DBProfileAccessoryViewLayoutAttributes *layoutAttributes = [self layoutAttributesForAccessoryViewOfKind:accessoryViewKind];
-//        referenceSize = layoutAttributes.referenceSize;
-//    }
+    else {
+        DBProfileAccessoryViewLayoutAttributes *layoutAttributes = [self layoutAttributesForAccessoryViewOfKind:accessoryViewKind];
+        referenceSize = layoutAttributes.referenceSize;
+    }
     
     return referenceSize;
 }
@@ -1046,10 +1036,6 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
         else {
             [NSLayoutConstraint activateConstraints:@[layoutAttributes.topLayoutGuideConstraint]];
             [NSLayoutConstraint deactivateConstraints:@[layoutAttributes.navigationConstraint, layoutAttributes.topSuperviewConstraint]];
-        }
-        
-        if (!(layoutAttributes.options & DBProfileHeaderLayoutOptionStretch)) {
-            [NSLayoutConstraint deactivateConstraints:@[layoutAttributes.topLayoutGuideConstraint, layoutAttributes.topSuperviewConstraint]];
         }
     }
     
@@ -1318,7 +1304,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
                                                                        toItem:nil
                                                                     attribute:NSLayoutAttributeNotAnAttribute
                                                                    multiplier:1
-                                                                     constant:DBProfileViewControllerDefaultAvatarSize];
+                                                                     constant:72];
     
     layoutAttributes.leftConstraint = [NSLayoutConstraint constraintWithItem:avatarView
                                                                    attribute:NSLayoutAttributeLeft

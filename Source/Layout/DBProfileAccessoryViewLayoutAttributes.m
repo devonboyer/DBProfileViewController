@@ -11,19 +11,36 @@
 #import "DBProfileAccessoryViewLayoutAttributes.h"
 #import "DBProfileViewController.h"
 
+static CGSize DBProfileAccessoryViewLayoutAttributesDefaultAvatarReferenceSize()
+{
+    return CGSizeMake(0, 72);
+}
+
+static CGSize DBProfileAccessoryViewLayoutAttributesDefaultHeaderReferenceSize()
+{
+    return CGSizeMake(0, CGRectGetHeight([UIScreen mainScreen].bounds) * 0.18);
+}
+
 @implementation DBProfileAccessoryViewLayoutAttributes
 
-+ (instancetype)layoutAttributesForAccessoryViewOfKind:(NSString *)accessoryKind
++ (instancetype)layoutAttributesForAccessoryViewOfKind:(NSString *)accessoryViewKind
 {
-    DBProfileAccessoryViewLayoutAttributes *layoutAttributes = [[[self class] alloc] initWithAccessoryKind:accessoryKind];
+    DBProfileAccessoryViewLayoutAttributes *layoutAttributes = [[[self class] alloc] initWithAccessoryViewKind:accessoryViewKind];
     return layoutAttributes;
 }
 
-- (instancetype)initWithAccessoryKind:(NSString *)accessoryKind
+- (instancetype)initWithAccessoryViewKind:(NSString *)accessoryViewKind
 {
     self = [self init];
     if (self) {
-        _representedAccessoryKind = accessoryKind;
+        _representedAccessoryKind = accessoryViewKind;
+        
+        if ([accessoryViewKind isEqualToString:DBProfileAccessoryKindHeader]) {
+            _referenceSize = DBProfileAccessoryViewLayoutAttributesDefaultHeaderReferenceSize();
+        }
+        else if ([accessoryViewKind isEqualToString:DBProfileAccessoryKindAvatar]) {
+            _referenceSize = DBProfileAccessoryViewLayoutAttributesDefaultAvatarReferenceSize();
+        }
     }
     return self;
 }

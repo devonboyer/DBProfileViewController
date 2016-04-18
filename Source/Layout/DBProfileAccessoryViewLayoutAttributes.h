@@ -10,6 +10,10 @@
 
 #import <Foundation/Foundation.h>
 
+/*!
+ @class DBProfileAccessoryViewLayoutAttributes
+ @abstract The `DBProfileAccessoryViewLayoutAttributes` object manages the layout-related attributes for a given accessory view in a profile view controller.
+ */
 @interface DBProfileAccessoryViewLayoutAttributes : NSObject
 
 + (instancetype)layoutAttributesForAccessoryViewOfKind:(NSString *)accessoryViewKind;
@@ -22,11 +26,11 @@
 
 @property (nonatomic, assign) BOOL hidden; // not implemented yet
 
-@property (nonatomic, assign) CGSize referenceSize; // not implemented yet
+@property (nonatomic, assign) CGSize referenceSize;
 
 @property (nonatomic, assign) CGFloat percentTransitioned; // only implemented for DBProfileAccessoryKindHeader
 
-// Constraints - don't touch
+// Constraints
 @property (nonatomic, strong) NSLayoutConstraint *leadingConstraint;
 @property (nonatomic, strong) NSLayoutConstraint *trailingConstraint;
 @property (nonatomic, strong) NSLayoutConstraint *leftConstraint;
@@ -48,6 +52,10 @@ typedef NS_ENUM(NSInteger, DBProfileAvatarLayoutAlignment) {
     DBProfileAvatarLayoutAlignmentCenter,
 };
 
+/*!
+ @class DBProfileAvatarViewLayoutAttributes
+ @abstract The `DBProfileAvatarViewLayoutAttributes` object manages the layout-related attributes for an avatar view in a profile view controller.
+ */
 @interface DBProfileAvatarViewLayoutAttributes : DBProfileAccessoryViewLayoutAttributes
 
 @property (nonatomic, assign) DBProfileAvatarLayoutAlignment alignment;
@@ -67,6 +75,10 @@ typedef NS_OPTIONS(NSUInteger, DBProfileHeaderLayoutOptions) {
     DBProfileHeaderLayoutOptionExtend = (1 << 2),
 };
 
+/*!
+ @class DBProfileHeaderViewLayoutAttributes
+ @abstract The `DBProfileHeaderViewLayoutAttributes` object manages the layout-related attributes for a header view in a profile view controller.
+ */
 @interface DBProfileHeaderViewLayoutAttributes : DBProfileAccessoryViewLayoutAttributes
 
 @property (nonatomic, strong, readonly) UINavigationItem *navigationItem;
@@ -75,7 +87,7 @@ typedef NS_OPTIONS(NSUInteger, DBProfileHeaderLayoutOptions) {
 
 @property (nonatomic, assign) DBProfileHeaderLayoutOptions options;
 
-// Constraints - don't touch
+// Constraints
 @property (nonatomic, strong) NSLayoutConstraint *navigationConstraint;
 @property (nonatomic, strong) NSLayoutConstraint *topLayoutGuideConstraint;
 @property (nonatomic, strong) NSLayoutConstraint *topSuperviewConstraint;

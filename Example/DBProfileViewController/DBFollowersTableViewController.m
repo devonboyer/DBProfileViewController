@@ -14,6 +14,7 @@
     [super viewDidLoad];
     
     self.title = @"Followers";
+    self.clearsSelectionOnViewWillAppear = NO;
     
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"Cell"];
 }

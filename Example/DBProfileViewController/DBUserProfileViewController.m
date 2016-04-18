@@ -54,11 +54,10 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
 //    detailsView.usernameLabel.text = @"by @devboyer";
 //    detailsView.descriptionLabel.text = @"A customizable library for creating stunning user profiles.";
     
-    DBProfileAvatarView *avatarView = (DBProfileAvatarView *)[self accessoryViewOfKind:DBProfileAccessoryKindAvatar];
+    DBProfileAvatarView *avatarView = [self accessoryViewOfKind:DBProfileAccessoryKindAvatar];
     [avatarView setAvatarImage:[UIImage imageNamed:@"demo-avatar"] animated:NO];
     
-    // Set cover photo and avatar images
-    DBProfileCoverPhotoView *coverPhotoView = (DBProfileCoverPhotoView *)[self accessoryViewOfKind:DBProfileAccessoryKindHeader];
+    DBProfileCoverPhotoView *coverPhotoView = [self accessoryViewOfKind:DBProfileAccessoryKindHeader];
     [coverPhotoView setCoverPhotoImage:[UIImage imageNamed:@"demo-header"] animated:NO];
     
     [self setStyle:self.style];
@@ -67,7 +66,7 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
 - (void)setStyle:(DBUserProfileViewControllerStyle)style {
     _style = style;
     
-    DBProfileAvatarView *avatarView = (DBProfileAvatarView *)[self accessoryViewOfKind:DBProfileAccessoryKindAvatar];
+    DBProfileAvatarView *avatarView = [self accessoryViewOfKind:DBProfileAccessoryKindAvatar];
     
     DBProfileHeaderViewLayoutAttributes *headerViewLayoutAttributes = [self layoutAttributesForAccessoryViewOfKind:DBProfileAccessoryKindHeader];
     
@@ -79,13 +78,13 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
         case DBUserProfileViewControllerStyle1:
             headerViewLayoutAttributes.style = DBProfileHeaderLayoutStyleNone;
         case DBUserProfileViewControllerStyle2:
-            avatarView.style = DBProfileAvatarStyleRoundedRect;
             avatarViewLayoutAttributes.alignment = DBProfileAvatarLayoutAlignmentLeft;
+            avatarView.style = DBProfileAvatarStyleRoundedRect;
             break;
         case DBUserProfileViewControllerStyle3: {
-            avatarView.style = DBProfileAvatarStyleRound;
             avatarViewLayoutAttributes.alignment = DBProfileAvatarLayoutAlignmentCenter;
-            
+            avatarView.style = DBProfileAvatarStyleRound;
+
             DBProfileDetailsView *detailsView = (DBProfileDetailsView *)self.detailsView;
             detailsView.nameLabel.textAlignment = NSTextAlignmentCenter;
             detailsView.usernameLabel.textAlignment = NSTextAlignmentCenter;

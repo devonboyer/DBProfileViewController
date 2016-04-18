@@ -10,12 +10,11 @@
 
 #import <UIKit/UIKit.h>
 
+#import "DBProfileAccessoryView.h"
+#import "DBProfileAccessoryViewLayoutAttributes.h"
 #import "DBProfileContentPresenting.h"
 #import "DBProfileViewControllerDelegate.h"
 #import "DBProfileViewControllerDataSource.h"
-
-@class DBProfileAccessoryView;
-@class DBProfileAccessoryViewLayoutAttributes;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -115,6 +114,12 @@ extern NSString * const DBProfileAccessoryKindHeader;
  */
 - (void)registerClass:(Class)viewClass forAccessoryViewOfKind:(NSString *)accessoryViewKind;
 
+/*!
+ @abstract Invalidates the current layout attributes and triggers a layout update.
+ @param accessoryViewKind A string that identifies the type of the accessory view
+ */
+- (void)invalidateLayoutAttributesForAccessoryViewOfKind:(NSString *)accessoryViewKind;
+
 ///----------------------------------------------
 /// @name Configuring Pull-To-Refresh
 ///----------------------------------------------
@@ -140,12 +145,12 @@ extern NSString * const DBProfileAccessoryKindHeader;
 ///---------------------------------------------
 
 /*!
- @abstract The index of the selected content controller.
+ @abstract The index of the displayed content controller.
  */
 @property (nonatomic, assign, readonly) NSUInteger indexForDisplayedContentController;
 
 /*!
- @abstract Selects a content controller in the profile view controller at the specified index.
+ @abstract Shows the content controller at the specified index.
  @param index An index identifying a content controller in the profile view controller.
  */
 - (void)showContentControllerAtIndex:(NSInteger)index;

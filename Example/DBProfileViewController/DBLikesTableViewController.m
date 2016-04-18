@@ -14,7 +14,8 @@
     [super viewDidLoad];
     
     self.title = @"Likes";
-    
+    self.clearsSelectionOnViewWillAppear = NO;
+
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"Cell"];
 }
 
