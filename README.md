@@ -52,7 +52,7 @@ View controllers that you wish too use as content controllers of a `DBProfileVie
 
 ## Accessory Views
 
-There are 2 types of supported accessory views: `DBProfileAccessoryKindAvatar` and `DBProfileAccessoryKindHeader`. You must register the class you would like to use for a specfied accessory kind. For covenience, the library includes `DBProfileCoverAvatarView` and `DBProfileCoverPhotoView` which provide sample implementations for an avatar view and header view, respectively.
+There are 2 types of supported accessory views: `DBProfileAccessoryKindAvatar` and `DBProfileAccessoryKindHeader`. You must register the class you would like to use for a specfied accessory kind. For covenience, the library includes `DBProfileAvatarView` and `DBProfileCoverPhotoView` which provide sample implementations for an avatar view and header view, respectively.
 
 ```
 [self registerClass:[DBProfileAvatarView class] forAccessoryViewOfKind:DBProfileAccessoryKindAvatar];
