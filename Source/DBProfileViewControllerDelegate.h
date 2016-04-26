@@ -52,9 +52,7 @@ NS_ASSUME_NONNULL_BEGIN
  *  @prarm avatarView The avatar view that was selected.
  *  @param accessoryViewKind A string that identifies the type of the accessory view
  */
-- (void)profileViewController:(DBProfileViewController *)profileViewController
-       didSelectAccessoryView:(__kindof DBProfileAccessoryView *)accessoryView
-       forAccessoryViewOfKind:(NSString *)accessoryViewKind;
+- (void)profileViewController:(DBProfileViewController *)profileViewController didSelectAccessoryView:(__kindof DBProfileAccessoryView *)accessoryView ofKind:(NSString *)accessoryViewKind;
 
 /**
  *  Tells the delegate that the accessory view has been deselected.
@@ -63,9 +61,7 @@ NS_ASSUME_NONNULL_BEGIN
  *  @prarm avatarView The accessory view that was deselected.
  *  @param accessoryViewKind A string that identifies the type of the accessory view
  */
-- (void)profileViewController:(DBProfileViewController *)profileViewController
-     didDeselectAccessoryView:(__kindof DBProfileAccessoryView *)accessoryView
-       forAccessoryViewOfKind:(NSString *)accessoryViewKind;
+- (void)profileViewController:(DBProfileViewController *)profileViewController didDeselectAccessoryView:(__kindof DBProfileAccessoryView *)accessoryView ofKind:(NSString *)accessoryViewKind;
 
 /**
  *  Tells the delegate that the accessory view was highlighted.
@@ -74,9 +70,7 @@ NS_ASSUME_NONNULL_BEGIN
  *  @prarm avatarView The accessory view that was highlighted.
  *  @param accessoryViewKind A string that identifies the type of the accessory view
  */
-- (void)profileViewController:(DBProfileViewController *)profileViewController
-    didHighlightAccessoryView:(__kindof DBProfileAccessoryView *)accessoryView
-       forAccessoryViewOfKind:(NSString *)accessoryViewKind;
+- (void)profileViewController:(DBProfileViewController *)profileViewController didHighlightAccessoryView:(__kindof DBProfileAccessoryView *)accessoryView ofKind:(NSString *)accessoryViewKind;
 
 /**
  *  Tells the delegate that the accessory view was unhighlighted.
@@ -85,9 +79,7 @@ NS_ASSUME_NONNULL_BEGIN
  *  @prarm avatarView The accessory view that was unhighlighted.
  *  @param accessoryViewKind A string that identifies the type of the accessory view
  */
-- (void)profileViewController:(DBProfileViewController *)profileViewController
-  didUnhighlightAccessoryView:(__kindof DBProfileAccessoryView *)accessoryView
-       forAccessoryViewOfKind:(NSString *)accessoryViewKind;
+- (void)profileViewController:(DBProfileViewController *)profileViewController didUnhighlightAccessoryView:(__kindof DBProfileAccessoryView *)accessoryView ofKind:(NSString *)accessoryViewKind;
 
 /**
  *  Asks the delegate if the accessory view should be highlighted during tracking.
@@ -98,9 +90,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @return YES if the accessory view should be highlighted during tracking, NO otherwise
  */
-- (BOOL)profileViewController:(DBProfileViewController *)profileViewController
- shouldHighlightAccessoryView:(__kindof DBProfileAccessoryView *)accessoryView
-       forAccessoryViewOfKind:(NSString *)accessoryViewKind;
+- (BOOL)profileViewController:(DBProfileViewController *)profileViewController shouldHighlightAccessoryView:(__kindof DBProfileAccessoryView *)accessoryView ofKind:(NSString *)accessoryViewKind;
 
 /**
  *  Asks the delegate for the size of the accessory view kind.

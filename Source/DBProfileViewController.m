@@ -183,7 +183,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
             [self scrollContentControllerToTop:displayedViewController animated:NO];
         }
         
-        // Tempoaray bug fix
+        // Tempoaray fix for content inset being calculated incorrectly before view appears.
         dispatch_async(dispatch_get_main_queue(), ^{
             [self adjustContentInsetForScrollView:self.contentControllers[self.indexForDisplayedContentController].contentScrollView];
         });
@@ -814,16 +814,16 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 
 - (BOOL)accessoryViewShouldHighlight:(DBProfileAccessoryView *)accessoryView
 {
-    if ([self.delegate respondsToSelector:@selector(profileViewController:shouldHighlightAccessoryView:forAccessoryViewOfKind:)]) {
-        return [self.delegate profileViewController:self shouldHighlightAccessoryView:accessoryView forAccessoryViewOfKind:accessoryView.representedAccessoryKind];
+    if ([self.delegate respondsToSelector:@selector(profileViewController:shouldHighlightAccessoryView:ofKind:)]) {
+        return [self.delegate profileViewController:self shouldHighlightAccessoryView:accessoryView ofKind:accessoryView.representedAccessoryKind];
     }
     return YES;
 }
 
 - (void)accessoryViewDidHighlight:(DBProfileAccessoryView *)accessoryView
 {
-    if ([self.delegate respondsToSelector:@selector(profileViewController:didHighlightAccessoryView:forAccessoryViewOfKind:)]) {
-        [self.delegate profileViewController:self didHighlightAccessoryView:accessoryView forAccessoryViewOfKind:accessoryView.representedAccessoryKind];
+    if ([self.delegate respondsToSelector:@selector(profileViewController:didHighlightAccessoryView:ofKind:)]) {
+        [self.delegate profileViewController:self didHighlightAccessoryView:accessoryView ofKind:accessoryView.representedAccessoryKind];
     }
     
     for (DBProfileAccessoryView *view in self.accessoryViews) {
@@ -835,15 +835,15 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 
 - (void)accessoryViewDidUnhighlight:(DBProfileAccessoryView *)accessoryView
 {
-    if ([self.delegate respondsToSelector:@selector(profileViewController:didUnhighlightAccessoryView:forAccessoryViewOfKind:)]) {
-        [self.delegate profileViewController:self didUnhighlightAccessoryView:accessoryView forAccessoryViewOfKind:accessoryView.representedAccessoryKind];
+    if ([self.delegate respondsToSelector:@selector(profileViewController:didUnhighlightAccessoryView:ofKind:)]) {
+        [self.delegate profileViewController:self didUnhighlightAccessoryView:accessoryView ofKind:accessoryView.representedAccessoryKind];
     }
 }
 
 - (void)accessoryViewWasSelected:(DBProfileAccessoryView *)accessoryView
 {
-    if ([self.delegate respondsToSelector:@selector(profileViewController:didSelectAccessoryView:forAccessoryViewOfKind:)]) {
-        [self.delegate profileViewController:self didSelectAccessoryView:accessoryView forAccessoryViewOfKind:accessoryView.representedAccessoryKind];
+    if ([self.delegate respondsToSelector:@selector(profileViewController:didSelectAccessoryView:ofKind:)]) {
+        [self.delegate profileViewController:self didSelectAccessoryView:accessoryView ofKind:accessoryView.representedAccessoryKind];
     }
     
     for (DBProfileAccessoryView *view in self.accessoryViews) {
@@ -855,8 +855,8 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 
 - (void)accessoryViewWasDeselected:(DBProfileAccessoryView *)accessoryView
 {
-    if ([self.delegate respondsToSelector:@selector(profileViewController:didDeselectAccessoryView:forAccessoryViewOfKind:)]) {
-        [self.delegate profileViewController:self didDeselectAccessoryView:accessoryView forAccessoryViewOfKind:accessoryView.representedAccessoryKind];
+    if ([self.delegate respondsToSelector:@selector(profileViewController:didDeselectAccessoryView:ofKind:)]) {
+        [self.delegate profileViewController:self didDeselectAccessoryView:accessoryView ofKind:accessoryView.representedAccessoryKind];
     }
 }
 
@@ -949,7 +949,11 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     CGAffineTransform avatarTransform = CGAffineTransformMakeScale(avatarScaleFactor, avatarScaleFactor);
     CGFloat avatarOffset = avatarViewLayoutAttributes.edgeInsets.bottom + avatarViewLayoutAttributes.edgeInsets.top;
     avatarTransform = CGAffineTransformTranslate(avatarTransform, 0, MAX(avatarOffset * percentScrolled, 0));
-    self.avatarView.transform = avatarTransform;
+    
+    // The avatar transform only needs to be applied if the avatar's frame is overlaying the header.
+    if (avatarOffset > 0) {
+        self.avatarView.transform = avatarTransform;
+    }
 }
 
 - (void)updateTitleViewWithContentOffset:(CGPoint)contentOffset

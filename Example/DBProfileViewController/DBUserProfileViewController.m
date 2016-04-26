@@ -67,17 +67,17 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
     
     DBProfileAvatarViewLayoutAttributes *avatarViewLayoutAttributes = [self layoutAttributesForAccessoryViewOfKind:DBProfileAccessoryKindAvatar];
     
-    headerViewLayoutAttributes.headerStyle = DBProfileHeaderLayoutStyleNavigation;
+    headerViewLayoutAttributes.headerStyle = DBProfileHeaderStyleNavigation;
     
     switch (style) {
         case DBUserProfileViewControllerStyle1:
-            headerViewLayoutAttributes.headerStyle = DBProfileHeaderLayoutStyleNone;
+            headerViewLayoutAttributes.headerStyle = DBProfileHeaderStyleDefault;
         case DBUserProfileViewControllerStyle2:
-            avatarViewLayoutAttributes.avatarAlignment = DBProfileAvatarLayoutAlignmentLeft;
+            avatarViewLayoutAttributes.avatarAlignment = DBProfileAvatarAlignmentLeft;
             avatarView.avatarStyle = DBProfileAvatarStyleRoundedRect;
             break;
         case DBUserProfileViewControllerStyle3: {
-            avatarViewLayoutAttributes.avatarAlignment = DBProfileAvatarLayoutAlignmentCenter;
+            avatarViewLayoutAttributes.avatarAlignment = DBProfileAvatarAlignmentCenter;
             avatarView.avatarStyle = DBProfileAvatarStyleRound;
 
             DBUserProfileDetailsView *detailsView = self.detailsView;
@@ -169,7 +169,7 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
     return CGSizeZero;
 }
 
-- (void)profileViewController:(DBProfileViewController *)profileViewController didSelectAccessoryView:(__kindof DBProfileAccessoryView *)accessoryView forAccessoryViewOfKind:(nonnull NSString *)accessoryViewKind
+- (void)profileViewController:(DBProfileViewController *)profileViewController didSelectAccessoryView:(__kindof DBProfileAccessoryView *)accessoryView ofKind:(nonnull NSString *)accessoryViewKind
 {
     [profileViewController deselectAccessoryViewOfKind:accessoryViewKind animated:YES];
 }
