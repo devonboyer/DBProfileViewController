@@ -10,15 +10,36 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef NS_ENUM(NSInteger, DBProfileHeaderLayoutStyle) {
-    DBProfileHeaderLayoutStyleNone,
-    DBProfileHeaderLayoutStyleNavigation,
+/**
+ *  Styles the can be applied to the header view.
+ */
+typedef NS_ENUM(NSInteger, DBProfileHeaderStyle) {
+    
+    /**
+     *  Use the default style.
+     */
+    DBProfileHeaderStyleDefault,
+    
+    /**
+     *  The header view will act as a navigation bar when the view is scrolled.
+     */
+    DBProfileHeaderStyleNavigation,
 };
 
-typedef NS_OPTIONS(NSUInteger, DBProfileHeaderLayoutOptions) {
-    DBProfileHeaderLayoutOptionNone = (1 << 0),
-    DBProfileHeaderLayoutOptionStretch = (1 << 1),
-    DBProfileHeaderLayoutOptionExtend = (1 << 2),
+/**
+ *  Options the can be applied to the header view.
+ */
+typedef NS_OPTIONS(NSUInteger, DBProfileHeaderOptions) {
+    
+    /**
+     *  No options will be applied.
+     */
+    DBProfileHeaderOptionNone = (1 << 0),
+    
+    /**
+     *  The header view will stretch when the view is scrolled.
+     */
+    DBProfileHeaderOptionStretch = (1 << 1),
 };
 
 /**
@@ -26,11 +47,26 @@ typedef NS_OPTIONS(NSUInteger, DBProfileHeaderLayoutOptions) {
  */
 @interface DBProfileHeaderViewLayoutAttributes : DBProfileAccessoryViewLayoutAttributes
 
+/**
+ *  The navigation item for of the associated header view when using `DBProfileHeaderStyleNavigation`.
+ *
+ *  The navigation item's left bar button item is set to a "chevron" icon by default.
+ */
 @property (nonatomic, readonly) UINavigationItem *navigationItem;
 
-@property (nonatomic) DBProfileHeaderLayoutStyle style;
+/**
+ *  The style of the associated header view.
+ *
+ *  Defaults to `DBProfileHeaderStyleNavigation`
+ */
+@property (nonatomic) DBProfileHeaderStyle headerStyle;
 
-@property (nonatomic) DBProfileHeaderLayoutOptions options;
+/**
+ *  The options to apply to the associated header view.
+ *
+ *  Defaults to `DBProfileHeaderOptionStretch`
+ */
+@property (nonatomic) DBProfileHeaderOptions headerOptions;
 
 @property (nonatomic, nullable) NSLayoutConstraint *navigationConstraint;
 @property (nonatomic, nullable) NSLayoutConstraint *topLayoutGuideConstraint;

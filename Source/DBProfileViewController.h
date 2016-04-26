@@ -111,7 +111,7 @@ FOUNDATION_EXPORT NSString * const DBProfileAccessoryKindHeader;
 /**
  *  Returns the accessory view for the specified accessory view kind.
  *
- *  @param accessoryViewKind A string that identifies the type of the accessory view
+ *  @param accessoryViewKind A string that identifies the type of the accessory view.
  *
  *  @return The accessory view for the specified accessory view kind.
  */
@@ -120,7 +120,7 @@ FOUNDATION_EXPORT NSString * const DBProfileAccessoryKindHeader;
 /**
  *  Returns the layout attributes for the specified accessory view kind.
  *
- *  @param accessoryViewKind A string that identifies the type of the accessory view
+ *  @param accessoryViewKind A string that identifies the type of the accessory view.
  *
  *  @return The layout attributes for the specified accessory view kind.
  */
@@ -130,14 +130,14 @@ FOUNDATION_EXPORT NSString * const DBProfileAccessoryKindHeader;
  *  Registers a class for use in creating accessory views.
  *
  *  @param viewClass The class to use for the accessory view.
- *  @param accessoryViewKind A string that identifies the type of the accessory view
+ *  @param accessoryViewKind A string that identifies the type of the accessory view.
  */
 - (void)registerClass:(Class)viewClass forAccessoryViewOfKind:(NSString *)accessoryViewKind;
 
 /*!
  *  Invalidates the current layout attributes and triggers a layout update.
  *
- *  @param accessoryViewKind A string that identifies the type of the accessory view
+ *  @param accessoryViewKind A string that identifies the type of the accessory view.
  */
 - (void)invalidateLayoutAttributesForAccessoryViewOfKind:(NSString *)accessoryViewKind;
 

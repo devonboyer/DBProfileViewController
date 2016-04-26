@@ -7,18 +7,18 @@
 //
 
 #import "DBProfileAvatarViewLayoutAttributes.h"
+#import "DBProfileViewController.h"
 
 @implementation DBProfileAvatarViewLayoutAttributes
 
-- (instancetype)init
+- (instancetype)initWithAccessoryViewKind:(NSString *)accessoryViewKind
 {
-    self = [super init];
+    self = [super initWithAccessoryViewKind:accessoryViewKind];
     if (self) {
-        _alignment = DBProfileAvatarLayoutAlignmentLeft;
-        _insets = UIEdgeInsetsMake(0, 15, 72/2.0 - 15, 0);
+        _avatarAlignment = DBProfileAvatarAlignmentLeft;
+        _edgeInsets = UIEdgeInsetsMake(0, 15, 72/2.0 - 15, 0);
     }
     return self;
 }
-
 
 @end

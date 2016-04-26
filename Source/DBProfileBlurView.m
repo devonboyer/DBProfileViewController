@@ -232,7 +232,7 @@
 {
     [super applyLayoutAttributes:layoutAttributes];
     
-    if (layoutAttributes.style == DBProfileHeaderLayoutStyleNone) {
+    if (layoutAttributes.headerStyle == DBProfileHeaderStyleDefault) {
         self.blurEnabled = NO;
     }
     

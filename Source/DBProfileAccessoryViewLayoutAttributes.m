@@ -29,8 +29,11 @@ static CGSize DBProfileAccessoryViewLayoutAttributesDefaultHeaderReferenceSize()
 
 - (instancetype)initWithAccessoryViewKind:(NSString *)accessoryViewKind
 {
-    self = [self init];
+    self = [super init];
     if (self) {
+        _frame = CGRectZero;
+        _bounds = CGRectZero;
+        _hidden = NO;
         _representedAccessoryKind = accessoryViewKind;
         
         if ([accessoryViewKind isEqualToString:DBProfileAccessoryKindHeader]) {
@@ -39,17 +42,6 @@ static CGSize DBProfileAccessoryViewLayoutAttributesDefaultHeaderReferenceSize()
         else if ([accessoryViewKind isEqualToString:DBProfileAccessoryKindAvatar]) {
             _referenceSize = DBProfileAccessoryViewLayoutAttributesDefaultAvatarReferenceSize();
         }
-    }
-    return self;
-}
-
-- (instancetype)init
-{
-    self = [super init];
-    if (self) {
-        _frame = CGRectZero;
-        _bounds = CGRectZero;
-        _hidden = NO;
     }
     return self;
 }

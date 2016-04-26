@@ -15,19 +15,55 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface DBProfileAccessoryViewLayoutAttributes : NSObject
 
+/**
+ *  Creates and returns a layout attributes object that represents the specified accessory view kind.
+ *
+ *  @param accessoryViewKind A string that identifies the type of the accessory view.
+ *
+ *  @return A new layout attributes object for the the specified accessory view kind.
+ */
 + (instancetype)layoutAttributesForAccessoryViewOfKind:(NSString *)accessoryViewKind;
 
+/**
+ *  Initializes a layout attributes object that represents the specified accessory view kind.
+ *
+ *  @param accessoryViewKind A string that identifies the type of the accessory view.
+ *
+ *  @return A new layout attributes object for the the specified accessory view kind.
+ */
+- (instancetype)initWithAccessoryViewKind:(NSString *)accessoryViewKind;
+
+- (instancetype)init NS_UNAVAILABLE;
+
+/**
+ *  The accessory kind represented by the layout attributes.
+ */
 @property (nonatomic, copy, readonly) NSString *representedAccessoryKind;
 
-@property (nonatomic) CGRect frame; // not implemented yet
+/**
+ *  The frame rectangle of the associated accessory view.
+ */
+@property (nonatomic) CGRect frame;
 
-@property (nonatomic) CGRect bounds; // not implemented yet
+/**
+ *  The bounds rectangle of the associated accessory view.
+ */
+@property (nonatomic) CGRect bounds;
 
-@property (nonatomic) BOOL hidden; // not implemented yet
+/**
+ *  Whether the accessory view is hidden of the associated accessory view.
+ */
+@property (nonatomic) BOOL hidden;
 
+/**
+ *  The size of the the associated accessory view's frame.
+ */
 @property (nonatomic) CGSize referenceSize;
 
-@property (nonatomic) CGFloat percentTransitioned; // only implemented for DBProfileAccessoryKindHeader
+/**
+ *  The percent that the associated accessory view has transitioned within its visible bounds.
+ */
+@property (nonatomic) CGFloat percentTransitioned;
 
 @property (nonatomic, nullable) NSLayoutConstraint *leadingConstraint;
 @property (nonatomic, nullable) NSLayoutConstraint *trailingConstraint;

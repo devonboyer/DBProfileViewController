@@ -10,20 +10,28 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef NS_ENUM(NSInteger, DBProfileAvatarLayoutAlignment) {
-    DBProfileAvatarLayoutAlignmentLeft,
-    DBProfileAvatarLayoutAlignmentRight,
-    DBProfileAvatarLayoutAlignmentCenter,
+typedef NS_ENUM(NSInteger, DBProfileAvatarAlignment) {
+    DBProfileAvatarAlignmentLeft,
+    DBProfileAvatarAlignmentRight,
+    DBProfileAvatarAlignmentCenter,
 };
 
 /**
- *  The `DBProfileHeaderViewLayoutAttributes` object manages the layout-related attributes for `DBProfileAccessoryKindAvatar` in a profile view controller.
+ *  The `DBProfileAvatarViewLayoutAttributes` object manages the layout-related attributes for `DBProfileAccessoryKindAvatar` in a profile view controller.
  */
 @interface DBProfileAvatarViewLayoutAttributes : DBProfileAccessoryViewLayoutAttributes
 
-@property (nonatomic) DBProfileAvatarLayoutAlignment alignment;
+/**
+ *  The horizontal of the associated avatar view.
+ *
+ *  Defaults to `DBProfileAvatarAlignmentLeft`
+ */
+@property (nonatomic) DBProfileAvatarAlignment avatarAlignment;
 
-@property (nonatomic) UIEdgeInsets insets;
+/**
+ *  The edge insets used to make fine-tune adjustments to the associated avatar view's frame.
+ */
+@property (nonatomic) UIEdgeInsets edgeInsets;
 
 @end
 

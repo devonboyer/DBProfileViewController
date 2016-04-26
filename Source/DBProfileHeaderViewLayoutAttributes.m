@@ -7,16 +7,17 @@
 //
 
 #import "DBProfileHeaderViewLayoutAttributes.h"
+#import "DBProfileViewController.h"
 
 @implementation DBProfileHeaderViewLayoutAttributes
 
-- (instancetype)init
+- (instancetype)initWithAccessoryViewKind:(NSString *)accessoryViewKind
 {
-    self = [super init];
+    self = [super initWithAccessoryViewKind:accessoryViewKind];
     if (self) {
         _navigationItem = [[UINavigationItem alloc] init];
-        _style = DBProfileHeaderLayoutStyleNavigation;
-        _options = DBProfileHeaderLayoutOptionStretch;
+        _headerStyle = DBProfileHeaderStyleNavigation;
+        _headerOptions = DBProfileHeaderOptionStretch;
     }
     return self;
 }

@@ -67,17 +67,17 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
     
     DBProfileAvatarViewLayoutAttributes *avatarViewLayoutAttributes = [self layoutAttributesForAccessoryViewOfKind:DBProfileAccessoryKindAvatar];
     
-    headerViewLayoutAttributes.style = DBProfileHeaderLayoutStyleNavigation;
+    headerViewLayoutAttributes.headerStyle = DBProfileHeaderLayoutStyleNavigation;
     
     switch (style) {
         case DBUserProfileViewControllerStyle1:
-            headerViewLayoutAttributes.style = DBProfileHeaderLayoutStyleNone;
+            headerViewLayoutAttributes.headerStyle = DBProfileHeaderLayoutStyleNone;
         case DBUserProfileViewControllerStyle2:
-            avatarViewLayoutAttributes.alignment = DBProfileAvatarLayoutAlignmentLeft;
+            avatarViewLayoutAttributes.avatarAlignment = DBProfileAvatarLayoutAlignmentLeft;
             avatarView.avatarStyle = DBProfileAvatarStyleRoundedRect;
             break;
         case DBUserProfileViewControllerStyle3: {
-            avatarViewLayoutAttributes.alignment = DBProfileAvatarLayoutAlignmentCenter;
+            avatarViewLayoutAttributes.avatarAlignment = DBProfileAvatarLayoutAlignmentCenter;
             avatarView.avatarStyle = DBProfileAvatarStyleRound;
 
             DBUserProfileDetailsView *detailsView = self.detailsView;
