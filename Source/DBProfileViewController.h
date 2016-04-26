@@ -82,13 +82,13 @@ FOUNDATION_EXPORT NSString * const DBProfileAccessoryKindHeader;
 @property (nonatomic) BOOL hidesSegmentedControlForSingleContentController;
 
 /**
- *  @name Configuring the Details Views
+ *  @name Configuring the Detail View
  */
 
 /**
  *  An optional view that is displayed above the content controllers.
  */
-@property (nonatomic, nullable) __kindof UIView *detailsView;
+@property (nonatomic, nullable) __kindof UIView *detailView;
 
 /**
  *  @name Configuring Accessory Views
@@ -172,6 +172,11 @@ FOUNDATION_EXPORT NSString * const DBProfileAccessoryKindHeader;
  *  The index of the displayed content controller.
  */
 @property (nonatomic, readonly) NSUInteger indexForDisplayedContentController;
+
+/**
+ *  The currently displayed content controller.
+ */
+@property (nonatomic, readonly) DBProfileContentController *displayedContentController;
 
 /**
  *  Shows the content controller at the specified index.

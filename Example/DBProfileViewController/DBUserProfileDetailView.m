@@ -1,14 +1,14 @@
 //
-//  DBUserProfileDetailsView.m
+//  DBUserProfileDetailView.m
 //  DBProfileViewController
 //
 //  Created by Devon Boyer on 2016-03-21.
 //  Copyright © 2016 Devon Boyer. All rights reserved.
 //
 
-#import "DBUserProfileDetailsView.h"
+#import "DBUserProfileDetailView.h"
 
-@interface DBUserProfileDetailsView ()
+@interface DBUserProfileDetailView ()
 
 @property (nonatomic, strong, readonly) UIButton *editProfileButton;
 @property (nonatomic, strong) UIView *supplementaryView;
@@ -17,7 +17,7 @@
 
 @end
 
-@implementation DBUserProfileDetailsView
+@implementation DBUserProfileDetailView
 
 - (instancetype)init {
     self = [super init];
@@ -80,7 +80,7 @@
 - (void)edit {
     self.showingSupplementaryView = !self.showingSupplementaryView;
     [self showSupplementaryView];
-    [self.delegate userProfileDetailsView:self didShowSupplementaryView:self.supplementaryView];
+    [self.delegate userProfileDetailView:self didShowSupplementaryView:self.supplementaryView];
 }
 
 - (void)showSupplementaryView {

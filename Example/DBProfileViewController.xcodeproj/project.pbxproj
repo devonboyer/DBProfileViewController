@@ -29,7 +29,7 @@
 		675B0F981C42A1E0000AADC6 /* DBLikesTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 675B0F971C42A1E0000AADC6 /* DBLikesTableViewController.m */; };
 		675D5BA01C3FCB72009E44CE /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 675D5B9F1C3FCB72009E44CE /* Launch Screen.storyboard */; };
 		675D5BA21C3FDCCC009E44CE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 675D5BA11C3FDCCC009E44CE /* Main.storyboard */; };
-		67E47C941C9FB38E00635AFD /* DBUserProfileDetailsView.m in Sources */ = {isa = PBXBuildFile; fileRef = 67E47C931C9FB38E00635AFD /* DBUserProfileDetailsView.m */; };
+		67E47C941C9FB38E00635AFD /* DBUserProfileDetailView.m in Sources */ = {isa = PBXBuildFile; fileRef = 67E47C931C9FB38E00635AFD /* DBUserProfileDetailView.m */; };
 		6BF96457D33B2A1824077D1C /* Pods_DBProfileViewController_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A74FB59D2E8276FE73FD3C57 /* Pods_DBProfileViewController_Tests.framework */; };
 /* End PBXBuildFile section */
 
@@ -77,8 +77,8 @@
 		675B0F971C42A1E0000AADC6 /* DBLikesTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBLikesTableViewController.m; sourceTree = "<group>"; };
 		675D5B9F1C3FCB72009E44CE /* Launch Screen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 		675D5BA11C3FDCCC009E44CE /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
-		67E47C921C9FB38E00635AFD /* DBUserProfileDetailsView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBUserProfileDetailsView.h; sourceTree = "<group>"; };
-		67E47C931C9FB38E00635AFD /* DBUserProfileDetailsView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBUserProfileDetailsView.m; sourceTree = "<group>"; };
+		67E47C921C9FB38E00635AFD /* DBUserProfileDetailView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBUserProfileDetailView.h; sourceTree = "<group>"; };
+		67E47C931C9FB38E00635AFD /* DBUserProfileDetailView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBUserProfileDetailView.m; sourceTree = "<group>"; };
 		762FB2E17229F4187C24A3D1 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		8E706C59695F1FFDD539460E /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		8EA72A854F72D8A6662DA9BB /* Pods-DBProfileViewController_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DBProfileViewController_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-DBProfileViewController_Tests/Pods-DBProfileViewController_Tests.release.xcconfig"; sourceTree = "<group>"; };
@@ -155,8 +155,8 @@
 				6003F59D195388D20070C39A /* DBAppDelegate.m */,
 				675D5BA11C3FDCCC009E44CE /* Main.storyboard */,
 				675D5B9F1C3FCB72009E44CE /* Launch Screen.storyboard */,
-				67E47C921C9FB38E00635AFD /* DBUserProfileDetailsView.h */,
-				67E47C931C9FB38E00635AFD /* DBUserProfileDetailsView.m */,
+				67E47C921C9FB38E00635AFD /* DBUserProfileDetailView.h */,
+				67E47C931C9FB38E00635AFD /* DBUserProfileDetailView.m */,
 				672EF5D41C4B09AA0035567E /* DBDemoViewController.h */,
 				672EF5D51C4B09AA0035567E /* DBDemoViewController.m */,
 				672EF5CD1C49E9B60035567E /* DBUserProfileViewController.h */,
@@ -439,7 +439,7 @@
 				6003F59E195388D20070C39A /* DBAppDelegate.m in Sources */,
 				675B0F921C42A1C4000AADC6 /* DBFollowersTableViewController.m in Sources */,
 				672EF5D61C4B09AA0035567E /* DBDemoViewController.m in Sources */,
-				67E47C941C9FB38E00635AFD /* DBUserProfileDetailsView.m in Sources */,
+				67E47C941C9FB38E00635AFD /* DBUserProfileDetailView.m in Sources */,
 				672EF5CF1C49E9B60035567E /* DBUserProfileViewController.m in Sources */,
 				675B0F951C42A1D4000AADC6 /* DBPhotosTableViewController.m in Sources */,
 				6003F59A195388D20070C39A /* main.m in Sources */,

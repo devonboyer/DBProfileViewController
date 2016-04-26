@@ -1,5 +1,5 @@
 //
-//  DBUserProfileDetailsView.h
+//  DBUserProfileDetailView.h
 //  DBProfileViewController
 //
 //  Created by Devon Boyer on 2016-03-21.
@@ -8,17 +8,17 @@
 
 @import DBProfileViewController;
 
-@class DBUserProfileDetailsView;
+@class DBUserProfileDetailView;
 
-@protocol DBUserProfileDetailsViewDelegate <NSObject>
+@protocol DBUserProfileDetailViewDelegate <NSObject>
 
-- (void)userProfileDetailsView:(DBUserProfileDetailsView *)detailsView didShowSupplementaryView:(UIView *)view;
+- (void)userProfileDetailView:(DBUserProfileDetailView *)detailView didShowSupplementaryView:(UIView *)view;
 
 @end
 
-@interface DBUserProfileDetailsView : UIView
+@interface DBUserProfileDetailView : UIView
 
-@property (nonatomic, weak) id<DBUserProfileDetailsViewDelegate> delegate;
+@property (nonatomic, weak) id<DBUserProfileDetailViewDelegate> delegate;
 
 @property (nonatomic, strong, readonly) UIView *contentView;
 @property (nonatomic, strong, readonly) UILabel *nameLabel;

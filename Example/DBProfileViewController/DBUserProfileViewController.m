@@ -10,7 +10,7 @@
 #import "DBFollowersTableViewController.h"
 #import "DBPhotosTableViewController.h"
 #import "DBLikesTableViewController.h"
-#import "DBUserProfileDetailsView.h"
+#import "DBUserProfileDetailView.h"
 
 static const NSInteger DBUserProfileNumberOfContentControllers = 3;
 
@@ -20,7 +20,7 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
     DBUserProfileContentControllerIndexLikes
 };
 
-@interface DBUserProfileViewController () <DBProfileViewControllerDataSource, DBProfileViewControllerDelegate, DBUserProfileDetailsViewDelegate>
+@interface DBUserProfileViewController () <DBProfileViewControllerDataSource, DBProfileViewControllerDelegate, DBUserProfileDetailViewDelegate>
 
 @end
 
@@ -33,21 +33,18 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
     
     self.delegate = self;
     self.dataSource = self;
-    
+
     // Register accessory views
     [self registerClass:[DBProfileAvatarView class] forAccessoryViewOfKind:DBProfileAccessoryKindAvatar];
     [self registerClass:[DBProfileCoverPhotoView class] forAccessoryViewOfKind:DBProfileAccessoryKindHeader];
     
-    // Customize profile appearance
-    self.allowsPullToRefresh = YES;
-    
-    // Customize details view
-    DBUserProfileDetailsView *detailsView = [[DBUserProfileDetailsView alloc] init];
-    detailsView.nameLabel.text = @"DBProfileViewController";
-    detailsView.usernameLabel.text = @"by @devboyer";
-    detailsView.descriptionLabel.text = @"A customizable library for creating stunning user profiles.";
-    detailsView.delegate = self;
-    self.detailsView = detailsView;
+    // Customize detail view
+    DBUserProfileDetailView *detailView = [[DBUserProfileDetailView alloc] init];
+    detailView.nameLabel.text = @"DBProfileViewController";
+    detailView.usernameLabel.text = @"by @devboyer";
+    detailView.descriptionLabel.text = @"A customizable library for creating stunning user profiles.";
+    detailView.delegate = self;
+    self.detailView = detailView;
         
     DBProfileAvatarView *avatarView = [self accessoryViewOfKind:DBProfileAccessoryKindAvatar];
     [avatarView setAvatarImage:[UIImage imageNamed:@"demo-avatar"] animated:NO];
@@ -55,21 +52,14 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
     DBProfileCoverPhotoView *coverPhotoView = [self accessoryViewOfKind:DBProfileAccessoryKindHeader];
     [coverPhotoView setCoverPhotoImage:[UIImage imageNamed:@"demo-header"] animated:NO];
     
-    [self setStyle:self.style];
-}
-
-- (void)setStyle:(DBUserProfileViewControllerStyle)style {
-    _style = style;
-    
-    DBProfileAvatarView *avatarView = [self accessoryViewOfKind:DBProfileAccessoryKindAvatar];
-    
+    // Customize layout attributes
     DBProfileHeaderViewLayoutAttributes *headerViewLayoutAttributes = [self layoutAttributesForAccessoryViewOfKind:DBProfileAccessoryKindHeader];
     
     DBProfileAvatarViewLayoutAttributes *avatarViewLayoutAttributes = [self layoutAttributesForAccessoryViewOfKind:DBProfileAccessoryKindAvatar];
     
     headerViewLayoutAttributes.headerStyle = DBProfileHeaderStyleNavigation;
     
-    switch (style) {
+    switch (self.style) {
         case DBUserProfileViewControllerStyle1:
             headerViewLayoutAttributes.headerStyle = DBProfileHeaderStyleDefault;
         case DBUserProfileViewControllerStyle2:
@@ -79,11 +69,11 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
         case DBUserProfileViewControllerStyle3: {
             avatarViewLayoutAttributes.avatarAlignment = DBProfileAvatarAlignmentCenter;
             avatarView.avatarStyle = DBProfileAvatarStyleRound;
-
-            DBUserProfileDetailsView *detailsView = self.detailsView;
-            detailsView.nameLabel.textAlignment = NSTextAlignmentCenter;
-            detailsView.usernameLabel.textAlignment = NSTextAlignmentCenter;
-            detailsView.descriptionLabel.textAlignment = NSTextAlignmentCenter;
+            
+            DBUserProfileDetailView *detailView = self.detailView;
+            detailView.nameLabel.textAlignment = NSTextAlignmentCenter;
+            detailView.usernameLabel.textAlignment = NSTextAlignmentCenter;
+            detailView.descriptionLabel.textAlignment = NSTextAlignmentCenter;
             
             break;
         }
@@ -94,7 +84,8 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
 
 #pragma mark - DBUserProfileDetailsViewDelegate
 
-- (void)userProfileDetailsView:(DBUserProfileDetailsView *)detailsView didShowSupplementaryView:(UIView *)view {
+- (void)userProfileDetailView:(DBUserProfileDetailView *)detailsView didShowSupplementaryView:(UIView *)view
+{
     [self beginUpdates];
     [detailsView invalidateIntrinsicContentSize];
     [self endUpdates];
@@ -102,7 +93,8 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
 
 #pragma mark - DBProfileViewControllerDataSource
 
-- (NSUInteger)numberOfContentControllersForProfileViewController:(DBProfileViewController *)profileViewController {
+- (NSUInteger)numberOfContentControllersForProfileViewController:(DBProfileViewController *)profileViewController
+{
     return DBUserProfileNumberOfContentControllers;
 }
 
@@ -154,13 +146,7 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
 - (CGSize)profileViewController:(DBProfileViewController *)controller referenceSizeForAccessoryViewOfKind:(NSString *)accessoryViewKind
 {
     if ([accessoryViewKind isEqualToString:DBProfileAccessoryKindAvatar]) {
-        switch (self.style) {
-            case DBUserProfileViewControllerStyle1:
-            case DBUserProfileViewControllerStyle2:
-                return CGSizeMake(0, 72);
-            case DBUserProfileViewControllerStyle3:
-                return CGSizeMake(0, 92);
-        }
+        return CGSizeMake(0, 72);
     }
     else if ([accessoryViewKind isEqualToString:DBProfileAccessoryKindHeader]) {
         return CGSizeMake(0, 120);
