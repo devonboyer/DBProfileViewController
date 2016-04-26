@@ -137,6 +137,8 @@ FOUNDATION_EXPORT NSString * const DBProfileAccessoryKindHeader;
 /*!
  *  Invalidates the current layout attributes and triggers a layout update.
  *
+ *  If any layout attributes are changed after `viewDidAppear:` is called, then this method must be called to trigger an appropriate layout update.
+ *
  *  @param accessoryViewKind A string that identifies the type of the accessory view.
  */
 - (void)invalidateLayoutAttributesForAccessoryViewOfKind:(NSString *)accessoryViewKind;
@@ -177,24 +179,6 @@ FOUNDATION_EXPORT NSString * const DBProfileAccessoryKindHeader;
  *  @param index An index identifying a content controller in the profile view controller.
  */
 - (void)showContentControllerAtIndex:(NSInteger)index;
-
-/**
- *  @name Managing Accessory View Selections
- */
-
-/**
- *  Selects the accessory view for the specified accessory view kind.
- *
- *  @param animated YES if selecting the accessory view should be animated, NO otherwise.
- */
-- (void)selectAccessoryViewOfKind:(NSString *)accessoryViewKind animated:(BOOL)animated;
-
-/**
- *  Deselects the accessory view for the specified accessory view kind.
- *
- *  @param animated YES if deselecting the accessory view should be animated, NO otherwise.
- */
-- (void)deselectAccessoryViewOfKind:(NSString *)accessoryViewKind animated:(BOOL)animated;
 
 /**
  *  @name Updating the Profile View Controller

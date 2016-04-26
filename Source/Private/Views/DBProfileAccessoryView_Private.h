@@ -13,14 +13,14 @@
 - (BOOL)accessoryViewShouldHighlight:(DBProfileAccessoryView *)accessoryView;
 - (void)accessoryViewDidHighlight:(DBProfileAccessoryView *)accessoryView;
 - (void)accessoryViewDidUnhighlight:(DBProfileAccessoryView *)accessoryView;
-- (void)accessoryViewWasSelected:(DBProfileAccessoryView *)accessoryView;
-- (void)accessoryViewWasDeselected:(DBProfileAccessoryView *)accessoryView;
+- (void)accessoryViewWasTapped:(DBProfileAccessoryView *)accessoryView;
+- (void)accessoryViewWasLongPressed:(DBProfileAccessoryView *)accessoryView;
 
 @end
 
 @interface DBProfileAccessoryView ()
 
-@property (nonatomic, weak) id<DBProfileAccessoryViewDelegate> delegate;
+@property (nonatomic, weak) id<DBProfileAccessoryViewDelegate> internalDelegate;
 
 @property (nonatomic, strong) NSString *representedAccessoryKind;
 

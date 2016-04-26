@@ -28,27 +28,14 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) UIView *backgroundView;
 
 /**
- *  The view used as the background of the accessory view when it is selected.
+ *  The view used as the background of the accessory view when it is highlighted.
  */
-@property (nonatomic) UIView *selectedBackgroundView;
-
-/**
- *  Whether the accessory view is selected.
- */
-@property (nonatomic, getter=isSelected) BOOL selected;
+@property (nonatomic) UIView *highlightedBackgroundView;
 
 /**
  *  Whether the accessory view is highlighted.
  */
 @property (nonatomic, getter=isHighlighted) BOOL highlighted;
-
-/**
- *  Sets the selected state of the accessory view, optionally with animation.
- *
- *  @param selected YES to set the accessory view as selected, NO to deselected.
- *  @param animated YES if the transition should be animated, NO otherwise.
- */
-- (void)setSelected:(BOOL)selected animated:(BOOL)animated;
 
 /**
  *  Sets the highlighted state of the accessory view, optionally with animation.
@@ -59,11 +46,29 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated;
 
 /**
+ *  @name Managing Layout Attributes
+ */
+
+/**
  *  Applies the specified layout attributes to the view.
  *
  *  @param layoutAttributes The layout attributes to apply.
  */
 - (void)applyLayoutAttributes:(DBProfileAccessoryViewLayoutAttributes *)layoutAttributes;
+
+/**
+ *  @name Configuring Gesture Recognizers
+ */
+
+/**
+ *  The gesture recognizer responsible for detecting when the to the accessory view receives a long press.
+ */
+@property (nonatomic, readonly) UILongPressGestureRecognizer *longPressGestureRecognizer;
+
+/**
+ *  The gesture recognizer responsible for detecting when the to the accessory view is tapped.
+ */
+@property (nonatomic, readonly) UITapGestureRecognizer *tapGestureRecognizer;
 
 @end
 

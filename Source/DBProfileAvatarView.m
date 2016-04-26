@@ -46,6 +46,9 @@
     
     [self updateConstraints];
     
+    // Bring the highlighted background view to the front so highlighting dims the view
+    [self bringSubviewToFront:self.highlightedBackgroundView];
+    
     self.hidden = NO;
     switch (self.avatarStyle) {
         case DBProfileAvatarStyleRound:

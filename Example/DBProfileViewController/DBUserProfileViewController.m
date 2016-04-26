@@ -151,7 +151,7 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
 
 #pragma mark - DBProfileViewControllerDelegate
 
-- (CGSize)profileViewController:(DBProfileViewController *)profileViewController referenceSizeForAccessoryViewOfKind:(NSString *)accessoryViewKind
+- (CGSize)profileViewController:(DBProfileViewController *)controller referenceSizeForAccessoryViewOfKind:(NSString *)accessoryViewKind
 {
     if ([accessoryViewKind isEqualToString:DBProfileAccessoryKindAvatar]) {
         switch (self.style) {
@@ -169,16 +169,21 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
     return CGSizeZero;
 }
 
-- (void)profileViewController:(DBProfileViewController *)profileViewController didSelectAccessoryView:(__kindof DBProfileAccessoryView *)accessoryView ofKind:(nonnull NSString *)accessoryViewKind
+- (void)profileViewController:(DBProfileViewController *)controller didLongPressAccessoryView:(__kindof DBProfileAccessoryView *)accessoryView ofKind:(NSString *)accessoryViewKind
 {
-    [profileViewController deselectAccessoryViewOfKind:accessoryViewKind animated:YES];
+    NSLog(@"Long Press");
 }
 
-- (void)profileViewController:(DBProfileViewController *)profileViewController willShowContentControllerAtIndex:(NSInteger)index { }
+- (void)profileViewController:(DBProfileViewController *)controller didTapAccessoryView:(__kindof DBProfileAccessoryView *)accessoryView ofKind:(NSString *)accessoryViewKind
+{
+    NSLog(@"Tap");
+}
 
-- (void)profileViewController:(DBProfileViewController *)profileViewController didShowContentControllerAtIndex:(NSInteger)index { }
+- (void)profileViewController:(DBProfileViewController *)controller willShowContentControllerAtIndex:(NSInteger)index { }
 
-- (void)profileViewController:(DBProfileViewController *)viewController didPullToRefreshContentControllerAtIndex:(NSInteger)index
+- (void)profileViewController:(DBProfileViewController *)controller didShowContentControllerAtIndex:(NSInteger)index { }
+
+- (void)profileViewController:(DBProfileViewController *)controller didPullToRefreshContentControllerAtIndex:(NSInteger)index
 {
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [self endRefreshing];

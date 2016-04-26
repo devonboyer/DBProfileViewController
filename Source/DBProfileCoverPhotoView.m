@@ -44,7 +44,8 @@ UIImage *DBProfileImageByCroppingImageToSize(UIImage *image, CGSize size) {
 
 @implementation DBProfileCoverPhotoView
 
-- (instancetype)init {
+- (instancetype)init
+{
     self = [super init];
     if (self) {
         self.backgroundColor = [UIColor whiteColor];
@@ -60,6 +61,14 @@ UIImage *DBProfileImageByCroppingImageToSize(UIImage *image, CGSize size) {
         [self addSubview:_tintView];
     }
     return self;
+}
+
+- (void)layoutSubviews
+{
+    [super layoutSubviews];
+    
+    // Bring the highlighted background view to the front so highlighting dims the view
+    [self bringSubviewToFront:self.highlightedBackgroundView];
 }
 
 - (void)setShouldApplyTint:(BOOL)shouldApplyTint {

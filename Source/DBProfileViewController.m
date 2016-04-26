@@ -387,7 +387,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     // Register the accessory view
     DBProfileAccessoryView *accessoryView = [[viewClass alloc] init];
     accessoryView.representedAccessoryKind = accessoryViewKind;
-    accessoryView.delegate = self;
+    accessoryView.internalDelegate = self;
 
     [self.registeredAccessoryViews setObject:accessoryView forKey:accessoryViewKind];
     
@@ -507,19 +507,6 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 - (void)showContentControllerAtIndex:(NSInteger)index
 {
     self.indexForDisplayedContentController = index;
-}
-
-- (void)selectAccessoryViewOfKind:(NSString *)accessoryViewKind animated:(BOOL)animated
-{
-    DBProfileAccessoryView *accessoryView = [self accessoryViewOfKind:accessoryViewKind];
-    [accessoryView setSelected:YES animated:animated];
-
-}
-
-- (void)deselectAccessoryViewOfKind:(NSString *)accessoryViewKind animated:(BOOL)animated
-{
-    DBProfileAccessoryView *accessoryView = [self accessoryViewOfKind:accessoryViewKind];
-    [accessoryView setSelected:NO animated:animated];
 }
 
 #pragma mark - Private Methods
@@ -825,12 +812,6 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     if ([self.delegate respondsToSelector:@selector(profileViewController:didHighlightAccessoryView:ofKind:)]) {
         [self.delegate profileViewController:self didHighlightAccessoryView:accessoryView ofKind:accessoryView.representedAccessoryKind];
     }
-    
-    for (DBProfileAccessoryView *view in self.accessoryViews) {
-        if (view != accessoryView && view.isSelected) {
-            [view setSelected:NO animated:YES];
-        }
-    }
 }
 
 - (void)accessoryViewDidUnhighlight:(DBProfileAccessoryView *)accessoryView
@@ -840,23 +821,17 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     }
 }
 
-- (void)accessoryViewWasSelected:(DBProfileAccessoryView *)accessoryView
+- (void)accessoryViewWasTapped:(DBProfileAccessoryView *)accessoryView
 {
-    if ([self.delegate respondsToSelector:@selector(profileViewController:didSelectAccessoryView:ofKind:)]) {
-        [self.delegate profileViewController:self didSelectAccessoryView:accessoryView ofKind:accessoryView.representedAccessoryKind];
-    }
-    
-    for (DBProfileAccessoryView *view in self.accessoryViews) {
-        if (view != accessoryView && view.isSelected) {
-            [view setSelected:NO animated:YES];
-        }
+    if ([self.delegate respondsToSelector:@selector(profileViewController:didTapAccessoryView:ofKind:)]) {
+        [self.delegate profileViewController:self didTapAccessoryView:accessoryView ofKind:accessoryView.representedAccessoryKind];
     }
 }
 
-- (void)accessoryViewWasDeselected:(DBProfileAccessoryView *)accessoryView
+- (void)accessoryViewWasLongPressed:(DBProfileAccessoryView *)accessoryView
 {
-    if ([self.delegate respondsToSelector:@selector(profileViewController:didDeselectAccessoryView:ofKind:)]) {
-        [self.delegate profileViewController:self didDeselectAccessoryView:accessoryView ofKind:accessoryView.representedAccessoryKind];
+    if ([self.delegate respondsToSelector:@selector(profileViewController:didLongPressAccessoryView:ofKind:)]) {
+        [self.delegate profileViewController:self didLongPressAccessoryView:accessoryView ofKind:accessoryView.representedAccessoryKind];
     }
 }
 

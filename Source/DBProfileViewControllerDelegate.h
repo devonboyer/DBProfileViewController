@@ -24,83 +24,83 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  *  Tells the delegate that a specified content controller is about to be displayed.
  *
- *  @param profileViewController The profile view controller that is showing the content controller.
+ *  @param controller The profile view controller that is showing the content controller.
  *  @prarm index The index locating the content controller in the profile view controller.
  */
-- (void)profileViewController:(DBProfileViewController *)profileViewController willShowContentControllerAtIndex:(NSInteger)index;
+- (void)profileViewController:(DBProfileViewController *)controller willShowContentControllerAtIndex:(NSInteger)index;
 
 /**
  *  Tells the delegate that a specified content controller is now displayed.
  *
- *  @param profileViewController The profile view controller that is showing the content controller.
+ *  @param controller The profile view controller that is showing the content controller.
  *  @prarm index The index locating the content controller in the profile view controller.
  */
-- (void)profileViewController:(DBProfileViewController *)profileViewController didShowContentControllerAtIndex:(NSInteger)index;
+- (void)profileViewController:(DBProfileViewController *)controller didShowContentControllerAtIndex:(NSInteger)index;
 
 /**
  *  Tells the delegate that the user has triggered a pull-to-refresh.
  *
- *  @param profileViewController The profile view controller that triggered a pull-to-refresh.
+ *  @param controller The profile view controller that triggered a pull-to-refresh.
  *  @prarm index The index locating the content controller in the profile view controller.
  */
-- (void)profileViewController:(DBProfileViewController *)profileViewController didPullToRefreshContentControllerAtIndex:(NSInteger)index;
-
-/**
- *  Tells the delegate that the accessory view has been selected.
- *
- *  @param profileViewController The profile view controller where the selection was made.
- *  @prarm avatarView The avatar view that was selected.
- *  @param accessoryViewKind A string that identifies the type of the accessory view
- */
-- (void)profileViewController:(DBProfileViewController *)profileViewController didSelectAccessoryView:(__kindof DBProfileAccessoryView *)accessoryView ofKind:(NSString *)accessoryViewKind;
-
-/**
- *  Tells the delegate that the accessory view has been deselected.
- *
- *  @param profileViewController The profile view controller where the selection was made.
- *  @prarm avatarView The accessory view that was deselected.
- *  @param accessoryViewKind A string that identifies the type of the accessory view
- */
-- (void)profileViewController:(DBProfileViewController *)profileViewController didDeselectAccessoryView:(__kindof DBProfileAccessoryView *)accessoryView ofKind:(NSString *)accessoryViewKind;
-
-/**
- *  Tells the delegate that the accessory view was highlighted.
- *
- *  @param profileViewController The profile view controller that highlighted the accessory view.
- *  @prarm avatarView The accessory view that was highlighted.
- *  @param accessoryViewKind A string that identifies the type of the accessory view
- */
-- (void)profileViewController:(DBProfileViewController *)profileViewController didHighlightAccessoryView:(__kindof DBProfileAccessoryView *)accessoryView ofKind:(NSString *)accessoryViewKind;
-
-/**
- *  Tells the delegate that the accessory view was unhighlighted.
- *
- *  @param profileViewController The profile view controller that unhighlighted the accessory view.
- *  @prarm avatarView The accessory view that was unhighlighted.
- *  @param accessoryViewKind A string that identifies the type of the accessory view
- */
-- (void)profileViewController:(DBProfileViewController *)profileViewController didUnhighlightAccessoryView:(__kindof DBProfileAccessoryView *)accessoryView ofKind:(NSString *)accessoryViewKind;
-
-/**
- *  Asks the delegate if the accessory view should be highlighted during tracking.
- *
- *  @param profileViewController The profile view controller that unhighlighted the accessory view.
- *  @prarm avatarView The accessory view that was unhighlighted.
- *  @param accessoryViewKind A string that identifies the type of the accessory view
- *
- *  @return YES if the accessory view should be highlighted during tracking, NO otherwise
- */
-- (BOOL)profileViewController:(DBProfileViewController *)profileViewController shouldHighlightAccessoryView:(__kindof DBProfileAccessoryView *)accessoryView ofKind:(NSString *)accessoryViewKind;
+- (void)profileViewController:(DBProfileViewController *)controller didPullToRefreshContentControllerAtIndex:(NSInteger)index;
 
 /**
  *  Asks the delegate for the size of the accessory view kind.
  *
- *  @param profileViewController The profile view controller that unhighlighted the accessory view.
+ *  @param controller The profile view controller that unhighlighted the accessory view.
  *  @param accessoryViewKind A string that identifies the type of the accessory view
  *
  *  @return The size of the header.
  */
-- (CGSize)profileViewController:(DBProfileViewController *)profileViewController referenceSizeForAccessoryViewOfKind:(NSString *)accessoryViewKind;
+- (CGSize)profileViewController:(DBProfileViewController *)controller referenceSizeForAccessoryViewOfKind:(NSString *)accessoryViewKind;
+
+/**
+ *  Tells the delegate that the accessory view has been long pressed.
+ *
+ *  @param controller The profile view controller where the event occurred.
+ *  @prarm accessoryView The accessoryView view that received a long press.
+ *  @param accessoryViewKind A string that identifies the type of the accessory view
+ */
+- (void)profileViewController:(DBProfileViewController *)controller didLongPressAccessoryView:(__kindof DBProfileAccessoryView *)accessoryView ofKind:(NSString *)accessoryViewKind;
+
+/**
+ *  Tells the delegate that the accessory view has been tapped.
+ *
+ *  @param controller The profile view controller where the event occurred.
+ *  @prarm accessoryView The accessoryView view that was tapped.
+ *  @param accessoryViewKind A string that identifies the type of the accessory view
+ */
+- (void)profileViewController:(DBProfileViewController *)controller didTapAccessoryView:(__kindof DBProfileAccessoryView *)accessoryView ofKind:(NSString *)accessoryViewKind;
+
+/**
+ *  Tells the delegate that the accessory view was highlighted.
+ *
+ *  @param controller The profile view controller where the event occurred.
+ *  @prarm accessoryView The accessoryView view that was highlighted.
+ *  @param accessoryViewKind A string that identifies the type of the accessory view
+ */
+- (void)profileViewController:(DBProfileViewController *)controller didHighlightAccessoryView:(__kindof DBProfileAccessoryView *)accessoryView ofKind:(NSString *)accessoryViewKind;
+
+/**
+ *  Tells the delegate that the accessory view was unhighlighted.
+ *
+ *  @param controller The profile view controller where the event occurred.
+ *  @prarm accessoryView The accessoryView view that was unhighlighted.
+ *  @param accessoryViewKind A string that identifies the type of the accessory view
+ */
+- (void)profileViewController:(DBProfileViewController *)controller didUnhighlightAccessoryView:(__kindof DBProfileAccessoryView *)accessoryView ofKind:(NSString *)accessoryViewKind;
+
+/**
+ *  Asks the delegate if the accessory view should be highlighted during tracking.
+ *
+ *  @param controller The profile view controller where the event occurred.
+ *  @prarm accessoryView The accessoryView view that should be highlighted.
+ *  @param accessoryViewKind A string that identifies the type of the accessory view
+ *
+ *  @return YES if the accessory view should be highlighted during tracking, NO otherwise
+ */
+- (BOOL)profileViewController:(DBProfileViewController *)controller shouldHighlightAccessoryView:(__kindof DBProfileAccessoryView *)accessoryView ofKind:(NSString *)accessoryViewKind;
 
 @end
 

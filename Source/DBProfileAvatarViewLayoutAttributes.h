@@ -10,9 +10,24 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/**
+ *  Specifies the horizontal alignment of the avatar view.
+ */
 typedef NS_ENUM(NSInteger, DBProfileAvatarAlignment) {
+    
+    /**
+     *  Left aligned.
+     */
     DBProfileAvatarAlignmentLeft,
+    
+    /**
+     *  Right aligned.
+     */
     DBProfileAvatarAlignmentRight,
+    
+    /**
+     *  Center aligned.
+     */
     DBProfileAvatarAlignmentCenter,
 };
 
