@@ -65,8 +65,8 @@ To customize the appearance and behaviour of accessory views you can change the 
 
 ```
 DBProfileHeaderViewLayoutAttributes *layoutAttributes = [self layoutAttributesForAccessoryViewOfKind:DBProfileAccessoryKindHeader];
-layoutAttributes.style = DBProfileHeaderLayoutStyleNavigation;
-layoutAttributes.options = DBProfileHeaderLayoutOptionStretch;
+layoutAttributes.headerStyle = DBProfileHeaderStyleNavigation;
+layoutAttributes.headerOptions = DBProfileHeaderOptionStretch;
 ```
 
 ## Author
