@@ -74,13 +74,13 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
             headerViewLayoutAttributes.style = DBProfileHeaderLayoutStyleNone;
         case DBUserProfileViewControllerStyle2:
             avatarViewLayoutAttributes.alignment = DBProfileAvatarLayoutAlignmentLeft;
-            avatarView.style = DBProfileAvatarStyleRoundedRect;
+            avatarView.avatarStyle = DBProfileAvatarStyleRoundedRect;
             break;
         case DBUserProfileViewControllerStyle3: {
             avatarViewLayoutAttributes.alignment = DBProfileAvatarLayoutAlignmentCenter;
-            avatarView.style = DBProfileAvatarStyleRound;
+            avatarView.avatarStyle = DBProfileAvatarStyleRound;
 
-            DBProfileDetailsView *detailsView = (DBProfileDetailsView *)self.detailsView;
+            DBUserProfileDetailsView *detailsView = self.detailsView;
             detailsView.nameLabel.textAlignment = NSTextAlignmentCenter;
             detailsView.usernameLabel.textAlignment = NSTextAlignmentCenter;
             detailsView.descriptionLabel.textAlignment = NSTextAlignmentCenter;
@@ -171,7 +171,7 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
 
 - (void)profileViewController:(DBProfileViewController *)profileViewController didSelectAccessoryView:(__kindof DBProfileAccessoryView *)accessoryView forAccessoryViewOfKind:(nonnull NSString *)accessoryViewKind
 {
-    [profileViewController deselectAccessoryView:accessoryView animated:YES];
+    [profileViewController deselectAccessoryViewOfKind:accessoryViewKind animated:YES];
 }
 
 - (void)profileViewController:(DBProfileViewController *)profileViewController willShowContentControllerAtIndex:(NSInteger)index { }
