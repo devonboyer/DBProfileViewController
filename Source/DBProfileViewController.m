@@ -832,7 +832,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     return referenceSize;
 }
 
-#pragma mark - DBProfileAccessoryViewDelegate
+#pragma mark - Accessory View Delegate
 
 - (BOOL)accessoryViewShouldHighlight:(DBProfileAccessoryView *)accessoryView
 {

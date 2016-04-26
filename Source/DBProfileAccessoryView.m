@@ -12,8 +12,6 @@
 
 @interface DBProfileAccessoryView () <UIGestureRecognizerDelegate>
 
-@property (nonatomic, readonly) UILongPressGestureRecognizer *highlightedLongPressGestureRecognizer;
-
 @end
 
 @implementation DBProfileAccessoryView
@@ -33,14 +31,9 @@
         self.highlightedBackgroundView.backgroundColor = [UIColor colorWithWhite:0 alpha:0.2];
         
         // Setup gesture recognizers
-        
-        _highlightedLongPressGestureRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleHighlightedLongPressGesture:)];
-        self.highlightedLongPressGestureRecognizer.minimumPressDuration = 0.0;
-        self.highlightedLongPressGestureRecognizer.delegate = self;
-        [self addGestureRecognizer:self.highlightedLongPressGestureRecognizer];
-    
         _longPressGestureRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPressGesture:)];
         self.longPressGestureRecognizer.minimumPressDuration = 0.6;
+        self.longPressGestureRecognizer.cancelsTouchesInView = NO;
         self.longPressGestureRecognizer.delegate = self;
         [self addGestureRecognizer:self.longPressGestureRecognizer];
         
@@ -112,6 +105,21 @@
     }
 }
 
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+{
+    [self setHighlighted:YES animated:YES];
+}
+
+- (void)touchesCancelled:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+{
+    [self setHighlighted:NO animated:YES];
+}
+
+- (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+{
+    [self setHighlighted:NO animated:YES];
+}
+
 #pragma mark - Actions
 
 - (void)handleLongPressGesture:(UILongPressGestureRecognizer *)gestureRecognizer
@@ -131,21 +139,6 @@
 {
     if ([self.internalDelegate respondsToSelector:@selector(accessoryViewWasTapped:)]) {
         [self.internalDelegate accessoryViewWasTapped:self];
-    }
-}
-
-- (void)handleHighlightedLongPressGesture:(UILongPressGestureRecognizer *)gestureRecognizer
-{
-    switch (gestureRecognizer.state) {
-        case UIGestureRecognizerStateBegan:
-            [self setHighlighted:YES animated:YES];
-            break;
-        case UIGestureRecognizerStateCancelled:
-        case UIGestureRecognizerStateEnded:
-            [self setHighlighted:NO animated:YES];
-            break;
-        default:
-            break;
     }
 }
 
