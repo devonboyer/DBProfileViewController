@@ -178,7 +178,7 @@ FOUNDATION_EXPORT NSString * const DBProfileAccessoryKindHeader;
 /**
  *  The currently displayed content controller.
  */
-@property (nonatomic, readonly) DBProfileContentController *currentlyDisplayedContentController;
+@property (nonatomic, nullable, readonly) DBProfileContentController *currentlyDisplayedContentController;
 
 /**
  *  Shows the content controller at the specified index.

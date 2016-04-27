@@ -31,16 +31,18 @@ static CGSize DBProfileAccessoryViewLayoutAttributesDefaultHeaderReferenceSize()
 {
     self = [super init];
     if (self) {
-        _frame = CGRectZero;
-        _bounds = CGRectZero;
-        _hidden = NO;
         _representedAccessoryKind = accessoryViewKind;
+
+        self.frame = CGRectZero;
+        self.bounds = CGRectZero;
+        self.hidden = NO;
+        self.transform = CGAffineTransformIdentity;
         
         if ([accessoryViewKind isEqualToString:DBProfileAccessoryKindHeader]) {
-            _referenceSize = DBProfileAccessoryViewLayoutAttributesDefaultHeaderReferenceSize();
+            self.referenceSize = DBProfileAccessoryViewLayoutAttributesDefaultHeaderReferenceSize();
         }
         else if ([accessoryViewKind isEqualToString:DBProfileAccessoryKindAvatar]) {
-            _referenceSize = DBProfileAccessoryViewLayoutAttributesDefaultAvatarReferenceSize();
+            self.referenceSize = DBProfileAccessoryViewLayoutAttributesDefaultAvatarReferenceSize();
         }
     }
     return self;

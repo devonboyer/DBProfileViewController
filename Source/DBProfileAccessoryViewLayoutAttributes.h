@@ -50,6 +50,9 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic) CGRect bounds;
 
+
+@property (nonatomic) CGAffineTransform transform;
+
 /**
  *  Whether the accessory view is hidden of the associated accessory view.
  */

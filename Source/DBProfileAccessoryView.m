@@ -179,7 +179,7 @@
 
 - (void)applyLayoutAttributes:(DBProfileAccessoryViewLayoutAttributes *)layoutAttributes
 {
-    // override in subclass
+    self.transform = layoutAttributes.transform;
 }
 
 #pragma mark - UIGestureRecognizerDelegate
