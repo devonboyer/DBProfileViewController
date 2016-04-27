@@ -181,7 +181,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     self.automaticallyAdjustsScrollViewInsets = !showOverlayView;
     
     if (!self.hasAppeared) {
-        [self reloadData];
+        [self reloadContentControllers];
         
         [self.view setNeedsUpdateConstraints];
         
@@ -215,6 +215,13 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     }
 }
 
+- (void)updateViewConstraints {
+    [self.registeredAccessoryViews enumerateKeysAndObjectsUsingBlock:^(NSString *_Nonnull kind, id  _Nonnull obj, BOOL * _Nonnull stop) {
+        [self invalidateLayoutAttributesForAccessoryViewOfKind:kind];
+    }];
+    [super updateViewConstraints];
+}
+
 - (UIStatusBarStyle)preferredStatusBarStyle {
     return UIStatusBarStyleLightContent;
 }
@@ -230,11 +237,6 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 
 - (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection {
     [super traitCollectionDidChange:previousTraitCollection];
-    
-    // Reset the navigation view constraints to allow the system to determine the height
-    [self.overlayView removeFromSuperview];
-    [self addOverlayView];
-    [self setupOverlayViewConstraints];
     
     // The scroll view content inset needs to be recalculated for the new size class
     UIScrollView *scrollView = [self.currentlyDisplayedContentController contentScrollView];
@@ -317,7 +319,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 - (void)setHidesSegmentedControlForSingleContentController:(BOOL)hidesSegmentedControlForSingleContentController
 {
     _hidesSegmentedControlForSingleContentController = hidesSegmentedControlForSingleContentController;
-    [self reloadData];
+    [self reloadContentControllers];
 }
 
 - (void)setDetailView:(__kindof UIView *)detailView
@@ -328,13 +330,13 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     if (!_detailView) {
         _detailView = [[UIView alloc] init];
     }
-    [self reloadData];
+    [self reloadContentControllers];
 }
 
 - (void)setAllowsPullToRefresh:(BOOL)allowsPullToRefresh
 {
     _allowsPullToRefresh = allowsPullToRefresh;
-    [self reloadData];
+    [self reloadContentControllers];
 }
 
 #pragma mark - DBProfileViewController
@@ -445,74 +447,6 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     }
 }
 
-- (void)beginUpdates
-{
-    self.updating = YES;
-    self.updateContext = [[DBProfileViewControllerUpdateContext alloc] init];
-    self.updateContext.beforeUpdatesDetailsViewHeight = CGRectGetHeight(self.detailView.frame);
-    [self.view invalidateIntrinsicContentSize];
-}
-
-- (void)endUpdates
-{
-    self.view.userInteractionEnabled = NO;
-    [UIView animateWithDuration:0.25 animations:^{
-        [self showContentControllerAtIndex:self.indexForDisplayedContentController];
-        
-        // Calculate the difference between heights of subviews from before updates to after updates
-        self.updateContext.afterUpdatesDetailsViewHeight = CGRectGetHeight(self.detailView.frame);
-        
-        // Adjust content offset to account for difference in heights of subviews from before updates to after updates
-        if (round(self.updateContext.beforeUpdatesDetailsViewHeight) != round(self.updateContext.afterUpdatesDetailsViewHeight)) {
-            UIScrollView *scrollView = [self.currentlyDisplayedContentController contentScrollView];
-            
-            CGPoint contentOffset = scrollView.contentOffset;
-            contentOffset.y += (self.updateContext.beforeUpdatesDetailsViewHeight - self.updateContext.afterUpdatesDetailsViewHeight);
-            scrollView.contentOffset = contentOffset;
-        }
-        
-        [self.view layoutIfNeeded];
-        [self updateViewConstraints];
-        
-    } completion:^(BOOL finished) {
-        self.view.userInteractionEnabled = YES;
-        self.updating = NO;
-        
-#warning - Remove once things are fixed!!!
-        // Invalidate the layout attributes for all accessory views
-        [self.registeredAccessoryViews enumerateKeysAndObjectsUsingBlock:^(NSString *_Nonnull kind, id  _Nonnull obj, BOOL * _Nonnull stop) {
-            [self invalidateLayoutAttributesForAccessoryViewOfKind:kind];
-        }];
-    }];
-}
-
-- (void)reloadData
-{
-    NSInteger numberOfSegments = [self _numberOfContentControllers];
-    
-    [self.scrollViewObservers removeAllObjects];
-    
-    if ([self.contentControllers count] > 0) {
-        [self removeContentController:self.currentlyDisplayedContentController];
-    }
-    
-    [self.contentControllers removeAllObjects];
-    [self.segmentedControl removeAllSegments];
-    
-    for (NSInteger i = 0; i < numberOfSegments; i++) {
-        // Reload content view controllers
-        DBProfileContentController *contentController = [self _contentControllerAtIndex:i];
-        [self.contentControllers addObject:contentController];
-        
-        // Reload segmented control
-        NSString *title = [self _titleForContentControllerAtIndex:i];
-        [self.segmentedControl insertSegmentWithTitle:title atIndex:i animated:NO];
-    }
-    
-    // Display selected content view controller
-    [self showContentControllerAtIndex:self.indexForDisplayedContentController];
-}
-
 - (void)showContentControllerAtIndex:(NSInteger)index
 {
     if (![self.contentControllers count]) return;
@@ -617,8 +551,6 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     
     [scrollView addSubview:self.detailView];
     
-    DBProfileHeaderViewLayoutAttributes *headerViewLayoutAttributes = [self layoutAttributesForAccessoryViewOfKind:DBProfileAccessoryKindHeader];
-    
     // Add segmented control
     if ([self.contentControllers count] > 1 || !self.hidesSegmentedControlForSingleContentController) {
         [scrollView addSubview:self.segmentedControlView];
@@ -629,21 +561,16 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     if ([self hasRegisteredAccessoryViewOfKind:DBProfileAccessoryKindHeader]) {
         [scrollView addSubview:headerView];
         
-        // Add pull-to-refresh
-        if (self.allowsPullToRefresh) {
-            [headerView addSubview:self.activityIndicator];
-        }
+        if (self.allowsPullToRefresh) [headerView addSubview:self.activityIndicator];
     }
     
-    if ([self hasRegisteredAccessoryViewOfKind:DBProfileAccessoryKindAvatar]) {
-        [scrollView addSubview:avatarView];
-    }
+    if ([self hasRegisteredAccessoryViewOfKind:DBProfileAccessoryKindAvatar]) [scrollView addSubview:avatarView];
     
-    [self setUpConstraintsForScrollView:scrollView];
+    [self setupConstraintsForScrollView:scrollView];
     
-    // Install constraint-based layout attributes
+    // Install constraint-based layout attributes for accessory views
     [self.registeredAccessoryViews enumerateKeysAndObjectsUsingBlock:^(NSString *_Nonnull kind, id  _Nonnull obj, BOOL * _Nonnull stop) {
-        self.accessoryViewLayoutAttributes[kind].hasInstalledConstraints = YES;
+        [self installConstraintsForLayoutAttributes:self.accessoryViewLayoutAttributes[kind] forAccessoryViewOfKind:kind];
     }];
     
     [scrollView setNeedsLayout];
@@ -668,6 +595,8 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
         [scrollView setContentOffset:_sharedContentOffset];
     }
     
+    DBProfileHeaderViewLayoutAttributes *headerViewLayoutAttributes = [self layoutAttributesForAccessoryViewOfKind:DBProfileAccessoryKindHeader];
+
     if (headerViewLayoutAttributes.headerStyle == DBProfileHeaderStyleNavigation) {
         if ((scrollView.contentOffset.y + scrollView.contentInset.top) < CGRectGetHeight(headerView.frame) - headerViewLayoutAttributes.navigationConstraint.constant) {
             [scrollView insertSubview:avatarView aboveSubview:headerView];
@@ -677,7 +606,67 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     }
 }
 
-#pragma mark - Private Methods
+- (void)beginUpdates
+{
+    self.updating = YES;
+    self.updateContext = [[DBProfileViewControllerUpdateContext alloc] init];
+    self.updateContext.beforeUpdatesDetailsViewHeight = CGRectGetHeight(self.detailView.frame);
+    [self.view invalidateIntrinsicContentSize];
+}
+
+- (void)endUpdates
+{
+    self.view.userInteractionEnabled = NO;
+    
+    [UIView animateWithDuration:0.25 animations:^{
+        [self showContentControllerAtIndex:self.indexForDisplayedContentController];
+
+        // Calculate the difference between heights of subviews from before updates to after updates
+        self.updateContext.afterUpdatesDetailsViewHeight = CGRectGetHeight(self.detailView.frame);
+        
+        // Adjust content offset to account for difference in heights of subviews from before updates to after updates
+        if (round(self.updateContext.beforeUpdatesDetailsViewHeight) != round(self.updateContext.afterUpdatesDetailsViewHeight)) {
+            UIScrollView *scrollView = [self.currentlyDisplayedContentController contentScrollView];
+            
+            CGPoint contentOffset = scrollView.contentOffset;
+            contentOffset.y += (self.updateContext.beforeUpdatesDetailsViewHeight - self.updateContext.afterUpdatesDetailsViewHeight);
+            scrollView.contentOffset = contentOffset;
+        }
+        
+        [self.view layoutIfNeeded];
+        
+    } completion:^(BOOL finished) {
+        self.view.userInteractionEnabled = YES;
+        self.updating = NO;
+    }];
+}
+
+- (void)reloadContentControllers
+{
+    NSInteger numberOfSegments = [self _numberOfContentControllers];
+    
+    [self.scrollViewObservers removeAllObjects];
+    
+    if ([self.contentControllers count] > 0) {
+        [self removeContentController:self.currentlyDisplayedContentController];
+    }
+    
+    [self.contentControllers removeAllObjects];
+    [self.segmentedControl removeAllSegments];
+    
+    for (NSInteger i = 0; i < numberOfSegments; i++) {
+        // Reload content view controllers
+        DBProfileContentController *contentController = [self _contentControllerAtIndex:i];
+        [self.contentControllers addObject:contentController];
+        
+        // Reload segmented control
+        NSString *title = [self _titleForContentControllerAtIndex:i];
+        [self.segmentedControl insertSegmentWithTitle:title atIndex:i animated:NO];
+    }
+    
+    // Display selected content view controller
+    [self showContentControllerAtIndex:self.indexForDisplayedContentController];
+}
 
 - (void)startRefreshAnimations
 {
@@ -701,8 +690,6 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     self.refreshing = NO;
     [self endRefreshAnimations];
 }
-
-#pragma mark - Helpers
 
 - (void)cacheContentOffset:(CGPoint)contentOffset forContentControllerAtIndex:(NSInteger)controllerIndex
 {
@@ -884,85 +871,36 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     [self.overlayView setTitleVerticalPositionAdjustment:MAX(titleViewOffset * percentScrolled, 0) traitCollection:self.traitCollection];
 }
 
-#pragma mark - DBProfileViewController(Constraints)
-
 - (void)setupOverlayViewConstraints
 {
-    NSArray *constraints = @[[NSLayoutConstraint constraintWithItem:self.overlayView
-                                                          attribute:NSLayoutAttributeTop
-                                                          relatedBy:NSLayoutRelationEqual
-                                                             toItem:[self topLayoutGuide]
-                                                          attribute:NSLayoutAttributeBottom
-                                                         multiplier:1
-                                                           constant:0],
-                             [NSLayoutConstraint constraintWithItem:self.overlayView
-                                                          attribute:NSLayoutAttributeLeft
-                                                          relatedBy:NSLayoutRelationEqual
-                                                             toItem:self.view
-                                                          attribute:NSLayoutAttributeLeft
-                                                         multiplier:1
-                                                           constant:0],
-                             [NSLayoutConstraint constraintWithItem:self.overlayView
-                                                          attribute:NSLayoutAttributeRight
-                                                          relatedBy:NSLayoutRelationEqual
-                                                             toItem:self.view
-                                                          attribute:NSLayoutAttributeRight
-                                                         multiplier:1
-                                                           constant:0]];
-    [self.view addConstraints:constraints];
+    [self.view addConstraints:
+    @[[NSLayoutConstraint constraintWithItem:self.overlayView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:[self topLayoutGuide] attribute:NSLayoutAttributeBottom multiplier:1 constant:0],
+      [NSLayoutConstraint constraintWithItem:self.overlayView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeLeft multiplier:1 constant:0],
+      [NSLayoutConstraint constraintWithItem:self.overlayView attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeRight multiplier:1 constant:0]]];
 }
 
-- (void)setUpConstraintsForScrollView:(UIScrollView *)scrollView
+- (void)setupConstraintsForScrollView:(UIScrollView *)scrollView
 {
     NSAssert(scrollView, @"scrollView cannot be nil");
     
     if (self.segmentedControlView.superview) {
-        [scrollView addConstraint:[NSLayoutConstraint constraintWithItem:self.segmentedControlView
-                                                               attribute:NSLayoutAttributeLeft
-                                                               relatedBy:NSLayoutRelationEqual
-                                                                  toItem:scrollView
-                                   
-                                                               attribute:NSLayoutAttributeLeft multiplier:1 constant:0]];
-        [scrollView addConstraint:[NSLayoutConstraint constraintWithItem:self.segmentedControlView
-                                                               attribute:NSLayoutAttributeWidth
-                                                               relatedBy:NSLayoutRelationEqual
-                                                                  toItem:scrollView
-                                                               attribute:NSLayoutAttributeWidth
-                                                              multiplier:1
-                                                                constant:0]];
-        
-        [scrollView addConstraint:[NSLayoutConstraint constraintWithItem:self.segmentedControlView
-                                                               attribute:NSLayoutAttributeTop
-                                                               relatedBy:NSLayoutRelationGreaterThanOrEqual
-                                                                  toItem:self.detailView
-                                                               attribute:NSLayoutAttributeBottom
-                                                              multiplier:1
-                                                                constant:0]];
-        
-        [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.segmentedControlView
-                                                              attribute:NSLayoutAttributeTop
-                                                              relatedBy:NSLayoutRelationGreaterThanOrEqual
-                                                                 toItem:[self topLayoutGuide]
-                                                              attribute:NSLayoutAttributeBottom
-                                                             multiplier:1
-                                                               constant:0]];
+        [scrollView addConstraints:
+         @[[NSLayoutConstraint constraintWithItem:self.segmentedControlView  attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:scrollView attribute:NSLayoutAttributeLeft multiplier:1 constant:0],
+           [NSLayoutConstraint constraintWithItem:self.segmentedControlView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:scrollView attribute:NSLayoutAttributeWidth multiplier:1 constant:0],
+           [NSLayoutConstraint constraintWithItem:self.segmentedControlView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:self.detailView attribute:NSLayoutAttributeBottom multiplier:1 constant:0]]];
     }
     
-    [scrollView addConstraint:[NSLayoutConstraint constraintWithItem:self.detailView
-                                                           attribute:NSLayoutAttributeLeft
-                                                           relatedBy:NSLayoutRelationEqual
-                                                              toItem:scrollView
-                                                           attribute:NSLayoutAttributeLeft
-                                                          multiplier:1
-                                                            constant:0]];
+    [scrollView addConstraints:
+     @[[NSLayoutConstraint constraintWithItem:self.detailView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:scrollView attribute:NSLayoutAttributeLeft multiplier:1 constant:0],
+       [NSLayoutConstraint constraintWithItem:self.detailView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:scrollView attribute:NSLayoutAttributeWidth multiplier:1 constant:0]]];
     
-    [scrollView addConstraint:[NSLayoutConstraint constraintWithItem:self.detailView
-                                                           attribute:NSLayoutAttributeWidth
-                                                           relatedBy:NSLayoutRelationEqual
-                                                              toItem:scrollView
-                                                           attribute:NSLayoutAttributeWidth
-                                                          multiplier:1
-                                                            constant:0]];
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.segmentedControlView
+                                                          attribute:NSLayoutAttributeTop
+                                                          relatedBy:NSLayoutRelationGreaterThanOrEqual
+                                                             toItem:[self topLayoutGuide]
+                                                          attribute:NSLayoutAttributeBottom
+                                                         multiplier:1
+                                                           constant:0]];
     
     _detailsViewTopConstraint = [NSLayoutConstraint constraintWithItem:self.detailView
                                                              attribute:NSLayoutAttributeTop
@@ -972,50 +910,39 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
                                                             multiplier:1
                                                               constant:0];
     [scrollView addConstraint:_detailsViewTopConstraint];
-    
-    if ([self hasRegisteredAccessoryViewOfKind:DBProfileAccessoryKindHeader]) {
-        [self setUpHeaderViewConstraintsForScrollView:scrollView];
-        
-        DBProfileAccessoryView *headerView = [self accessoryViewOfKind:DBProfileAccessoryKindHeader];
-        
-        if (self.allowsPullToRefresh) {
-            
-            NSArray *activityIndicatorConstraints = @[[NSLayoutConstraint constraintWithItem:self.activityIndicator
-                                                                                   attribute:NSLayoutAttributeCenterX
-                                                                                   relatedBy:NSLayoutRelationEqual
-                                                                                      toItem:headerView
-                                                                                   attribute:NSLayoutAttributeCenterX
-                                                                                  multiplier:1
-                                                                                    constant:0],
-                                                      [NSLayoutConstraint constraintWithItem:self.activityIndicator
-                                                                                   attribute:NSLayoutAttributeCenterY
-                                                                                   relatedBy:NSLayoutRelationEqual
-                                                                                      toItem:headerView
-                                                                                   attribute:NSLayoutAttributeCenterY
-                                                                                  multiplier:1
-                                                                                    constant:0]];
-            [headerView addConstraints:activityIndicatorConstraints];
-        }
-
-    }
-    
-    if ([self hasRegisteredAccessoryViewOfKind:DBProfileAccessoryKindAvatar]) {
-        [self setUpAvatarViewConstraintsForScrollView:scrollView];
-    }
 }
 
-- (void)setUpHeaderViewConstraintsForScrollView:(UIScrollView *)scrollView
-{
-    NSAssert(scrollView, @"scrollView cannot be nil");
+#pragma mark - DBProfileViewController(InstallingConstraints)
+
+- (void)installConstraintsForLayoutAttributes:(DBProfileAccessoryViewLayoutAttributes *)layoutAttributes forAccessoryViewOfKind:(NSString *)accessoryViewKind {
+    NSAssert([self hasRegisteredAccessoryViewOfKind:accessoryViewKind], @"no accessory view has been registered for accessory kind '%@'", accessoryViewKind);
+    
+    DBProfileAccessoryView *accessoryView = [self accessoryViewOfKind:accessoryViewKind];
+    
+    NSAssert(accessoryView.superview, @"accessoryView must have a superview");
+    
+    [layoutAttributes uninstallConstraints];
+    
+    if ([accessoryViewKind isEqualToString:DBProfileAccessoryKindAvatar]) {
+        [self installConstraintsForAvatarViewWithLayoutAttributes:layoutAttributes];
+    }
+    else if ([accessoryViewKind isEqualToString:DBProfileAccessoryKindHeader]) {
+        [self installConstraintsForHeaderViewWithLayoutAttributes:layoutAttributes];
+    }
+    
+    layoutAttributes.hasInstalledConstraints = YES;
+    
+    [self invalidateLayoutAttributesForAccessoryViewOfKind:DBProfileAccessoryKindAvatar];
+}
+
+- (void)installConstraintsForHeaderViewWithLayoutAttributes:(DBProfileHeaderViewLayoutAttributes *)layoutAttributes {
     
     DBProfileAccessoryView *headerView = [self accessoryViewOfKind:DBProfileAccessoryKindHeader];
-    
-    DBProfileHeaderViewLayoutAttributes *layoutAttributes = [self layoutAttributesForAccessoryViewOfKind:DBProfileAccessoryKindHeader];
     
     layoutAttributes.leftConstraint = [NSLayoutConstraint constraintWithItem:headerView
                                                                    attribute:NSLayoutAttributeLeft
                                                                    relatedBy:NSLayoutRelationEqual
-                                                                      toItem:scrollView
+                                                                      toItem:headerView.superview
                                                                    attribute:NSLayoutAttributeLeft
                                                                   multiplier:1
                                                                     constant:0];
@@ -1023,7 +950,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     layoutAttributes.widthConstraint = [NSLayoutConstraint constraintWithItem:headerView
                                                                     attribute:NSLayoutAttributeWidth
                                                                     relatedBy:NSLayoutRelationEqual
-                                                                       toItem:scrollView
+                                                                       toItem:headerView.superview
                                                                     attribute:NSLayoutAttributeWidth
                                                                    multiplier:1
                                                                      constant:0];
@@ -1041,13 +968,13 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     layoutAttributes.topConstraint = [NSLayoutConstraint constraintWithItem:headerView
                                                                   attribute:NSLayoutAttributeTop
                                                                   relatedBy:NSLayoutRelationEqual
-                                                                     toItem:scrollView
+                                                                     toItem:headerView.superview
                                                                   attribute:NSLayoutAttributeTop
                                                                  multiplier:1
                                                                    constant:0];
     
     layoutAttributes.topConstraint.priority = UILayoutPriorityDefaultHigh;
-
+    
     layoutAttributes.navigationConstraint = [NSLayoutConstraint constraintWithItem:headerView
                                                                          attribute:NSLayoutAttributeBottom
                                                                          relatedBy:NSLayoutRelationGreaterThanOrEqual
@@ -1057,28 +984,28 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
                                                                           constant:0];
     
     layoutAttributes.topLayoutGuideConstraint = [NSLayoutConstraint constraintWithItem:headerView
-                                                                           attribute:NSLayoutAttributeTop
-                                                                           relatedBy:NSLayoutRelationLessThanOrEqual
-                                                                              toItem:[self topLayoutGuide]
-                                                                           attribute:NSLayoutAttributeBottom
-                                                                          multiplier:1
-                                                                            constant:0];
+                                                                             attribute:NSLayoutAttributeTop
+                                                                             relatedBy:NSLayoutRelationLessThanOrEqual
+                                                                                toItem:[self topLayoutGuide]
+                                                                             attribute:NSLayoutAttributeBottom
+                                                                            multiplier:1
+                                                                              constant:0];
     
     layoutAttributes.topLayoutGuideConstraint.priority = UILayoutPriorityDefaultHigh+1;
     
     layoutAttributes.topSuperviewConstraint = [NSLayoutConstraint constraintWithItem:headerView
-                                                                         attribute:NSLayoutAttributeTop
-                                                                         relatedBy:NSLayoutRelationLessThanOrEqual
-                                                                            toItem:self.view
-                                                                         attribute:NSLayoutAttributeTop
-                                                                        multiplier:1
-                                                                          constant:0];
+                                                                           attribute:NSLayoutAttributeTop
+                                                                           relatedBy:NSLayoutRelationLessThanOrEqual
+                                                                              toItem:self.view
+                                                                           attribute:NSLayoutAttributeTop
+                                                                          multiplier:1
+                                                                            constant:0];
     
     layoutAttributes.topSuperviewConstraint.priority = UILayoutPriorityDefaultHigh+1;
     
-    [scrollView addConstraints:@[layoutAttributes.leftConstraint,
-                                 layoutAttributes.widthConstraint,
-                                 layoutAttributes.topConstraint]];
+    [headerView.superview addConstraints:@[layoutAttributes.leftConstraint,
+                                           layoutAttributes.widthConstraint,
+                                           layoutAttributes.topConstraint]];
     
     [self.view addConstraints:@[layoutAttributes.heightConstraint,
                                 layoutAttributes.topLayoutGuideConstraint,
@@ -1094,15 +1021,30 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
                                                              multiplier:1
                                                                constant:0]];
     }
+    
+    if (self.allowsPullToRefresh) {
+        
+        NSArray *activityIndicatorConstraints = @[[NSLayoutConstraint constraintWithItem:self.activityIndicator
+                                                                               attribute:NSLayoutAttributeCenterX
+                                                                               relatedBy:NSLayoutRelationEqual
+                                                                                  toItem:headerView
+                                                                               attribute:NSLayoutAttributeCenterX
+                                                                              multiplier:1
+                                                                                constant:0],
+                                                  [NSLayoutConstraint constraintWithItem:self.activityIndicator
+                                                                               attribute:NSLayoutAttributeCenterY
+                                                                               relatedBy:NSLayoutRelationEqual
+                                                                                  toItem:headerView
+                                                                               attribute:NSLayoutAttributeCenterY
+                                                                              multiplier:1
+                                                                                constant:0]];
+        [headerView addConstraints:activityIndicatorConstraints];
+    }
 }
 
-- (void)setUpAvatarViewConstraintsForScrollView:(UIScrollView *)scrollView
-{
-    NSAssert(scrollView, @"scrollView cannot be nil");
+- (void)installConstraintsForAvatarViewWithLayoutAttributes:(DBProfileAvatarViewLayoutAttributes *)layoutAttributes {
     
     DBProfileAccessoryView *avatarView = [self accessoryViewOfKind:DBProfileAccessoryKindAvatar];
-    
-    DBProfileAvatarViewLayoutAttributes *layoutAttributes = [self layoutAttributesForAccessoryViewOfKind:DBProfileAccessoryKindAvatar];
     
     layoutAttributes.heightConstraint = [NSLayoutConstraint constraintWithItem:avatarView
                                                                      attribute:NSLayoutAttributeHeight
@@ -1123,7 +1065,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     layoutAttributes.leftConstraint = [NSLayoutConstraint constraintWithItem:avatarView
                                                                    attribute:NSLayoutAttributeLeft
                                                                    relatedBy:NSLayoutRelationEqual
-                                                                      toItem:scrollView
+                                                                      toItem:avatarView.superview
                                                                    attribute:NSLayoutAttributeLeft
                                                                   multiplier:1
                                                                     constant:0];
@@ -1132,7 +1074,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     layoutAttributes.rightConstraint = [NSLayoutConstraint constraintWithItem:avatarView
                                                                     attribute:NSLayoutAttributeRight
                                                                     relatedBy:NSLayoutRelationEqual
-                                                                       toItem:scrollView
+                                                                       toItem:avatarView.superview
                                                                     attribute:NSLayoutAttributeRight
                                                                    multiplier:1
                                                                      constant:0];
@@ -1142,7 +1084,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     layoutAttributes.centerXConstraint = [NSLayoutConstraint constraintWithItem:avatarView
                                                                       attribute:NSLayoutAttributeCenterX
                                                                       relatedBy:NSLayoutRelationEqual
-                                                                         toItem:scrollView
+                                                                         toItem:avatarView.superview
                                                                       attribute:NSLayoutAttributeCenterX
                                                                      multiplier:1
                                                                        constant:0];
@@ -1156,12 +1098,12 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
                                                                  multiplier:1
                                                                    constant:0];
     
-    [scrollView addConstraints:@[layoutAttributes.heightConstraint,
-                                 layoutAttributes.widthConstraint,
-                                 layoutAttributes.leftConstraint,
-                                 layoutAttributes.rightConstraint,
-                                 layoutAttributes.centerXConstraint,
-                                 layoutAttributes.topConstraint]];
+    [avatarView.superview addConstraints:@[layoutAttributes.heightConstraint,
+                                           layoutAttributes.widthConstraint,
+                                           layoutAttributes.leftConstraint,
+                                           layoutAttributes.rightConstraint,
+                                           layoutAttributes.centerXConstraint,
+                                           layoutAttributes.topConstraint]];
 }
 
 #pragma mark - DBProfileViewController(AccessoryViews)
@@ -1242,8 +1184,6 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 }
 
 - (void)configureLayoutAttributes:(DBProfileAccessoryViewLayoutAttributes *)layoutAttributes forAccessoryViewOfKind:(NSString *)accessoryViewKind {
-    
-    if (self.isUpdating) return;
     
     CGPoint contentOffset = [self contentOffsetForCurrentlyDisplayedContentController];
     
@@ -1343,7 +1283,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     avatarTransform = CGAffineTransformTranslate(avatarTransform, 0, MAX(avatarOffset * percentScrolled, 0));
     
     // The avatar transform only needs to be applied if the avatar's offset would cause the avatar's frame to overlay the header.
-    if (avatarOffset > 0) {
+    if (avatarOffset > 0 && !self.isUpdating) {
         layoutAttributes.transform = avatarTransform;
     }
     
