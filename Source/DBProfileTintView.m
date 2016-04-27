@@ -40,8 +40,10 @@
 }
 
 - (void)updateTintLayer {
-    CAGradientLayer *tintLayer = (CAGradientLayer *)self.layer;
+    if (!self.startColor || !self.endColor) return;
     
+    CAGradientLayer *tintLayer = (CAGradientLayer *)self.layer;
+
     tintLayer.colors = @[(id)self.startColor.CGColor, (id)self.endColor.CGColor];
     tintLayer.locations = @[@0, @1];
 }

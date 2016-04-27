@@ -179,6 +179,8 @@
 
 - (void)applyLayoutAttributes:(DBProfileAccessoryViewLayoutAttributes *)layoutAttributes
 {
+    self.hidden = layoutAttributes.hidden;
+    self.alpha = layoutAttributes.alpha;
     self.transform = layoutAttributes.transform;
 }
 

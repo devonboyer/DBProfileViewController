@@ -1180,7 +1180,10 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     DBProfileAccessoryView *accessoryView = [self accessoryViewOfKind:accessoryViewKind];
     layoutAttributes.frame = accessoryView.frame;
     layoutAttributes.bounds = accessoryView.bounds;
+    layoutAttributes.size = accessoryView.frame.size;
+    layoutAttributes.center = accessoryView.center;
     layoutAttributes.hidden = accessoryView.hidden;
+    layoutAttributes.alpha = accessoryView.alpha;
     layoutAttributes.transform = accessoryView.transform;
     
 #warning - Update percent transitioned which should be calculatable based on the frame for all accessory views
@@ -1191,6 +1194,16 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     else if ([accessoryViewKind isEqualToString:DBProfileAccessoryKindHeader]) {
         [self configureHeaderViewLayoutAttributes:layoutAttributes];
     }
+    
+    // Sort accessory views by zIndex
+    NSArray *sortedAccessoryViews = [self.accessoryViews sortedArrayUsingComparator:^NSComparisonResult(DBProfileAccessoryView *lhs, DBProfileAccessoryView *rhs) {
+        return [self layoutAttributesForAccessoryViewOfKind:lhs.representedAccessoryKind].zIndex >
+            [self layoutAttributesForAccessoryViewOfKind:rhs.representedAccessoryKind].zIndex;
+    }];
+    
+    [sortedAccessoryViews enumerateObjectsUsingBlock:^(DBProfileAccessoryView *accessoryView, NSUInteger idx, BOOL * _Nonnull stop) {
+        [self.currentlyDisplayedContentController.contentScrollView bringSubviewToFront:accessoryView];
+    }];
 }
 
 - (void)configureHeaderViewLayoutAttributes:(DBProfileHeaderViewLayoutAttributes *)layoutAttributes
@@ -1204,11 +1217,11 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     BOOL showOverlayView = layoutAttributes.headerStyle == DBProfileHeaderStyleNavigation;
     [self setOverlayViewHidden:!showOverlayView animated:NO];
     
-    if (layoutAttributes.headerStyle == DBProfileHeaderStyleNavigation) {
+    if (layoutAttributes.headerStyle == DBProfileHeaderStyleNavigation && !self.isUpdating) {
         if (contentOffset.y < CGRectGetHeight(headerView.frame) - layoutAttributes.navigationConstraint.constant) {
-            [headerView.superview insertSubview:avatarView aboveSubview:headerView];
+            layoutAttributes.zIndex = -100;
         } else {
-            [headerView.superview insertSubview:headerView aboveSubview:avatarView];
+            layoutAttributes.zIndex = 100;
         }
     }
     

@@ -35,8 +35,12 @@ static CGSize DBProfileAccessoryViewLayoutAttributesDefaultHeaderReferenceSize()
 
         self.frame = CGRectZero;
         self.bounds = CGRectZero;
+        self.size = CGSizeZero;
+        self.center = CGPointZero;
         self.hidden = NO;
+        self.alpha = 1.0;
         self.transform = CGAffineTransformIdentity;
+        self.zIndex = 0;
         
         if ([accessoryViewKind isEqualToString:DBProfileAccessoryKindHeader]) {
             self.referenceSize = DBProfileAccessoryViewLayoutAttributesDefaultHeaderReferenceSize();

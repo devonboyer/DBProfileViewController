@@ -50,13 +50,39 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic) CGRect bounds;
 
+/**
+ *  The size of the associated accessory view.
+ */
+@property (nonatomic) CGSize size;
 
+/**
+ *  The center point of the associated accessory view.
+ */
+@property (nonatomic) CGPoint center;
+
+/**
+ *  The The affine transform of the associated accessory view.
+ */
 @property (nonatomic) CGAffineTransform transform;
 
 /**
  *  Whether the accessory view is hidden of the associated accessory view.
  */
 @property (nonatomic) BOOL hidden;
+
+/**
+ *  The alpha of the associated accessory view.
+ */
+@property (nonatomic) CGFloat alpha;
+
+/**
+ *  The associated accessory view’s position on the z axis.
+ *
+ *  This property is used to determine the front-to-back ordering of items during layout. Items with higher index values appear on top of items with lower values. Items with the same value have an undetermined order.
+ *
+ *  Defaults to 0.
+ */
+@property (nonatomic) NSInteger zIndex;
 
 /**
  *  The size of the the associated accessory view's frame.

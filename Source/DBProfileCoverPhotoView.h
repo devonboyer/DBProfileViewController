@@ -38,7 +38,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, readonly) DBProfileTintView *tintView;
 
-
 /**
  *  Whether a tint should be applied to the view. This allows for overlayed bar button items to be more visible.
  * 
