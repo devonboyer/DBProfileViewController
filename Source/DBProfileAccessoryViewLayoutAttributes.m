@@ -48,4 +48,20 @@ static CGSize DBProfileAccessoryViewLayoutAttributesDefaultHeaderReferenceSize()
     return self;
 }
 
+- (void)uninstallConstraints {
+    self.hasInstalledConstraints = NO;
+    self.leadingConstraint = nil;
+    self.trailingConstraint = nil;
+    self.leftConstraint = nil;
+    self.rightConstraint = nil;
+    self.topConstraint = nil;
+    self.bottomConstraint = nil;
+    self.widthConstraint = nil;
+    self.heightConstraint = nil;
+    self.centerXConstraint = nil;
+    self.centerYConstraint = nil;
+    self.firstBaselineConstraint = nil;
+    self.lastBaselineConstraint = nil;
+}
+
 @end

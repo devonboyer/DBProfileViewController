@@ -21,4 +21,11 @@
     return self;
 }
 
+- (void)uninstallConstraints {
+    [super uninstallConstraints];
+    self.navigationConstraint = nil;
+    self.topLayoutGuideConstraint = nil;
+    self.topSuperviewConstraint = nil;
+}
+
 @end

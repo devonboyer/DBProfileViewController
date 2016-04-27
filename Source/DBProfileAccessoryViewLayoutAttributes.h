@@ -68,6 +68,17 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic) CGFloat percentTransitioned;
 
+/**
+ *  @name Installing/Uninstalling Constraint-Based Layout Attributes
+ */
+
+/**
+ *  Whether the associated accessory view has had its constraints-based layout attributes installed.
+ */
+@property (nonatomic) BOOL hasInstalledConstraints;
+
+- (void)uninstallConstraints;
+
 @property (nonatomic, nullable) NSLayoutConstraint *leadingConstraint;
 @property (nonatomic, nullable) NSLayoutConstraint *trailingConstraint;
 @property (nonatomic, nullable) NSLayoutConstraint *leftConstraint;
