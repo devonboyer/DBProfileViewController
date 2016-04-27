@@ -73,7 +73,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 
 /**
- *  Whether the associated accessory view has had its constraints-based layout attributes installed.
+ *  Whether the associated accessory view has had its constraint-based layout attributes installed.
  */
 @property (nonatomic) BOOL hasInstalledConstraints;
 
