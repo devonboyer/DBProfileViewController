@@ -8,6 +8,8 @@
 
 #import <DBProfileViewController/DBProfileBlurView.h>
 
+@class DBProfileTintView;
+
 NS_ASSUME_NONNULL_BEGIN
 
 /**
@@ -30,6 +32,12 @@ NS_ASSUME_NONNULL_BEGIN
  
  */
 @interface DBProfileCoverPhotoView : DBProfileBlurView
+
+/**
+ *  The view that displays a tint over the cover photo image.
+ */
+@property (nonatomic, readonly) DBProfileTintView *tintView;
+
 
 /**
  *  Whether a tint should be applied to the view. This allows for overlayed bar button items to be more visible.

@@ -1,12 +1,13 @@
 //
 //  DBProfileHeaderOverlayView.m
-//  Pods
+//  DBProfileViewController
 //
 //  Created by Devon Boyer on 2016-04-26.
-//
+//  Copyright (c) 2015 Devon Boyer. All rights reserved.
 //
 
 #import "DBProfileHeaderOverlayView.h"
+#import "DBProfileTitleView.h"
 
 @interface DBProfileHeaderOverlayView ()
 
@@ -119,6 +120,14 @@
     self.titleView.title = title;
 }
 
+- (NSDictionary *)titleTextAttributes {
+    return self.titleView.titleTextAttributes;
+}
+
+- (void)setTitleTextAttributes:(NSDictionary *)titleTextAttributes {
+    self.titleView.titleTextAttributes = titleTextAttributes;
+}
+
 - (NSString *)subtitle {
     return self.titleView.subtitle;
 }
@@ -127,21 +136,12 @@
     self.titleView.subtitle = subtitle;
 }
 
-- (NSDictionary *)titleTextAttributes {
-    return self.navigationBar.titleTextAttributes;
+- (NSDictionary<NSString *,id> *)subtitleTextAttributes {
+    return self.titleView.subtitleTextAttributes;
 }
 
-- (void)setTitleTextAttributes:(NSDictionary *)titleTextAttributes {
-    self.navigationBar.titleTextAttributes = titleTextAttributes;
-}
-
-
-- (void)setTitleVerticalPositionAdjustment:(CGFloat)adjustment traitCollection:(UITraitCollection *)traitCollection {
-    if (traitCollection.verticalSizeClass == UIUserInterfaceSizeClassCompact) {
-        [self.navigationBar setTitleVerticalPositionAdjustment:adjustment forBarMetrics:UIBarMetricsCompact];
-    } else {
-        [self.navigationBar setTitleVerticalPositionAdjustment:adjustment forBarMetrics:UIBarMetricsDefault];
-    }
+- (void)setSubtitleTextAttributes:(NSDictionary<NSString *,id> *)subtitleTextAttributes {
+    self.titleView.subtitleTextAttributes = subtitleTextAttributes;
 }
 
 @end

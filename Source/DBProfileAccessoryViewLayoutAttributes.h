@@ -69,7 +69,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) CGFloat percentTransitioned;
 
 /**
- *  @name Installing/Uninstalling Constraint-Based Layout Attributes
+ *  @name Constraint-Based Layout Attributes
  */
 
 /**
@@ -77,6 +77,9 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic) BOOL hasInstalledConstraints;
 
+/**
+ *  Uninstalls constraint-based layout attributes.
+ */
 - (void)uninstallConstraints;
 
 @property (nonatomic, nullable) NSLayoutConstraint *leadingConstraint;

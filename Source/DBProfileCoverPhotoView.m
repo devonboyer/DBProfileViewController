@@ -34,18 +34,16 @@ UIImage *DBProfileImageByCroppingImageToSize(UIImage *image, CGSize size) {
     return newImage;
 }
 
-@interface DBProfileCoverPhotoView () {
-    UIImage *_originalImage;
-}
+@interface DBProfileCoverPhotoView ()
 
-@property (nonatomic, strong) DBProfileTintView *tintView;
+@property (nonatomic) DBProfileTintView *tintView;
+@property (nonatomic) UIImage *originalImage;
 
 @end
 
 @implementation DBProfileCoverPhotoView
 
-- (instancetype)init
-{
+- (instancetype)init {
     self = [super init];
     if (self) {
         self.backgroundColor = [UIColor whiteColor];
@@ -58,13 +56,12 @@ UIImage *DBProfileImageByCroppingImageToSize(UIImage *image, CGSize size) {
         self.tintView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         self.tintView.frame = self.frame;
         
-        [self addSubview:_tintView];
+        [self addSubview:self.tintView];
     }
     return self;
 }
 
-- (void)layoutSubviews
-{
+- (void)layoutSubviews {
     [super layoutSubviews];
     
     // Bring the highlighted background view to the front so highlighting dims the view
@@ -76,15 +73,13 @@ UIImage *DBProfileImageByCroppingImageToSize(UIImage *image, CGSize size) {
     self.tintView.hidden = !shouldApplyTint;
 }
 
-- (void)setShouldCropImageBeforeBlurring:(BOOL)shouldCropImageBeforeBlurring
-{
+- (void)setShouldCropImageBeforeBlurring:(BOOL)shouldCropImageBeforeBlurring {
     _shouldCropImageBeforeBlurring = shouldCropImageBeforeBlurring;
-    [self setCoverPhotoImage:_originalImage animated:NO];
+    [self setCoverPhotoImage:self.originalImage animated:NO];
 }
 
-- (void)setCoverPhotoImage:(UIImage *)coverPhotoImage animated:(BOOL)animated
-{
-    _originalImage = coverPhotoImage;
+- (void)setCoverPhotoImage:(UIImage *)coverPhotoImage animated:(BOOL)animated {
+    self.originalImage = coverPhotoImage;
     
     UIImage *preparedImage = (self.shouldCropImageBeforeBlurring) ? DBProfileImageByCroppingImageToSize(coverPhotoImage, self.frame.size) : coverPhotoImage;
     
@@ -101,8 +96,7 @@ UIImage *DBProfileImageByCroppingImageToSize(UIImage *image, CGSize size) {
     }
 }
 
-- (void)applyLayoutAttributes:(DBProfileHeaderViewLayoutAttributes *)layoutAttributes
-{
+- (void)applyLayoutAttributes:(DBProfileHeaderViewLayoutAttributes *)layoutAttributes {
     [super applyLayoutAttributes:layoutAttributes];
     
     if (layoutAttributes.headerStyle == DBProfileHeaderStyleDefault) {

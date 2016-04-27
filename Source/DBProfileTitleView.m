@@ -23,25 +23,23 @@
         _titleLabel = [[UILabel alloc] init];
         _subtitleLabel = [[UILabel alloc] init];
         
-        _contentView.translatesAutoresizingMaskIntoConstraints = NO;
+        self.contentView.translatesAutoresizingMaskIntoConstraints = NO;
         self.titleLabel.translatesAutoresizingMaskIntoConstraints = NO;
         self.subtitleLabel.translatesAutoresizingMaskIntoConstraints = NO;
         
-        [self addSubview:_contentView];
-        [_contentView addSubview:self.titleLabel];
-        [_contentView addSubview:self.subtitleLabel];
+        [self addSubview:self.contentView];
+        [self.contentView addSubview:self.titleLabel];
+        [self.contentView addSubview:self.subtitleLabel];
         
-        [self setUpConstraints];
-        
-        self.titleLabel.textColor = [UIColor whiteColor];
-        self.titleLabel.font = [UIFont boldSystemFontOfSize:18];
-        self.titleLabel.textAlignment = NSTextAlignmentCenter;
-        
-        self.subtitleLabel.textColor = [UIColor whiteColor];
-        self.subtitleLabel.font = [UIFont systemFontOfSize:14];
-        self.subtitleLabel.textAlignment = NSTextAlignmentCenter;
-
         self.wantsShadowForLabels = NO;
+
+        [self setupConstraints];
+    
+        self.titleLabel.font = [UIFont boldSystemFontOfSize:18];
+        self.subtitleLabel.font = [UIFont systemFontOfSize:14];
+
+        self.titleLabel.textAlignment = NSTextAlignmentCenter;
+        self.subtitleLabel.textAlignment = NSTextAlignmentCenter;
     }
     return self;
 }
@@ -59,25 +57,42 @@
 }
 
 - (void)setTitle:(NSString *)title {
-    self.titleLabel.text = title;
+    _title = title;
+    [self updateTitleInformation];
+}
+
+- (void)setTitleTextAttributes:(NSDictionary<NSString *,id> *)titleTextAttributes {
+    _titleTextAttributes = titleTextAttributes;
+    [self updateTitleInformation];
 }
 
 - (void)setSubtitle:(NSString *)subtitle {
-    self.subtitleLabel.text = subtitle;
+    _subtitle = subtitle;
+    [self updateTitleInformation];
 }
 
-- (void)setUpConstraints {
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:_contentView attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterX multiplier:1 constant:0]];
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:_contentView attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterY multiplier:1 constant:-2]];
+- (void)setSubtitleTextAttributes:(NSDictionary<NSString *,id> *)subtitleTextAttributes {
+    _subtitleTextAttributes = subtitleTextAttributes;
+    [self updateTitleInformation];
+}
+
+- (void)updateTitleInformation {
+    self.titleLabel.attributedText = [[NSAttributedString alloc] initWithString:self.title ?: @"" attributes:self.titleTextAttributes];
+    self.subtitleLabel.attributedText = [[NSAttributedString alloc] initWithString:self.subtitle ?: @"" attributes:self.subtitleTextAttributes];
+}
+
+- (void)setupConstraints {
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.contentView attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterX multiplier:1 constant:0]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.contentView attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterY multiplier:1 constant:-2]];
     
-    [_contentView addConstraint:[NSLayoutConstraint constraintWithItem:self.titleLabel attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:_contentView attribute:NSLayoutAttributeTop multiplier:1 constant:0]];
-    [_contentView addConstraint:[NSLayoutConstraint constraintWithItem:self.titleLabel attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:_contentView attribute:NSLayoutAttributeLeft multiplier:1 constant:0]];
-    [_contentView addConstraint:[NSLayoutConstraint constraintWithItem:self.titleLabel attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:_contentView attribute:NSLayoutAttributeRight multiplier:1 constant:0]];
+    [self.contentView addConstraint:[NSLayoutConstraint constraintWithItem:self.titleLabel attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.contentView attribute:NSLayoutAttributeTop multiplier:1 constant:0]];
+    [self.contentView addConstraint:[NSLayoutConstraint constraintWithItem:self.titleLabel attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self.contentView attribute:NSLayoutAttributeLeft multiplier:1 constant:0]];
+    [self.contentView addConstraint:[NSLayoutConstraint constraintWithItem:self.titleLabel attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self.contentView attribute:NSLayoutAttributeRight multiplier:1 constant:0]];
     
-    [_contentView addConstraint:[NSLayoutConstraint constraintWithItem:self.subtitleLabel attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.titleLabel attribute:NSLayoutAttributeBottom multiplier:1 constant:0]];
-    [_contentView addConstraint:[NSLayoutConstraint constraintWithItem:self.subtitleLabel attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:_contentView attribute:NSLayoutAttributeBottom multiplier:1 constant:0]];
-    [_contentView addConstraint:[NSLayoutConstraint constraintWithItem:self.subtitleLabel attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:_contentView attribute:NSLayoutAttributeLeft multiplier:1 constant:0]];
-    [_contentView addConstraint:[NSLayoutConstraint constraintWithItem:self.subtitleLabel attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:_contentView attribute:NSLayoutAttributeRight multiplier:1 constant:0]];
+    [self.contentView addConstraint:[NSLayoutConstraint constraintWithItem:self.subtitleLabel attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.titleLabel attribute:NSLayoutAttributeBottom multiplier:1 constant:0]];
+    [self.contentView addConstraint:[NSLayoutConstraint constraintWithItem:self.subtitleLabel attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.contentView attribute:NSLayoutAttributeBottom multiplier:1 constant:0]];
+    [self.contentView addConstraint:[NSLayoutConstraint constraintWithItem:self.subtitleLabel attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self.contentView attribute:NSLayoutAttributeLeft multiplier:1 constant:0]];
+    [self.contentView addConstraint:[NSLayoutConstraint constraintWithItem:self.subtitleLabel attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self.contentView attribute:NSLayoutAttributeRight multiplier:1 constant:0]];
 }
 
 @end

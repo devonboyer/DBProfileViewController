@@ -1,16 +1,20 @@
 //
 //  DBProfileHeaderOverlayView.h
-//  Pods
+//  DBProfileViewController
 //
 //  Created by Devon Boyer on 2016-04-26.
-//
+//  Copyright (c) 2015 Devon Boyer. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
-#import <DBProfileTitleView.h>
+
+@class DBProfileTitleView;
 
 NS_ASSUME_NONNULL_BEGIN
 
+/**
+ *  A view that overlays `DBProfileAccessoryKindHeader`, and houses the left and right bar button items, and a title view.
+ */
 @interface DBProfileHeaderOverlayView : UIView
 
 /**
@@ -18,22 +22,30 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, readonly) UINavigationBar *navigationBar;
 
+/**
+ *  The view that displays the title and subtitle of the overlay. Centered between the left and right bar button items.
+ */
 @property (nonatomic, readonly) DBProfileTitleView *titleView;
 
 /**
- *  The title of the overlay. Centered between the left and right bar button items.
+ *  The title of the overlay.
  */
 @property (nonatomic, copy, nullable) NSString *title;
-
-/**
- *  The title of the overlay. Centered between the left and right bar button items.
- */
-@property (nonatomic, copy, nullable) NSString *subtitle;
 
 /**
  *  The attributes of the overlay's title.
  */
 @property(nonatomic, copy, nullable) NSDictionary <NSString *, id> *titleTextAttributes;
+
+/**
+ *  The subtitle of the overlay.
+ */
+@property (nonatomic, copy, nullable) NSString *subtitle;
+
+/**
+ *  The attributes of the overlay's subtitle.
+ */
+@property(nonatomic, copy, nullable) NSDictionary <NSString *, id> *subtitleTextAttributes;
 
 /**
  *  The bar button item appearing at the top left of the overlay.
@@ -54,8 +66,6 @@ NS_ASSUME_NONNULL_BEGIN
  *  The bar button items appearing at the top right of the overlay.
  */
 @property (nonatomic, copy, nullable) NSArray <UIBarButtonItem *> *rightBarButtonItems;
-
-- (void)setTitleVerticalPositionAdjustment:(CGFloat)adjustment traitCollection:(UITraitCollection *)traitCollection;
 
 @end
 

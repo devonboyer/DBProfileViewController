@@ -139,32 +139,11 @@ FOUNDATION_EXPORT NSString * const DBProfileAccessoryKindHeader;
 /*!
  *  Invalidates the current layout attributes and triggers a layout update.
  *
- *  If any layout attributes are changed after `viewDidAppear:` is called, then this method must be called to trigger an appropriate layout update.
+ *  If any layout attributes are changed after `viewWillAppear:` is called, then this method must be called to trigger an appropriate layout update.
  *
  *  @param accessoryViewKind A string that identifies the type of the accessory view.
  */
 - (void)invalidateLayoutAttributesForAccessoryViewOfKind:(NSString *)accessoryViewKind;
-
-/**
- *  @name Configuring Pull-To-Refresh
- */
-
-/**
- *  Whether the pull-to-refresh action is allowed.
- *
- *  Defaults to YES.
- */
-@property (nonatomic) BOOL allowsPullToRefresh;
-
-/**
- *  Whether the pull-to-refresh indicator is currently animating.
- */
-@property (nonatomic, readonly, getter=isRefreshing) BOOL refreshing;
-
-/**
- *  Hides the pull-to-refresh indicator if it is currently animating.
- */
-- (void)endRefreshing;
 
 /**
  *  @name Showing Content Controllers
@@ -183,36 +162,13 @@ FOUNDATION_EXPORT NSString * const DBProfileAccessoryKindHeader;
 /**
  *  Shows the content controller at the specified index.
  *
- *  @param index An index identifying a content controller in the profile view controller.
+ *  @param controllerIndex An index identifying a content controller in the profile view controller.
  */
-- (void)showContentControllerAtIndex:(NSInteger)index;
+- (void)showContentControllerAtIndex:(NSInteger)controllerIndex;
 
 /**
- *  @name Updating the Profile View Controller
+ *  @name Configuring the Overlay View
  */
-
-/**
- *  Begins a series of method calls that modify height calculations for subviews of the profile view controller.
- *
- *  Call this method if you want subsequent height changes to subviews to be animated simultaneously.
- *
- *  @warning This group of methods must conclude with an invocation of endUpdates. You should not call reloadData within the group.
- */
-- (void)beginUpdates;
-
-/**
- *  Concludes a series of method calls that modify height calculations for subviews of the profile view controller.
- *
- *  You call this method to bracket a series of method calls that begins with beginUpdates. When you call endUpdates, height changes to subviews are animated simultaneously.
- */
-- (void)endUpdates;
-
-/**
- *  Reloads the content controllers of the profile view controller by rebuilding the view heirarchy.
- */
-- (void)reloadContentControllers;
-
-// NEW STUFF
 
 /**
  *  The overlay view displayed over the header. Created during `viewDidLoad`.
@@ -238,6 +194,52 @@ FOUNDATION_EXPORT NSString * const DBProfileAccessoryKindHeader;
  *  The right bar button items overlaying the header.
  */
 @property (nonatomic, copy, nullable) NSArray <UIBarButtonItem *> *rightBarButtonItems;
+
+/**
+ *  @name Configuring Pull-To-Refresh
+ */
+
+/**
+ *  Whether the pull-to-refresh action is allowed.
+ *
+ *  Defaults to YES.
+ */
+@property (nonatomic) BOOL allowsPullToRefresh;
+
+/**
+ *  Whether the pull-to-refresh indicator is currently animating.
+ */
+@property (nonatomic, readonly, getter=isRefreshing) BOOL refreshing;
+
+/**
+ *  Hides the pull-to-refresh indicator if it is currently animating.
+ */
+- (void)endRefreshing;
+
+/**
+ *  @name Updating the Profile View Controller
+ */
+
+/**
+ *  Begins a series of method calls that modify height calculations for subviews of the profile view controller.
+ *
+ *  Call this method if you want subsequent height changes to subviews to be animated simultaneously.
+ *
+ *  @warning This group of methods must conclude with an invocation of endUpdates. You should not call reloadData within the group.
+ */
+- (void)beginUpdates;
+
+/**
+ *  Concludes a series of method calls that modify height calculations for subviews of the profile view controller.
+ *
+ *  You call this method to bracket a series of method calls that begins with beginUpdates. When you call endUpdates, height changes to subviews are animated simultaneously.
+ */
+- (void)endUpdates;
+
+/**
+ *  Reloads the content controllers of the profile view controller provided by the data source.
+ */
+- (void)reloadContentControllers;
 
 @end
 

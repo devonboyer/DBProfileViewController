@@ -10,16 +10,44 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/**
+ *  A view that displays a title and subtitle.
+ */
 @interface DBProfileTitleView : UIView
 
+/**
+ *  A label that displays the title.
+ */
 @property (nonatomic, readonly) UILabel *titleLabel;
 
+/**
+ *  A label that displays the subtitle.
+ */
 @property (nonatomic, readonly) UILabel *subtitleLabel;
 
-@property (nonatomic, copy, nullable) NSString *title;
+/**
+ *  A string representing the title;
+ */
+@property (nonatomic, copy, nullable) NSAttributedString *title;
 
-@property (nonatomic, copy, nullable) NSString *subtitle;
+/**
+ *  The attributes of the title.
+ */
+@property(nonatomic, copy, nullable) NSDictionary <NSString *, id> *titleTextAttributes;
 
+/**
+ *  A string representing the subtitle;
+ */
+@property (nonatomic, copy, nullable) NSAttributedString *subtitle;
+
+/**
+ *  The attributes of the subtitle.
+ */
+@property(nonatomic, copy, nullable) NSDictionary <NSString *, id> *subtitleTextAttributes;
+
+/**
+ *  Whether a shadow should be added to the title and subtitle labels.
+ */
 @property (nonatomic) BOOL wantsShadowForLabels;
 
 @end
