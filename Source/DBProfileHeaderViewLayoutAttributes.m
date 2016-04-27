@@ -15,7 +15,6 @@
 {
     self = [super initWithAccessoryViewKind:accessoryViewKind];
     if (self) {
-        _navigationItem = [[UINavigationItem alloc] init];
         _headerStyle = DBProfileHeaderStyleNavigation;
         _headerOptions = DBProfileHeaderOptionStretch;
     }

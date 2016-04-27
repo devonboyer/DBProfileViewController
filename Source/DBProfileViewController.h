@@ -22,6 +22,8 @@
 #import <DBProfileViewController/DBProfileAvatarView.h>
 #import <DBProfileViewController/DBProfileBlurView.h>
 #import <DBProfileViewController/DBProfileCoverPhotoView.h>
+#import <DBProfileViewController/DBProfileHeaderOverlayView.h>
+#import <DBProfileViewController/DBProfileTitleView.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -176,7 +178,7 @@ FOUNDATION_EXPORT NSString * const DBProfileAccessoryKindHeader;
 /**
  *  The currently displayed content controller.
  */
-@property (nonatomic, readonly) DBProfileContentController *displayedContentController;
+@property (nonatomic, readonly) DBProfileContentController *currentlyDisplayedContentController;
 
 /**
  *  Shows the content controller at the specified index.
@@ -209,6 +211,33 @@ FOUNDATION_EXPORT NSString * const DBProfileAccessoryKindHeader;
  *  Reloads the content controllers of the profile view controller by rebuilding the view heirarchy.
  */
 - (void)reloadData;
+
+// NEW STUFF
+
+/**
+ *  The overlay view displayed over the header. Created during `viewDidLoad`.
+ */
+@property (nonatomic, readonly, nullable) DBProfileHeaderOverlayView *overlayView;
+
+/**
+ *  The left bar button item overlaying the header.
+ */
+@property (nonatomic, nullable) UIBarButtonItem *leftBarButtonItem;
+
+/**
+ *  The left bar button items overlaying the header.
+ */
+@property (nonatomic, copy, nullable) NSArray <UIBarButtonItem *> *leftBarButtonItems;
+
+/**
+ *  The right bar button item overlaying the header.
+ */
+@property (nonatomic, nullable) UIBarButtonItem *rightBarButtonItem;
+
+/**
+ *  The right bar button items overlaying the header.
+ */
+@property (nonatomic, copy, nullable) NSArray <UIBarButtonItem *> *rightBarButtonItems;
 
 @end
 

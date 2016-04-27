@@ -10,6 +10,6 @@
 
 @interface NSBundle (DBProfileViewController)
 
-+ (NSBundle *)db_profileViewControllerBundle;
++ (instancetype)db_profileViewControllerBundle;
 
 @end

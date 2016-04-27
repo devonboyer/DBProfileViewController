@@ -48,13 +48,6 @@ typedef NS_OPTIONS(NSUInteger, DBProfileHeaderOptions) {
 @interface DBProfileHeaderViewLayoutAttributes : DBProfileAccessoryViewLayoutAttributes
 
 /**
- *  The navigation item for of the associated header view when using `DBProfileHeaderStyleNavigation`.
- *
- *  The navigation item's left bar button item is set to a "chevron" icon by default.
- */
-@property (nonatomic, readonly) UINavigationItem *navigationItem;
-
-/**
  *  The style of the associated header view.
  *
  *  Defaults to `DBProfileHeaderStyleNavigation`

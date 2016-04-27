@@ -47,7 +47,7 @@ typedef NS_ENUM(NSInteger, DBProfileAvatarStyle) {
  
  // Customizing layout attributes
  DBProfileAvatarViewLayoutAttributes *layoutAttributes = [self layoutAttributesForAccessoryViewOfKind:DBProfileAccessoryKindAvatar];
- layoutAttributes.alignment = DBProfileAvatarLayoutAlignmentLeft;
+ layoutAttributes.avatarAlignment = DBProfileAvatarAlignmentLeft;
  
  */
 @interface DBProfileAvatarView : DBProfileAccessoryView

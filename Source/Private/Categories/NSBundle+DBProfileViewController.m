@@ -11,11 +11,15 @@
 
 @implementation NSBundle (DBProfileViewController)
 
-+ (NSBundle *)db_profileViewControllerBundle
++ (instancetype)db_profileViewControllerBundle
 {
-    NSString *resourcePath = [NSBundle bundleForClass:[DBProfileViewController class]].resourcePath;
-    NSString *bundlePath = [resourcePath stringByAppendingPathComponent:@"DBProfileViewController.bundle"];
-    return [NSBundle bundleWithPath:bundlePath];
+    static NSBundle *resourceBundle = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        NSString *resourceBundlePath = [[NSBundle bundleForClass:[DBProfileViewController class]] pathForResource:@"DBProfileViewController" ofType:@"bundle"];
+        resourceBundle = [self bundleWithPath:resourceBundlePath];
+    });
+    return resourceBundle;
 }
 
 @end

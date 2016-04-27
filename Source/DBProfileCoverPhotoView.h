@@ -26,7 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
  
  // Customizing layout attributes
  DBProfileHeaderViewLayoutAttributes *layoutAttributes = [self layoutAttributesForAccessoryViewOfKind:DBProfileAccessoryKindHeader];
- layoutAttributes.headerStyle = DBProfileHeaderLayoutStyleNavigation;
+ layoutAttributes.headerStyle = DBProfileHeaderStyleNavigation;
  
  */
 @interface DBProfileCoverPhotoView : DBProfileBlurView

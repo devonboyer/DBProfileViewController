@@ -10,9 +10,9 @@
 #import "DBProfileObserver.h"
 #import "DBProfileTitleView.h"
 #import "DBProfileSegmentedControlView.h"
-#import "DBProfileHeaderViewNavigationBar.h"
 #import "DBProfileViewControllerUpdateContext.h"
 #import "UIBarButtonItem+DBProfileViewController.h"
+#import "NSBundle+DBProfileViewController.h"
 #import "DBProfileAccessoryView_Private.h"
 
 static CGFloat DBProfileViewControllerNavigationBarHeightForTraitCollection(UITraitCollection *traitCollection)
@@ -59,11 +59,11 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 @property (nonatomic, strong) NSMutableDictionary *accessoryViewLayoutAttributes;
 
 // Views
-@property (nonatomic, assign) Class segmentedControlClass;
-@property (nonatomic, strong) UIView *containerView;
-@property (nonatomic, strong) UIActivityIndicatorView *activityIndicator;
-@property (nonatomic, strong) DBProfileHeaderViewNavigationBar *headerViewNavigationBar;
-@property (nonatomic, strong) DBProfileSegmentedControlView *segmentedControlView;
+@property (nonatomic) Class segmentedControlClass;
+@property (nonatomic) UIView *containerView;
+@property (nonatomic) UIActivityIndicatorView *activityIndicator;
+@property (nonatomic) DBProfileSegmentedControlView *segmentedControlView;
+@property (nonatomic) DBProfileHeaderOverlayView *overlayView;
 
 @end
 
@@ -110,18 +110,19 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 
 - (void)commonInit
 {
-    _detailView = [[UIView alloc] init];
-    _segmentedControlView = [[DBProfileSegmentedControlView alloc] init];
-    _headerViewNavigationBar = [[DBProfileHeaderViewNavigationBar alloc] init];
-    _activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
-
     NSCache *contentOffsetCache = [[NSCache alloc] init];
     contentOffsetCache.name = DBProfileViewControllerContentOffsetCacheName;
     contentOffsetCache.countLimit = 10;
     _contentOffsetCache = contentOffsetCache;
     
-    self.containerView = [[UIView alloc] init];
-    self.segmentedControlClass = [UISegmentedControl class];
+    _containerView = [[UIView alloc] init];
+    _detailView = [[UIView alloc] init];
+    _segmentedControlView = [[DBProfileSegmentedControlView alloc] init];
+    _activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
+    _overlayView = [[DBProfileHeaderOverlayView alloc] initWithFrame:CGRectZero];
+    _overlayView.leftBarButtonItem = [UIBarButtonItem db_backBarButtonItemWithTarget:self action:@selector(backButtonTapped:)];
+    
+    [self setSegmentedControlClass:[UISegmentedControl class]];
     
     [self configureDefaults];
 }
@@ -136,42 +137,28 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 
 #pragma mark - View Lifecycle
 
-- (void)loadView
+- (void)viewDidLoad
 {
-    [super loadView];
+    [super viewDidLoad];
+    
+//    self.view.tintColor = [UIColor whiteColor];
 
     self.containerView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.containerView.frame = self.view.frame;
     [self.view addSubview:self.containerView];
     
-    self.headerViewNavigationBar.translatesAutoresizingMaskIntoConstraints = NO;
-    [self.view addSubview:self.headerViewNavigationBar];
-    
-    [self setupHeaderViewNavigationBarConstraints];
-}
+    [self addOverlayView];
+    [self setupOverlayViewConstraints];
 
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-
-    [self.segmentedControl addTarget:self
-                              action:@selector(showContentController)
-                    forControlEvents:UIControlEventValueChanged];
+    [self.segmentedControl addTarget:self action:@selector(showContentController:) forControlEvents:UIControlEventValueChanged];
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
     
-    if (!self.dataSource) {
-        @throw [NSException exceptionWithName:NSInternalInconsistencyException
-                                       reason:[NSString stringWithFormat:@"%@ must have a dataSource before `viewWillAppear:` is called.", NSStringFromClass([self class])]
-                                     userInfo:nil];
-    }
-    
     DBProfileHeaderViewLayoutAttributes *layoutAttributes = [self layoutAttributesForAccessoryViewOfKind:DBProfileAccessoryKindHeader];
     if (layoutAttributes.headerStyle == DBProfileHeaderStyleNavigation) {
-        layoutAttributes.navigationItem.leftBarButtonItem = [UIBarButtonItem db_backBarButtonItemWithTarget:self action:@selector(back)];
         [self.navigationController setNavigationBarHidden:YES animated:YES];
         [self.navigationController.interactivePopGestureRecognizer setDelegate:nil];
     }
@@ -185,12 +172,12 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
         
         // Scroll displayed content controller to top
         if ([self.contentControllers count]) {
-            [self scrollContentControllerToTop:self.displayedContentController animated:NO];
+            [self scrollContentControllerToTop:self.currentlyDisplayedContentController animated:NO];
         }
         
         // Tempoaray fix for content inset being calculated incorrectly before view appears.
         dispatch_async(dispatch_get_main_queue(), ^{
-            [self adjustContentInsetForScrollView:self.displayedContentController.contentScrollView];
+            [self adjustContentInsetForScrollView:self.currentlyDisplayedContentController.contentScrollView];
         });
     }
 }
@@ -227,7 +214,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 
 - (void)willTransitionToTraitCollection:(UITraitCollection *)newCollection withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator
 {
-    UIScrollView *scrollView = [self.displayedContentController contentScrollView];
+    UIScrollView *scrollView = [self.currentlyDisplayedContentController contentScrollView];
     _cachedContentInset = scrollView.contentInset;
 }
 
@@ -236,12 +223,12 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     [super traitCollectionDidChange:previousTraitCollection];
     
     // Reset the navigation view constraints to allow the system to determine the height
-    [self.headerViewNavigationBar removeFromSuperview];
-    [self.view addSubview:self.headerViewNavigationBar];
-    [self setupHeaderViewNavigationBarConstraints];
+    [self.overlayView removeFromSuperview];
+    [self addOverlayView];
+    [self setupOverlayViewConstraints];
     
     // The scroll view content inset needs to be recalculated for the new size class
-    UIScrollView *scrollView = [self.displayedContentController contentScrollView];
+    UIScrollView *scrollView = [self.currentlyDisplayedContentController contentScrollView];
     
     [scrollView setNeedsLayout];
     [scrollView layoutIfNeeded];
@@ -255,7 +242,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     contentOffset.y -= MAX(scrollView.contentInset.top - _cachedContentInset.top, 0);
     scrollView.contentOffset = contentOffset;
     
-    [self _resetTitles];
+    [self updateOverlayInformation];
 }
 
 #pragma mark - Getters
@@ -265,7 +252,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     return self.segmentedControlView.segmentedControl;
 }
 
-- (DBProfileContentController *)displayedContentController
+- (DBProfileContentController *)currentlyDisplayedContentController
 {
     return self.contentControllers[self.indexForDisplayedContentController];
 }
@@ -352,12 +339,12 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 
 #pragma mark - Actions
 
-- (void)back
+- (void)backButtonTapped:(id)sender
 {
     [self.navigationController popViewControllerAnimated:YES];
 }
 
-- (void)showContentController
+- (void)showContentController:(id)sender
 {
     NSInteger selectedSegmentIndex = [self.segmentedControl selectedSegmentIndex];
     
@@ -370,6 +357,70 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     if ([self.delegate respondsToSelector:@selector(profileViewController:didShowContentControllerAtIndex:)]) {
         [self.delegate profileViewController:self didShowContentControllerAtIndex:selectedSegmentIndex];
     }
+}
+
+#pragma mark - DBProfileViewController
+
+- (UIBarButtonItem *)leftBarButtonItem {
+    return self.overlayView.leftBarButtonItem;
+}
+
+- (void)setLeftBarButtonItem:(UIBarButtonItem *)leftBarButtonItem {
+    self.overlayView.leftBarButtonItem = leftBarButtonItem;
+}
+
+- (NSArray *)leftBarButtonItems {
+    return self.overlayView.leftBarButtonItems;
+}
+
+- (void)setLeftBarButtonItems:(NSArray *)leftBarButtonItems {
+    self.overlayView.leftBarButtonItems = leftBarButtonItems;
+}
+
+- (UIBarButtonItem *)rightBarButtonItem {
+    return self.overlayView.rightBarButtonItem;
+}
+
+- (void)setRightBarButtonItem:(UIBarButtonItem *)rightBarButtonItem {
+    self.overlayView.rightBarButtonItem = rightBarButtonItem;
+}
+
+- (NSArray *)rightBarButtonItems {
+    return self.overlayView.rightBarButtonItems;
+}
+
+- (void)setRightBarButtonItems:(NSArray *)rightBarButtonItems {
+    self.overlayView.rightBarButtonItems = rightBarButtonItems;
+}
+
+- (void)addOverlayView {
+    NSAssert(self.overlayView != nil, @"overlayView must be set during initialization, to provide bar button items for this %@", NSStringFromClass([self class]));
+    
+    UIColor *textColor = self.view.tintColor ?: [UIColor whiteColor];
+    self.overlayView.titleTextAttributes = @{NSForegroundColorAttributeName: textColor};
+    self.overlayView.translatesAutoresizingMaskIntoConstraints = NO;
+    
+    [self updateOverlayInformation];
+    [self.view addSubview:self.overlayView];
+}
+
+- (void)updateOverlayInformation {
+    NSString *overlayTitle;
+    
+    NSUInteger controllerIndex = self.indexForDisplayedContentController;
+    
+    if ([self.delegate respondsToSelector:@selector(profileViewController:titleForContentControllerAtIndex:)]) {
+        overlayTitle = [self.dataSource profileViewController:self titleForContentControllerAtIndex:controllerIndex];
+    }
+    
+    NSString *overlaySubtitle;
+    
+    if ([self.delegate respondsToSelector:@selector(profileViewController:titleForContentControllerAtIndex:)]) {
+        overlaySubtitle = [self.dataSource profileViewController:self subtitleForContentControllerAtIndex:controllerIndex];
+    }
+    
+    self.overlayView.title = overlayTitle;
+    self.overlayView.subtitle = overlaySubtitle;
 }
 
 #pragma mark - Public Methods
@@ -414,11 +465,6 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     DBProfileAccessoryViewLayoutAttributes *layoutAttributes = [layoutAttributesClass layoutAttributesForAccessoryViewOfKind:accessoryViewKind];
     [self.accessoryViewLayoutAttributes setObject:layoutAttributes forKey:accessoryViewKind];
     
-    if ([accessoryViewKind isEqualToString:DBProfileAccessoryKindHeader]) {
-        DBProfileHeaderViewLayoutAttributes *layoutAttributes = [self layoutAttributesForAccessoryViewOfKind:DBProfileAccessoryKindHeader];
-        [self.headerViewNavigationBar setItems:@[layoutAttributes.navigationItem]];
-    }
-    
     [self invalidateLayoutAttributesForAccessoryViewOfKind:accessoryViewKind];
 }
 
@@ -459,7 +505,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
         
         // Adjust content offset to account for difference in heights of subviews from before updates to after updates
         if (round(self.updateContext.beforeUpdatesDetailsViewHeight) != round(self.updateContext.afterUpdatesDetailsViewHeight)) {
-            UIScrollView *scrollView = [self.displayedContentController contentScrollView];
+            UIScrollView *scrollView = [self.currentlyDisplayedContentController contentScrollView];
             
             CGPoint contentOffset = scrollView.contentOffset;
             contentOffset.y += (self.updateContext.beforeUpdatesDetailsViewHeight - self.updateContext.afterUpdatesDetailsViewHeight);
@@ -482,7 +528,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     [self.scrollViewObservers removeAllObjects];
     
     if ([self.contentControllers count] > 0) {
-        [self hideContentController:self.displayedContentController];
+        [self hideContentController:self.currentlyDisplayedContentController];
     }
     
     [self.contentControllers removeAllObjects];
@@ -503,7 +549,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     
     // Hide navigation bar
     DBProfileHeaderViewLayoutAttributes *layoutAttributes = [self layoutAttributesForAccessoryViewOfKind:DBProfileAccessoryKindHeader];
-    self.headerViewNavigationBar.hidden = layoutAttributes.headerStyle != DBProfileHeaderStyleNavigation;
+    self.overlayView.hidden = layoutAttributes.headerStyle != DBProfileHeaderStyleNavigation;
     
     [self invalidateLayoutAttributesForAccessoryViewOfKind:DBProfileAccessoryKindHeader];
 }
@@ -519,7 +565,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     if (![self.contentControllers count]) return;
     
     // Hide the currently displayed content controller and remove scroll view observer
-    DBProfileContentController *hideContentController = self.displayedContentController;
+    DBProfileContentController *hideContentController = self.currentlyDisplayedContentController;
     if (hideContentController) {
         [self hideContentController:hideContentController];
         NSString *key = [self uniqueKeyForContentControllerAtIndex:_indexForDisplayedContentController];
@@ -533,7 +579,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     [self.segmentedControl setSelectedSegmentIndex:self.indexForDisplayedContentController];
     
     // Display the desired content controller and add scroll view observer
-    DBProfileContentController *displayContentController = self.displayedContentController;
+    DBProfileContentController *displayContentController = self.currentlyDisplayedContentController;
     if (displayContentController) {
         [self displayContentController:displayContentController];
         NSString *key = [self uniqueKeyForContentControllerAtIndex:index];
@@ -545,7 +591,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     [self updateViewConstraints];
     [self.view layoutIfNeeded];
     
-    [self _resetTitles];
+    [self updateOverlayInformation];
 }
 
 #pragma mark - Private Methods
@@ -581,8 +627,8 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     viewController.view.frame = [self frameForContentController];
     [self.containerView addSubview:viewController.view];
     [viewController didMoveToParentViewController:self];
-    [self.view bringSubviewToFront:self.headerViewNavigationBar];
-    [self buildContentController:viewController];
+    [self.view bringSubviewToFront:self.overlayView];
+    [self setCurrentlyDisplayedContentController:viewController animated:YES];
 }
 
 - (void)hideContentController:(DBProfileContentController *)viewController
@@ -592,7 +638,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     UIScrollView *scrollView = [viewController contentScrollView];
     
     // Cache content offset
-    CGFloat topInset = CGRectGetMaxY(self.headerViewNavigationBar.frame) + CGRectGetHeight(self.segmentedControlView.frame);
+    CGFloat topInset = CGRectGetMaxY(self.overlayView.frame) + CGRectGetHeight(self.segmentedControlView.frame);
     if (self.automaticallyAdjustsScrollViewInsets) topInset = CGRectGetHeight(self.segmentedControlView.frame);
     _shouldScrollToTop = scrollView.contentOffset.y >= -topInset;
     _sharedContentOffset = scrollView.contentOffset;
@@ -604,11 +650,11 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     [viewController removeFromParentViewController];
 }
 
-- (void)buildContentController:(DBProfileContentController *)viewController
+- (void)setCurrentlyDisplayedContentController:(DBProfileContentController *)controller animated:(BOOL)animated
 {
-    NSAssert(viewController, @"viewController cannot be nil");
+    NSAssert(controller, @"controller cannot be nil");
     
-    UIScrollView *scrollView = [viewController contentScrollView];
+    UIScrollView *scrollView = [controller contentScrollView];
     
     [self.headerView removeFromSuperview];
     [self.avatarView removeFromSuperview];
@@ -679,8 +725,6 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
             [scrollView insertSubview:self.headerView aboveSubview:self.avatarView];
         }
     }
-    
-    scrollView.delaysContentTouches = NO;
 }
 
 #pragma mark - Helpers
@@ -712,7 +756,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 - (void)resetContentOffsetForScrollView:(UIScrollView *)scrollView
 {
     CGPoint contentOffset = scrollView.contentOffset;
-    contentOffset.y = -(CGRectGetMaxY(self.headerViewNavigationBar.frame) + CGRectGetHeight(self.segmentedControlView.frame));
+    contentOffset.y = -(CGRectGetMaxY(self.overlayView.frame) + CGRectGetHeight(self.segmentedControlView.frame));
     [scrollView setContentOffset:contentOffset];
 }
 
@@ -749,13 +793,6 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     return [self.registeredAccessoryViews objectForKey:accessoryViewKind];
 }
 
-- (void)_resetTitles
-{
-    [self.headerViewNavigationBar setTitle:self.title];
-    [self.headerViewNavigationBar setSubtitle:[self _subtitleForContentControllerAtIndex:self.indexForDisplayedContentController]
-                              traitCollection:self.traitCollection];
-}
-
 - (CGFloat)_headerViewOffset
 {
     return CGRectGetHeight(self.headerView.frame);
@@ -763,7 +800,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 
 - (CGFloat)_titleViewOffset
 {
-    return (([self _headerViewOffset] - CGRectGetMaxY(self.headerViewNavigationBar.frame)) + CGRectGetHeight(self.segmentedControlView.frame));
+    return (([self _headerViewOffset] - CGRectGetMaxY(self.overlayView.frame)) + CGRectGetHeight(self.segmentedControlView.frame));
 }
 
 - (NSInteger)_numberOfContentControllers
@@ -809,14 +846,6 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     }
 }
 
-- (NSString *)_subtitleForContentControllerAtIndex:(NSInteger)index
-{
-    if ([self.delegate respondsToSelector:@selector(profileViewController:subtitleForContentControllerAtIndex:)]) {
-        return [self.dataSource profileViewController:self subtitleForContentControllerAtIndex:index];
-    }
-    return nil;
-}
-
 - (CGSize)_referenceSizeForAccessoryViewOfKind:(NSString *)accessoryViewKind
 {
     CGSize referenceSize;
@@ -832,9 +861,9 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     return referenceSize;
 }
 
-#pragma mark - Accessory View Delegate
+#pragma mark - DBProfielAccessoryViewDelegate
 
-- (BOOL)accessoryViewShouldHighlight:(DBProfileAccessoryView *)accessoryView
+- (BOOL)accessoryViewShouldHighlight:(DBProfileAccessoryView *)accessoryView 
 {
     if ([self.delegate respondsToSelector:@selector(profileViewController:shouldHighlightAccessoryView:ofKind:)]) {
         return [self.delegate profileViewController:self shouldHighlightAccessoryView:accessoryView ofKind:accessoryView.representedAccessoryKind];
@@ -922,7 +951,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
         layoutAttributes.heightConstraint.constant = referenceSize.height;
     }
     
-    CGFloat maxBlurOffset = [self _headerViewOffset] - CGRectGetMaxY(self.headerViewNavigationBar.frame);
+    CGFloat maxBlurOffset = [self _headerViewOffset] - CGRectGetMaxY(self.overlayView.frame);
     
     if (self.automaticallyAdjustsScrollViewInsets) maxBlurOffset += [self.topLayoutGuide length];
     
@@ -950,7 +979,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     CGFloat percentScrolled = 0;
     
     if (headerViewLayoutAttributes.headerStyle == DBProfileHeaderStyleNavigation) {
-        headerOffset -= CGRectGetMaxY(self.headerViewNavigationBar.frame);
+        headerOffset -= CGRectGetMaxY(self.overlayView.frame);
     }
     
     percentScrolled = MIN(1, contentOffset.y / headerOffset);
@@ -981,7 +1010,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     titleViewOffset += (CGRectGetHeight(self.avatarView.frame) + avatarOffset + padding);
     
     CGFloat percentScrolled = 1 - contentOffset.y / titleViewOffset;
-    [self.headerViewNavigationBar setTitleVerticalPositionAdjustment:MAX(titleViewOffset * percentScrolled, 0) traitCollection:self.traitCollection];
+    [self.overlayView setTitleVerticalPositionAdjustment:MAX(titleViewOffset * percentScrolled, 0) traitCollection:self.traitCollection];
 }
 
 - (void)observedScrollViewDidScroll:(UIScrollView *)scrollView
@@ -1070,23 +1099,23 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     layoutAttributes.topConstraint.constant = layoutAttributes.edgeInsets.top - layoutAttributes.edgeInsets.bottom;
 }
 
-- (void)setupHeaderViewNavigationBarConstraints
+- (void)setupOverlayViewConstraints
 {
-    NSArray *constraints = @[[NSLayoutConstraint constraintWithItem:self.headerViewNavigationBar
+    NSArray *constraints = @[[NSLayoutConstraint constraintWithItem:self.overlayView
                                                           attribute:NSLayoutAttributeTop
                                                           relatedBy:NSLayoutRelationEqual
                                                              toItem:[self topLayoutGuide]
                                                           attribute:NSLayoutAttributeBottom
                                                          multiplier:1
                                                            constant:0],
-                             [NSLayoutConstraint constraintWithItem:self.headerViewNavigationBar
+                             [NSLayoutConstraint constraintWithItem:self.overlayView
                                                           attribute:NSLayoutAttributeLeft
                                                           relatedBy:NSLayoutRelationEqual
                                                              toItem:self.view
                                                           attribute:NSLayoutAttributeLeft
                                                          multiplier:1
                                                            constant:0],
-                             [NSLayoutConstraint constraintWithItem:self.headerViewNavigationBar
+                             [NSLayoutConstraint constraintWithItem:self.overlayView
                                                           attribute:NSLayoutAttributeRight
                                                           relatedBy:NSLayoutRelationEqual
                                                              toItem:self.view
