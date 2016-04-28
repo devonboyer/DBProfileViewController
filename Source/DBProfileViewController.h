@@ -239,7 +239,7 @@ FOUNDATION_EXPORT NSString * const DBProfileAccessoryKindHeader;
 /**
  *  Reloads the content controllers of the profile view controller provided by the data source.
  */
-- (void)reloadContentControllers;
+- (void)reloadData;
 
 @end
 

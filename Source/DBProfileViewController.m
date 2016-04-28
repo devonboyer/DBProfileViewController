@@ -180,7 +180,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     self.automaticallyAdjustsScrollViewInsets = !showOverlayView;
     
     if (!self.hasAppeared) {
-        [self reloadContentControllers];
+        [self reloadData];
         
         [self.view setNeedsUpdateConstraints];
         
@@ -261,6 +261,11 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     return controller;
 }
 
+- (NSArray<DBProfileAccessoryView *> *)accessoryViews
+{
+    return [self.registeredAccessoryViews allValues];
+}
+
 - (NSMutableArray *)contentControllers
 {
     if (!_contentControllers) {
@@ -285,11 +290,6 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     return _accessoryViewLayoutAttributes;
 }
 
-- (NSArray<DBProfileAccessoryView *> *)accessoryViews
-{
-    return [self.registeredAccessoryViews allValues];
-}
-
 - (NSMutableDictionary *)scrollViewObservers
 {
     if (!_scrollViewObservers) {
@@ -311,7 +311,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 - (void)setHidesSegmentedControlForSingleContentController:(BOOL)hidesSegmentedControlForSingleContentController
 {
     _hidesSegmentedControlForSingleContentController = hidesSegmentedControlForSingleContentController;
-    [self reloadContentControllers];
+    [self reloadData];
 }
 
 - (void)setDetailView:(__kindof UIView *)detailView
@@ -322,13 +322,13 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     if (!_detailView) {
         _detailView = [[UIView alloc] init];
     }
-    [self reloadContentControllers];
+    [self reloadData];
 }
 
 - (void)setAllowsPullToRefresh:(BOOL)allowsPullToRefresh
 {
     _allowsPullToRefresh = allowsPullToRefresh;
-    [self reloadContentControllers];
+    [self reloadData];
 }
 
 #pragma mark - DBProfileViewController
@@ -477,6 +477,8 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     
     [self updateOverlayInformation];
     
+    // We need to invalidate the layout attributes for all accessory views after showing a content controller in order to update the constraint-based attributes
+    // that have been installed.
     [self.registeredAccessoryViews enumerateKeysAndObjectsUsingBlock:^(NSString *_Nonnull kind, id  _Nonnull obj, BOOL * _Nonnull stop) {
         [self invalidateLayoutAttributesForAccessoryViewOfKind:kind];
     }];
@@ -621,7 +623,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     }];
 }
 
-- (void)reloadContentControllers
+- (void)reloadData
 {
     NSInteger numberOfSegments = [self _numberOfContentControllers];
     
@@ -917,8 +919,6 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     }
     
     layoutAttributes.hasInstalledConstraints = YES;
-    
-    [self invalidateLayoutAttributesForAccessoryViewOfKind:DBProfileAccessoryKindAvatar];
 }
 
 - (void)installConstraintsForHeaderViewWithLayoutAttributes:(DBProfileHeaderViewLayoutAttributes *)layoutAttributes {
