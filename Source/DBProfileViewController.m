@@ -36,22 +36,21 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 
 @interface DBProfileViewController () <DBProfileAccessoryViewDelegate, DBProfileScrollViewObserverDelegate>
 {
-    BOOL _shouldScrollToTop;
-    CGPoint _sharedContentOffset;
-    UIEdgeInsets _cachedContentInset;
-    UIImage *_coverPhotoImage;
-    
-    NSLayoutConstraint *_detailsViewTopConstraint;
+    BOOL _shouldScrollToTop; // Used for size class changes
+    CGPoint _sharedContentOffset; // Used for size class changes
+    UIEdgeInsets _cachedContentInset; // Used for size class changes
 }
 
 // State
 @property (nonatomic) NSUInteger indexForDisplayedContentController;
 @property (nonatomic, getter=isRefreshing) BOOL refreshing;
+@property (nonatomic) CGPoint contentOffsetForDisplayedContentController;
 
 // Updates
 @property (nonatomic) DBProfileViewControllerUpdateContext *updateContext;
 @property (nonatomic, getter=isUpdating) BOOL updating;
 @property (nonatomic) BOOL hasAppeared;
+@property (nonatomic) NSLayoutConstraint *detailViewTopConstraint;
 
 // Data
 @property (nonatomic) NSMutableArray<DBProfileContentController *> *contentControllers;
@@ -67,7 +66,10 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 @property (nonatomic) DBProfileSegmentedControlView *segmentedControlView;
 @property (nonatomic) DBProfileHeaderOverlayView *overlayView;
 
-@property (nonatomic) CGPoint contentOffsetForDisplayedContentController;
+- (BOOL)hasRegisteredAccessoryViewOfKind:(NSString *)accessoryViewKind;
+- (void)installConstraintsForAccessoryViewOfKind:(NSString *)accessoryViewKind withLayoutAttributes:(DBProfileAccessoryViewLayoutAttributes *)layoutAttributes;
+- (BOOL)shouldInvalidateLayoutAttributesForAccessoryViewOfKind:(NSString *)accessoryViewKind forBoundsChange:(CGRect)newBounds;
+- (void)configureLayoutAttributes:(DBProfileAccessoryViewLayoutAttributes *)layoutAttributes forAccessoryViewOfKind:(NSString *)accessoryViewKind;
 
 @end
 
@@ -575,7 +577,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     
     // Install constraint-based layout attributes for accessory views
     [self.registeredAccessoryViews enumerateKeysAndObjectsUsingBlock:^(NSString *_Nonnull kind, id  _Nonnull obj, BOOL * _Nonnull stop) {
-        [self installConstraintsForLayoutAttributes:self.accessoryViewLayoutAttributes[kind] forAccessoryViewOfKind:kind];
+        [self installConstraintsForAccessoryViewOfKind:kind withLayoutAttributes:self.accessoryViewLayoutAttributes[kind]];
     }];
     
     [scrollView setNeedsLayout];
@@ -744,7 +746,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     
     // Calculate details view inset
     topInset -= CGRectGetHeight(headerView.frame);
-    _detailsViewTopConstraint.constant = -topInset;
+    self.detailViewTopConstraint.constant = -topInset;
 }
 
 - (CGFloat)_headerViewOffset
@@ -897,19 +899,19 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
                                                          multiplier:1
                                                            constant:0]];
     
-    _detailsViewTopConstraint = [NSLayoutConstraint constraintWithItem:self.detailView
-                                                             attribute:NSLayoutAttributeTop
-                                                             relatedBy:NSLayoutRelationEqual
-                                                                toItem:scrollView
-                                                             attribute:NSLayoutAttributeTop
-                                                            multiplier:1
-                                                              constant:0];
-    [scrollView addConstraint:_detailsViewTopConstraint];
+    self.detailViewTopConstraint = [NSLayoutConstraint constraintWithItem:self.detailView
+                                                                attribute:NSLayoutAttributeTop
+                                                                relatedBy:NSLayoutRelationEqual
+                                                                   toItem:scrollView
+                                                                attribute:NSLayoutAttributeTop
+                                                               multiplier:1
+                                                                 constant:0];
+    [scrollView addConstraint:self.detailViewTopConstraint];
 }
 
 #pragma mark - DBProfileViewController(InstallingConstraints)
 
-- (void)installConstraintsForLayoutAttributes:(DBProfileAccessoryViewLayoutAttributes *)layoutAttributes forAccessoryViewOfKind:(NSString *)accessoryViewKind {
+- (void)installConstraintsForAccessoryViewOfKind:(NSString *)accessoryViewKind withLayoutAttributes:(DBProfileAccessoryViewLayoutAttributes *)layoutAttributes {
     NSAssert([self hasRegisteredAccessoryViewOfKind:accessoryViewKind], @"no accessory view has been registered for accessory kind '%@'", accessoryViewKind);
     
     DBProfileAccessoryView *accessoryView = [self accessoryViewOfKind:accessoryViewKind];
@@ -1207,9 +1209,6 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     
     CGPoint contentOffset = self.contentOffsetForDisplayedContentController;
     
-    BOOL showOverlayView = layoutAttributes.headerStyle == DBProfileHeaderStyleNavigation;
-    [self setOverlayViewHidden:!showOverlayView animated:NO];
-    
     if (layoutAttributes.headerStyle == DBProfileHeaderStyleNavigation && !self.isUpdating) {
         if (contentOffset.y < CGRectGetHeight(headerView.frame) - layoutAttributes.navigationConstraint.constant) {
             layoutAttributes.zIndex = -100;
@@ -1227,20 +1226,16 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
         layoutAttributes.heightConstraint.constant = referenceSize.height;
     }
     
+    // Calculate percent transitioned
+    
     CGFloat scrollableDistance = CGRectGetHeight(headerView.frame) - CGRectGetMaxY(self.overlayView.frame);
     if (self.automaticallyAdjustsScrollViewInsets) scrollableDistance += [self.topLayoutGuide length];
     
-    CGFloat percentScrolled = 0;
+    if (contentOffset.y <= 0) layoutAttributes.percentTransitioned = MAX(MIN(1 - (scrollableDistance - fabs(contentOffset.y))/scrollableDistance, 1), 0);
+    else if (contentOffset.y > [self _titleViewOffset]) layoutAttributes.percentTransitioned = MAX(MIN(1 - (50 - fabs(contentOffset.y - [self _titleViewOffset]))/50, 1), 0);
+
+    // Configure constraint-based layout attributes
     
-    if (contentOffset.y <= 0) {
-        percentScrolled = MAX(MIN(1 - (scrollableDistance - fabs(contentOffset.y))/scrollableDistance, 1), 0);
-    }
-    else if (contentOffset.y > [self _titleViewOffset]) {
-        percentScrolled = MAX(MIN(1 - (50 - fabs(contentOffset.y - [self _titleViewOffset]))/50, 1), 0);
-    }
-
-    layoutAttributes.percentTransitioned = percentScrolled;
-
     if (layoutAttributes.hasInstalledConstraints) {
         
         layoutAttributes.navigationConstraint.constant = DBProfileViewControllerNavigationBarHeightForTraitCollection(self.traitCollection);
@@ -1264,6 +1259,9 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     
     DBProfileHeaderViewLayoutAttributes *headerViewLayoutAttributes = [self layoutAttributesForAccessoryViewOfKind:DBProfileAccessoryKindHeader];
     
+    // Calculate the affine transform to apply to the avatar view. The avatar transform only needs to be applied if the avatar's offset
+    // causes the avatar's frame to overlay the header.
+
     CGFloat headerOffset = [self _headerViewOffset];
     CGFloat percentScrolled = 0;
     
@@ -1278,11 +1276,12 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     CGFloat avatarOffset = layoutAttributes.edgeInsets.bottom + layoutAttributes.edgeInsets.top;
     avatarTransform = CGAffineTransformTranslate(avatarTransform, 0, MAX(avatarOffset * percentScrolled, 0));
     
-    // The avatar transform only needs to be applied if the avatar's offset causes the avatar's frame to overlay the header.
     if (avatarOffset > 0 && !self.isUpdating) {
         layoutAttributes.transform = avatarTransform;
     }
     
+    // Configure constraint-based layout attributes
+
     if (layoutAttributes.hasInstalledConstraints) {
         
         switch (layoutAttributes.avatarAlignment) {
