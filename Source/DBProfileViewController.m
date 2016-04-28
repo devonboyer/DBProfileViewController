@@ -1214,8 +1214,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     }];
 }
 
-- (void)configureHeaderViewLayoutAttributes:(DBProfileHeaderViewLayoutAttributes *)layoutAttributes
-{
+- (void)configureHeaderViewLayoutAttributes:(DBProfileHeaderViewLayoutAttributes *)layoutAttributes {
     DBProfileAccessoryView *headerView = [self accessoryViewOfKind:DBProfileAccessoryKindHeader];
     
     CGPoint contentOffset = self.contentOffsetForDisplayedContentController;

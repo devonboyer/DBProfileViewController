@@ -25,25 +25,25 @@ NS_ASSUME_NONNULL_BEGIN
  *  Tells the delegate that a specified content controller is about to be displayed.
  *
  *  @param controller The profile view controller that is showing the content controller.
- *  @prarm index The index locating the content controller in the profile view controller.
+ *  @prarm controllerIndex The index locating the content controller in the profile view controller.
  */
-- (void)profileViewController:(DBProfileViewController *)controller willShowContentControllerAtIndex:(NSInteger)index;
+- (void)profileViewController:(DBProfileViewController *)controller willShowContentControllerAtIndex:(NSInteger)controllerIndex;
 
 /**
  *  Tells the delegate that a specified content controller is now displayed.
  *
  *  @param controller The profile view controller that is showing the content controller.
- *  @prarm index The index locating the content controller in the profile view controller.
+ *  @prarm controllerIndex The index locating the content controller in the profile view controller.
  */
-- (void)profileViewController:(DBProfileViewController *)controller didShowContentControllerAtIndex:(NSInteger)index;
+- (void)profileViewController:(DBProfileViewController *)controller didShowContentControllerAtIndex:(NSInteger)controllerIndex;
 
 /**
  *  Tells the delegate that the user has triggered a pull-to-refresh.
  *
  *  @param controller The profile view controller that triggered a pull-to-refresh.
- *  @prarm index The index locating the content controller in the profile view controller.
+ *  @prarm controllerIndex The index locating the content controller in the profile view controller.
  */
-- (void)profileViewController:(DBProfileViewController *)controller didPullToRefreshContentControllerAtIndex:(NSInteger)index;
+- (void)profileViewController:(DBProfileViewController *)controller didPullToRefreshContentControllerAtIndex:(NSInteger)controllerIndex;
 
 /**
  *  Asks the delegate for the size of the accessory view kind.

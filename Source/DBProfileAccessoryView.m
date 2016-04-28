@@ -177,8 +177,7 @@
     }
 }
 
-- (void)applyLayoutAttributes:(DBProfileAccessoryViewLayoutAttributes *)layoutAttributes
-{
+- (void)applyLayoutAttributes:(DBProfileAccessoryViewLayoutAttributes *)layoutAttributes {
     self.hidden = layoutAttributes.hidden;
     self.alpha = layoutAttributes.alpha;
     self.transform = layoutAttributes.transform;
@@ -186,8 +185,7 @@
 
 #pragma mark - UIGestureRecognizerDelegate
 
-- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
-{
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
     return otherGestureRecognizer == self.longPressGestureRecognizer || otherGestureRecognizer == self.tapGestureRecognizer;
 }
 

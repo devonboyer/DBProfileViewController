@@ -24,6 +24,7 @@
 #import <DBProfileViewController/DBProfileCoverPhotoView.h>
 #import <DBProfileViewController/DBProfileHeaderOverlayView.h>
 #import <DBProfileViewController/DBProfileTitleView.h>
+#import <DBProfileViewController/DBProfileTintView.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
