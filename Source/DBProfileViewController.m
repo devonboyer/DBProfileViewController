@@ -45,20 +45,20 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 }
 
 // State
-@property (nonatomic, assign) NSUInteger indexForDisplayedContentController;
+@property (nonatomic) NSUInteger indexForDisplayedContentController;
 @property (nonatomic, getter=isRefreshing) BOOL refreshing;
 
 // Updates
-@property (nonatomic, strong) DBProfileViewControllerUpdateContext *updateContext;
+@property (nonatomic) DBProfileViewControllerUpdateContext *updateContext;
 @property (nonatomic, getter=isUpdating) BOOL updating;
-@property (nonatomic, assign) BOOL hasAppeared;
+@property (nonatomic) BOOL hasAppeared;
 
 // Data
-@property (nonatomic, strong) NSMutableArray<DBProfileContentController *> *contentControllers;
-@property (nonatomic, strong) NSMutableDictionary<NSString *, DBProfileObserver *> *scrollViewObservers;
-@property (nonatomic, strong) NSCache *contentOffsetCache;
-@property (nonatomic, strong) NSMutableDictionary *registeredAccessoryViews;
-@property (nonatomic, strong) NSMutableDictionary<NSString *, DBProfileAccessoryViewLayoutAttributes *> *accessoryViewLayoutAttributes;
+@property (nonatomic) NSMutableArray<DBProfileContentController *> *contentControllers;
+@property (nonatomic) NSMutableDictionary<NSString *, DBProfileObserver *> *scrollViewObservers;
+@property (nonatomic) NSCache *contentOffsetCache;
+@property (nonatomic) NSMutableDictionary *registeredAccessoryViews;
+@property (nonatomic) NSMutableDictionary<NSString *, DBProfileAccessoryViewLayoutAttributes *> *accessoryViewLayoutAttributes;
 
 // Views
 @property (nonatomic) Class segmentedControlClass;
@@ -73,8 +73,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 
 #pragma mark - Initialization
 
-- (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
+- (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         [self commonInit];
@@ -82,8 +81,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     return self;
 }
 
-- (instancetype)initWithCoder:(NSCoder *)aDecoder
-{
+- (instancetype)initWithCoder:(NSCoder *)aDecoder {
     self = [super initWithCoder:aDecoder];
     if (self) {
         [self commonInit];
@@ -91,8 +89,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     return self;
 }
 
-- (instancetype)initWithSegmentedControlClass:(Class)segmentedControlClass
-{
+- (instancetype)initWithSegmentedControlClass:(Class)segmentedControlClass {
     NSAssert([segmentedControlClass isSubclassOfClass:[UISegmentedControl class]], @"segmentedControlClass must inherit from `UISegmentedControl`");
     self = [self init];
     if (self) {
@@ -101,8 +98,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     return self;
 }
 
-- (instancetype)init
-{
+- (instancetype)init {
     self = [super init];
     if (self) {
         [self commonInit];
@@ -400,10 +396,6 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     self.overlayView.subtitle = overlaySubtitle;
 }
 
-- (void)backButtonTapped:(id)sender {
-    [self.navigationController popViewControllerAnimated:YES];
-}
-
 - (void)setOverlayViewHidden:(BOOL)hidden animated:(BOOL)animated {
     if (hidden == self.overlayView.hidden) {
         return;
@@ -426,6 +418,24 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     }
 }
 
+- (void)updateSegmentedControlTitles {
+    
+    NSInteger numberOfSegments = [self _numberOfContentControllers];
+
+    [self.segmentedControl removeAllSegments];
+    
+    for (NSInteger controllerIndex = 0; controllerIndex < numberOfSegments; controllerIndex++) {
+        
+        NSString *overlayTitle = [self _titleForContentControllerAtIndex:controllerIndex];
+        
+        [self.segmentedControl insertSegmentWithTitle:overlayTitle atIndex:controllerIndex animated:NO];
+    }
+}
+
+- (void)backButtonTapped:(id)sender {
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
 - (void)didChangeContentController:(id)sender {
     NSInteger selectedSegmentIndex = [self.segmentedControl selectedSegmentIndex];
     
@@ -440,8 +450,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     }
 }
 
-- (void)showContentControllerAtIndex:(NSInteger)controllerIndex
-{
+- (void)showContentControllerAtIndex:(NSInteger)controllerIndex {
     if (![self.contentControllers count]) return;
     
     // Hide the currently displayed content controller and remove scroll view observer
@@ -477,8 +486,8 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     
     [self updateOverlayInformation];
     
-    // We need to invalidate the layout attributes for all accessory views after showing a content controller in order to update the constraint-based attributes
-    // that have been installed.
+    // We need to invalidate the layout attributes for all accessory views after showing a content controller in order to update the constraint-based
+    // layout attributes that have been installed.
     [self.registeredAccessoryViews enumerateKeysAndObjectsUsingBlock:^(NSString *_Nonnull kind, id  _Nonnull obj, BOOL * _Nonnull stop) {
         [self invalidateLayoutAttributesForAccessoryViewOfKind:kind];
     }];
@@ -634,17 +643,13 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     }
     
     [self.contentControllers removeAllObjects];
-    [self.segmentedControl removeAllSegments];
     
-    for (NSInteger i = 0; i < numberOfSegments; i++) {
-        // Reload content view controllers
-        DBProfileContentController *contentController = [self _contentControllerAtIndex:i];
+    for (NSInteger controllerIndex = 0; controllerIndex < numberOfSegments; controllerIndex++) {
+        DBProfileContentController *contentController = [self _contentControllerAtIndex:controllerIndex];
         [self.contentControllers addObject:contentController];
-        
-        // Reload segmented control
-        NSString *title = [self _titleForContentControllerAtIndex:i];
-        [self.segmentedControl insertSegmentWithTitle:title atIndex:i animated:NO];
     }
+    
+    [self updateSegmentedControlTitles];
     
     // Display selected content view controller
     [self showContentControllerAtIndex:self.indexForDisplayedContentController];
@@ -1146,6 +1151,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 #pragma mark - DBProfileViewController(Layout)
 
 - (BOOL)shouldInvalidateLayoutAttributesForAccessoryViewOfKind:(NSString *)accessoryViewKind forBoundsChange:(CGRect)newBounds {
+#warning - There is no need to invalidate the layout attributes if the frame of an accessory view is outside the visible bounds
     return [accessoryViewKind isEqualToString:DBProfileAccessoryKindHeader] ||
            [accessoryViewKind isEqualToString:DBProfileAccessoryKindAvatar];
 }
@@ -1173,6 +1179,8 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     
     CGPoint contentOffset = [self contentOffsetForCurrentlyDisplayedContentController];
     
+    //////////// Configure Layout Attributes //////////////////
+    
     DBProfileAccessoryView *accessoryView = [self accessoryViewOfKind:accessoryViewKind];
     layoutAttributes.frame = accessoryView.frame;
     layoutAttributes.bounds = accessoryView.bounds;
@@ -1182,6 +1190,12 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     layoutAttributes.alpha = accessoryView.alpha;
     layoutAttributes.transform = accessoryView.transform;
     
+    CGFloat scrollableDistance = CGRectGetHeight(accessoryView.frame) - CGRectGetMaxY(self.overlayView.frame);
+    if (self.automaticallyAdjustsScrollViewInsets) scrollableDistance += [self.topLayoutGuide length];
+    CGFloat percentScrolled = MAX(MIN(1 - (scrollableDistance - fabs(contentOffset.y))/scrollableDistance, 1), 0);
+    
+    layoutAttributes.percentTransitioned = percentScrolled;
+    
     if ([accessoryViewKind isEqualToString:DBProfileAccessoryKindAvatar]) {
         [self configureAvatarViewLayoutAttributes:layoutAttributes];
     }
@@ -1189,14 +1203,9 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
         [self configureHeaderViewLayoutAttributes:layoutAttributes];
     }
     
-#warning - Update percent transitioned which should be calculatable based on the frame for all accessory views
-    
-//    CGFloat maxBlurOffset = CGRectGetHeight(accessoryView.frame) - CGRectGetMaxY(self.overlayView.frame);
-//    if (self.automaticallyAdjustsScrollViewInsets) maxBlurOffset += [self.topLayoutGuide length];
-//    CGFloat percentScrolled = MAX(MIN(1 - (maxBlurOffset - fabs(contentOffset.y))/maxBlurOffset, 1), 0);
-//    layoutAttributes.percentTransitioned = percentScrolled;
-    
-    // Sort accessory views by zIndex
+    /////////////////////////////////////////////////////////
+
+    // Reorganize the front-to-back ordering of accessory views using the zIndex layout attribute
     NSArray *sortedAccessoryViews = [self.accessoryViews sortedArrayUsingComparator:^NSComparisonResult(DBProfileAccessoryView *lhs, DBProfileAccessoryView *rhs) {
         return [self layoutAttributesForAccessoryViewOfKind:lhs.representedAccessoryKind].zIndex >
             [self layoutAttributesForAccessoryViewOfKind:rhs.representedAccessoryKind].zIndex;

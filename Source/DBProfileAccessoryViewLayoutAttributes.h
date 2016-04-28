@@ -78,7 +78,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  *  The associated accessory view’s position on the z axis.
  *
- *  This property is used to determine the front-to-back ordering of items during layout. Items with higher index values appear on top of items with lower values. Items with the same value have an undetermined order.
+ *  This property is used to determine the front-to-back ordering of accessory views during layout. Items with higher index values appear on top of items with lower values. Items with the same value have an undetermined order.
  *
  *  Defaults to 0.
  */
