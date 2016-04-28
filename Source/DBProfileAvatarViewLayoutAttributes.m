@@ -15,8 +15,8 @@
 {
     self = [super initWithAccessoryViewKind:accessoryViewKind];
     if (self) {
-        _avatarAlignment = DBProfileAvatarAlignmentLeft;
-        _edgeInsets = UIEdgeInsetsMake(0, 15, 72/2.0 - 15, 0);
+        self.avatarAlignment = DBProfileAvatarAlignmentLeft;
+        self.edgeInsets = UIEdgeInsetsMake(0, 0, 72/2.0 - 15, 0);
     }
     return self;
 }

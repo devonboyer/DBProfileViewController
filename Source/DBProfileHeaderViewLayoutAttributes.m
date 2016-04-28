@@ -15,8 +15,8 @@
 {
     self = [super initWithAccessoryViewKind:accessoryViewKind];
     if (self) {
-        _headerStyle = DBProfileHeaderStyleNavigation;
-        _headerOptions = DBProfileHeaderOptionStretch;
+        self.headerStyle = DBProfileHeaderStyleNavigation;
+        self.headerOptions = DBProfileHeaderOptionStretch;
     }
     return self;
 }

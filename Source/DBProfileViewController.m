@@ -1074,7 +1074,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
                                                                    attribute:NSLayoutAttributeLeft
                                                                    relatedBy:NSLayoutRelationEqual
                                                                       toItem:avatarView.superview
-                                                                   attribute:NSLayoutAttributeLeft
+                                                                   attribute:NSLayoutAttributeLeftMargin
                                                                   multiplier:1
                                                                     constant:0];
     layoutAttributes.leftConstraint.priority = UILayoutPriorityDefaultLow;
@@ -1083,7 +1083,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
                                                                     attribute:NSLayoutAttributeRight
                                                                     relatedBy:NSLayoutRelationEqual
                                                                        toItem:avatarView.superview
-                                                                    attribute:NSLayoutAttributeRight
+                                                                    attribute:NSLayoutAttributeRightMargin
                                                                    multiplier:1
                                                                      constant:0];
     
