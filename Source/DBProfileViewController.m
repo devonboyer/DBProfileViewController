@@ -67,6 +67,8 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 @property (nonatomic) DBProfileSegmentedControlView *segmentedControlView;
 @property (nonatomic) DBProfileHeaderOverlayView *overlayView;
 
+@property (nonatomic) CGPoint contentOffsetForDisplayedContentController;
+
 @end
 
 @implementation DBProfileViewController
@@ -182,12 +184,12 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
         
         // Scroll displayed content controller to top
         if ([self.contentControllers count]) {
-            [self scrollContentControllerToTop:self.currentlyDisplayedContentController animated:NO];
+            [self scrollContentControllerToTop:self.displayedContentController animated:NO];
         }
         
         // Tempoaray fix for content inset being calculated incorrectly before view appears.
         dispatch_async(dispatch_get_main_queue(), ^{
-            [self updateContentInsetForScrollView:self.currentlyDisplayedContentController.contentScrollView];
+            [self updateContentInsetForScrollView:self.displayedContentController.contentScrollView];
         });
     }
 }
@@ -219,7 +221,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 }
 
 - (void)willTransitionToTraitCollection:(UITraitCollection *)newCollection withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
-    UIScrollView *scrollView = [self.currentlyDisplayedContentController contentScrollView];
+    UIScrollView *scrollView = [self.displayedContentController contentScrollView];
     _cachedContentInset = scrollView.contentInset;
 }
 
@@ -227,7 +229,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     [super traitCollectionDidChange:previousTraitCollection];
     
     // The scroll view content inset needs to be recalculated for the new size class
-    UIScrollView *scrollView = [self.currentlyDisplayedContentController contentScrollView];
+    UIScrollView *scrollView = [self.displayedContentController contentScrollView];
     
     [scrollView setNeedsLayout];
     [scrollView layoutIfNeeded];
@@ -251,7 +253,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     return self.segmentedControlView.segmentedControl;
 }
 
-- (DBProfileContentController *)currentlyDisplayedContentController {
+- (DBProfileContentController *)displayedContentController {
     DBProfileContentController *controller;
     if ([self.contentControllers count] > 0) return self.contentControllers[self.indexForDisplayedContentController];
     return controller;
@@ -454,7 +456,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     if (![self.contentControllers count]) return;
     
     // Hide the currently displayed content controller and remove scroll view observer
-    DBProfileContentController *hideContentController = self.currentlyDisplayedContentController;
+    DBProfileContentController *hideContentController = self.displayedContentController;
     if (hideContentController) {
         [self removeContentController:hideContentController];
         NSString *key = [self uniqueKeyForContentControllerAtIndex:_indexForDisplayedContentController];
@@ -468,7 +470,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     [self.segmentedControl setSelectedSegmentIndex:controllerIndex];
     
     // Display the desired content controller and add scroll view observer
-    DBProfileContentController *displayContentController = self.currentlyDisplayedContentController;
+    DBProfileContentController *displayContentController = self.displayedContentController;
     
     if (displayContentController) {
         [self addContentController:displayContentController];
@@ -617,7 +619,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
         
         // Adjust content offset to account for difference in heights of subviews from before updates to after updates
         if (round(self.updateContext.beforeUpdatesDetailsViewHeight) != round(self.updateContext.afterUpdatesDetailsViewHeight)) {
-            UIScrollView *scrollView = [self.currentlyDisplayedContentController contentScrollView];
+            UIScrollView *scrollView = [self.displayedContentController contentScrollView];
             
             CGPoint contentOffset = scrollView.contentOffset;
             contentOffset.y += (self.updateContext.beforeUpdatesDetailsViewHeight - self.updateContext.afterUpdatesDetailsViewHeight);
@@ -639,7 +641,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     [self.scrollViewObservers removeAllObjects];
     
     if ([self.contentControllers count] > 0) {
-        [self removeContentController:self.currentlyDisplayedContentController];
+        [self removeContentController:self.displayedContentController];
     }
     
     [self.contentControllers removeAllObjects];
@@ -924,6 +926,8 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     }
     
     layoutAttributes.hasInstalledConstraints = YES;
+    
+    [self invalidateLayoutAttributesForAccessoryViewOfKind:accessoryViewKind];
 }
 
 - (void)installConstraintsForHeaderViewWithLayoutAttributes:(DBProfileHeaderViewLayoutAttributes *)layoutAttributes {
@@ -1156,15 +1160,6 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
            [accessoryViewKind isEqualToString:DBProfileAccessoryKindAvatar];
 }
 
-- (CGPoint)contentOffsetForCurrentlyDisplayedContentController {
-    CGPoint contentOffset = CGPointZero;
-    if (self.currentlyDisplayedContentController) {
-        UIScrollView *scrollView = self.currentlyDisplayedContentController.contentScrollView;
-        contentOffset = scrollView.contentOffset;
-        contentOffset.y += scrollView.contentInset.top;
-    }
-    return contentOffset;
-}
 
 - (DBProfileAccessoryViewLayoutAttributes *)layoutAttributesForAccessoryViewOfKind:(NSString *)accessoryViewKind {
     
@@ -1177,9 +1172,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 
 - (void)configureLayoutAttributes:(DBProfileAccessoryViewLayoutAttributes *)layoutAttributes forAccessoryViewOfKind:(NSString *)accessoryViewKind {
     
-    CGPoint contentOffset = [self contentOffsetForCurrentlyDisplayedContentController];
-    
-    //////////// Configure Layout Attributes //////////////////
+    CGPoint contentOffset = self.contentOffsetForDisplayedContentController;
     
     DBProfileAccessoryView *accessoryView = [self accessoryViewOfKind:accessoryViewKind];
     layoutAttributes.frame = accessoryView.frame;
@@ -1190,12 +1183,6 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     layoutAttributes.alpha = accessoryView.alpha;
     layoutAttributes.transform = accessoryView.transform;
     
-    CGFloat scrollableDistance = CGRectGetHeight(accessoryView.frame) - CGRectGetMaxY(self.overlayView.frame);
-    if (self.automaticallyAdjustsScrollViewInsets) scrollableDistance += [self.topLayoutGuide length];
-    CGFloat percentScrolled = MAX(MIN(1 - (scrollableDistance - fabs(contentOffset.y))/scrollableDistance, 1), 0);
-    
-    layoutAttributes.percentTransitioned = percentScrolled;
-    
     if ([accessoryViewKind isEqualToString:DBProfileAccessoryKindAvatar]) {
         [self configureAvatarViewLayoutAttributes:layoutAttributes];
     }
@@ -1203,8 +1190,6 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
         [self configureHeaderViewLayoutAttributes:layoutAttributes];
     }
     
-    /////////////////////////////////////////////////////////
-
     // Reorganize the front-to-back ordering of accessory views using the zIndex layout attribute
     NSArray *sortedAccessoryViews = [self.accessoryViews sortedArrayUsingComparator:^NSComparisonResult(DBProfileAccessoryView *lhs, DBProfileAccessoryView *rhs) {
         return [self layoutAttributesForAccessoryViewOfKind:lhs.representedAccessoryKind].zIndex >
@@ -1212,7 +1197,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     }];
     
     [sortedAccessoryViews enumerateObjectsUsingBlock:^(DBProfileAccessoryView *accessoryView, NSUInteger idx, BOOL * _Nonnull stop) {
-        [self.currentlyDisplayedContentController.contentScrollView bringSubviewToFront:accessoryView];
+        [self.displayedContentController.contentScrollView bringSubviewToFront:accessoryView];
     }];
 }
 
@@ -1220,7 +1205,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 {
     DBProfileAccessoryView *headerView = [self accessoryViewOfKind:DBProfileAccessoryKindHeader];
     
-    CGPoint contentOffset = [self contentOffsetForCurrentlyDisplayedContentController];
+    CGPoint contentOffset = self.contentOffsetForDisplayedContentController;
     
     BOOL showOverlayView = layoutAttributes.headerStyle == DBProfileHeaderStyleNavigation;
     [self setOverlayViewHidden:!showOverlayView animated:NO];
@@ -1242,14 +1227,13 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
         layoutAttributes.heightConstraint.constant = referenceSize.height;
     }
     
-    CGFloat maxBlurOffset = [self _headerViewOffset] - CGRectGetMaxY(self.overlayView.frame);
-    
-    if (self.automaticallyAdjustsScrollViewInsets) maxBlurOffset += [self.topLayoutGuide length];
+    CGFloat scrollableDistance = CGRectGetHeight(headerView.frame) - CGRectGetMaxY(self.overlayView.frame);
+    if (self.automaticallyAdjustsScrollViewInsets) scrollableDistance += [self.topLayoutGuide length];
     
     CGFloat percentScrolled = 0;
     
     if (contentOffset.y <= 0) {
-        percentScrolled = MAX(MIN(1 - (maxBlurOffset - fabs(contentOffset.y))/maxBlurOffset, 1), 0);
+        percentScrolled = MAX(MIN(1 - (scrollableDistance - fabs(contentOffset.y))/scrollableDistance, 1), 0);
     }
     else if (contentOffset.y > [self _titleViewOffset]) {
         percentScrolled = MAX(MIN(1 - (50 - fabs(contentOffset.y - [self _titleViewOffset]))/50, 1), 0);
@@ -1276,7 +1260,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 
 - (void)configureAvatarViewLayoutAttributes:(DBProfileAvatarViewLayoutAttributes *)layoutAttributes {
     
-    CGPoint contentOffset = [self contentOffsetForCurrentlyDisplayedContentController];
+    CGPoint contentOffset = self.contentOffsetForDisplayedContentController;
     
     DBProfileHeaderViewLayoutAttributes *headerViewLayoutAttributes = [self layoutAttributesForAccessoryViewOfKind:DBProfileAccessoryKindHeader];
     
@@ -1342,13 +1326,16 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 
 - (void)observedScrollViewDidScroll:(UIScrollView *)scrollView {
     
+    CGPoint contentOffset = scrollView.contentOffset;
+    contentOffset.y += scrollView.contentInset.top;
+    self.contentOffsetForDisplayedContentController = contentOffset;
+    
     [self.registeredAccessoryViews enumerateKeysAndObjectsUsingBlock:^(NSString *_Nonnull kind, id  _Nonnull obj, BOOL * _Nonnull stop) {
         if ([self shouldInvalidateLayoutAttributesForAccessoryViewOfKind:kind forBoundsChange:scrollView.bounds]) {
             [self invalidateLayoutAttributesForAccessoryViewOfKind:kind];
         }
     }];
 
-    CGPoint contentOffset = [self contentOffsetForCurrentlyDisplayedContentController];
     [self updateTitleViewWithContentOffset:contentOffset];
     [self handlePullToRefreshWithScrollView:scrollView];
 }
