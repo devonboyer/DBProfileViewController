@@ -150,6 +150,7 @@
     
     self.stage = round(percentScrolled * self.numberOfStages);
     
+
     // We will use a second image view to interpolate the blur between stages to create a smoother transition
     if (self.shouldInterpolateStages) {
         UIImage *blurredImage = [self blurredImageForStage:self.stage + 1];

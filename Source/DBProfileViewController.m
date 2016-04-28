@@ -214,13 +214,6 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     }
 }
 
-- (void)updateViewConstraints {
-    [self.registeredAccessoryViews enumerateKeysAndObjectsUsingBlock:^(NSString *_Nonnull kind, id  _Nonnull obj, BOOL * _Nonnull stop) {
-        [self invalidateLayoutAttributesForAccessoryViewOfKind:kind];
-    }];
-    [super updateViewConstraints];
-}
-
 - (UIStatusBarStyle)preferredStatusBarStyle {
     return UIStatusBarStyleLightContent;
 }
@@ -441,7 +434,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     }
     
     [self showContentControllerAtIndex:selectedSegmentIndex];
-    
+        
     if ([self.delegate respondsToSelector:@selector(profileViewController:didShowContentControllerAtIndex:)]) {
         [self.delegate profileViewController:self didShowContentControllerAtIndex:selectedSegmentIndex];
     }
@@ -483,6 +476,10 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     [self.view layoutIfNeeded];
     
     [self updateOverlayInformation];
+    
+    [self.registeredAccessoryViews enumerateKeysAndObjectsUsingBlock:^(NSString *_Nonnull kind, id  _Nonnull obj, BOOL * _Nonnull stop) {
+        [self invalidateLayoutAttributesForAccessoryViewOfKind:kind];
+    }];
 }
 
 - (CGRect)frameForContentController {
@@ -1138,7 +1135,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 }
 
 - (DBProfileAccessoryView *)accessoryViewOfKind:(NSString *)accessoryViewKind {
-    NSAssert([self hasRegisteredAccessoryViewOfKind:accessoryViewKind], @"no accessory view has been registered for accessory kind '%@'", accessoryViewKind);
+    //NSAssert([self hasRegisteredAccessoryViewOfKind:accessoryViewKind], @"no accessory view has been registered for accessory kind '%@'", accessoryViewKind);
     return [self.registeredAccessoryViews objectForKey:accessoryViewKind];
 }
 
@@ -1165,7 +1162,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 
 - (DBProfileAccessoryViewLayoutAttributes *)layoutAttributesForAccessoryViewOfKind:(NSString *)accessoryViewKind {
     
-    NSAssert([self hasRegisteredAccessoryViewOfKind:accessoryViewKind], @"no accessory view has been registered for accessory kind '%@'", accessoryViewKind);
+    //NSAssert([self hasRegisteredAccessoryViewOfKind:accessoryViewKind], @"no accessory view has been registered for accessory kind '%@'", accessoryViewKind);
 
     DBProfileAccessoryViewLayoutAttributes *layoutAttributes = self.accessoryViewLayoutAttributes[accessoryViewKind];
     
@@ -1176,7 +1173,6 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     
     CGPoint contentOffset = [self contentOffsetForCurrentlyDisplayedContentController];
     
-    // Configure the layout attributes that are common to all accessory views
     DBProfileAccessoryView *accessoryView = [self accessoryViewOfKind:accessoryViewKind];
     layoutAttributes.frame = accessoryView.frame;
     layoutAttributes.bounds = accessoryView.bounds;
@@ -1186,14 +1182,19 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     layoutAttributes.alpha = accessoryView.alpha;
     layoutAttributes.transform = accessoryView.transform;
     
-#warning - Update percent transitioned which should be calculatable based on the frame for all accessory views
-    
     if ([accessoryViewKind isEqualToString:DBProfileAccessoryKindAvatar]) {
         [self configureAvatarViewLayoutAttributes:layoutAttributes];
     }
     else if ([accessoryViewKind isEqualToString:DBProfileAccessoryKindHeader]) {
         [self configureHeaderViewLayoutAttributes:layoutAttributes];
     }
+    
+#warning - Update percent transitioned which should be calculatable based on the frame for all accessory views
+    
+//    CGFloat maxBlurOffset = CGRectGetHeight(accessoryView.frame) - CGRectGetMaxY(self.overlayView.frame);
+//    if (self.automaticallyAdjustsScrollViewInsets) maxBlurOffset += [self.topLayoutGuide length];
+//    CGFloat percentScrolled = MAX(MIN(1 - (maxBlurOffset - fabs(contentOffset.y))/maxBlurOffset, 1), 0);
+//    layoutAttributes.percentTransitioned = percentScrolled;
     
     // Sort accessory views by zIndex
     NSArray *sortedAccessoryViews = [self.accessoryViews sortedArrayUsingComparator:^NSComparisonResult(DBProfileAccessoryView *lhs, DBProfileAccessoryView *rhs) {
@@ -1210,10 +1211,8 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 {
     DBProfileAccessoryView *headerView = [self accessoryViewOfKind:DBProfileAccessoryKindHeader];
     
-    DBProfileAccessoryView *avatarView = [self accessoryViewOfKind:DBProfileAccessoryKindAvatar];
-    
     CGPoint contentOffset = [self contentOffsetForCurrentlyDisplayedContentController];
-
+    
     BOOL showOverlayView = layoutAttributes.headerStyle == DBProfileHeaderStyleNavigation;
     [self setOverlayViewHidden:!showOverlayView animated:NO];
     
@@ -1243,23 +1242,25 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     if (contentOffset.y <= 0) {
         percentScrolled = MAX(MIN(1 - (maxBlurOffset - fabs(contentOffset.y))/maxBlurOffset, 1), 0);
     }
-    else if (contentOffset.y >= [self _titleViewOffset]) {
+    else if (contentOffset.y > [self _titleViewOffset]) {
         percentScrolled = MAX(MIN(1 - (50 - fabs(contentOffset.y - [self _titleViewOffset]))/50, 1), 0);
     }
-    
+
     layoutAttributes.percentTransitioned = percentScrolled;
-    
+
     if (layoutAttributes.hasInstalledConstraints) {
         
         layoutAttributes.navigationConstraint.constant = DBProfileViewControllerNavigationBarHeightForTraitCollection(self.traitCollection);
         
-        if (layoutAttributes.headerStyle == DBProfileHeaderStyleNavigation) {
-            [NSLayoutConstraint activateConstraints:@[layoutAttributes.navigationConstraint, layoutAttributes.topSuperviewConstraint]];
-            [NSLayoutConstraint deactivateConstraints:@[layoutAttributes.topLayoutGuideConstraint]];
-        }
-        else {
-            [NSLayoutConstraint activateConstraints:@[layoutAttributes.topLayoutGuideConstraint]];
-            [NSLayoutConstraint deactivateConstraints:@[layoutAttributes.navigationConstraint, layoutAttributes.topSuperviewConstraint]];
+        switch (layoutAttributes.headerStyle) {
+            case DBProfileHeaderStyleNavigation:
+                [NSLayoutConstraint activateConstraints:@[layoutAttributes.navigationConstraint, layoutAttributes.topSuperviewConstraint]];
+                [NSLayoutConstraint deactivateConstraints:@[layoutAttributes.topLayoutGuideConstraint]];
+                break;
+            default:
+                [NSLayoutConstraint activateConstraints:@[layoutAttributes.topLayoutGuideConstraint]];
+                [NSLayoutConstraint deactivateConstraints:@[layoutAttributes.navigationConstraint, layoutAttributes.topSuperviewConstraint]];
+                break;
         }
     }
 }
@@ -1318,7 +1319,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 }
 
 - (void)invalidateLayoutAttributesForAccessoryViewOfKind:(NSString *)accessoryViewKind {
-    NSAssert([self hasRegisteredAccessoryViewOfKind:accessoryViewKind], @"no accessory view has been registered for accessory kind '%@'", accessoryViewKind);
+    //NSAssert([self hasRegisteredAccessoryViewOfKind:accessoryViewKind], @"no accessory view has been registered for accessory kind '%@'", accessoryViewKind);
 
     DBProfileAccessoryViewLayoutAttributes *layoutAttributes = [self layoutAttributesForAccessoryViewOfKind:accessoryViewKind];
     
@@ -1337,7 +1338,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
             [self invalidateLayoutAttributesForAccessoryViewOfKind:kind];
         }
     }];
-    
+
     CGPoint contentOffset = [self contentOffsetForCurrentlyDisplayedContentController];
     [self updateTitleViewWithContentOffset:contentOffset];
     [self handlePullToRefreshWithScrollView:scrollView];
