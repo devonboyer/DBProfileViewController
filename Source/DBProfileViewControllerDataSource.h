@@ -31,21 +31,21 @@ NS_ASSUME_NONNULL_BEGIN
  *  Asks the data source to return the content controller at a particular index in the profile view controller.
  *
  *  @param controller The profile view controller requesting the information.
- *  @prarm index The index locating the content controller in the profile view controller.
+ *  @prarm controllerIndex The index locating the content controller in the profile view controller.
  *
  *  @return The content controller at a particular index in the profile view controller.
  */
-- (DBProfileContentController *)profileViewController:(DBProfileViewController *)controller contentControllerAtIndex:(NSUInteger)index;
+- (DBProfileContentController *)profileViewController:(DBProfileViewController *)controller contentControllerAtIndex:(NSUInteger)controllerIndex;
 
 /**
  *  Asks the data source to return the title for the content controller at a particular index in the profile view controller.
  *
  *  @param controller The profile view controller requesting the information.
- *  @prarm index The index locating the content controller in the profile view controller.
+ *  @prarm controllerIndex The index locating the content controller in the profile view controller.
  *
  *  @return The title for the content controller at a particular index in the profile view controller.
  */
-- (NSString *)profileViewController:(DBProfileViewController *)controller titleForContentControllerAtIndex:(NSUInteger)index;
+- (NSString *)profileViewController:(DBProfileViewController *)controller titleForContentControllerAtIndex:(NSUInteger)controllerIndex;
 
 @optional
 
@@ -53,11 +53,11 @@ NS_ASSUME_NONNULL_BEGIN
  *  Asks the data source to return the subtitle for the content controller at a particular index in the profile view controller.
  *
  *  @param controller The profile view controller requesting the information.
- *  @prarm index The index locating the content controller in the profile view controller.
+ *  @prarm controllerIndex The index locating the content controller in the profile view controller.
  *
  *  @return The subtitle for the content controller at a particular index in the profile view controller.
  */
-- (NSString *)profileViewController:(DBProfileViewController *)controller subtitleForContentControllerAtIndex:(NSUInteger)index;
+- (NSString *)profileViewController:(DBProfileViewController *)controller subtitleForContentControllerAtIndex:(NSUInteger)controllerIndex;
 
 @end
 

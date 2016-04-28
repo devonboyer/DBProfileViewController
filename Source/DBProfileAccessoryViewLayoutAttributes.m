@@ -68,4 +68,24 @@ static CGSize DBProfileAccessoryViewLayoutAttributesDefaultHeaderReferenceSize()
     self.lastBaselineConstraint = nil;
 }
 
+#pragma mark - NSObject
+
+- (BOOL)isEqual:(id)object {
+    if (![object isKindOfClass:[self class]]) return NO;
+    DBProfileAccessoryViewLayoutAttributes *otherObject = (DBProfileAccessoryViewLayoutAttributes *)object;
+    return
+    [self.representedAccessoryKind isEqual:otherObject.representedAccessoryKind];
+    CGRectEqualToRect(self.frame, otherObject.frame) &&
+    CGRectEqualToRect(self.bounds, otherObject.bounds) &&
+    CGAffineTransformEqualToTransform(self.transform, otherObject.transform) &&
+    CGSizeEqualToSize(self.size, otherObject.size) &&
+    CGSizeEqualToSize(self.referenceSize, otherObject.referenceSize) &&
+    CGPointEqualToPoint(self.center, otherObject.center) &&
+    self.hidden == otherObject.hidden &&
+    self.alpha == otherObject.alpha &&
+    self.zIndex == otherObject.zIndex &&
+    self.hasInstalledConstraints == otherObject.hasInstalledConstraints;
+
+}
+
 @end

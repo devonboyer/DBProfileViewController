@@ -21,4 +21,13 @@
     return self;
 }
 
+#pragma mark - NSObject
+
+- (BOOL)isEqual:(id)object {
+    if (![object isKindOfClass:[self class]]) return NO;
+    if (![super isEqual:object]) return NO;
+    DBProfileAvatarViewLayoutAttributes *otherObject = (DBProfileAvatarViewLayoutAttributes *)object;
+    return UIEdgeInsetsEqualToEdgeInsets(self.edgeInsets, otherObject.edgeInsets) && self.avatarAlignment == otherObject.avatarAlignment;
+}
+
 @end

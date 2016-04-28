@@ -93,14 +93,12 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
 
 #pragma mark - DBProfileViewControllerDataSource
 
-- (NSUInteger)numberOfContentControllersForProfileViewController:(DBProfileViewController *)profileViewController
-{
+- (NSUInteger)numberOfContentControllersForProfileViewController:(DBProfileViewController *)profileViewController {
     return DBUserProfileNumberOfContentControllers;
 }
 
-- (DBProfileContentController *)profileViewController:(DBProfileViewController *)profileViewController contentControllerAtIndex:(NSUInteger)index {
-
-    switch (index) {
+- (DBProfileContentController *)profileViewController:(DBProfileViewController *)profileViewController contentControllerAtIndex:(NSUInteger)controllerIndex {
+    switch (controllerIndex) {
         case DBUserProfileContentControllerIndexFollowers:
             return [[DBFollowersTableViewController alloc] init];
         case DBUserProfileContentControllerIndexPhotos:
@@ -113,8 +111,8 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
     return nil;
 }
 
-- (NSString *)profileViewController:(DBProfileViewController *)profileViewController titleForContentControllerAtIndex:(NSUInteger)index {
-    switch (index) {
+- (NSString *)profileViewController:(DBProfileViewController *)profileViewController titleForContentControllerAtIndex:(NSUInteger)controllerIndex {
+    switch (controllerIndex) {
         case DBUserProfileContentControllerIndexFollowers:
             return @"Followers";
         case DBUserProfileContentControllerIndexPhotos:
@@ -127,8 +125,8 @@ typedef NS_ENUM(NSInteger, DBUserProfileContentControllerIndex) {
     return nil;
 }
 
-- (NSString *)profileViewController:(DBProfileViewController *)profileViewController subtitleForContentControllerAtIndex:(NSUInteger)index {
-    switch (index) {
+- (NSString *)profileViewController:(DBProfileViewController *)profileViewController subtitleForContentControllerAtIndex:(NSUInteger)controllerIndex {
+    switch (controllerIndex) {
         case DBUserProfileContentControllerIndexFollowers:
             return @"20 Followers";
         case DBUserProfileContentControllerIndexPhotos:

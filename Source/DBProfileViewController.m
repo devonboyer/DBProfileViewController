@@ -36,21 +36,20 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 
 @interface DBProfileViewController () <DBProfileAccessoryViewDelegate, DBProfileScrollViewObserverDelegate>
 {
-    BOOL _shouldScrollToTop; // Used for size class changes
+    BOOL _shouldScrollToTop; // Used for content offset caching
     CGPoint _sharedContentOffset; // Used for size class changes
     UIEdgeInsets _cachedContentInset; // Used for size class changes
 }
 
 // State
 @property (nonatomic) NSUInteger indexForDisplayedContentController;
-@property (nonatomic, getter=isRefreshing) BOOL refreshing;
 @property (nonatomic) CGPoint contentOffsetForDisplayedContentController;
+@property (nonatomic, getter=isRefreshing) BOOL refreshing;
+@property (nonatomic) BOOL viewHasAppeared;
 
 // Updates
 @property (nonatomic) DBProfileViewControllerUpdateContext *updateContext;
 @property (nonatomic, getter=isUpdating) BOOL updating;
-@property (nonatomic) BOOL hasAppeared;
-@property (nonatomic) NSLayoutConstraint *detailViewTopConstraint;
 
 // Data
 @property (nonatomic) NSMutableArray<DBProfileContentController *> *contentControllers;
@@ -65,6 +64,13 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 @property (nonatomic) UIActivityIndicatorView *activityIndicator;
 @property (nonatomic) DBProfileSegmentedControlView *segmentedControlView;
 @property (nonatomic) DBProfileHeaderOverlayView *overlayView;
+
+// Constraints
+@property (nonatomic) NSLayoutConstraint *detailViewTopConstraint;
+
+- (void)addContentController:(DBProfileContentController *)controller;
+- (void)removeContentController:(DBProfileContentController *)controller;
+- (void)setDisplayedContentController:(DBProfileContentController *)controller animated:(BOOL)animated;
 
 - (BOOL)hasRegisteredAccessoryViewOfKind:(NSString *)accessoryViewKind;
 - (void)installConstraintsForAccessoryViewOfKind:(NSString *)accessoryViewKind withLayoutAttributes:(DBProfileAccessoryViewLayoutAttributes *)layoutAttributes;
@@ -179,7 +185,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     // to prevent this since we are managing the scrollView contentInset manually.
     self.automaticallyAdjustsScrollViewInsets = !showOverlayView;
     
-    if (!self.hasAppeared) {
+    if (!self.viewHasAppeared) {
         [self reloadData];
         
         [self.view setNeedsUpdateConstraints];
@@ -198,7 +204,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    self.hasAppeared = YES;
+    self.viewHasAppeared = YES;
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -477,7 +483,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     if (displayContentController) {
         [self addContentController:displayContentController];
         
-        [self setCurrentlyDisplayedContentController:displayContentController animated:YES];
+        [self setDisplayedContentController:displayContentController animated:YES];
 
         NSString *key = [self uniqueKeyForContentControllerAtIndex:controllerIndex];
         DBProfileScrollViewObserver *observer = [[DBProfileScrollViewObserver alloc] initWithTargetView:displayContentController.contentScrollView delegate:self];
@@ -499,6 +505,11 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 
 - (CGRect)frameForContentController {
     return self.containerView.frame;
+}
+
+- (BOOL)shouldDisplaySegmentedControl {
+    if ([self.contentControllers count] > 1) return YES;
+    return !self.hidesSegmentedControlForSingleContentController;
 }
 
 - (void)addContentController:(DBProfileContentController *)controller {
@@ -534,7 +545,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     [controller removeFromParentViewController];
 }
 
-- (void)setCurrentlyDisplayedContentController:(DBProfileContentController *)controller animated:(BOOL)animated {
+- (void)setDisplayedContentController:(DBProfileContentController *)controller animated:(BOOL)animated {
     NSAssert(controller, @"controller cannot be nil");
     
     UIScrollView *scrollView = controller.contentScrollView;
@@ -558,8 +569,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     
     [scrollView addSubview:self.detailView];
     
-    // Add segmented control
-    if ([self.contentControllers count] > 1 || !self.hidesSegmentedControlForSingleContentController) {
+    if ([self shouldDisplaySegmentedControl]) {
         [scrollView addSubview:self.segmentedControlView];
     } else {
         self.segmentedControlView.frame = CGRectZero;
@@ -586,19 +596,21 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     [self.view setNeedsUpdateConstraints];
     [self updateViewConstraints];
     
-    // Adjust contentInset
+    // Update the contentInset of the displayed content controller
     [self updateContentInsetForScrollView:scrollView];
     
-    // Reset the content offset
+    // Set the contentOffset for the displayed content controller that was cached from the last time this content controller was displayed
     if (_shouldScrollToTop) {
         [self resetContentOffsetForScrollView:scrollView];
         
-        // Restore content offset for scroll view from cache
         CGPoint cachedContentOffset = [self cachedContentOffsetForContentControllerAtIndex:self.indexForDisplayedContentController];
         if (cachedContentOffset.y > scrollView.contentOffset.y && !CGPointEqualToPoint(CGPointZero, cachedContentOffset)) {
             [scrollView setContentOffset:cachedContentOffset];
         }
-    } else {
+    }
+    else {
+        // When the contentOffset is too small for any content controller then all of the content controllers must share this same contentOffset
+        // when the displayed content controller is changed. This behaviour was adopted from apps with similar design patterns.
         [scrollView setContentOffset:_sharedContentOffset];
     }
 }
@@ -636,8 +648,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     }];
 }
 
-- (void)reloadData
-{
+- (void)reloadData {
     NSInteger numberOfSegments = [self _numberOfContentControllers];
     
     [self.scrollViewObservers removeAllObjects];
@@ -719,8 +730,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     [scrollView setContentOffset:contentOffset];
 }
 
-- (void)updateContentInsetForScrollView:(UIScrollView *)scrollView
-{
+- (void)updateContentInsetForScrollView:(UIScrollView *)scrollView {
     DBProfileAccessoryView *headerView = [self accessoryViewOfKind:DBProfileAccessoryKindHeader];
     
     DBProfileHeaderViewLayoutAttributes *headerViewLayoutAttributes = [self layoutAttributesForAccessoryViewOfKind:DBProfileAccessoryKindHeader];
@@ -731,7 +741,8 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     UIEdgeInsets contentInset = scrollView.contentInset;
     contentInset.top = (self.automaticallyAdjustsScrollViewInsets) ? topInset + [self.topLayoutGuide length] : topInset;
     
-    // Calculate scroll view bottom inset
+    // When the contentSize is too small to dislay the content controller, detailView, segmentedControl and accessory views, then
+    // the missing height is calculated and added to the contentInset.bottom. This behaviour was adopted from apps with similar design patterns.
     CGFloat minimumContentSizeHeight = CGRectGetHeight(scrollView.frame) - CGRectGetHeight(self.segmentedControlView.frame) - DBProfileViewControllerNavigationBarHeightForTraitCollection(self.traitCollection);
     
     if (scrollView.contentSize.height < minimumContentSizeHeight && ([self.contentControllers count] > 1 ||
@@ -747,75 +758,6 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     // Calculate details view inset
     topInset -= CGRectGetHeight(headerView.frame);
     self.detailViewTopConstraint.constant = -topInset;
-}
-
-- (CGFloat)_headerViewOffset
-{
-    DBProfileAccessoryView *headerView = [self accessoryViewOfKind:DBProfileAccessoryKindHeader];
-    return CGRectGetHeight(headerView.frame);
-}
-
-- (CGFloat)_titleViewOffset
-{
-    return (([self _headerViewOffset] - CGRectGetMaxY(self.overlayView.frame)) + CGRectGetHeight(self.segmentedControlView.frame));
-}
-
-- (NSInteger)_numberOfContentControllers
-{
-    if ([self.dataSource respondsToSelector:@selector(numberOfContentControllersForProfileViewController:)]) {
-        NSInteger numberOfContentControllers = [self.dataSource numberOfContentControllersForProfileViewController:self];
-        NSAssert(numberOfContentControllers > 0, @"numberOfContentControllers must be greater than zero");
-        return numberOfContentControllers;
-    }
-    else {
-        @throw [NSException exceptionWithName:NSInternalInconsistencyException
-                                       reason:@"dataSource must implement `numberOfContentControllersForProfileViewController:`"
-                                     userInfo:nil];
-    }
-
-}
-
-- (DBProfileContentController *)_contentControllerAtIndex:(NSInteger)index
-{
-    if ([self.dataSource respondsToSelector:@selector(profileViewController:contentControllerAtIndex:)]) {
-        DBProfileContentController *contentController = [self.dataSource profileViewController:self contentControllerAtIndex:index];
-        NSAssert(contentController, @"contentController cannot be nil");
-        return contentController;
-    }
-    else {
-        @throw [NSException exceptionWithName:NSInternalInconsistencyException
-                                       reason:@"dataSource must implement `profileViewController:contentControllerAtIndex:`"
-                                     userInfo:nil];
-    }
-}
-
-- (NSString *)_titleForContentControllerAtIndex:(NSInteger)index
-{
-    if ([self.dataSource respondsToSelector:@selector(profileViewController:titleForContentControllerAtIndex:)]) {
-        NSString *title = [self.dataSource profileViewController:self titleForContentControllerAtIndex:index];
-        NSAssert([title length], @"title for contentController cannot be nil");
-        return title;
-    }
-    else {
-        @throw [NSException exceptionWithName:NSInternalInconsistencyException
-                                       reason:@"dataSource must implement `profileViewController:titleForContentControllerAtIndex:`"
-                                     userInfo:nil];
-    }
-}
-
-- (CGSize)_referenceSizeForAccessoryViewOfKind:(NSString *)accessoryViewKind
-{
-    CGSize referenceSize;
-    
-    if ([self.delegate respondsToSelector:@selector(profileViewController:referenceSizeForAccessoryViewOfKind:)]) {
-        referenceSize = [self.delegate profileViewController:self referenceSizeForAccessoryViewOfKind:accessoryViewKind];
-    }
-    else {
-        DBProfileAccessoryViewLayoutAttributes *layoutAttributes = [self layoutAttributesForAccessoryViewOfKind:accessoryViewKind];
-        referenceSize = layoutAttributes.referenceSize;
-    }
-    
-    return referenceSize;
 }
 
 - (void)handlePullToRefreshWithScrollView:(UIScrollView *)scrollView
@@ -866,6 +808,75 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     } else {
         [self.overlayView.navigationBar setTitleVerticalPositionAdjustment:adjustment forBarMetrics:UIBarMetricsDefault];
     }
+}
+
+- (CGFloat)_headerViewOffset
+{
+    DBProfileAccessoryView *headerView = [self accessoryViewOfKind:DBProfileAccessoryKindHeader];
+    return CGRectGetHeight(headerView.frame);
+}
+
+- (CGFloat)_titleViewOffset
+{
+    return (([self _headerViewOffset] - CGRectGetMaxY(self.overlayView.frame)) + CGRectGetHeight(self.segmentedControlView.frame));
+}
+
+- (NSInteger)_numberOfContentControllers
+{
+    if ([self.dataSource respondsToSelector:@selector(numberOfContentControllersForProfileViewController:)]) {
+        NSInteger numberOfContentControllers = [self.dataSource numberOfContentControllersForProfileViewController:self];
+        NSAssert(numberOfContentControllers > 0, @"numberOfContentControllers must be greater than zero");
+        return numberOfContentControllers;
+    }
+    else {
+        @throw [NSException exceptionWithName:NSInternalInconsistencyException
+                                       reason:@"dataSource must implement `numberOfContentControllersForProfileViewController:`"
+                                     userInfo:nil];
+    }
+    
+}
+
+- (DBProfileContentController *)_contentControllerAtIndex:(NSInteger)index
+{
+    if ([self.dataSource respondsToSelector:@selector(profileViewController:contentControllerAtIndex:)]) {
+        DBProfileContentController *contentController = [self.dataSource profileViewController:self contentControllerAtIndex:index];
+        NSAssert(contentController, @"contentController cannot be nil");
+        return contentController;
+    }
+    else {
+        @throw [NSException exceptionWithName:NSInternalInconsistencyException
+                                       reason:@"dataSource must implement `profileViewController:contentControllerAtIndex:`"
+                                     userInfo:nil];
+    }
+}
+
+- (NSString *)_titleForContentControllerAtIndex:(NSInteger)index
+{
+    if ([self.dataSource respondsToSelector:@selector(profileViewController:titleForContentControllerAtIndex:)]) {
+        NSString *title = [self.dataSource profileViewController:self titleForContentControllerAtIndex:index];
+        NSAssert([title length], @"title for contentController cannot be nil");
+        return title;
+    }
+    else {
+        @throw [NSException exceptionWithName:NSInternalInconsistencyException
+                                       reason:@"dataSource must implement `profileViewController:titleForContentControllerAtIndex:`"
+                                     userInfo:nil];
+    }
+}
+
+- (CGSize)_referenceSizeForAccessoryViewOfKind:(NSString *)accessoryViewKind
+{
+    CGSize referenceSize;
+    
+    if ([self.delegate respondsToSelector:@selector(profileViewController:referenceSizeForAccessoryViewOfKind:)]) {
+        referenceSize = [self.delegate profileViewController:self referenceSizeForAccessoryViewOfKind:accessoryViewKind];
+    }
+    else {
+        DBProfileAccessoryViewLayoutAttributes *layoutAttributes = [self layoutAttributesForAccessoryViewOfKind:accessoryViewKind];
+        referenceSize = layoutAttributes.referenceSize;
+    }
+    
+    return referenceSize;
 }
 
 - (void)setupOverlayViewConstraints

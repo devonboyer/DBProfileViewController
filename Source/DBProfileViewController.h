@@ -217,7 +217,7 @@ FOUNDATION_EXPORT NSString * const DBProfileAccessoryKindHeader;
 - (void)endRefreshing;
 
 /**
- *  @name Updating the Profile View Controller
+ *  @name Updating and Reloading the Profile View Controller
  */
 
 /**

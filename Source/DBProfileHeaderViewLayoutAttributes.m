@@ -28,4 +28,13 @@
     self.topSuperviewConstraint = nil;
 }
 
+#pragma mark - NSObject
+
+- (BOOL)isEqual:(id)object {
+    if (![object isKindOfClass:[self class]]) return NO;
+    if (![super isEqual:object]) return NO;
+    DBProfileHeaderViewLayoutAttributes *otherObject = (DBProfileHeaderViewLayoutAttributes *)object;
+    return self.headerStyle == otherObject.headerStyle && self.headerOptions == otherObject.headerOptions;
+}
+
 @end
