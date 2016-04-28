@@ -1,5 +1,15 @@
 # Changelog
 
+## 2.0.2
+
+* Bug fixes and performance improvements
+
+### Added
+
+* Added `overlayView` property to `DBProfileViewController`
+* Added `leftBarButtonItem`, `leftBarButtonItems`, `rightBarButtonItem`, `rightBarButtonItems` methods to `DBProfileViewController`
+* Added `DBProfileHeaderOverlayView`, `DBProfileTitleView` and `DBProfileTintView`
+
 ## 2.0.1
 
 * Bug fixes and performance improvements
