@@ -73,9 +73,9 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 - (void)setDisplayedContentController:(DBProfileContentController *)controller animated:(BOOL)animated;
 
 - (BOOL)hasRegisteredAccessoryViewOfKind:(NSString *)accessoryViewKind;
-- (void)installConstraintsForAccessoryViewOfKind:(NSString *)accessoryViewKind withLayoutAttributes:(DBProfileAccessoryViewLayoutAttributes *)layoutAttributes;
+- (void)installConstraintsForAccessoryViewOfKind:(NSString *)accessoryViewKind withLayoutAttributes:(__kindof DBProfileAccessoryViewLayoutAttributes *)layoutAttributes;
 - (BOOL)shouldInvalidateLayoutAttributesForAccessoryViewOfKind:(NSString *)accessoryViewKind forBoundsChange:(CGRect)newBounds;
-- (void)configureLayoutAttributes:(DBProfileAccessoryViewLayoutAttributes *)layoutAttributes forAccessoryViewOfKind:(NSString *)accessoryViewKind;
+- (void)configureLayoutAttributes:(__kindof DBProfileAccessoryViewLayoutAttributes *)layoutAttributes forAccessoryViewOfKind:(NSString *)accessoryViewKind;
 
 @end
 
@@ -922,12 +922,9 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 
 #pragma mark - DBProfileViewController(InstallingConstraints)
 
-- (void)installConstraintsForAccessoryViewOfKind:(NSString *)accessoryViewKind withLayoutAttributes:(DBProfileAccessoryViewLayoutAttributes *)layoutAttributes {
+- (void)installConstraintsForAccessoryViewOfKind:(NSString *)accessoryViewKind withLayoutAttributes:(__kindof DBProfileAccessoryViewLayoutAttributes *)layoutAttributes {
     NSAssert([self hasRegisteredAccessoryViewOfKind:accessoryViewKind], @"no accessory view has been registered for accessory kind '%@'", accessoryViewKind);
-    
-    DBProfileAccessoryView *accessoryView = [self accessoryViewOfKind:accessoryViewKind];
-    
-    NSAssert(accessoryView.superview, @"accessoryView must have a superview");
+    NSAssert([self accessoryViewOfKind:accessoryViewKind].superview, @"accessoryView must have a superview");
     
     [layoutAttributes uninstallConstraints];
     
@@ -1162,13 +1159,13 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 }
 
 - (BOOL)hasRegisteredAccessoryViewOfKind:(NSString *)accessoryViewKind {
-    return [self.registeredAccessoryViews objectForKey:accessoryViewKind];
+    return [self.registeredAccessoryViews objectForKey:accessoryViewKind] != nil;
 }
 
 #pragma mark - DBProfileViewController(Layout)
 
 - (BOOL)shouldInvalidateLayoutAttributesForAccessoryViewOfKind:(NSString *)accessoryViewKind forBoundsChange:(CGRect)newBounds {
-#warning - There is no need to invalidate the layout attributes if the frame of an accessory view is outside the visible bounds
+    // FIXME: There is no need to invalidate the layout attributes if the frame of an accessory view is outside the visible bounds
     return [accessoryViewKind isEqualToString:DBProfileAccessoryKindHeader] ||
            [accessoryViewKind isEqualToString:DBProfileAccessoryKindAvatar];
 }
@@ -1183,9 +1180,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     return layoutAttributes;
 }
 
-- (void)configureLayoutAttributes:(DBProfileAccessoryViewLayoutAttributes *)layoutAttributes forAccessoryViewOfKind:(NSString *)accessoryViewKind {
-    
-    CGPoint contentOffset = self.contentOffsetForDisplayedContentController;
+- (void)configureLayoutAttributes:(__kindof DBProfileAccessoryViewLayoutAttributes *)layoutAttributes forAccessoryViewOfKind:(NSString *)accessoryViewKind {
     
     DBProfileAccessoryView *accessoryView = [self accessoryViewOfKind:accessoryViewKind];
     layoutAttributes.frame = accessoryView.frame;

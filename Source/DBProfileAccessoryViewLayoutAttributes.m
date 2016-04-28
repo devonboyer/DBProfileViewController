@@ -74,7 +74,7 @@ static CGSize DBProfileAccessoryViewLayoutAttributesDefaultHeaderReferenceSize()
     if (![object isKindOfClass:[self class]]) return NO;
     DBProfileAccessoryViewLayoutAttributes *otherObject = (DBProfileAccessoryViewLayoutAttributes *)object;
     return
-    [self.representedAccessoryKind isEqual:otherObject.representedAccessoryKind];
+    [self.representedAccessoryKind isEqual:otherObject.representedAccessoryKind] &&
     CGRectEqualToRect(self.frame, otherObject.frame) &&
     CGRectEqualToRect(self.bounds, otherObject.bounds) &&
     CGAffineTransformEqualToTransform(self.transform, otherObject.transform) &&

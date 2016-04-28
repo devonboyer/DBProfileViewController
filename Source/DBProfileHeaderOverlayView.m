@@ -77,7 +77,7 @@
 }
 
 - (DBProfileTitleView *)titleView {
-    return self.navigationItem.titleView;
+    return (DBProfileTitleView *)self.navigationItem.titleView;
 }
 
 - (UIBarButtonItem *)leftBarButtonItem {

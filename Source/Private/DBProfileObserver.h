@@ -22,6 +22,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithTarget:(id)target keyPaths:(NSArray *)keyPaths delegate:(id)delegate action:(SEL)action context:(void *)context NS_DESIGNATED_INITIALIZER;
 
+- (instancetype)init NS_UNAVAILABLE;
+
 - (void)startObserving;
 
 @end

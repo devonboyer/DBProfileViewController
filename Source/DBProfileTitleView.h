@@ -28,7 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  *  A string representing the title;
  */
-@property (nonatomic, copy, nullable) NSAttributedString *title;
+@property (nonatomic, copy, nullable) NSString *title;
 
 /**
  *  The attributes of the title.
@@ -38,7 +38,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  *  A string representing the subtitle;
  */
-@property (nonatomic, copy, nullable) NSAttributedString *subtitle;
+@property (nonatomic, copy, nullable) NSString *subtitle;
 
 /**
  *  The attributes of the subtitle.
