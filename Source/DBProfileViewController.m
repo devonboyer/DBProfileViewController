@@ -10,10 +10,11 @@
 #import "DBProfileObserver.h"
 #import "DBProfileTitleView.h"
 #import "DBProfileSegmentedControlView.h"
+#import "DBProfileAccessoryView_Private.h"
 #import "DBProfileViewControllerUpdateContext.h"
 #import "UIBarButtonItem+DBProfileViewController.h"
 #import "NSBundle+DBProfileViewController.h"
-#import "DBProfileAccessoryView_Private.h"
+#import "UIView+DBProfileConstraintBasedLayout.h"
 
 CGFloat DBProfileViewControllerNavigationBarHeightForTraitCollection(UITraitCollection *traitCollection) {
     switch (traitCollection.verticalSizeClass) {
@@ -1080,7 +1081,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
                                                                     attribute:NSLayoutAttributeNotAnAttribute
                                                                    multiplier:1
                                                                      constant:72];
-    
+        
     layoutAttributes.leftConstraint = [NSLayoutConstraint constraintWithItem:avatarView
                                                                    attribute:NSLayoutAttributeLeft
                                                                    relatedBy:NSLayoutRelationEqual
@@ -1246,7 +1247,6 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     }
     
     // Calculate percent transitioned
-    
     CGFloat scrollableDistance = CGRectGetHeight(headerView.frame) - CGRectGetMaxY(self.overlayView.frame);
     if (self.automaticallyAdjustsScrollViewInsets) scrollableDistance += [self.topLayoutGuide length];
     
@@ -1254,7 +1254,6 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     else if (contentOffset.y > [self _titleViewOffset]) layoutAttributes.percentTransitioned = MAX(MIN(1 - (50 - fabs(contentOffset.y - [self _titleViewOffset]))/50, 1), 0);
 
     // Configure constraint-based layout attributes
-    
     if (layoutAttributes.hasInstalledConstraints) {
         
         layoutAttributes.navigationConstraint.constant = DBProfileViewControllerNavigationBarHeightForTraitCollection(self.traitCollection);
@@ -1300,7 +1299,6 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     }
     
     // Configure constraint-based layout attributes
-
     if (layoutAttributes.hasInstalledConstraints) {
         
         switch (layoutAttributes.avatarAlignment) {
