@@ -28,6 +28,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+extern CGFloat DBProfileViewControllerNavigationBarHeightForTraitCollection(UITraitCollection *traitCollection);
+
 /**
  *  The identifier for the avatar accessory view.
  */

@@ -46,16 +46,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)profileViewController:(DBProfileViewController *)controller didPullToRefreshContentControllerAtIndex:(NSInteger)controllerIndex;
 
 /**
- *  Asks the delegate for the size of the accessory view kind.
- *
- *  @param controller The profile view controller that unhighlighted the accessory view.
- *  @param accessoryViewKind A string that identifies the type of the accessory view
- *
- *  @return The size of the header.
- */
-- (CGSize)profileViewController:(DBProfileViewController *)controller referenceSizeForAccessoryViewOfKind:(NSString *)accessoryViewKind;
-
-/**
  *  Tells the delegate that the accessory view has been long pressed.
  *
  *  @param controller The profile view controller where the event occurred.
@@ -101,6 +91,10 @@ NS_ASSUME_NONNULL_BEGIN
  *  @return YES if the accessory view should be highlighted during tracking, NO otherwise
  */
 - (BOOL)profileViewController:(DBProfileViewController *)controller shouldHighlightAccessoryView:(__kindof DBProfileAccessoryView *)accessoryView ofKind:(NSString *)accessoryViewKind;
+
+
+// Moving to DBProfileLayoutAttributesProviderDelegate
+- (CGSize)profileViewController:(DBProfileViewController *)controller referenceSizeForAccessoryViewOfKind:(NSString *)accessoryViewKind;
 
 @end
 

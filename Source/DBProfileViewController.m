@@ -15,8 +15,7 @@
 #import "NSBundle+DBProfileViewController.h"
 #import "DBProfileAccessoryView_Private.h"
 
-static CGFloat DBProfileViewControllerNavigationBarHeightForTraitCollection(UITraitCollection *traitCollection)
-{
+CGFloat DBProfileViewControllerNavigationBarHeightForTraitCollection(UITraitCollection *traitCollection) {
     switch (traitCollection.verticalSizeClass) {
         case UIUserInterfaceSizeClassCompact:
             return 32;
@@ -52,9 +51,9 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 @property (nonatomic, getter=isUpdating) BOOL updating;
 
 // Data
+@property (nonatomic) NSCache *contentOffsetCache;
 @property (nonatomic) NSMutableArray<DBProfileContentController *> *contentControllers;
 @property (nonatomic) NSMutableDictionary<NSString *, DBProfileObserver *> *scrollViewObservers;
-@property (nonatomic) NSCache *contentOffsetCache;
 @property (nonatomic) NSMutableDictionary *registeredAccessoryViews;
 @property (nonatomic) NSMutableDictionary<NSString *, DBProfileAccessoryViewLayoutAttributes *> *accessoryViewLayoutAttributes;
 
@@ -116,12 +115,10 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     return self;
 }
 
-- (void)commonInit
-{
-    NSCache *contentOffsetCache = [[NSCache alloc] init];
-    contentOffsetCache.name = DBProfileViewControllerContentOffsetCacheName;
-    contentOffsetCache.countLimit = 10;
-    _contentOffsetCache = contentOffsetCache;
+- (void)commonInit {
+    _contentOffsetCache = [[NSCache alloc] init];
+    self.contentOffsetCache.name = DBProfileViewControllerContentOffsetCacheName;
+    self.contentOffsetCache.countLimit = 10;
     
     _containerView = [[UIView alloc] init];
     _detailView = [[UIView alloc] init];

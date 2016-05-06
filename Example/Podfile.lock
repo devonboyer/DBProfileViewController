@@ -1,5 +1,5 @@
 PODS:
-  - DBProfileViewController (2.0.2):
+  - DBProfileViewController (2.0.3):
     - FXBlurView (~> 1.6.4)
   - FXBlurView (1.6.4)
 
@@ -12,7 +12,7 @@ EXTERNAL SOURCES:
     :path: ../
 
 SPEC CHECKSUMS:
-  DBProfileViewController: a2da39408911b0a732ac04512e999468d39f0802
+  DBProfileViewController: 68a16d93d03ba8d8b5055e88273e4f2f9a0755cb
   FXBlurView: db786c2561cb49a09ae98407f52460096ab8a44f
 
 COCOAPODS: 0.39.0

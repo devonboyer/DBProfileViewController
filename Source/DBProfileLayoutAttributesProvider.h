@@ -8,16 +8,46 @@
 
 #import <Foundation/Foundation.h>
 
+#import <DBProfileViewController/DBProfileViewControllerDelegate.h>
+
+@class DBProfileViewController;
+@class DBProfileLayoutAttributesProvider;
 @class DBProfileAccessoryViewLayoutAttributes;
 
-// Handles all layout attribute configuration and manages the array of layout attributes
-// This class will manage scroll observering and invalidating based on scrolling etc.
-@interface DBProfileLayoutAttributesProvider : NSObject
+@protocol DBProfileLayoutAttributesProviderDelegate <DBProfileViewControllerDelegate>
 
-@property (nonatomic) NSDictionary<NSString *, DBProfileAccessoryViewLayoutAttributes *> *layoutAttributes;
-
-- (__kindof DBProfileAccessoryViewLayoutAttributes *)layoutAttributesForAccessoryViewOfKind:(NSString *)accessoryViewKind;
-- (void)invalidateLayoutAttributesForAccessoryViewOfKind:(NSString *)accessoryViewKind;
-- (BOOL)shouldInvalidateLayoutAttributesForAccessoryViewOfKind:(NSString *)accessoryViewKind forBoundsChange:(CGRect)newBounds;
+- (CGSize)profileViewController:(DBProfileViewController *)controller provider:(DBProfileLayoutAttributesProvider *)provider referenceSizeForAccessoryViewOfKind:(NSString *)accessoryViewKind;
 
 @end
+
+@interface DBProfileLayoutAttributesProvider : NSObject
+
++ (Class)layoutAttributesClassForAccessoryViewOfKind:(NSString *)accessoryViewKind;
+
+@property (nonatomic, weak, readonly) DBProfileViewController *profileViewController;
+
+@property (nonatomic) CGSize headerReferenceSize;
+
+@property (nonatomic) CGSize avatarReferenceSize;
+
+- (__kindof DBProfileAccessoryViewLayoutAttributes *)layoutAttributesForAccessoryViewOfKind:(NSString *)accessoryViewKind;
+
+- (BOOL)shouldInvalidateLayoutAttributesForAccessoryViewOfKind:(NSString *)accessoryViewKind forBoundsChange:(CGRect)newBounds;
+
+- (void)invalidateLayoutAttributesForAccessoryViewOfKind:(NSString *)accessoryViewKind;
+
+- (void)invalidateAllLayoutAttributes;
+
+@end
+
+@interface DBProfileLayoutAttributesProvider (InstallingConstraints)
+
+- (BOOL)shouldInstallConstraintsForAccessoryViewOfKind:(NSString *)accessoryViewKind;
+
+- (void)installConstraintsForAccessoryViewOfKind:(NSString *)accessoryViewKind;
+
+- (void)uninstallConstraintsForAccessoryViewOfKind:(NSString *)accessoryViewKind;
+
+@end
+
+
