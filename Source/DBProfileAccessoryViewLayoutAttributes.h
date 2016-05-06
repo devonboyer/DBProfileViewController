@@ -85,11 +85,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) NSInteger zIndex;
 
 /**
- *  The size of the the associated accessory view's frame.
- */
-@property (nonatomic) CGSize referenceSize;
-
-/**
  *  The percent that the associated accessory view has transitioned within its visible bounds.
  */
 @property (nonatomic) CGFloat percentTransitioned;

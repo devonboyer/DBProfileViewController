@@ -116,6 +116,10 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 }
 
 - (void)commonInit {
+    // Default sizes for provided accessory view kinds
+    self.headerReferenceSize = CGSizeMake(0, CGRectGetHeight([UIScreen mainScreen].bounds) * 0.18);
+    self.avatarReferenceSize = CGSizeMake(0, 72);
+    
     _contentOffsetCache = [[NSCache alloc] init];
     self.contentOffsetCache.name = DBProfileViewControllerContentOffsetCacheName;
     self.contentOffsetCache.countLimit = 10;
@@ -335,6 +339,16 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 }
 
 #pragma mark - DBProfileViewController
+
+- (void)setHeaderReferenceSize:(CGSize)headerReferenceSize {
+    _headerReferenceSize = headerReferenceSize;
+    [self invalidateLayoutAttributesForAccessoryViewOfKind:DBProfileAccessoryKindHeader];
+}
+
+- (void)setAvatarReferenceSize:(CGSize)avatarReferenceSize {
+    _avatarReferenceSize = avatarReferenceSize;
+    [self invalidateLayoutAttributesForAccessoryViewOfKind:DBProfileAccessoryKindAvatar];
+}
 
 - (UIBarButtonItem *)leftBarButtonItem {
     return self.overlayView.leftBarButtonItem;
@@ -861,16 +875,19 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     }
 }
 
-- (CGSize)_referenceSizeForAccessoryViewOfKind:(NSString *)accessoryViewKind
+- (CGSize)referenceSizeForAccessoryViewOfKind:(NSString *)accessoryViewKind
 {
     CGSize referenceSize;
     
+    if (accessoryViewKind == DBProfileAccessoryKindHeader) {
+        referenceSize = self.headerReferenceSize;
+    }
+    else if (accessoryViewKind == DBProfileAccessoryKindAvatar) {
+        referenceSize = self.avatarReferenceSize;
+    }
+    
     if ([self.delegate respondsToSelector:@selector(profileViewController:referenceSizeForAccessoryViewOfKind:)]) {
         referenceSize = [self.delegate profileViewController:self referenceSizeForAccessoryViewOfKind:accessoryViewKind];
-    }
-    else {
-        DBProfileAccessoryViewLayoutAttributes *layoutAttributes = [self layoutAttributesForAccessoryViewOfKind:accessoryViewKind];
-        referenceSize = layoutAttributes.referenceSize;
     }
     
     return referenceSize;
@@ -957,7 +974,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
                                                                    multiplier:1
                                                                      constant:0];
     
-    CGSize referenceSize = [self _referenceSizeForAccessoryViewOfKind:DBProfileAccessoryKindHeader];
+    CGSize referenceSize = [self referenceSizeForAccessoryViewOfKind:DBProfileAccessoryKindHeader];
     
     layoutAttributes.heightConstraint = [NSLayoutConstraint constraintWithItem:headerView
                                                                      attribute:NSLayoutAttributeHeight
@@ -1219,7 +1236,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
         }
     }
     
-    CGSize referenceSize = [self _referenceSizeForAccessoryViewOfKind:DBProfileAccessoryKindHeader];
+    CGSize referenceSize = [self referenceSizeForAccessoryViewOfKind:DBProfileAccessoryKindHeader];
     
     if (contentOffset.y < 0 && layoutAttributes.headerOptions & DBProfileHeaderOptionStretch) {
         layoutAttributes.heightConstraint.constant = referenceSize.height - contentOffset.y;
@@ -1303,7 +1320,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
                 break;
         }
         
-        CGSize referenceSize = [self _referenceSizeForAccessoryViewOfKind:DBProfileAccessoryKindAvatar];
+        CGSize referenceSize = [self referenceSizeForAccessoryViewOfKind:DBProfileAccessoryKindAvatar];
         
         layoutAttributes.widthConstraint.constant = MAX(referenceSize.width, referenceSize.height);
         layoutAttributes.leftConstraint.constant = layoutAttributes.edgeInsets.left - layoutAttributes.edgeInsets.right;
