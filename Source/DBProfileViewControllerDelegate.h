@@ -11,6 +11,7 @@
 
 @class DBProfileViewController;
 @class DBProfileAccessoryView;
+@class DBProfileAccessoryViewLayoutAttributes;
 
 NS_ASSUME_NONNULL_BEGIN
 
