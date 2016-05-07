@@ -104,9 +104,11 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 }
 
 - (void)commonInit {
-    // Default sizes for provided accessory view kinds
-    self.headerReferenceSize = CGSizeMake(0, CGRectGetHeight([UIScreen mainScreen].bounds) * 0.18);
-    self.avatarReferenceSize = CGSizeMake(0, 72);
+    // Defaults
+    _headerReferenceSize = CGSizeMake(0, CGRectGetHeight([UIScreen mainScreen].bounds) * 0.18);
+    _avatarReferenceSize = CGSizeMake(0, 72);
+    _hidesSegmentedControlForSingleContentController = YES;
+    _allowsPullToRefresh = YES;
     
     _contentOffsetCache = [[NSCache alloc] init];
     self.contentOffsetCache.name = DBProfileViewControllerContentOffsetCacheName;
@@ -146,10 +148,6 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     [self setupOverlayViewConstraints];
     
     self.segmentedControl.tintColor = [UIColor colorWithRed:29/255.0 green:161/255.0 blue:242/255.0 alpha:1];
-    
-    _hidesSegmentedControlForSingleContentController = YES;
-    _allowsPullToRefresh = YES;
-
     [self.segmentedControl addTarget:self action:@selector(didChangeContentController:) forControlEvents:UIControlEventValueChanged];
 }
 
