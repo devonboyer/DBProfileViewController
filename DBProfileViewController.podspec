@@ -22,7 +22,8 @@ Pod::Spec.new do |s|
   }
 
   s.public_header_files = 'Source/**/*.h'
-  s.private_header_files = 'Source/Private/**/*.h'
-  s.frameworks = 'UIKit'
+  s.private_header_files = 'Source/Private/*.h'
+
   s.dependency 'FXBlurView', '~> 1.6.4'
+
 end
