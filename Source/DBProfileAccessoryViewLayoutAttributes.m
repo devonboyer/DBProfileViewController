@@ -9,16 +9,6 @@
 #import "DBProfileAccessoryViewLayoutAttributes.h"
 #import "DBProfileViewController.h"
 
-static CGSize DBProfileAccessoryViewLayoutAttributesDefaultAvatarReferenceSize()
-{
-    return CGSizeMake(0, 72);
-}
-
-static CGSize DBProfileAccessoryViewLayoutAttributesDefaultHeaderReferenceSize()
-{
-    return CGSizeMake(0, CGRectGetHeight([UIScreen mainScreen].bounds) * 0.18);
-}
-
 @implementation DBProfileAccessoryViewLayoutAttributes
 
 + (instancetype)layoutAttributesForAccessoryViewOfKind:(NSString *)accessoryViewKind
@@ -41,13 +31,6 @@ static CGSize DBProfileAccessoryViewLayoutAttributesDefaultHeaderReferenceSize()
         self.alpha = 1.0;
         self.transform = CGAffineTransformIdentity;
         self.zIndex = 0;
-        
-        if ([accessoryViewKind isEqualToString:DBProfileAccessoryKindHeader]) {
-            self.referenceSize = DBProfileAccessoryViewLayoutAttributesDefaultHeaderReferenceSize();
-        }
-        else if ([accessoryViewKind isEqualToString:DBProfileAccessoryKindAvatar]) {
-            self.referenceSize = DBProfileAccessoryViewLayoutAttributesDefaultAvatarReferenceSize();
-        }
     }
     return self;
 }
@@ -79,7 +62,6 @@ static CGSize DBProfileAccessoryViewLayoutAttributesDefaultHeaderReferenceSize()
     CGRectEqualToRect(self.bounds, otherObject.bounds) &&
     CGAffineTransformEqualToTransform(self.transform, otherObject.transform) &&
     CGSizeEqualToSize(self.size, otherObject.size) &&
-    CGSizeEqualToSize(self.referenceSize, otherObject.referenceSize) &&
     CGPointEqualToPoint(self.center, otherObject.center) &&
     self.hidden == otherObject.hidden &&
     self.alpha == otherObject.alpha &&

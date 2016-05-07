@@ -98,6 +98,16 @@ FOUNDATION_EXPORT NSString * const DBProfileAccessoryKindHeader;
  */
 
 /**
+ *  The default size to use for the header accessory view.
+ */
+@property (nonatomic) CGSize headerReferenceSize;
+
+/**
+ *  The default size to use for the avatar accessory view.
+ */
+@property (nonatomic) CGSize avatarReferenceSize;
+
+/**
  *  An array of `DBProfileAccessoryView` instances managed by the profile view controller.
  */
 @property (nonatomic, readonly) NSArray<__kindof DBProfileAccessoryView *> *accessoryViews;
