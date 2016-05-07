@@ -1,5 +1,16 @@
 # Changelog
 
+## 2.0.3
+
+### Public API Changes
+
+* Removed `referenceSize` property from `DBProfileAccessoryViewLayoutAttributes`
+
+### Added
+
+* Added `headerReferenceSize` property to `DBProfileViewController`
+* Added `avatarReferenceSize` property to `DBProfileViewController`
+
 ## 2.0.2
 
 * Bug fixes and performance improvements
