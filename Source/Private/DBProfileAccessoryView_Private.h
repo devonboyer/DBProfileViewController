@@ -22,6 +22,6 @@
 
 @property (nonatomic, weak) id<DBProfileAccessoryViewDelegate> internalDelegate;
 
-@property (nonatomic, strong) NSString *representedAccessoryKind;
+@property (nonatomic, copy) NSString *representedAccessoryKind;
 
 @end

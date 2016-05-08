@@ -11,6 +11,7 @@
 #import "DBProfileTitleView.h"
 #import "DBProfileSegmentedControlView.h"
 #import "DBProfileAccessoryView_Private.h"
+#import "DBProfileAccessoryViewModel.h"
 #import "DBProfileViewControllerUpdateContext.h"
 #import "UIBarButtonItem+DBProfileViewController.h"
 #import "NSBundle+DBProfileViewController.h"
@@ -54,8 +55,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 @property (nonatomic) NSCache *contentOffsetCache;
 @property (nonatomic) NSMutableArray<DBProfileContentController *> *contentControllers;
 @property (nonatomic) NSMutableDictionary<NSString *, DBProfileObserver *> *scrollViewObservers;
-@property (nonatomic) NSMutableDictionary *registeredAccessoryViews;
-@property (nonatomic) NSMutableDictionary<NSString *, DBProfileAccessoryViewLayoutAttributes *> *accessoryViewLayoutAttributes;
+@property (nonatomic) NSMutableArray<DBProfileAccessoryViewModel *> *accessoryViewModels;
 
 @property (nonatomic) Class segmentedControlClass;
 @property (nonatomic) UIView *containerView;
@@ -248,12 +248,12 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 
 - (DBProfileContentController *)displayedContentController {
     DBProfileContentController *controller;
-    if ([self.contentControllers count] > 0) return self.contentControllers[self.indexForDisplayedContentController];
+    if ([self.contentControllers count] > 0) controller = self.contentControllers[self.indexForDisplayedContentController];
     return controller;
 }
 
 - (NSArray<DBProfileAccessoryView *> *)accessoryViews {
-    return [self.registeredAccessoryViews allValues];
+    return [self.accessoryViewModels valueForKey:@"accessoryView"];
 }
 
 - (NSMutableArray *)contentControllers {
@@ -263,18 +263,11 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     return _contentControllers;
 }
 
-- (NSMutableDictionary *)registeredAccessoryViews {
-    if (!_registeredAccessoryViews) {
-        _registeredAccessoryViews = [NSMutableDictionary dictionary];
+- (NSMutableArray<DBProfileAccessoryViewModel *> *)accessoryViewModels {
+    if (!_accessoryViewModels) {
+        _accessoryViewModels = [NSMutableArray array];
     }
-    return _registeredAccessoryViews;
-}
-
-- (NSMutableDictionary *)accessoryViewLayoutAttributes {
-    if (!_accessoryViewLayoutAttributes) {
-        _accessoryViewLayoutAttributes = [NSMutableDictionary dictionary];
-    }
-    return _accessoryViewLayoutAttributes;
+    return _accessoryViewModels;
 }
 
 - (NSMutableDictionary *)scrollViewObservers {
@@ -480,9 +473,9 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     
     // We need to invalidate the layout attributes for all accessory views after showing a content controller in order to update the constraint-based
     // layout attributes that have been installed.
-    [self.registeredAccessoryViews enumerateKeysAndObjectsUsingBlock:^(NSString *_Nonnull kind, id  _Nonnull obj, BOOL * _Nonnull stop) {
-        [self invalidateLayoutAttributesForAccessoryViewOfKind:kind];
-    }];
+    for (DBProfileAccessoryViewModel *viewModel in self.accessoryViewModels) {
+        [self invalidateLayoutAttributesForAccessoryViewOfKind:viewModel.representedAccessoryKind];
+    }
 }
 
 - (CGRect)frameForContentController {
@@ -508,9 +501,9 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     NSAssert(controller, @"controller cannot be nil");
     
     // Uninstall constraint-based layout attributes
-    [self.registeredAccessoryViews enumerateKeysAndObjectsUsingBlock:^(NSString *_Nonnull kind, id  _Nonnull obj, BOOL * _Nonnull stop) {
-        [self.accessoryViewLayoutAttributes[kind] uninstallConstraints];
-    }];
+    for (DBProfileAccessoryViewModel *viewModel in self.accessoryViewModels) {
+        [viewModel.layoutAttributes uninstallConstraints];
+    }
     
     UIScrollView *scrollView = controller.contentScrollView;
     
@@ -568,9 +561,9 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     [self setupConstraintsForScrollView:scrollView];
     
     // Install constraint-based layout attributes for accessory views
-    [self.registeredAccessoryViews enumerateKeysAndObjectsUsingBlock:^(NSString *_Nonnull kind, id  _Nonnull obj, BOOL * _Nonnull stop) {
-        [self installConstraintsForAccessoryViewOfKind:kind withLayoutAttributes:self.accessoryViewLayoutAttributes[kind]];
-    }];
+    for (DBProfileAccessoryViewModel *viewModel in self.accessoryViewModels) {
+        [self addConstraintsForAccessoryViewOfKind:viewModel.representedAccessoryKind withLayoutAttributes:viewModel.layoutAttributes];
+    }
     
     [scrollView setNeedsLayout];
     [scrollView layoutIfNeeded];
@@ -907,7 +900,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 
 #pragma mark - DBProfileViewController (InstallingConstraintBasedLayoutAttributes)
 
-- (void)installConstraintsForAccessoryViewOfKind:(NSString *)accessoryViewKind withLayoutAttributes:(__kindof DBProfileAccessoryViewLayoutAttributes *)layoutAttributes {
+- (void)addConstraintsForAccessoryViewOfKind:(NSString *)accessoryViewKind withLayoutAttributes:(__kindof DBProfileAccessoryViewLayoutAttributes *)layoutAttributes {
     
     NSAssert([self hasRegisteredAccessoryViewOfKind:accessoryViewKind], @"no accessory view has been registered for accessory kind '%@'", accessoryViewKind);
     NSAssert([self accessoryViewOfKind:accessoryViewKind].superview, @"accessoryView must have a superview");
@@ -915,10 +908,10 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     [layoutAttributes uninstallConstraints];
     
     if ([accessoryViewKind isEqualToString:DBProfileAccessoryKindAvatar]) {
-        [self installConstraintsForAvatarViewWithLayoutAttributes:layoutAttributes];
+        [self addConstraintsForAvatarViewWithLayoutAttributes:layoutAttributes];
     }
     else if ([accessoryViewKind isEqualToString:DBProfileAccessoryKindHeader]) {
-        [self installConstraintsForHeaderViewWithLayoutAttributes:layoutAttributes];
+        [self addConstraintsForHeaderViewWithLayoutAttributes:layoutAttributes];
     }
     
     layoutAttributes.hasInstalledConstraints = YES;
@@ -926,7 +919,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     [self invalidateLayoutAttributesForAccessoryViewOfKind:accessoryViewKind];
 }
 
-- (void)installConstraintsForHeaderViewWithLayoutAttributes:(DBProfileHeaderViewLayoutAttributes *)layoutAttributes {
+- (void)addConstraintsForHeaderViewWithLayoutAttributes:(DBProfileHeaderViewLayoutAttributes *)layoutAttributes {
     
     DBProfileAccessoryView *headerView = [self accessoryViewOfKind:DBProfileAccessoryKindHeader];
     
@@ -1029,7 +1022,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     }
 }
 
-- (void)installConstraintsForAvatarViewWithLayoutAttributes:(DBProfileAvatarViewLayoutAttributes *)layoutAttributes {
+- (void)addConstraintsForAvatarViewWithLayoutAttributes:(DBProfileAvatarViewLayoutAttributes *)layoutAttributes {
     
     DBProfileAccessoryView *avatarView = [self accessoryViewOfKind:DBProfileAccessoryKindAvatar];
     
@@ -1109,16 +1102,10 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 - (void)registerClass:(Class)viewClass forAccessoryViewOfKind:(NSString *)accessoryViewKind {
     NSAssert([viewClass isSubclassOfClass:[DBProfileAccessoryView class]], @"viewClass must inherit from `DBProfileAccessoryView`");
     
-    // Unregister any existing accessory view for the specified accessory kind
-    [self.registeredAccessoryViews removeObjectForKey:accessoryViewKind];
-    [self.accessoryViewLayoutAttributes removeObjectForKey:accessoryViewKind];
-    
     // Register the accessory view for the specified accessory kind
     DBProfileAccessoryView *accessoryView = [[viewClass alloc] init];
     accessoryView.representedAccessoryKind = accessoryViewKind;
     accessoryView.internalDelegate = self;
-    
-    [self.registeredAccessoryViews setObject:accessoryView forKey:accessoryViewKind];
     
     Class layoutAttributesClass = [[self class] layoutAttributesClassForAccessoryViewOfKind:accessoryViewKind];
     
@@ -1132,16 +1119,33 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     }
     
     DBProfileAccessoryViewLayoutAttributes *layoutAttributes = [layoutAttributesClass layoutAttributesForAccessoryViewOfKind:accessoryViewKind];
-    [self.accessoryViewLayoutAttributes setObject:layoutAttributes forKey:accessoryViewKind];
+    
+    DBProfileAccessoryViewModel *viewModel = [[DBProfileAccessoryViewModel alloc] initWithAccessoryView:accessoryView layoutAttributes:layoutAttributes];
+    
+    if ([self.accessoryViewModels containsObject:viewModel]) {
+        [self.accessoryViewModels removeObjectIdenticalTo:viewModel];
+    }
+    
+    [self.accessoryViewModels addObject:viewModel];
+}
+
+- (BOOL)hasRegisteredAccessoryViewOfKind:(NSString *)accessoryViewKind {
+    return [self accessoryViewModelForAccessoryViewOfKind:accessoryViewKind] != nil;
+}
+
+- (DBProfileAccessoryViewModel *)accessoryViewModelForAccessoryViewOfKind:(NSString *)accessoryViewKind {
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"representedAccessoryKind == %@", accessoryViewKind];
+    return [[self.accessoryViewModels filteredArrayUsingPredicate:predicate] firstObject];
 }
 
 - (DBProfileAccessoryView *)accessoryViewOfKind:(NSString *)accessoryViewKind {
     //NSAssert([self hasRegisteredAccessoryViewOfKind:accessoryViewKind], @"no accessory view has been registered for accessory kind '%@'", accessoryViewKind);
-    return [self.registeredAccessoryViews objectForKey:accessoryViewKind];
+    return [self accessoryViewModelForAccessoryViewOfKind:accessoryViewKind].accessoryView;
 }
 
-- (BOOL)hasRegisteredAccessoryViewOfKind:(NSString *)accessoryViewKind {
-    return [self.registeredAccessoryViews objectForKey:accessoryViewKind] != nil;
+- (DBProfileAccessoryViewLayoutAttributes *)layoutAttributesForAccessoryViewOfKind:(NSString *)accessoryViewKind {
+    //NSAssert([self hasRegisteredAccessoryViewOfKind:accessoryViewKind], @"no accessory view has been registered for accessory kind '%@'", accessoryViewKind);
+    return [self accessoryViewModelForAccessoryViewOfKind:accessoryViewKind].layoutAttributes;
 }
 
 #pragma mark - DBProfileViewController (LayoutAttributesConfiguration)
@@ -1149,15 +1153,6 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 - (BOOL)shouldInvalidateLayoutAttributesForAccessoryViewOfKind:(NSString *)accessoryViewKind forBoundsChange:(CGRect)newBounds {
     return [accessoryViewKind isEqualToString:DBProfileAccessoryKindHeader] ||
            [accessoryViewKind isEqualToString:DBProfileAccessoryKindAvatar];
-}
-
-- (DBProfileAccessoryViewLayoutAttributes *)layoutAttributesForAccessoryViewOfKind:(NSString *)accessoryViewKind {
-    
-    //NSAssert([self hasRegisteredAccessoryViewOfKind:accessoryViewKind], @"no accessory view has been registered for accessory kind '%@'", accessoryViewKind);
-
-    DBProfileAccessoryViewLayoutAttributes *layoutAttributes = self.accessoryViewLayoutAttributes[accessoryViewKind];
-    
-    return layoutAttributes;
 }
 
 - (void)configureLayoutAttributes:(__kindof DBProfileAccessoryViewLayoutAttributes *)layoutAttributes forAccessoryViewOfKind:(NSString *)accessoryViewKind {
@@ -1311,17 +1306,17 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     contentOffset.y += scrollView.contentInset.top;
     self.contentOffsetForDisplayedContentController = contentOffset;
     
-    [self.registeredAccessoryViews enumerateKeysAndObjectsUsingBlock:^(NSString *_Nonnull kind, id  _Nonnull obj, BOOL * _Nonnull stop) {
-        if ([self shouldInvalidateLayoutAttributesForAccessoryViewOfKind:kind forBoundsChange:scrollView.bounds]) {
-            [self invalidateLayoutAttributesForAccessoryViewOfKind:kind];
+    for (DBProfileAccessoryViewModel *viewModel in self.accessoryViewModels) {
+        if ([self shouldInvalidateLayoutAttributesForAccessoryViewOfKind:viewModel.representedAccessoryKind forBoundsChange:scrollView.bounds]) {
+            [self invalidateLayoutAttributesForAccessoryViewOfKind:viewModel.representedAccessoryKind];
         }
-    }];
+    }
 
     [self updateTitleViewWithContentOffset:contentOffset];
     [self handlePullToRefreshWithScrollView:scrollView];
 }
 
-#pragma mark - DBProfielAccessoryViewDelegate
+#pragma mark - DBProfileAccessoryViewDelegate
 
 - (BOOL)accessoryViewShouldHighlight:(DBProfileAccessoryView *)accessoryView {
     if ([self.delegate respondsToSelector:@selector(profileViewController:shouldHighlightAccessoryView:ofKind:)]) {
