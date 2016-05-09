@@ -104,6 +104,7 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
 
 - (void)commonInit {
     // Defaults
+    _segmentedControlClass = [UISegmentedControl class];
     _headerReferenceSize = CGSizeMake(0, CGRectGetHeight([UIScreen mainScreen].bounds) * 0.18);
     _avatarReferenceSize = CGSizeMake(0, 72);
     _hidesSegmentedControlForSingleContentController = YES;
@@ -115,8 +116,6 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
     _activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
     _overlayView = [[DBProfileHeaderOverlayView alloc] initWithFrame:CGRectZero];
     _overlayView.leftBarButtonItem = [UIBarButtonItem db_backBarButtonItemWithTarget:self action:@selector(backButtonTapped:)];
-    
-    [self setSegmentedControlClass:[UISegmentedControl class]];
 }
 
 - (void)dealloc {
@@ -137,11 +136,9 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
     self.containerView.frame = self.view.frame;
     [self.view addSubview:self.containerView];
     
+    [self addSegmentedControl];
     [self addOverlayView];
     [self setupOverlayViewConstraints];
-    
-    self.segmentedControl.tintColor = [UIColor colorWithRed:29/255.0 green:161/255.0 blue:242/255.0 alpha:1];
-    [self.segmentedControl addTarget:self action:@selector(didChangeContentController:) forControlEvents:UIControlEventValueChanged];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -270,13 +267,6 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
     return _scrollViewObservers;
 }
 
-- (void)setSegmentedControlClass:(Class)segmentedControlClass {
-    _segmentedControlClass = segmentedControlClass;
-    
-    UISegmentedControl *segmentedControl = [[segmentedControlClass alloc] init];
-    self.segmentedControlView.segmentedControl = segmentedControl;
-}
-
 - (void)setDetailView:(__kindof UIView *)detailView {
     _detailView = detailView;
     
@@ -349,6 +339,17 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
     
     [self updateOverlayInformation];
     [self.view addSubview:self.overlayView];
+}
+
+- (void)addSegmentedControl {
+    NSAssert(self.segmentedControlView != nil, @"segmentedControlView must be set during initialization, to add segmented control for this %@", NSStringFromClass([self class]));
+    
+    UISegmentedControl *segmentedControl = [[self.segmentedControlClass alloc] init];
+    self.segmentedControlView.segmentedControl = segmentedControl;
+    
+    UIColor *tintColor = [UIColor colorWithRed:29/255.0 green:161/255.0 blue:242/255.0 alpha:1];
+    self.segmentedControl.tintColor = tintColor;
+    [self.segmentedControl addTarget:self action:@selector(didChangeContentController:) forControlEvents:UIControlEventValueChanged];
 }
 
 - (void)updateOverlayInformation {

@@ -40,6 +40,11 @@ typedef NS_OPTIONS(NSUInteger, DBProfileHeaderOptions) {
      *  The header view will stretch when the view is scrolled.
      */
     DBProfileHeaderOptionStretch = (1 << 1),
+    
+    /**
+     *  IN DEVELOPMENT
+     */
+    DBProfileHeaderOptionParallax = (1 << 2),
 };
 
 /**
