@@ -1,9 +1,9 @@
 //
 //  DBProfileAccessoryViewModel.m
-//  Pods
+//  DBProfileViewController
 //
 //  Created by Devon Boyer on 2016-05-08.
-//
+//  Copyright (c) 2015 Devon Boyer. All rights reserved.
 //
 
 #import "DBProfileAccessoryViewModel.h"

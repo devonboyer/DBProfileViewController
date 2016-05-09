@@ -12,6 +12,7 @@
 #import "DBProfileSegmentedControlView.h"
 #import "DBProfileAccessoryView_Private.h"
 #import "DBProfileAccessoryViewModel.h"
+#import "DBProfileContentOffsetCache.h"
 #import "DBProfileViewControllerUpdateContext.h"
 #import "UIBarButtonItem+DBProfileViewController.h"
 #import "NSBundle+DBProfileViewController.h"
@@ -32,8 +33,6 @@ static const CGFloat DBProfileViewControllerOverlayAnimationDuration = 0.2;
 
 static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
 
-static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProfileViewController.contentOffsetCache";
-
 @interface DBProfileViewController () <DBProfileAccessoryViewDelegate, DBProfileScrollViewObserverDelegate>
 {
     BOOL _shouldScrollToTop; // Used for content offset caching
@@ -52,7 +51,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 @property (nonatomic, getter=isUpdating) BOOL updating;
 
 // Data
-@property (nonatomic) NSCache *contentOffsetCache;
+@property (nonatomic) DBProfileContentOffsetCache *contentOffsetCache;
 @property (nonatomic) NSMutableArray<DBProfileContentController *> *contentControllers;
 @property (nonatomic) NSMutableDictionary<NSString *, DBProfileObserver *> *scrollViewObservers;
 @property (nonatomic) NSMutableArray<DBProfileAccessoryViewModel *> *accessoryViewModels;
@@ -110,10 +109,6 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     _hidesSegmentedControlForSingleContentController = YES;
     _allowsPullToRefresh = YES;
     
-    _contentOffsetCache = [[NSCache alloc] init];
-    self.contentOffsetCache.name = DBProfileViewControllerContentOffsetCacheName;
-    self.contentOffsetCache.countLimit = 10;
-    
     _containerView = [[UIView alloc] init];
     _detailView = [[UIView alloc] init];
     _segmentedControlView = [[DBProfileSegmentedControlView alloc] init];
@@ -126,8 +121,6 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    
-    [self.contentOffsetCache removeAllObjects];
     
     self.delegate = nil;
     self.dataSource = nil;
@@ -442,7 +435,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     DBProfileContentController *hideContentController = self.displayedContentController;
     if (hideContentController) {
         [self removeContentController:hideContentController];
-        NSString *key = [self uniqueKeyForContentControllerAtIndex:_indexForDisplayedContentController];
+        NSString *key = [self.contentOffsetCache keyForContentControllerAtIndex:_indexForDisplayedContentController];
         if ([self.scrollViewObservers valueForKey:key]) {
             [self.scrollViewObservers removeObjectForKey:key];
         }
@@ -460,7 +453,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
         
         [self setDisplayedContentController:displayContentController animated:YES];
 
-        NSString *key = [self uniqueKeyForContentControllerAtIndex:controllerIndex];
+        NSString *key = [self.contentOffsetCache keyForContentControllerAtIndex:controllerIndex];
         DBProfileScrollViewObserver *observer = [[DBProfileScrollViewObserver alloc] initWithTargetView:displayContentController.contentScrollView delegate:self];
         [observer startObserving];
         self.scrollViewObservers[key] = observer;
@@ -513,7 +506,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     _shouldScrollToTop = scrollView.contentOffset.y >= -topInset;
     _sharedContentOffset = scrollView.contentOffset;
     
-    [self cacheContentOffset:scrollView.contentOffset forContentControllerAtIndex:self.indexForDisplayedContentController];
+    [self.contentOffsetCache setContentOffset:scrollView.contentOffset forContentControllerAtIndex:self.indexForDisplayedContentController];
     
     [controller willMoveToParentViewController:nil];
     [controller.view removeFromSuperview];
@@ -578,7 +571,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     if (_shouldScrollToTop) {
         [self resetContentOffsetForScrollView:scrollView];
         
-        CGPoint cachedContentOffset = [self cachedContentOffsetForContentControllerAtIndex:self.indexForDisplayedContentController];
+        CGPoint cachedContentOffset = [self.contentOffsetCache contentOffsetForContentControllerAtIndex:self.indexForDisplayedContentController];
         if (cachedContentOffset.y > scrollView.contentOffset.y && !CGPointEqualToPoint(CGPointZero, cachedContentOffset)) {
             [scrollView setContentOffset:cachedContentOffset];
         }
@@ -639,6 +632,8 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
         [self.contentControllers addObject:contentController];
     }
     
+    self.contentOffsetCache = [[DBProfileContentOffsetCache alloc] initWithContentControllers:self.contentControllers];
+    
     [self updateSegmentedControlTitles];
     
     // Display selected content view controller
@@ -666,30 +661,6 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     if ([self respondsToSelector:@selector(profileViewController:didPullToRefreshContentControllerAtIndex:)]) {
         [self.delegate profileViewController:self didPullToRefreshContentControllerAtIndex:index];
     }
-}
-
-- (void)cacheContentOffset:(CGPoint)contentOffset forContentControllerAtIndex:(NSInteger)controllerIndex
-{
-    NSString *key = [self uniqueKeyForContentControllerAtIndex:controllerIndex];
-    [self.contentOffsetCache setObject:[NSValue valueWithCGPoint:contentOffset] forKey:key];
-}
-
-- (CGPoint)cachedContentOffsetForContentControllerAtIndex:(NSInteger)controllerIndex {
-    NSString *key = [self uniqueKeyForContentControllerAtIndex:controllerIndex];
-    return [[self.contentOffsetCache objectForKey:key] CGPointValue];
-}
-
-- (NSString *)uniqueKeyForContentControllerAtIndex:(NSInteger)controllerIndex
-{
-    NSString *overlayTitle;
-    
-    if ([self.delegate respondsToSelector:@selector(profileViewController:titleForContentControllerAtIndex:)]) {
-        overlayTitle = [self.dataSource profileViewController:self titleForContentControllerAtIndex:controllerIndex];
-    }
-    
-    NSMutableString *key = [[NSMutableString alloc] initWithString:overlayTitle];
-    [key appendFormat:@"-%@", @(controllerIndex)];
-    return key;
 }
 
 - (void)scrollContentControllerToTop:(DBProfileContentController *)viewController animated:(BOOL)animated
@@ -898,7 +869,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     [scrollView addConstraint:self.detailViewTopConstraint];
 }
 
-#pragma mark - DBProfileViewController (InstallingConstraintBasedLayoutAttributes)
+#pragma mark - DBProfileViewController (DBProfileInstallingConstraintBasedLayoutAttributes)
 
 - (void)addConstraintsForAccessoryViewOfKind:(NSString *)accessoryViewKind withLayoutAttributes:(__kindof DBProfileAccessoryViewLayoutAttributes *)layoutAttributes {
     
@@ -1086,7 +1057,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
                                            layoutAttributes.topConstraint]];
 }
 
-#pragma mark - DBProfileViewController (AccessoryViewRegistration)
+#pragma mark - DBProfileViewController (DBProfileAccessoryViewRegistration)
 
 + (Class)layoutAttributesClassForAccessoryViewOfKind:(NSString *)accessoryViewKind {
     if ([accessoryViewKind isEqualToString:DBProfileAccessoryKindHeader]) {
@@ -1148,7 +1119,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     return [self accessoryViewModelForAccessoryViewOfKind:accessoryViewKind].layoutAttributes;
 }
 
-#pragma mark - DBProfileViewController (LayoutAttributesConfiguration)
+#pragma mark - DBProfileViewController (DBProfileLayoutAttributesConfiguration)
 
 - (BOOL)shouldInvalidateLayoutAttributesForAccessoryViewOfKind:(NSString *)accessoryViewKind forBoundsChange:(CGRect)newBounds {
     return [accessoryViewKind isEqualToString:DBProfileAccessoryKindHeader] ||
