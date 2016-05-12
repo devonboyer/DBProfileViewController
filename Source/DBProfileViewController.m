@@ -17,6 +17,8 @@
 #import "UIBarButtonItem+DBProfileViewController.h"
 #import "NSBundle+DBProfileViewController.h"
 
+#import "DBProfileViewController+DBProfileAccessoryViewModelUpdating.h"
+
 NSString * const DBProfileAccessoryKindAvatar = @"DBProfileAccessoryKindAvatar";
 NSString * const DBProfileAccessoryKindHeader = @"DBProfileAccessoryKindHeader";
 
@@ -1093,6 +1095,8 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
     DBProfileAccessoryViewLayoutAttributes *layoutAttributes = [layoutAttributesClass layoutAttributesForAccessoryViewOfKind:accessoryViewKind];
     
     DBProfileAccessoryViewModel *viewModel = [[DBProfileAccessoryViewModel alloc] initWithAccessoryView:accessoryView layoutAttributes:layoutAttributes];
+    
+    viewModel.updater = self;
     
     if ([self.accessoryViewModels containsObject:viewModel]) {
         [self.accessoryViewModels removeObjectIdenticalTo:viewModel];
