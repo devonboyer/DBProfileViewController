@@ -12,17 +12,18 @@ static void * DBProfileLayoutAttributeBindingContext = &DBProfileLayoutAttribute
 
 @implementation DBProfileLayoutAttributeBinding
 
-+ (instancetype)bindingWithObject:(NSObject *)object keyPath:(NSString *)keyPath
++ (instancetype)bindingWithObject:(NSObject *)object keyPath:(NSString *)keyPath delegate:(id<DBProfileLayoutAttributeBindingDelegate>)delegate
 {
-    return [[self alloc] initWithObject:object keyPath:keyPath];
+    return [[self alloc] initWithObject:object keyPath:keyPath delegate:delegate];
 }
 
-- (instancetype)initWithObject:(NSObject *)object keyPath:(NSString *)keyPath
+- (instancetype)initWithObject:(NSObject *)object keyPath:(NSString *)keyPath delegate:(id<DBProfileLayoutAttributeBindingDelegate>)delegate
 {
     self = [super init];
     if (self) {
         _object = object;
         _keyPath = [keyPath copy];
+        _delegate = delegate;
     }
     return self;
 }
