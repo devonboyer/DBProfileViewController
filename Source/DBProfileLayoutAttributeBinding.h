@@ -24,7 +24,6 @@
 
 - (instancetype)initWithObject:(NSObject *)object keyPath:(NSString *)keyPath delegate:(id<DBProfileLayoutAttributeBindingDelegate>)delegate;
 
-
 @property (nonatomic, weak) id<DBProfileLayoutAttributeBindingDelegate> delegate;
 
 @property (nonatomic, readonly) NSObject *object;
