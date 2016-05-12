@@ -12,7 +12,7 @@ EXTERNAL SOURCES:
     :path: ../
 
 SPEC CHECKSUMS:
-  DBProfileViewController: 8d76b1916321cc46f348b97f72b8b96c710577c2
+  DBProfileViewController: 68a16d93d03ba8d8b5055e88273e4f2f9a0755cb
   FXBlurView: db786c2561cb49a09ae98407f52460096ab8a44f
 
 COCOAPODS: 0.39.0

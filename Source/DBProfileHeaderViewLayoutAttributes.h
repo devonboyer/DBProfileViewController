@@ -27,24 +27,19 @@ typedef NS_ENUM(NSInteger, DBProfileHeaderStyle) {
 };
 
 /**
- *  Scroll effects the can be applied to the header view.
+ *  Options the can be applied to the header view.
  */
-typedef NS_OPTIONS(NSUInteger, DBProfileHeaderScrollEffects) {
+typedef NS_OPTIONS(NSUInteger, DBProfileHeaderOptions) {
     
     /**
      *  No options will be applied.
      */
-    DBProfileHeaderScrollEffectNone = (1 << 0),
+    DBProfileHeaderOptionNone = (1 << 0),
     
     /**
      *  The header view will stretch when the view is scrolled.
      */
-    DBProfileHeaderScrollEffectStretch = (1 << 1),
-    
-    /**
-     *  IN DEVELOPMENT
-     */
-    DBProfileHeaderScrollEffectParallax = (1 << 2),
+    DBProfileHeaderOptionStretch = (1 << 1),
 };
 
 /**
@@ -60,11 +55,11 @@ typedef NS_OPTIONS(NSUInteger, DBProfileHeaderScrollEffects) {
 @property (nonatomic) DBProfileHeaderStyle headerStyle;
 
 /**
- *  The scroll effects to apply to the associated header view.
+ *  The options to apply to the associated header view.
  *
- *  Defaults to `DBProfileHeaderScrollEffectStretch`
+ *  Defaults to `DBProfileHeaderOptionStretch`
  */
-@property (nonatomic) DBProfileHeaderScrollEffects scrollEffects;
+@property (nonatomic) DBProfileHeaderOptions headerOptions;
 
 @property (nonatomic, nullable) NSLayoutConstraint *navigationConstraint;
 @property (nonatomic, nullable) NSLayoutConstraint *topLayoutGuideConstraint;

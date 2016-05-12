@@ -11,11 +11,6 @@
 
 @implementation DBProfileAccessoryViewLayoutAttributes
 
-+ (NSArray<NSString *> *)keyPathsForBindings
-{
-    return nil;
-}
-
 + (instancetype)layoutAttributesForAccessoryViewOfKind:(NSString *)accessoryViewKind
 {
     DBProfileAccessoryViewLayoutAttributes *layoutAttributes = [[[self class] alloc] initWithAccessoryViewKind:accessoryViewKind];
