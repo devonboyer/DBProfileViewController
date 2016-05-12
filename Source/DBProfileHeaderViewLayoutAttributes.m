@@ -11,12 +11,18 @@
 
 @implementation DBProfileHeaderViewLayoutAttributes
 
++ (NSArray<NSString *> *)keyPathsForBindings
+{
+    return @[NSStringFromSelector(@selector(headerStyle)),
+             NSStringFromSelector(@selector(scrollEffects))];
+}
+
 - (instancetype)initWithAccessoryViewKind:(NSString *)accessoryViewKind
 {
     self = [super initWithAccessoryViewKind:accessoryViewKind];
     if (self) {
         self.headerStyle = DBProfileHeaderStyleNavigation;
-        self.headerOptions = DBProfileHeaderOptionStretch;
+        self.scrollEffects = DBProfileHeaderScrollEffectStretch;
     }
     return self;
 }
@@ -34,7 +40,7 @@
     if (![object isKindOfClass:[self class]]) return NO;
     if (![super isEqual:object]) return NO;
     DBProfileHeaderViewLayoutAttributes *otherObject = (DBProfileHeaderViewLayoutAttributes *)object;
-    return self.headerStyle == otherObject.headerStyle && self.headerOptions == otherObject.headerOptions;
+    return self.headerStyle == otherObject.headerStyle && self.scrollEffects == otherObject.scrollEffects;
 }
 
 @end

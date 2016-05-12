@@ -43,7 +43,10 @@ FOUNDATION_EXPORT NSString * const DBProfileAccessoryKindHeader;
  *
  *  This class manages and displays a collection of content controllers and customizable accessory views associated with a profile interface.
  */
-@interface DBProfileViewController : UIViewController
+@interface DBProfileViewController : UIViewController {
+@protected
+    BOOL _viewHasAppeared;
+}
 
 /**
  *  @name Creating Profile View Controllers
@@ -111,50 +114,6 @@ FOUNDATION_EXPORT NSString * const DBProfileAccessoryKindHeader;
  *  An array of `DBProfileAccessoryView` instances managed by the profile view controller.
  */
 @property (nonatomic, readonly) NSArray<__kindof DBProfileAccessoryView *> *accessoryViews;
-
-/**
- *  Returns the class to use when creating layout attributes objects.
- *
- *  @param accessoryViewKind A string that identifies the type of the accessory view.
- *
- *  @return The class to use when creating layout attributes objects.
- */
-+ (Class)layoutAttributesClassForAccessoryViewOfKind:(NSString *)accessoryViewKind;
-
-/**
- *  Returns the accessory view for the specified accessory view kind.
- *
- *  @param accessoryViewKind A string that identifies the type of the accessory view.
- *
- *  @return The accessory view for the specified accessory view kind.
- */
-- (__kindof DBProfileAccessoryView *)accessoryViewOfKind:(NSString *)accessoryViewKind;
-
-/**
- *  Returns the layout attributes for the specified accessory view kind.
- *
- *  @param accessoryViewKind A string that identifies the type of the accessory view.
- *
- *  @return The layout attributes for the specified accessory view kind.
- */
-- (__kindof DBProfileAccessoryViewLayoutAttributes *)layoutAttributesForAccessoryViewOfKind:(NSString *)accessoryViewKind;
-
-/**
- *  Registers a class for use in creating accessory views.
- *
- *  @param viewClass The class to use for the accessory view.
- *  @param accessoryViewKind A string that identifies the type of the accessory view.
- */
-- (void)registerClass:(Class)viewClass forAccessoryViewOfKind:(NSString *)accessoryViewKind;
-
-/*!
- *  Invalidates the current layout attributes and triggers a layout update.
- *
- *  If any layout attributes are changed after `viewWillAppear:` is called, then this method must be called to trigger an appropriate layout update.
- *
- *  @param accessoryViewKind A string that identifies the type of the accessory view.
- */
-- (void)invalidateLayoutAttributesForAccessoryViewOfKind:(NSString *)accessoryViewKind;
 
 /**
  *  @name Showing Content Controllers
@@ -254,4 +213,60 @@ FOUNDATION_EXPORT NSString * const DBProfileAccessoryKindHeader;
 
 @end
 
+#pragma mark - DBProfileAccessoryViewRegistration
+
+@interface DBProfileViewController (DBProfileAccessoryViewRegistration)
+
+/**
+ *  Returns the class to use when creating layout attributes objects.
+ *
+ *  @param accessoryViewKind A string that identifies the type of the accessory view.
+ *
+ *  @return The class to use when creating layout attributes objects.
+ */
++ (Class)layoutAttributesClassForAccessoryViewOfKind:(NSString *)accessoryViewKind;
+
+/**
+ *  Registers a class for use in creating accessory views.
+ *
+ *  @param viewClass The class to use for the accessory view.
+ *  @param accessoryViewKind A string that identifies the type of the accessory view.
+ */
+- (void)registerClass:(Class)viewClass forAccessoryViewOfKind:(NSString *)accessoryViewKind;
+
+/**
+ *  Returns the accessory view for the specified accessory view kind.
+ *
+ *  @param accessoryViewKind A string that identifies the type of the accessory view.
+ *
+ *  @return The accessory view for the specified accessory view kind.
+ */
+- (__kindof DBProfileAccessoryView *)accessoryViewOfKind:(NSString *)accessoryViewKind;\
+
+/**
+ *  Returns the layout attributes for the specified accessory view kind.
+ *
+ *  @param accessoryViewKind A string that identifies the type of the accessory view.
+ *
+ *  @return The layout attributes for the specified accessory view kind.
+ */
+- (__kindof DBProfileAccessoryViewLayoutAttributes *)layoutAttributesForAccessoryViewOfKind:(NSString *)accessoryViewKind;
+
+@end
+
+#pragma mark - DBProfileLayoutAttributesConfiguration
+
+@interface DBProfileViewController (DBProfileLayoutAttributesConfiguration)
+
+/*!
+ *  Invalidates the current layout attributes and triggers a layout update.
+ *
+ *  @param accessoryViewKind A string that identifies the type of the accessory view.
+ */
+- (void)invalidateLayoutAttributesForAccessoryViewOfKind:(NSString *)accessoryViewKind;
+
+@end
+
 NS_ASSUME_NONNULL_END
+
+

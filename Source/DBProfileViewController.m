@@ -11,9 +11,13 @@
 #import "DBProfileTitleView.h"
 #import "DBProfileSegmentedControlView.h"
 #import "DBProfileAccessoryView_Private.h"
+#import "DBProfileAccessoryViewModel.h"
+#import "DBProfileContentOffsetCache.h"
 #import "DBProfileViewControllerUpdateContext.h"
 #import "UIBarButtonItem+DBProfileViewController.h"
 #import "NSBundle+DBProfileViewController.h"
+
+#import "DBProfileViewController+DBProfileAccessoryViewModelUpdating.h"
 
 NSString * const DBProfileAccessoryKindAvatar = @"DBProfileAccessoryKindAvatar";
 NSString * const DBProfileAccessoryKindHeader = @"DBProfileAccessoryKindHeader";
@@ -31,7 +35,19 @@ static const CGFloat DBProfileViewControllerOverlayAnimationDuration = 0.2;
 
 static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
 
-static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProfileViewController.contentOffsetCache";
+@interface DBProfileViewController (DBProfileAccessoryViewRegistration)
+- (BOOL)hasRegisteredAccessoryViewOfKind:(NSString *)accessoryViewKind;
+- (DBProfileAccessoryViewModel *)accessoryViewModelForAccessoryViewOfKind:(NSString *)accessoryViewKind;
+@end
+
+@interface DBProfileViewController (DBProfileInstallingConstraintBasedLayoutAttributes)
+- (void)addConstraintsForAccessoryViewOfKind:(NSString *)accessoryViewKind withLayoutAttributes:(__kindof DBProfileAccessoryViewLayoutAttributes *)layoutAttributes;
+@end
+
+@interface DBProfileViewController (DBProfileLayoutAttributesConfiguration)
+- (BOOL)shouldInvalidateLayoutAttributesForAccessoryViewOfKind:(NSString *)accessoryViewKind forBoundsChange:(CGRect)newBounds;
+- (void)configureLayoutAttributes:(__kindof DBProfileAccessoryViewLayoutAttributes *)layoutAttributes forAccessoryViewOfKind:(NSString *)accessoryViewKind;
+@end
 
 @interface DBProfileViewController () <DBProfileAccessoryViewDelegate, DBProfileScrollViewObserverDelegate>
 {
@@ -44,18 +60,16 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 @property (nonatomic) NSUInteger indexForDisplayedContentController;
 @property (nonatomic) CGPoint contentOffsetForDisplayedContentController;
 @property (nonatomic, getter=isRefreshing) BOOL refreshing;
-@property (nonatomic) BOOL viewHasAppeared;
 
 // Updates
 @property (nonatomic) DBProfileViewControllerUpdateContext *updateContext;
 @property (nonatomic, getter=isUpdating) BOOL updating;
 
 // Data
-@property (nonatomic) NSCache *contentOffsetCache;
+@property (nonatomic) DBProfileContentOffsetCache *contentOffsetCache;
 @property (nonatomic) NSMutableArray<DBProfileContentController *> *contentControllers;
 @property (nonatomic) NSMutableDictionary<NSString *, DBProfileObserver *> *scrollViewObservers;
-@property (nonatomic) NSMutableDictionary *registeredAccessoryViews;
-@property (nonatomic) NSMutableDictionary<NSString *, DBProfileAccessoryViewLayoutAttributes *> *accessoryViewLayoutAttributes;
+@property (nonatomic) NSMutableArray<DBProfileAccessoryViewModel *> *accessoryViewModels;
 
 @property (nonatomic) Class segmentedControlClass;
 @property (nonatomic) UIView *containerView;
@@ -105,14 +119,11 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 
 - (void)commonInit {
     // Defaults
+    _segmentedControlClass = [UISegmentedControl class];
     _headerReferenceSize = CGSizeMake(0, CGRectGetHeight([UIScreen mainScreen].bounds) * 0.18);
     _avatarReferenceSize = CGSizeMake(0, 72);
     _hidesSegmentedControlForSingleContentController = YES;
     _allowsPullToRefresh = YES;
-    
-    _contentOffsetCache = [[NSCache alloc] init];
-    self.contentOffsetCache.name = DBProfileViewControllerContentOffsetCacheName;
-    self.contentOffsetCache.countLimit = 10;
     
     _containerView = [[UIView alloc] init];
     _detailView = [[UIView alloc] init];
@@ -120,14 +131,10 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     _activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
     _overlayView = [[DBProfileHeaderOverlayView alloc] initWithFrame:CGRectZero];
     _overlayView.leftBarButtonItem = [UIBarButtonItem db_backBarButtonItemWithTarget:self action:@selector(backButtonTapped:)];
-    
-    [self setSegmentedControlClass:[UISegmentedControl class]];
 }
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    
-    [self.contentOffsetCache removeAllObjects];
     
     self.delegate = nil;
     self.dataSource = nil;
@@ -144,11 +151,9 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     self.containerView.frame = self.view.frame;
     [self.view addSubview:self.containerView];
     
+    [self addSegmentedControl];
     [self addOverlayView];
     [self setupOverlayViewConstraints];
-    
-    self.segmentedControl.tintColor = [UIColor colorWithRed:29/255.0 green:161/255.0 blue:242/255.0 alpha:1];
-    [self.segmentedControl addTarget:self action:@selector(didChangeContentController:) forControlEvents:UIControlEventValueChanged];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -171,7 +176,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     // to prevent this since we are managing the scrollView contentInset manually.
     self.automaticallyAdjustsScrollViewInsets = !showOverlayView;
     
-    if (!self.viewHasAppeared) {
+    if (!_viewHasAppeared) {
         [self reloadData];
         
         [self.view setNeedsUpdateConstraints];
@@ -190,7 +195,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    self.viewHasAppeared = YES;
+    _viewHasAppeared = YES;
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -248,12 +253,12 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 
 - (DBProfileContentController *)displayedContentController {
     DBProfileContentController *controller;
-    if ([self.contentControllers count] > 0) return self.contentControllers[self.indexForDisplayedContentController];
+    if ([self.contentControllers count] > 0) controller = self.contentControllers[self.indexForDisplayedContentController];
     return controller;
 }
 
 - (NSArray<DBProfileAccessoryView *> *)accessoryViews {
-    return [self.registeredAccessoryViews allValues];
+    return [self.accessoryViewModels valueForKey:@"accessoryView"];
 }
 
 - (NSMutableArray *)contentControllers {
@@ -263,18 +268,11 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     return _contentControllers;
 }
 
-- (NSMutableDictionary *)registeredAccessoryViews {
-    if (!_registeredAccessoryViews) {
-        _registeredAccessoryViews = [NSMutableDictionary dictionary];
+- (NSMutableArray<DBProfileAccessoryViewModel *> *)accessoryViewModels {
+    if (!_accessoryViewModels) {
+        _accessoryViewModels = [NSMutableArray array];
     }
-    return _registeredAccessoryViews;
-}
-
-- (NSMutableDictionary *)accessoryViewLayoutAttributes {
-    if (!_accessoryViewLayoutAttributes) {
-        _accessoryViewLayoutAttributes = [NSMutableDictionary dictionary];
-    }
-    return _accessoryViewLayoutAttributes;
+    return _accessoryViewModels;
 }
 
 - (NSMutableDictionary *)scrollViewObservers {
@@ -282,13 +280,6 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
         _scrollViewObservers = [NSMutableDictionary dictionary];
     }
     return _scrollViewObservers;
-}
-
-- (void)setSegmentedControlClass:(Class)segmentedControlClass {
-    _segmentedControlClass = segmentedControlClass;
-    
-    UISegmentedControl *segmentedControl = [[segmentedControlClass alloc] init];
-    self.segmentedControlView.segmentedControl = segmentedControl;
 }
 
 - (void)setDetailView:(__kindof UIView *)detailView {
@@ -363,6 +354,17 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     
     [self updateOverlayInformation];
     [self.view addSubview:self.overlayView];
+}
+
+- (void)addSegmentedControl {
+    NSAssert(self.segmentedControlView != nil, @"segmentedControlView must be set during initialization, to add segmented control for this %@", NSStringFromClass([self class]));
+    
+    UISegmentedControl *segmentedControl = [[self.segmentedControlClass alloc] init];
+    self.segmentedControlView.segmentedControl = segmentedControl;
+    
+    UIColor *tintColor = [UIColor colorWithRed:29/255.0 green:161/255.0 blue:242/255.0 alpha:1];
+    self.segmentedControl.tintColor = tintColor;
+    [self.segmentedControl addTarget:self action:@selector(didChangeContentController:) forControlEvents:UIControlEventValueChanged];
 }
 
 - (void)updateOverlayInformation {
@@ -449,7 +451,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     DBProfileContentController *hideContentController = self.displayedContentController;
     if (hideContentController) {
         [self removeContentController:hideContentController];
-        NSString *key = [self uniqueKeyForContentControllerAtIndex:_indexForDisplayedContentController];
+        NSString *key = [self.contentOffsetCache keyForContentControllerAtIndex:_indexForDisplayedContentController];
         if ([self.scrollViewObservers valueForKey:key]) {
             [self.scrollViewObservers removeObjectForKey:key];
         }
@@ -467,7 +469,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
         
         [self setDisplayedContentController:displayContentController animated:YES];
 
-        NSString *key = [self uniqueKeyForContentControllerAtIndex:controllerIndex];
+        NSString *key = [self.contentOffsetCache keyForContentControllerAtIndex:controllerIndex];
         DBProfileScrollViewObserver *observer = [[DBProfileScrollViewObserver alloc] initWithTargetView:displayContentController.contentScrollView delegate:self];
         [observer startObserving];
         self.scrollViewObservers[key] = observer;
@@ -480,9 +482,9 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     
     // We need to invalidate the layout attributes for all accessory views after showing a content controller in order to update the constraint-based
     // layout attributes that have been installed.
-    [self.registeredAccessoryViews enumerateKeysAndObjectsUsingBlock:^(NSString *_Nonnull kind, id  _Nonnull obj, BOOL * _Nonnull stop) {
-        [self invalidateLayoutAttributesForAccessoryViewOfKind:kind];
-    }];
+    for (DBProfileAccessoryViewModel *viewModel in self.accessoryViewModels) {
+        [self invalidateLayoutAttributesForAccessoryViewOfKind:viewModel.representedAccessoryKind];
+    }
 }
 
 - (CGRect)frameForContentController {
@@ -508,9 +510,9 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     NSAssert(controller, @"controller cannot be nil");
     
     // Uninstall constraint-based layout attributes
-    [self.registeredAccessoryViews enumerateKeysAndObjectsUsingBlock:^(NSString *_Nonnull kind, id  _Nonnull obj, BOOL * _Nonnull stop) {
-        [self.accessoryViewLayoutAttributes[kind] uninstallConstraints];
-    }];
+    for (DBProfileAccessoryViewModel *viewModel in self.accessoryViewModels) {
+        [viewModel.layoutAttributes uninstallConstraints];
+    }
     
     UIScrollView *scrollView = controller.contentScrollView;
     
@@ -520,7 +522,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     _shouldScrollToTop = scrollView.contentOffset.y >= -topInset;
     _sharedContentOffset = scrollView.contentOffset;
     
-    [self cacheContentOffset:scrollView.contentOffset forContentControllerAtIndex:self.indexForDisplayedContentController];
+    [self.contentOffsetCache setContentOffset:scrollView.contentOffset forContentControllerAtIndex:self.indexForDisplayedContentController];
     
     [controller willMoveToParentViewController:nil];
     [controller.view removeFromSuperview];
@@ -568,9 +570,9 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     [self setupConstraintsForScrollView:scrollView];
     
     // Install constraint-based layout attributes for accessory views
-    [self.registeredAccessoryViews enumerateKeysAndObjectsUsingBlock:^(NSString *_Nonnull kind, id  _Nonnull obj, BOOL * _Nonnull stop) {
-        [self installConstraintsForAccessoryViewOfKind:kind withLayoutAttributes:self.accessoryViewLayoutAttributes[kind]];
-    }];
+    for (DBProfileAccessoryViewModel *viewModel in self.accessoryViewModels) {
+        [self addConstraintsForAccessoryViewOfKind:viewModel.representedAccessoryKind withLayoutAttributes:viewModel.layoutAttributes];
+    }
     
     [scrollView setNeedsLayout];
     [scrollView layoutIfNeeded];
@@ -585,7 +587,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     if (_shouldScrollToTop) {
         [self resetContentOffsetForScrollView:scrollView];
         
-        CGPoint cachedContentOffset = [self cachedContentOffsetForContentControllerAtIndex:self.indexForDisplayedContentController];
+        CGPoint cachedContentOffset = [self.contentOffsetCache contentOffsetForContentControllerAtIndex:self.indexForDisplayedContentController];
         if (cachedContentOffset.y > scrollView.contentOffset.y && !CGPointEqualToPoint(CGPointZero, cachedContentOffset)) {
             [scrollView setContentOffset:cachedContentOffset];
         }
@@ -646,6 +648,8 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
         [self.contentControllers addObject:contentController];
     }
     
+    self.contentOffsetCache = [[DBProfileContentOffsetCache alloc] initWithContentControllers:self.contentControllers];
+    
     [self updateSegmentedControlTitles];
     
     // Display selected content view controller
@@ -673,30 +677,6 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     if ([self respondsToSelector:@selector(profileViewController:didPullToRefreshContentControllerAtIndex:)]) {
         [self.delegate profileViewController:self didPullToRefreshContentControllerAtIndex:index];
     }
-}
-
-- (void)cacheContentOffset:(CGPoint)contentOffset forContentControllerAtIndex:(NSInteger)controllerIndex
-{
-    NSString *key = [self uniqueKeyForContentControllerAtIndex:controllerIndex];
-    [self.contentOffsetCache setObject:[NSValue valueWithCGPoint:contentOffset] forKey:key];
-}
-
-- (CGPoint)cachedContentOffsetForContentControllerAtIndex:(NSInteger)controllerIndex {
-    NSString *key = [self uniqueKeyForContentControllerAtIndex:controllerIndex];
-    return [[self.contentOffsetCache objectForKey:key] CGPointValue];
-}
-
-- (NSString *)uniqueKeyForContentControllerAtIndex:(NSInteger)controllerIndex
-{
-    NSString *overlayTitle;
-    
-    if ([self.delegate respondsToSelector:@selector(profileViewController:titleForContentControllerAtIndex:)]) {
-        overlayTitle = [self.dataSource profileViewController:self titleForContentControllerAtIndex:controllerIndex];
-    }
-    
-    NSMutableString *key = [[NSMutableString alloc] initWithString:overlayTitle];
-    [key appendFormat:@"-%@", @(controllerIndex)];
-    return key;
 }
 
 - (void)scrollContentControllerToTop:(DBProfileContentController *)viewController animated:(BOOL)animated
@@ -905,9 +885,132 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     [scrollView addConstraint:self.detailViewTopConstraint];
 }
 
-#pragma mark - DBProfileViewController (InstallingConstraintBasedLayoutAttributes)
+#pragma mark - DBProfileScrollViewObserverDelegate
 
-- (void)installConstraintsForAccessoryViewOfKind:(NSString *)accessoryViewKind withLayoutAttributes:(__kindof DBProfileAccessoryViewLayoutAttributes *)layoutAttributes {
+- (void)observedScrollViewDidScroll:(UIScrollView *)scrollView {
+    
+    CGPoint contentOffset = scrollView.contentOffset;
+    contentOffset.y += scrollView.contentInset.top;
+    self.contentOffsetForDisplayedContentController = contentOffset;
+    
+    for (DBProfileAccessoryViewModel *viewModel in self.accessoryViewModels) {
+        if ([self shouldInvalidateLayoutAttributesForAccessoryViewOfKind:viewModel.representedAccessoryKind forBoundsChange:scrollView.bounds]) {
+            [self invalidateLayoutAttributesForAccessoryViewOfKind:viewModel.representedAccessoryKind];
+        }
+    }
+
+    [self updateTitleViewWithContentOffset:contentOffset];
+    [self handlePullToRefreshWithScrollView:scrollView];
+}
+
+#pragma mark - DBProfileAccessoryViewDelegate
+
+- (BOOL)accessoryViewShouldHighlight:(DBProfileAccessoryView *)accessoryView {
+    if ([self.delegate respondsToSelector:@selector(profileViewController:shouldHighlightAccessoryView:ofKind:)]) {
+        return [self.delegate profileViewController:self shouldHighlightAccessoryView:accessoryView ofKind:accessoryView.representedAccessoryKind];
+    }
+    return YES;
+}
+
+- (void)accessoryViewDidHighlight:(DBProfileAccessoryView *)accessoryView {
+    if ([self.delegate respondsToSelector:@selector(profileViewController:didHighlightAccessoryView:ofKind:)]) {
+        [self.delegate profileViewController:self didHighlightAccessoryView:accessoryView ofKind:accessoryView.representedAccessoryKind];
+    }
+}
+
+- (void)accessoryViewDidUnhighlight:(DBProfileAccessoryView *)accessoryView {
+    if ([self.delegate respondsToSelector:@selector(profileViewController:didUnhighlightAccessoryView:ofKind:)]) {
+        [self.delegate profileViewController:self didUnhighlightAccessoryView:accessoryView ofKind:accessoryView.representedAccessoryKind];
+    }
+}
+
+- (void)accessoryViewWasTapped:(DBProfileAccessoryView *)accessoryView {
+    if ([self.delegate respondsToSelector:@selector(profileViewController:didTapAccessoryView:ofKind:)]) {
+        [self.delegate profileViewController:self didTapAccessoryView:accessoryView ofKind:accessoryView.representedAccessoryKind];
+    }
+}
+
+- (void)accessoryViewWasLongPressed:(DBProfileAccessoryView *)accessoryView {
+    if ([self.delegate respondsToSelector:@selector(profileViewController:didLongPressAccessoryView:ofKind:)]) {
+        [self.delegate profileViewController:self didLongPressAccessoryView:accessoryView ofKind:accessoryView.representedAccessoryKind];
+    }
+}
+
+@end
+
+#pragma mark - DBProfileAccessoryViewRegistration
+
+@implementation DBProfileViewController (DBProfileAccessoryViewRegistration)
+
++ (Class)layoutAttributesClassForAccessoryViewOfKind:(NSString *)accessoryViewKind {
+    if ([accessoryViewKind isEqualToString:DBProfileAccessoryKindHeader]) {
+        return [DBProfileHeaderViewLayoutAttributes class];
+    }
+    else if ([accessoryViewKind isEqualToString:DBProfileAccessoryKindAvatar]) {
+        return [DBProfileAvatarViewLayoutAttributes class];
+    }
+    
+    return [DBProfileAccessoryViewLayoutAttributes class];
+}
+
+- (void)registerClass:(Class)viewClass forAccessoryViewOfKind:(NSString *)accessoryViewKind {
+    NSAssert([viewClass isSubclassOfClass:[DBProfileAccessoryView class]], @"viewClass must inherit from `DBProfileAccessoryView`");
+    
+    // Register the accessory view for the specified accessory kind
+    DBProfileAccessoryView *accessoryView = [[viewClass alloc] init];
+    accessoryView.representedAccessoryKind = accessoryViewKind;
+    accessoryView.internalDelegate = self;
+    
+    Class layoutAttributesClass = [[self class] layoutAttributesClassForAccessoryViewOfKind:accessoryViewKind];
+    
+    if (accessoryViewKind == DBProfileAccessoryKindHeader) {
+        NSAssert([layoutAttributesClass isSubclassOfClass:[DBProfileHeaderViewLayoutAttributes class]],
+                 @"layoutAttributesClass must inherit from `DBProfileHeaderViewLayoutAttributes`");
+    }
+    else if (accessoryViewKind == DBProfileAccessoryKindAvatar) {
+        NSAssert([layoutAttributesClass isSubclassOfClass:[DBProfileAvatarViewLayoutAttributes class]],
+                 @"layoutAttributesClass must inherit from `DBProfileAvatarViewLayoutAttributes`");
+    }
+    
+    DBProfileAccessoryViewLayoutAttributes *layoutAttributes = [layoutAttributesClass layoutAttributesForAccessoryViewOfKind:accessoryViewKind];
+    
+    DBProfileAccessoryViewModel *viewModel = [[DBProfileAccessoryViewModel alloc] initWithAccessoryView:accessoryView layoutAttributes:layoutAttributes];
+    
+    viewModel.updater = self;
+    
+    if ([self.accessoryViewModels containsObject:viewModel]) {
+        [self.accessoryViewModels removeObjectIdenticalTo:viewModel];
+    }
+    
+    [self.accessoryViewModels addObject:viewModel];
+}
+
+- (BOOL)hasRegisteredAccessoryViewOfKind:(NSString *)accessoryViewKind {
+    return [self accessoryViewModelForAccessoryViewOfKind:accessoryViewKind] != nil;
+}
+
+- (DBProfileAccessoryViewModel *)accessoryViewModelForAccessoryViewOfKind:(NSString *)accessoryViewKind {
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"representedAccessoryKind == %@", accessoryViewKind];
+    return [[self.accessoryViewModels filteredArrayUsingPredicate:predicate] firstObject];
+}
+
+- (DBProfileAccessoryView *)accessoryViewOfKind:(NSString *)accessoryViewKind {
+    //NSAssert([self hasRegisteredAccessoryViewOfKind:accessoryViewKind], @"no accessory view has been registered for accessory kind '%@'", accessoryViewKind);
+    return [self accessoryViewModelForAccessoryViewOfKind:accessoryViewKind].accessoryView;
+}
+
+- (DBProfileAccessoryViewLayoutAttributes *)layoutAttributesForAccessoryViewOfKind:(NSString *)accessoryViewKind {
+    //NSAssert([self hasRegisteredAccessoryViewOfKind:accessoryViewKind], @"no accessory view has been registered for accessory kind '%@'", accessoryViewKind);
+    return [self accessoryViewModelForAccessoryViewOfKind:accessoryViewKind].layoutAttributes;
+}
+
+@end
+
+#pragma mark - DBProfileInstallingConstraintBasedLayoutAttributes
+
+@implementation DBProfileViewController (DBProfileInstallingConstraintBasedLayoutAttributes)
+
+- (void)addConstraintsForAccessoryViewOfKind:(NSString *)accessoryViewKind withLayoutAttributes:(__kindof DBProfileAccessoryViewLayoutAttributes *)layoutAttributes {
     
     NSAssert([self hasRegisteredAccessoryViewOfKind:accessoryViewKind], @"no accessory view has been registered for accessory kind '%@'", accessoryViewKind);
     NSAssert([self accessoryViewOfKind:accessoryViewKind].superview, @"accessoryView must have a superview");
@@ -915,10 +1018,10 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     [layoutAttributes uninstallConstraints];
     
     if ([accessoryViewKind isEqualToString:DBProfileAccessoryKindAvatar]) {
-        [self installConstraintsForAvatarViewWithLayoutAttributes:layoutAttributes];
+        [self addConstraintsForAvatarViewWithLayoutAttributes:layoutAttributes];
     }
     else if ([accessoryViewKind isEqualToString:DBProfileAccessoryKindHeader]) {
-        [self installConstraintsForHeaderViewWithLayoutAttributes:layoutAttributes];
+        [self addConstraintsForHeaderViewWithLayoutAttributes:layoutAttributes];
     }
     
     layoutAttributes.hasInstalledConstraints = YES;
@@ -926,7 +1029,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     [self invalidateLayoutAttributesForAccessoryViewOfKind:accessoryViewKind];
 }
 
-- (void)installConstraintsForHeaderViewWithLayoutAttributes:(DBProfileHeaderViewLayoutAttributes *)layoutAttributes {
+- (void)addConstraintsForHeaderViewWithLayoutAttributes:(DBProfileHeaderViewLayoutAttributes *)layoutAttributes {
     
     DBProfileAccessoryView *headerView = [self accessoryViewOfKind:DBProfileAccessoryKindHeader];
     
@@ -1029,7 +1132,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     }
 }
 
-- (void)installConstraintsForAvatarViewWithLayoutAttributes:(DBProfileAvatarViewLayoutAttributes *)layoutAttributes {
+- (void)addConstraintsForAvatarViewWithLayoutAttributes:(DBProfileAvatarViewLayoutAttributes *)layoutAttributes {
     
     DBProfileAccessoryView *avatarView = [self accessoryViewOfKind:DBProfileAccessoryKindAvatar];
     
@@ -1040,7 +1143,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
                                                                      attribute:NSLayoutAttributeWidth
                                                                     multiplier:1
                                                                       constant:0];
-
+    
     layoutAttributes.widthConstraint = [NSLayoutConstraint constraintWithItem:avatarView
                                                                     attribute:NSLayoutAttributeWidth
                                                                     relatedBy:NSLayoutRelationEqual
@@ -1048,7 +1151,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
                                                                     attribute:NSLayoutAttributeNotAnAttribute
                                                                    multiplier:1
                                                                      constant:100];
-        
+    
     layoutAttributes.leftConstraint = [NSLayoutConstraint constraintWithItem:avatarView
                                                                    attribute:NSLayoutAttributeLeft
                                                                    relatedBy:NSLayoutRelationEqual
@@ -1093,71 +1196,15 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
                                            layoutAttributes.topConstraint]];
 }
 
-#pragma mark - DBProfileViewController (AccessoryViewRegistration)
+@end
 
-+ (Class)layoutAttributesClassForAccessoryViewOfKind:(NSString *)accessoryViewKind {
-    if ([accessoryViewKind isEqualToString:DBProfileAccessoryKindHeader]) {
-        return [DBProfileHeaderViewLayoutAttributes class];
-    }
-    else if ([accessoryViewKind isEqualToString:DBProfileAccessoryKindAvatar]) {
-        return [DBProfileAvatarViewLayoutAttributes class];
-    }
-    
-    return [DBProfileAccessoryViewLayoutAttributes class];
-}
+#pragma mark - DBProfileLayoutAttributesConfiguration
 
-- (void)registerClass:(Class)viewClass forAccessoryViewOfKind:(NSString *)accessoryViewKind {
-    NSAssert([viewClass isSubclassOfClass:[DBProfileAccessoryView class]], @"viewClass must inherit from `DBProfileAccessoryView`");
-    
-    // Unregister any existing accessory view for the specified accessory kind
-    [self.registeredAccessoryViews removeObjectForKey:accessoryViewKind];
-    [self.accessoryViewLayoutAttributes removeObjectForKey:accessoryViewKind];
-    
-    // Register the accessory view for the specified accessory kind
-    DBProfileAccessoryView *accessoryView = [[viewClass alloc] init];
-    accessoryView.representedAccessoryKind = accessoryViewKind;
-    accessoryView.internalDelegate = self;
-    
-    [self.registeredAccessoryViews setObject:accessoryView forKey:accessoryViewKind];
-    
-    Class layoutAttributesClass = [[self class] layoutAttributesClassForAccessoryViewOfKind:accessoryViewKind];
-    
-    if (accessoryViewKind == DBProfileAccessoryKindHeader) {
-        NSAssert([layoutAttributesClass isSubclassOfClass:[DBProfileHeaderViewLayoutAttributes class]],
-                 @"layoutAttributesClass must inherit from `DBProfileHeaderViewLayoutAttributes`");
-    }
-    else if (accessoryViewKind == DBProfileAccessoryKindAvatar) {
-        NSAssert([layoutAttributesClass isSubclassOfClass:[DBProfileAvatarViewLayoutAttributes class]],
-                 @"layoutAttributesClass must inherit from `DBProfileAvatarViewLayoutAttributes`");
-    }
-    
-    DBProfileAccessoryViewLayoutAttributes *layoutAttributes = [layoutAttributesClass layoutAttributesForAccessoryViewOfKind:accessoryViewKind];
-    [self.accessoryViewLayoutAttributes setObject:layoutAttributes forKey:accessoryViewKind];
-}
-
-- (DBProfileAccessoryView *)accessoryViewOfKind:(NSString *)accessoryViewKind {
-    //NSAssert([self hasRegisteredAccessoryViewOfKind:accessoryViewKind], @"no accessory view has been registered for accessory kind '%@'", accessoryViewKind);
-    return [self.registeredAccessoryViews objectForKey:accessoryViewKind];
-}
-
-- (BOOL)hasRegisteredAccessoryViewOfKind:(NSString *)accessoryViewKind {
-    return [self.registeredAccessoryViews objectForKey:accessoryViewKind] != nil;
-}
-
-#pragma mark - DBProfileViewController (LayoutAttributesConfiguration)
+@implementation DBProfileViewController (DBProfileLayoutAttributesConfiguration)
 
 - (BOOL)shouldInvalidateLayoutAttributesForAccessoryViewOfKind:(NSString *)accessoryViewKind forBoundsChange:(CGRect)newBounds {
     return [accessoryViewKind isEqualToString:DBProfileAccessoryKindHeader] ||
-           [accessoryViewKind isEqualToString:DBProfileAccessoryKindAvatar];
-}
-
-- (DBProfileAccessoryViewLayoutAttributes *)layoutAttributesForAccessoryViewOfKind:(NSString *)accessoryViewKind {
-    
-    //NSAssert([self hasRegisteredAccessoryViewOfKind:accessoryViewKind], @"no accessory view has been registered for accessory kind '%@'", accessoryViewKind);
-
-    DBProfileAccessoryViewLayoutAttributes *layoutAttributes = self.accessoryViewLayoutAttributes[accessoryViewKind];
-    
-    return layoutAttributes;
+    [accessoryViewKind isEqualToString:DBProfileAccessoryKindAvatar];
 }
 
 - (void)configureLayoutAttributes:(__kindof DBProfileAccessoryViewLayoutAttributes *)layoutAttributes forAccessoryViewOfKind:(NSString *)accessoryViewKind {
@@ -1181,7 +1228,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     // Reorganize the front-to-back ordering of accessory views using the zIndex layout attribute
     NSArray *sortedAccessoryViews = [self.accessoryViews sortedArrayUsingComparator:^NSComparisonResult(DBProfileAccessoryView *lhs, DBProfileAccessoryView *rhs) {
         return [self layoutAttributesForAccessoryViewOfKind:lhs.representedAccessoryKind].zIndex >
-            [self layoutAttributesForAccessoryViewOfKind:rhs.representedAccessoryKind].zIndex;
+        [self layoutAttributesForAccessoryViewOfKind:rhs.representedAccessoryKind].zIndex;
     }];
     
     [sortedAccessoryViews enumerateObjectsUsingBlock:^(DBProfileAccessoryView *accessoryView, NSUInteger idx, BOOL * _Nonnull stop) {
@@ -1204,7 +1251,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     
     CGSize referenceSize = [self referenceSizeForAccessoryViewOfKind:DBProfileAccessoryKindHeader];
     
-    if (contentOffset.y < 0 && layoutAttributes.headerOptions & DBProfileHeaderOptionStretch) {
+    if (contentOffset.y < 0 && layoutAttributes.scrollEffects & DBProfileHeaderScrollEffectStretch) {
         layoutAttributes.heightConstraint.constant = referenceSize.height - contentOffset.y;
     }
     else {
@@ -1217,7 +1264,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     
     if (contentOffset.y <= 0) layoutAttributes.percentTransitioned = MAX(MIN(1 - (scrollableDistance - fabs(contentOffset.y))/scrollableDistance, 1), 0);
     else if (contentOffset.y > [self _titleViewOffset]) layoutAttributes.percentTransitioned = MAX(MIN(1 - (50 - fabs(contentOffset.y - [self _titleViewOffset]))/50, 1), 0);
-
+    
     // Configure constraint-based layout attributes
     if (layoutAttributes.hasInstalledConstraints) {
         
@@ -1244,7 +1291,7 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
     
     // Calculate the affine transform to apply to the avatar view. The avatar transform only needs to be applied if the avatar's offset
     // causes the avatar's frame to overlay the header.
-
+    
     CGFloat headerOffset = [self _headerViewOffset];
     CGFloat percentScrolled = 0;
     
@@ -1294,64 +1341,13 @@ static NSString * const DBProfileViewControllerContentOffsetCacheName = @"DBProf
 
 - (void)invalidateLayoutAttributesForAccessoryViewOfKind:(NSString *)accessoryViewKind {
     //NSAssert([self hasRegisteredAccessoryViewOfKind:accessoryViewKind], @"no accessory view has been registered for accessory kind '%@'", accessoryViewKind);
-
+    
     DBProfileAccessoryViewLayoutAttributes *layoutAttributes = [self layoutAttributesForAccessoryViewOfKind:accessoryViewKind];
     
     // The layout attributes have been marked as invalid and must be re-configured and applied to the associated accessory view.
     [self configureLayoutAttributes:layoutAttributes forAccessoryViewOfKind:accessoryViewKind];
     
     [[self accessoryViewOfKind:accessoryViewKind] applyLayoutAttributes:layoutAttributes];
-}
-
-#pragma mark - DBProfileScrollViewObserverDelegate
-
-- (void)observedScrollViewDidScroll:(UIScrollView *)scrollView {
-    
-    CGPoint contentOffset = scrollView.contentOffset;
-    contentOffset.y += scrollView.contentInset.top;
-    self.contentOffsetForDisplayedContentController = contentOffset;
-    
-    [self.registeredAccessoryViews enumerateKeysAndObjectsUsingBlock:^(NSString *_Nonnull kind, id  _Nonnull obj, BOOL * _Nonnull stop) {
-        if ([self shouldInvalidateLayoutAttributesForAccessoryViewOfKind:kind forBoundsChange:scrollView.bounds]) {
-            [self invalidateLayoutAttributesForAccessoryViewOfKind:kind];
-        }
-    }];
-
-    [self updateTitleViewWithContentOffset:contentOffset];
-    [self handlePullToRefreshWithScrollView:scrollView];
-}
-
-#pragma mark - DBProfielAccessoryViewDelegate
-
-- (BOOL)accessoryViewShouldHighlight:(DBProfileAccessoryView *)accessoryView {
-    if ([self.delegate respondsToSelector:@selector(profileViewController:shouldHighlightAccessoryView:ofKind:)]) {
-        return [self.delegate profileViewController:self shouldHighlightAccessoryView:accessoryView ofKind:accessoryView.representedAccessoryKind];
-    }
-    return YES;
-}
-
-- (void)accessoryViewDidHighlight:(DBProfileAccessoryView *)accessoryView {
-    if ([self.delegate respondsToSelector:@selector(profileViewController:didHighlightAccessoryView:ofKind:)]) {
-        [self.delegate profileViewController:self didHighlightAccessoryView:accessoryView ofKind:accessoryView.representedAccessoryKind];
-    }
-}
-
-- (void)accessoryViewDidUnhighlight:(DBProfileAccessoryView *)accessoryView {
-    if ([self.delegate respondsToSelector:@selector(profileViewController:didUnhighlightAccessoryView:ofKind:)]) {
-        [self.delegate profileViewController:self didUnhighlightAccessoryView:accessoryView ofKind:accessoryView.representedAccessoryKind];
-    }
-}
-
-- (void)accessoryViewWasTapped:(DBProfileAccessoryView *)accessoryView {
-    if ([self.delegate respondsToSelector:@selector(profileViewController:didTapAccessoryView:ofKind:)]) {
-        [self.delegate profileViewController:self didTapAccessoryView:accessoryView ofKind:accessoryView.representedAccessoryKind];
-    }
-}
-
-- (void)accessoryViewWasLongPressed:(DBProfileAccessoryView *)accessoryView {
-    if ([self.delegate respondsToSelector:@selector(profileViewController:didLongPressAccessoryView:ofKind:)]) {
-        [self.delegate profileViewController:self didLongPressAccessoryView:accessoryView ofKind:accessoryView.representedAccessoryKind];
-    }
 }
 
 @end
