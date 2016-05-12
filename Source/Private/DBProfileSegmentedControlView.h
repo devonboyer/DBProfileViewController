@@ -7,10 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <DBProfileViewController/DBProfileSegmentedControl.h>
 
 @interface DBProfileSegmentedControlView : UIView
 
-@property (nonatomic) UISegmentedControl *segmentedControl;
+@property (nonatomic) UIControl<DBProfileSegmentedControl> *segmentedControl;
 @property (nonatomic) BOOL showsTopBorder;
 @property (nonatomic) BOOL showsBottomBorder;
 

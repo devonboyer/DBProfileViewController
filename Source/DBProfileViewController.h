@@ -12,6 +12,7 @@
 #error "DBProfileViewController doesn't support iOS 6.x and lower. Please, change your minimum deployment target to iOS 7.0"
 #endif
 
+#import <DBProfileViewController/DBProfileSegmentedControl.h>
 #import <DBProfileViewController/DBProfileContentPresenting.h>
 #import <DBProfileViewController/DBProfileViewControllerDelegate.h>
 #import <DBProfileViewController/DBProfileViewControllerDataSource.h>
@@ -55,11 +56,13 @@ FOUNDATION_EXPORT NSString * const DBProfileAccessoryKindHeader;
 /**
  *  Initializes a profile view controller.
  *  
- *  @param segmentedControlClass Specifies the custom UISegmentedControl subclass you want to use, or specify nil to use the standard UISegmentedControl class.
+ *  @param segmentedControlClass Specifies the custom UIControl<DBProfileSegmentedControl> subclass you want to use, or specify nil to use the standard UISegmentedControl class.
  *
  *  @return An initialized `DBProfileViewController`.
+ *
+ *  @see DBProfileSegmentedControl
  */
-- (instancetype)initWithSegmentedControlClass:(nullable Class)segmentedControlClass;
+- (instancetype)initWithSegmentedControlClass:(nullable Class<DBProfileSegmentedControl>)segmentedControlClass;
 
 /**
  *  The object that acts as the view controller's delegate.
@@ -78,7 +81,7 @@ FOUNDATION_EXPORT NSString * const DBProfileAccessoryKindHeader;
 /**
  *  The segmented control managed by the profile view controller.
  */
-@property (nonatomic, readonly) UISegmentedControl *segmentedControl;
+@property (nonatomic, readonly) UIControl<DBProfileSegmentedControl> *segmentedControl;
 
 /**
  *  Whether the segmented control is hidden when there is only one content controller.
