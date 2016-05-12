@@ -14,7 +14,7 @@
 + (NSArray<NSString *> *)keyPathsForBindings
 {
     return @[NSStringFromSelector(@selector(headerStyle)),
-             NSStringFromSelector(@selector(headerOptions))];
+             NSStringFromSelector(@selector(scrollEffects))];
 }
 
 - (instancetype)initWithAccessoryViewKind:(NSString *)accessoryViewKind
