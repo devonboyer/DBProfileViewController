@@ -87,7 +87,7 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
 - (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        [self commonInit];
+        [self commonInitWithSegmentedControlClass:[UISegmentedControl class]];
     }
     return self;
 }
@@ -95,16 +95,16 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
 - (instancetype)initWithCoder:(NSCoder *)aDecoder {
     self = [super initWithCoder:aDecoder];
     if (self) {
-        [self commonInit];
+        [self commonInitWithSegmentedControlClass:[UISegmentedControl class]];
     }
     return self;
 }
 
-- (instancetype)initWithSegmentedControlClass:(Class)segmentedControlClass {
-    NSAssert([segmentedControlClass isSubclassOfClass:[UISegmentedControl class]], @"segmentedControlClass must inherit from `UISegmentedControl`");
-    self = [self init];
+- (instancetype)initWithSegmentedControlClass:(Class<DBProfileSegmentedControl>)segmentedControlClass {
+    NSAssert([segmentedControlClass isKindOfClass:[UIControl class]], @"segmentedControlClass must inherit from `UIControl`");
+    self = [super init];
     if (self) {
-        self.segmentedControlClass = segmentedControlClass ? segmentedControlClass : [UISegmentedControl class];
+        [self commonInitWithSegmentedControlClass:segmentedControlClass];
     }
     return self;
 }
@@ -112,14 +112,14 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
 - (instancetype)init {
     self = [super init];
     if (self) {
-        [self commonInit];
+        [self commonInitWithSegmentedControlClass:[UISegmentedControl class]];
     }
     return self;
 }
 
-- (void)commonInit {
+- (void)commonInitWithSegmentedControlClass:(Class<DBProfileSegmentedControl>)segmentedControlClass {
     // Defaults
-    _segmentedControlClass = [UISegmentedControl class];
+    _segmentedControlClass = segmentedControlClass ? segmentedControlClass : [UISegmentedControl class];
     _headerReferenceSize = CGSizeMake(0, CGRectGetHeight([UIScreen mainScreen].bounds) * 0.18);
     _avatarReferenceSize = CGSizeMake(0, 72);
     _hidesSegmentedControlForSingleContentController = YES;
@@ -247,7 +247,7 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
 
 #pragma mark - DBProfileViewController
 
-- (UISegmentedControl *)segmentedControl {
+- (UIControl<DBProfileSegmentedControl> *)segmentedControl {
     return self.segmentedControlView.segmentedControl;
 }
 

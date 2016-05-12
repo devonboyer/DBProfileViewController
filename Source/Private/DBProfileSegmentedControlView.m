@@ -53,7 +53,7 @@
     self.bottomBorderView.hidden = !showsBottomBorder;
 }
 
-- (void)setSegmentedControl:(UISegmentedControl *)segmentedControl {
+- (void)setSegmentedControl:(UIControl<DBProfileSegmentedControl> *)segmentedControl {
     NSAssert(segmentedControl, @"segmented control cannot be nil");
     [self.segmentedControl removeFromSuperview];
     _segmentedControl = segmentedControl;
