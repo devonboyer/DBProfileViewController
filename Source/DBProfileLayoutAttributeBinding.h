@@ -20,6 +20,8 @@
 
 @interface DBProfileLayoutAttributeBinding : NSObject
 
++ (instancetype)bindingWithObject:(NSObject *)object keyPath:(NSString *)keyPath;
+
 - (instancetype)initWithObject:(NSObject *)object keyPath:(NSString *)keyPath;
 
 @property (nonatomic, weak) id<DBProfileLayoutAttributeBindingDelegate> delegate;

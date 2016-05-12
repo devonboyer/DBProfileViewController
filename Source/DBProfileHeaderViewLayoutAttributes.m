@@ -11,6 +11,12 @@
 
 @implementation DBProfileHeaderViewLayoutAttributes
 
++ (NSArray<NSString *> *)keyPathsForBindings
+{
+    return @[NSStringFromSelector(@selector(headerStyle)),
+             NSStringFromSelector(@selector(headerOptions))];
+}
+
 - (instancetype)initWithAccessoryViewKind:(NSString *)accessoryViewKind
 {
     self = [super initWithAccessoryViewKind:accessoryViewKind];

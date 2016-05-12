@@ -25,6 +25,12 @@
     if (self) {
         _accessoryView = accessoryView;
         _layoutAttributes = layoutAttributes;
+        
+        // Add bindings for layout attributes
+        NSArray *keyPaths = [[layoutAttributes class] keyPathsForBindings];
+        for (NSString *keyPath in keyPaths) {
+            [self addBinding:[DBProfileLayoutAttributeBinding bindingWithObject:layoutAttributes keyPath:keyPath]];
+        }
     }
     return self;
 }

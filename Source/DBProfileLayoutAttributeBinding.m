@@ -12,6 +12,11 @@ static void * DBProfileLayoutAttributeBindingContext = &DBProfileLayoutAttribute
 
 @implementation DBProfileLayoutAttributeBinding
 
++ (instancetype)bindingWithObject:(NSObject *)object keyPath:(NSString *)keyPath
+{
+    return [[self alloc] initWithObject:object keyPath:keyPath];
+}
+
 - (instancetype)initWithObject:(NSObject *)object keyPath:(NSString *)keyPath
 {
     self = [super init];

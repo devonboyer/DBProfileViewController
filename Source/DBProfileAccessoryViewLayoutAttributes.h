@@ -15,6 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface DBProfileAccessoryViewLayoutAttributes : NSObject
 
++ (NSArray<NSString *> *)keyPathsForBindings;
+
 /**
  *  Creates and returns a layout attributes object that represents the specified accessory view kind.
  *
