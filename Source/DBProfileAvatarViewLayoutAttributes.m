@@ -11,6 +11,12 @@
 
 @implementation DBProfileAvatarViewLayoutAttributes
 
++ (NSArray<NSString *> *)keyPathsForBindings
+{
+    return @[NSStringFromSelector(@selector(avatarAlignment)),
+             NSStringFromSelector(@selector(edgeInsets))];
+}
+
 - (instancetype)initWithAccessoryViewKind:(NSString *)accessoryViewKind
 {
     self = [super initWithAccessoryViewKind:accessoryViewKind];

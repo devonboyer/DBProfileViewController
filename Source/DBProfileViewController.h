@@ -43,7 +43,10 @@ FOUNDATION_EXPORT NSString * const DBProfileAccessoryKindHeader;
  *
  *  This class manages and displays a collection of content controllers and customizable accessory views associated with a profile interface.
  */
-@interface DBProfileViewController : UIViewController
+@interface DBProfileViewController : UIViewController {
+@protected
+    BOOL _viewHasAppeared;
+}
 
 /**
  *  @name Creating Profile View Controllers
@@ -149,8 +152,6 @@ FOUNDATION_EXPORT NSString * const DBProfileAccessoryKindHeader;
 
 /*!
  *  Invalidates the current layout attributes and triggers a layout update.
- *
- *  If any layout attributes are changed after `viewWillAppear:` is called, then this method must be called to trigger an appropriate layout update.
  *
  *  @param accessoryViewKind A string that identifies the type of the accessory view.
  */

@@ -60,9 +60,9 @@ typedef NS_OPTIONS(NSUInteger, DBProfileHeaderScrollEffects) {
 @property (nonatomic) DBProfileHeaderStyle headerStyle;
 
 /**
- *  The options to apply to the associated header view.
+ *  The scroll effects to apply to the associated header view.
  *
- *  Defaults to `DBProfileHeaderOptionStretch`
+ *  Defaults to `DBProfileHeaderScrollEffectStretch`
  */
 @property (nonatomic) DBProfileHeaderScrollEffects scrollEffects;
 
