@@ -1171,7 +1171,7 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
     
     CGSize referenceSize = [self referenceSizeForAccessoryViewOfKind:DBProfileAccessoryKindHeader];
     
-    if (contentOffset.y < 0 && layoutAttributes.headerOptions & DBProfileHeaderOptionStretch) {
+    if (contentOffset.y < 0 && layoutAttributes.scrollEffects & DBProfileHeaderScrollEffectStretch) {
         layoutAttributes.heightConstraint.constant = referenceSize.height - contentOffset.y;
     }
     else {
