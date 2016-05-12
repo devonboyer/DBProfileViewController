@@ -46,7 +46,6 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
 @property (nonatomic) NSUInteger indexForDisplayedContentController;
 @property (nonatomic) CGPoint contentOffsetForDisplayedContentController;
 @property (nonatomic, getter=isRefreshing) BOOL refreshing;
-@property (nonatomic) BOOL viewHasAppeared;
 
 // Updates
 @property (nonatomic) DBProfileViewControllerUpdateContext *updateContext;
@@ -163,7 +162,7 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
     // to prevent this since we are managing the scrollView contentInset manually.
     self.automaticallyAdjustsScrollViewInsets = !showOverlayView;
     
-    if (!self.viewHasAppeared) {
+    if (!_viewHasAppeared) {
         [self reloadData];
         
         [self.view setNeedsUpdateConstraints];
@@ -182,7 +181,7 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    self.viewHasAppeared = YES;
+    _viewHasAppeared = YES;
 }
 
 - (void)viewWillDisappear:(BOOL)animated {

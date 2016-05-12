@@ -43,7 +43,10 @@ FOUNDATION_EXPORT NSString * const DBProfileAccessoryKindHeader;
  *
  *  This class manages and displays a collection of content controllers and customizable accessory views associated with a profile interface.
  */
-@interface DBProfileViewController : UIViewController
+@interface DBProfileViewController : UIViewController {
+@protected
+    BOOL _viewHasAppeared;
+}
 
 /**
  *  @name Creating Profile View Controllers
