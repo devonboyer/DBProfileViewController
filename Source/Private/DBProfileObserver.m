@@ -11,7 +11,12 @@
 
 @implementation DBProfileObserver
 
-- (instancetype)initWithTarget:(id)target keyPaths:(NSArray *)keyPaths delegate:(id)delegate action:(SEL)action context:(void *)context {
+- (instancetype)initWithTarget:(id)target keyPaths:(NSArray *)keyPaths delegate:(id<DBProfileObserverDelegate>)delegate context:(void *)context
+{
+    return [self initWithTarget:target keyPaths:keyPaths delegate:delegate action:nil context:context];
+}
+
+- (instancetype)initWithTarget:(id)target keyPaths:(NSArray *)keyPaths delegate:(id<DBProfileObserverDelegate>)delegate action:(SEL)action context:(void *)context {
     self = [super init];
     if (self) {
         self.keyPaths = keyPaths;
@@ -30,9 +35,10 @@
         NSAssert(self.target, @"");
         NSAssert(self.context, @"");
         NSAssert(self.delegate, @"");
-        NSAssert(self.action, @"");
         for (NSString *keyPath in self.keyPaths) {
-            [self.target addObserver:self forKeyPath:keyPath options:(NSKeyValueObservingOptions)0 context:self.context];
+            [self.target addObserver:self forKeyPath:keyPath
+                             options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld)
+                             context:self.context];
         }
         self.observing = YES;
     }
@@ -56,7 +62,24 @@
                         change:(NSDictionary *)change
                        context:(void *)context {
     NSAssert(context == self.context, @"Unexpected KVO");
-    DBProfileSuppressPerformSelectorWarning([self.delegate performSelector:self.action withObject:self.target]);
+    
+    id newValue = change[NSKeyValueChangeNewKey];
+    if (newValue == [NSNull null]) {
+        newValue = nil;
+    }
+    
+    id oldValue = change[NSKeyValueChangeOldKey];
+    if (oldValue == [NSNull null]) {
+        oldValue = nil;
+    }
+    
+    if ([self.delegate respondsToSelector:@selector(observer:valueDidChange:fromValue:)]) {
+        [self.delegate observer:self valueDidChange:newValue fromValue:oldValue];
+    }
+    
+    if (self.action) {
+        DBProfileSuppressPerformSelectorWarning([self.delegate performSelector:self.action withObject:self.target]);
+    }
 }
 
 @end

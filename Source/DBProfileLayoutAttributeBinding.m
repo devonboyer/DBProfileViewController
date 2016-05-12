@@ -7,8 +7,15 @@
 //
 
 #import "DBProfileLayoutAttributeBinding.h"
+#import "DBProfileObserver.h"
 
 static void * DBProfileLayoutAttributeBindingContext = &DBProfileLayoutAttributeBindingContext;
+
+@interface DBProfileLayoutAttributeBinding () <DBProfileObserverDelegate>
+
+@property (nonatomic) DBProfileObserver *observer;
+
+@end
 
 @implementation DBProfileLayoutAttributeBinding
 
@@ -35,49 +42,39 @@ static void * DBProfileLayoutAttributeBindingContext = &DBProfileLayoutAttribute
     }
 }
 
-#pragma mark - KVO
-
 - (id)value
 {
     return [self.object valueForKeyPath:self.keyPath];
 }
 
+#pragma mark - Binding
+
+- (BOOL)isBound
+{
+    return self.observer.observing;
+}
+
 - (void)bind
 {
     if (!self.isBound) {
-        [self.object addObserver:self
-                      forKeyPath:self.keyPath
-                         options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld)
-                         context:&DBProfileLayoutAttributeBindingContext];
-
-        _bound = YES;
+        self.observer = [[DBProfileObserver alloc] initWithTarget:self.object
+                                                         keyPaths:@[self.keyPath]
+                                                         delegate:self
+                                                          context:DBProfileLayoutAttributeBindingContext];
     }
 }
 
 - (void)unbind
 {
     if (self.isBound) {
-        [self.object removeObserver:self forKeyPath:self.keyPath context:&DBProfileLayoutAttributeBindingContext];
-        _bound = NO;
+        self.observer = nil;
     }
 }
 
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+#pragma mark - DBProfileObserverDelegate
+
+- (void)observer:(DBProfileObserver *)observer valueDidChange:(id)newValue fromValue:(id)oldValue
 {
-    if (context != DBProfileLayoutAttributeBindingContext || object != self.object || ![keyPath isEqual:self.keyPath]) {
-        return;
-    }
-    
-    id newValue = change[NSKeyValueChangeNewKey];
-    if (newValue == [NSNull null]) {
-        newValue = nil;
-    }
-    
-    id oldValue = change[NSKeyValueChangeOldKey];
-    if (oldValue == [NSNull null]) {
-        oldValue = nil;
-    }
-    
     if ([self.delegate respondsToSelector:@selector(binding:valueDidChange:fromValue:)]) {
         [self.delegate binding:self valueDidChange:newValue fromValue:oldValue];
     }
