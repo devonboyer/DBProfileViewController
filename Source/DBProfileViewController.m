@@ -247,7 +247,7 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
 
 #pragma mark - DBProfileViewController
 
-- (UIControl<DBProfileSegmentedControl> *)segmentedControl {
+- (DBProfileSegmentedControl *)segmentedControl {
     return self.segmentedControlView.segmentedControl;
 }
 

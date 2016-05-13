@@ -81,7 +81,7 @@ FOUNDATION_EXPORT NSString * const DBProfileAccessoryKindHeader;
 /**
  *  The segmented control managed by the profile view controller.
  */
-@property (nonatomic, readonly) UIControl<DBProfileSegmentedControl> *segmentedControl;
+@property (nonatomic, readonly) DBProfileSegmentedControl *segmentedControl;
 
 /**
  *  Whether the segmented control is hidden when there is only one content controller.
