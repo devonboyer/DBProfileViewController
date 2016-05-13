@@ -166,7 +166,7 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
     // If header style is `DBProfileHeaderStyleNavigation`, then we need to hide the navigationController's navigation bar in instead use
     // the header overlay view for navigation.
     if (showOverlayView && self.navigationController) {
-        [self.navigationController setNavigationBarHidden:YES animated:YES];
+        [self.navigationController setNavigationBarHidden:YES animated:animated];
         [self.navigationController.interactivePopGestureRecognizer setDelegate:nil];
     }
     
