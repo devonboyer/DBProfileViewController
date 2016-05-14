@@ -11,7 +11,7 @@
 @class DBProfileAccessoryViewModel;
 @class DBProfileAccessoryView;
 @class DBProfileAccessoryViewLayoutAttributes;
-@class DBProfileLayoutAttributeBinding;
+@class DBProfileBinding;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -36,11 +36,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, readonly) DBProfileAccessoryViewLayoutAttributes *layoutAttributes;
 
-@property (nonatomic, readonly) NSArray<DBProfileLayoutAttributeBinding *> *bindings;
+@property (nonatomic, readonly) NSArray<DBProfileBinding *> *bindings;
 
-- (void)addBinding:(DBProfileLayoutAttributeBinding *)binding;
+- (void)addBinding:(DBProfileBinding *)binding;
 
-- (void)addBindings:(NSArray<DBProfileLayoutAttributeBinding *> *)bindings;
+- (void)addBindings:(NSArray<DBProfileBinding *> *)bindings;
 
 @end
 

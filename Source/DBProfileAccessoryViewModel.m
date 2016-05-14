@@ -9,11 +9,11 @@
 #import "DBProfileAccessoryViewModel.h"
 #import "DBProfileAccessoryView.h"
 #import "DBProfileAccessoryViewLayoutAttributes.h"
-#import "DBProfileLayoutAttributeBinding.h"
+#import "DBProfileBinding.h"
 
-@interface DBProfileAccessoryViewModel () <DBProfileLayoutAttributeBindingDelegate>
+@interface DBProfileAccessoryViewModel () <DBProfileBindingDelegate>
 
-@property (nonatomic) NSArray<DBProfileLayoutAttributeBinding *> *bindings;
+@property (nonatomic) NSArray<DBProfileBinding *> *bindings;
 
 @end
 
@@ -29,9 +29,7 @@
         // Add bindings for layout attributes
         NSArray *keyPaths = [[layoutAttributes class] keyPathsForBindings];
         for (NSString *keyPath in keyPaths) {
-            [self addBinding:[DBProfileLayoutAttributeBinding bindingWithObject:layoutAttributes
-                                                                        keyPath:keyPath
-                                                                       delegate:self]];
+            [self addBinding:[DBProfileBinding bindingWithObject:layoutAttributes keyPath:keyPath delegate:self]];
         }
     }
     return self;
@@ -56,12 +54,12 @@
 
 #pragma mark - Binding
 
-- (void)addBinding:(DBProfileLayoutAttributeBinding *)binding
+- (void)addBinding:(DBProfileBinding *)binding
 {
     [self addBindings:@[binding]];
 }
 
-- (void)addBindings:(NSArray<DBProfileLayoutAttributeBinding *> *)bindings
+- (void)addBindings:(NSArray<DBProfileBinding *> *)bindings
 {
     NSMutableArray *mutableBindings = [self.bindings mutableCopy] ?: [NSMutableArray array];
     [mutableBindings addObjectsFromArray:bindings];
@@ -71,21 +69,21 @@
 
 - (void)bind
 {
-    for (DBProfileLayoutAttributeBinding *binding in self.bindings) {
+    for (DBProfileBinding *binding in self.bindings) {
         [binding bind];
     }
 }
 
 - (void)unbind
 {
-    for (DBProfileLayoutAttributeBinding *binding in self.bindings) {
+    for (DBProfileBinding *binding in self.bindings) {
         [binding unbind];
     }
 }
 
-#pragma mark - DBProfileLayoutAttributeBindingDelegate
+#pragma mark - DBProfileBindingDelegate
 
-- (void)binding:(DBProfileLayoutAttributeBinding *)binding valueDidChange:(id)newValue fromValue:(id)oldValue
+- (void)binding:(DBProfileBinding *)binding valueDidChange:(id)newValue fromValue:(id)oldValue
 {
     if ([self.updater respondsToSelector:@selector(updateLayoutAttributeFromValue:toValue:forAccessoryViewModel:)]) {
         [self.updater updateLayoutAttributeFromValue:oldValue toValue:newValue forAccessoryViewModel:self];

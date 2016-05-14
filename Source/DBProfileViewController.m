@@ -17,8 +17,6 @@
 #import "UIBarButtonItem+DBProfileViewController.h"
 #import "NSBundle+DBProfileViewController.h"
 
-#import "DBProfileViewController+DBProfileAccessoryViewModelUpdating.h"
-
 NSString * const DBProfileAccessoryKindAvatar = @"DBProfileAccessoryKindAvatar";
 NSString * const DBProfileAccessoryKindHeader = @"DBProfileAccessoryKindHeader";
 
@@ -49,7 +47,7 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
 - (void)configureLayoutAttributes:(__kindof DBProfileAccessoryViewLayoutAttributes *)layoutAttributes forAccessoryViewOfKind:(NSString *)accessoryViewKind;
 @end
 
-@interface DBProfileViewController () <DBProfileAccessoryViewDelegate, DBProfileScrollViewObserverDelegate>
+@interface DBProfileViewController () <DBProfileAccessoryViewDelegate, DBProfileScrollViewObserverDelegate, DBProfileAccessoryViewModelUpdating>
 {
     BOOL _shouldScrollToTop; // Used for content offset caching
     CGPoint _sharedContentOffset; // Used for size class changes
@@ -60,6 +58,7 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
 @property (nonatomic) NSUInteger indexForDisplayedContentController;
 @property (nonatomic) CGPoint contentOffsetForDisplayedContentController;
 @property (nonatomic, getter=isRefreshing) BOOL refreshing;
+@property (nonatomic) BOOL viewHasAppeared;
 
 // Updates
 @property (nonatomic) DBProfileViewControllerUpdateContext *updateContext;
@@ -176,7 +175,7 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
     // to prevent this since we are managing the scrollView contentInset manually.
     self.automaticallyAdjustsScrollViewInsets = !showOverlayView;
     
-    if (!_viewHasAppeared) {
+    if (!self.viewHasAppeared) {
         [self reloadData];
         
         [self.view setNeedsUpdateConstraints];
@@ -195,7 +194,7 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    _viewHasAppeared = YES;
+    self.viewHasAppeared = YES;
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -933,6 +932,18 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
 - (void)accessoryViewWasLongPressed:(DBProfileAccessoryView *)accessoryView {
     if ([self.delegate respondsToSelector:@selector(profileViewController:didLongPressAccessoryView:ofKind:)]) {
         [self.delegate profileViewController:self didLongPressAccessoryView:accessoryView ofKind:accessoryView.representedAccessoryKind];
+    }
+}
+
+#pragma mark - DBProfileAccessoryViewModelUpdating
+
+- (void)updateLayoutAttributeFromValue:(id)fromValue toValue:(id)toValue forAccessoryViewModel:(DBProfileAccessoryViewModel *)viewModel
+{
+    // We don't want to try to invalidate layout attributes until the view has appeared.
+    if (self.viewHasAppeared) {
+        // FIXME: Ideally we only need to invalidate the specific attribute that was updated
+        // Considering using an invalidation context to specify which atttributes need updating
+        [self invalidateLayoutAttributesForAccessoryViewOfKind:viewModel.representedAccessoryKind];
     }
 }
 
