@@ -7,6 +7,8 @@
 //
 
 #import "DBProfileHeaderViewLayoutAttributes.h"
+#import "DBProfileHeaderViewLayoutAttributes_Private.h"
+#import "DBProfileAccessoryViewLayoutAttributes_Private.h"
 #import "DBProfileViewController.h"
 
 @implementation DBProfileHeaderViewLayoutAttributes

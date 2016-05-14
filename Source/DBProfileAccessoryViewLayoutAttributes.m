@@ -7,13 +7,14 @@
 //
 
 #import "DBProfileAccessoryViewLayoutAttributes.h"
-#import "DBProfileViewController.h"
+#import "DBProfileAccessoryViewLayoutAttributes_Private.h"
 
 @implementation DBProfileAccessoryViewLayoutAttributes
 
 + (NSArray<NSString *> *)keyPathsForBindings
 {
-    return nil;
+    return @[NSStringFromSelector(@selector(hidden)),
+             NSStringFromSelector(@selector(alpha))];
 }
 
 + (instancetype)layoutAttributesForAccessoryViewOfKind:(NSString *)accessoryViewKind
@@ -28,10 +29,6 @@
     if (self) {
         _representedAccessoryKind = accessoryViewKind;
 
-        self.frame = CGRectZero;
-        self.bounds = CGRectZero;
-        self.size = CGSizeZero;
-        self.center = CGPointZero;
         self.hidden = NO;
         self.alpha = 1.0;
         self.transform = CGAffineTransformIdentity;
@@ -39,6 +36,8 @@
     }
     return self;
 }
+
+#pragma mark - Constraint Based Layout Attributes
 
 - (void)uninstallConstraints {
     self.hasInstalledConstraints = NO;
@@ -63,11 +62,7 @@
     DBProfileAccessoryViewLayoutAttributes *otherObject = (DBProfileAccessoryViewLayoutAttributes *)object;
     return
     [self.representedAccessoryKind isEqual:otherObject.representedAccessoryKind] &&
-    CGRectEqualToRect(self.frame, otherObject.frame) &&
-    CGRectEqualToRect(self.bounds, otherObject.bounds) &&
     CGAffineTransformEqualToTransform(self.transform, otherObject.transform) &&
-    CGSizeEqualToSize(self.size, otherObject.size) &&
-    CGPointEqualToPoint(self.center, otherObject.center) &&
     self.hidden == otherObject.hidden &&
     self.alpha == otherObject.alpha &&
     self.zIndex == otherObject.zIndex &&

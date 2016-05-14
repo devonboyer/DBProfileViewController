@@ -7,6 +7,7 @@
 //
 
 #import "DBProfileAvatarViewLayoutAttributes.h"
+#import "DBProfileAccessoryViewLayoutAttributes_Private.h"
 #import "DBProfileViewController.h"
 
 @implementation DBProfileAvatarViewLayoutAttributes

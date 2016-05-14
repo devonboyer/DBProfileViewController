@@ -13,6 +13,8 @@
 #import "DBProfileTitleView.h"
 #import "DBProfileSegmentedControlView.h"
 #import "DBProfileAccessoryView_Private.h"
+#import "DBProfileAccessoryViewLayoutAttributes_Private.h"
+#import "DBProfileHeaderViewLayoutAttributes_Private.h"
 #import "DBProfileAccessoryViewModel.h"
 #import "DBProfileContentOffsetCache.h"
 #import "DBProfileViewControllerUpdateContext.h"
@@ -1214,13 +1216,6 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
 - (void)configureLayoutAttributes:(__kindof DBProfileAccessoryViewLayoutAttributes *)layoutAttributes forAccessoryViewOfKind:(NSString *)accessoryViewKind {
     
     DBProfileAccessoryView *accessoryView = [self accessoryViewOfKind:accessoryViewKind];
-    layoutAttributes.frame = accessoryView.frame;
-    layoutAttributes.bounds = accessoryView.bounds;
-    layoutAttributes.size = accessoryView.frame.size;
-    layoutAttributes.center = accessoryView.center;
-    layoutAttributes.hidden = accessoryView.hidden;
-    layoutAttributes.alpha = accessoryView.alpha;
-    layoutAttributes.transform = accessoryView.transform;
     
     if ([accessoryViewKind isEqualToString:DBProfileAccessoryKindAvatar]) {
         [self configureAvatarViewLayoutAttributes:layoutAttributes];

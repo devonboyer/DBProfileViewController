@@ -66,10 +66,6 @@ typedef NS_OPTIONS(NSUInteger, DBProfileHeaderScrollEffects) {
  */
 @property (nonatomic) DBProfileHeaderScrollEffects scrollEffects;
 
-@property (nonatomic, nullable) NSLayoutConstraint *navigationConstraint;
-@property (nonatomic, nullable) NSLayoutConstraint *topLayoutGuideConstraint;
-@property (nonatomic, nullable) NSLayoutConstraint *topSuperviewConstraint;
-
 @end
 
 NS_ASSUME_NONNULL_END

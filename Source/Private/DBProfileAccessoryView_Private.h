@@ -8,6 +8,8 @@
 
 #import "DBProfileAccessoryView.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @protocol DBProfileAccessoryViewDelegate <NSObject>
 
 - (BOOL)accessoryViewShouldHighlight:(DBProfileAccessoryView *)accessoryView;
@@ -25,3 +27,5 @@
 @property (nonatomic, copy) NSString *representedAccessoryKind;
 
 @end
+
+NS_ASSUME_NONNULL_END

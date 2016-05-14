@@ -43,26 +43,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, readonly) NSString *representedAccessoryKind;
 
 /**
- *  The frame rectangle of the associated accessory view.
- */
-@property (nonatomic) CGRect frame;
-
-/**
- *  The bounds rectangle of the associated accessory view.
- */
-@property (nonatomic) CGRect bounds;
-
-/**
- *  The size of the associated accessory view.
- */
-@property (nonatomic) CGSize size;
-
-/**
- *  The center point of the associated accessory view.
- */
-@property (nonatomic) CGPoint center;
-
-/**
  *  The The affine transform of the associated accessory view.
  */
 @property (nonatomic) CGAffineTransform transform;
@@ -90,33 +70,6 @@ NS_ASSUME_NONNULL_BEGIN
  *  The percent that the associated accessory view has transitioned within its visible bounds.
  */
 @property (nonatomic) CGFloat percentTransitioned;
-
-/**
- *  @name Constraint-Based Layout Attributes
- */
-
-/**
- *  Whether the associated accessory view has had its constraint-based layout attributes installed.
- */
-@property (nonatomic) BOOL hasInstalledConstraints;
-
-/**
- *  Uninstalls constraint-based layout attributes.
- */
-- (void)uninstallConstraints;
-
-@property (nonatomic, nullable) NSLayoutConstraint *leadingConstraint;
-@property (nonatomic, nullable) NSLayoutConstraint *trailingConstraint;
-@property (nonatomic, nullable) NSLayoutConstraint *leftConstraint;
-@property (nonatomic, nullable) NSLayoutConstraint *rightConstraint;
-@property (nonatomic, nullable) NSLayoutConstraint *topConstraint;
-@property (nonatomic, nullable) NSLayoutConstraint *bottomConstraint;
-@property (nonatomic, nullable) NSLayoutConstraint *widthConstraint;
-@property (nonatomic, nullable) NSLayoutConstraint *heightConstraint;
-@property (nonatomic, nullable) NSLayoutConstraint *centerXConstraint;
-@property (nonatomic, nullable) NSLayoutConstraint *centerYConstraint;
-@property (nonatomic, nullable) NSLayoutConstraint *firstBaselineConstraint;
-@property (nonatomic, nullable) NSLayoutConstraint *lastBaselineConstraint;
 
 @end
 

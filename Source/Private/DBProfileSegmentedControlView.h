@@ -11,7 +11,7 @@
 
 @interface DBProfileSegmentedControlView : UIView
 
-@property (nonatomic) UIControl<DBProfileSegmentedControl> *segmentedControl;
+@property (nonatomic) DBProfileSegmentedControl *segmentedControl;
 @property (nonatomic) BOOL showsTopBorder;
 @property (nonatomic) BOOL showsBottomBorder;
 
