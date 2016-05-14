@@ -24,13 +24,14 @@
 		6702AD221C5D8242008D014D /* demo-avatar.png in Resources */ = {isa = PBXBuildFile; fileRef = 6702AD201C5D8242008D014D /* demo-avatar.png */; };
 		6707F3BE1CE6E62C00720418 /* DBProfileViewControllerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6707F3BD1CE6E62C00720418 /* DBProfileViewControllerTests.m */; };
 		6707F3C21CE7A88B00720418 /* DBProfileAccessoryViewTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6707F3C11CE7A88B00720418 /* DBProfileAccessoryViewTests.m */; };
+		6707F3CC1CE7B80D00720418 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6707F3C91CE7B80D00720418 /* Launch Screen.storyboard */; };
+		6707F3CD1CE7B80D00720418 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6707F3CA1CE7B80D00720418 /* Main.storyboard */; };
+		6707F3CE1CE7B80D00720418 /* Test.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6707F3CB1CE7B80D00720418 /* Test.storyboard */; };
 		672EF5CF1C49E9B60035567E /* DBUserProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 672EF5CE1C49E9B60035567E /* DBUserProfileViewController.m */; };
 		672EF5D61C4B09AA0035567E /* DBDemoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 672EF5D51C4B09AA0035567E /* DBDemoViewController.m */; };
 		675B0F921C42A1C4000AADC6 /* DBFollowersTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 675B0F911C42A1C4000AADC6 /* DBFollowersTableViewController.m */; };
 		675B0F951C42A1D4000AADC6 /* DBPhotosTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 675B0F941C42A1D4000AADC6 /* DBPhotosTableViewController.m */; };
 		675B0F981C42A1E0000AADC6 /* DBLikesTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 675B0F971C42A1E0000AADC6 /* DBLikesTableViewController.m */; };
-		675D5BA01C3FCB72009E44CE /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 675D5B9F1C3FCB72009E44CE /* Launch Screen.storyboard */; };
-		675D5BA21C3FDCCC009E44CE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 675D5BA11C3FDCCC009E44CE /* Main.storyboard */; };
 		67E47C941C9FB38E00635AFD /* DBUserProfileDetailView.m in Sources */ = {isa = PBXBuildFile; fileRef = 67E47C931C9FB38E00635AFD /* DBUserProfileDetailView.m */; };
 /* End PBXBuildFile section */
 
@@ -67,6 +68,9 @@
 		6707F3BD1CE6E62C00720418 /* DBProfileViewControllerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBProfileViewControllerTests.m; sourceTree = "<group>"; };
 		6707F3BF1CE79D4600720418 /* Pods_DBProfileViewController_Example.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Pods_DBProfileViewController_Example.framework; path = "../../../../Library/Developer/Xcode/DerivedData/DBProfileViewController-fjpxyjmweoibqeffwkdnzvudovhy/Build/Products/Debug-iphonesimulator/Pods_DBProfileViewController_Example.framework"; sourceTree = "<group>"; };
 		6707F3C11CE7A88B00720418 /* DBProfileAccessoryViewTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBProfileAccessoryViewTests.m; sourceTree = "<group>"; };
+		6707F3C91CE7B80D00720418 /* Launch Screen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
+		6707F3CA1CE7B80D00720418 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
+		6707F3CB1CE7B80D00720418 /* Test.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Test.storyboard; sourceTree = "<group>"; };
 		672EF5CD1C49E9B60035567E /* DBUserProfileViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBUserProfileViewController.h; sourceTree = "<group>"; };
 		672EF5CE1C49E9B60035567E /* DBUserProfileViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBUserProfileViewController.m; sourceTree = "<group>"; };
 		672EF5D41C4B09AA0035567E /* DBDemoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBDemoViewController.h; sourceTree = "<group>"; };
@@ -77,8 +81,6 @@
 		675B0F941C42A1D4000AADC6 /* DBPhotosTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBPhotosTableViewController.m; sourceTree = "<group>"; };
 		675B0F961C42A1E0000AADC6 /* DBLikesTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBLikesTableViewController.h; sourceTree = "<group>"; };
 		675B0F971C42A1E0000AADC6 /* DBLikesTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBLikesTableViewController.m; sourceTree = "<group>"; };
-		675D5B9F1C3FCB72009E44CE /* Launch Screen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
-		675D5BA11C3FDCCC009E44CE /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		67E47C921C9FB38E00635AFD /* DBUserProfileDetailView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBUserProfileDetailView.h; sourceTree = "<group>"; };
 		67E47C931C9FB38E00635AFD /* DBUserProfileDetailView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBUserProfileDetailView.m; sourceTree = "<group>"; };
 		762FB2E17229F4187C24A3D1 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
@@ -157,8 +159,6 @@
 			children = (
 				6003F59C195388D20070C39A /* DBAppDelegate.h */,
 				6003F59D195388D20070C39A /* DBAppDelegate.m */,
-				675D5BA11C3FDCCC009E44CE /* Main.storyboard */,
-				675D5B9F1C3FCB72009E44CE /* Launch Screen.storyboard */,
 				67E47C921C9FB38E00635AFD /* DBUserProfileDetailView.h */,
 				67E47C931C9FB38E00635AFD /* DBUserProfileDetailView.m */,
 				672EF5D41C4B09AA0035567E /* DBDemoViewController.h */,
@@ -171,6 +171,7 @@
 				675B0F941C42A1D4000AADC6 /* DBPhotosTableViewController.m */,
 				675B0F961C42A1E0000AADC6 /* DBLikesTableViewController.h */,
 				675B0F971C42A1E0000AADC6 /* DBLikesTableViewController.m */,
+				6707F3C81CE7B80D00720418 /* Storyboards */,
 				672EF5D31C49EC150035567E /* Assets */,
 				6003F5A8195388D20070C39A /* Images.xcassets */,
 				6003F594195388D20070C39A /* Supporting Files */,
@@ -218,6 +219,16 @@
 				762FB2E17229F4187C24A3D1 /* LICENSE */,
 			);
 			name = "Podspec Metadata";
+			sourceTree = "<group>";
+		};
+		6707F3C81CE7B80D00720418 /* Storyboards */ = {
+			isa = PBXGroup;
+			children = (
+				6707F3C91CE7B80D00720418 /* Launch Screen.storyboard */,
+				6707F3CA1CE7B80D00720418 /* Main.storyboard */,
+				6707F3CB1CE7B80D00720418 /* Test.storyboard */,
+			);
+			path = Storyboards;
 			sourceTree = "<group>";
 		};
 		672EF5D31C49EC150035567E /* Assets */ = {
@@ -327,10 +338,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				6003F5A9195388D20070C39A /* Images.xcassets in Resources */,
-				675D5BA01C3FCB72009E44CE /* Launch Screen.storyboard in Resources */,
 				6003F598195388D20070C39A /* InfoPlist.strings in Resources */,
-				675D5BA21C3FDCCC009E44CE /* Main.storyboard in Resources */,
 				670278631C9C9D6F00C5ECA3 /* demo-header.png in Resources */,
+				6707F3CD1CE7B80D00720418 /* Main.storyboard in Resources */,
+				6707F3CC1CE7B80D00720418 /* Launch Screen.storyboard in Resources */,
+				6707F3CE1CE7B80D00720418 /* Test.storyboard in Resources */,
 				6702AD221C5D8242008D014D /* demo-avatar.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
