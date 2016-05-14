@@ -19,6 +19,11 @@
              NSStringFromSelector(@selector(scrollEffects))];
 }
 
++ (instancetype)layoutAttributes
+{
+    return [super layoutAttributesForAccessoryViewOfKind:DBProfileAccessoryKindHeader];
+}
+
 - (instancetype)initWithAccessoryViewKind:(NSString *)accessoryViewKind
 {
     self = [super initWithAccessoryViewKind:accessoryViewKind];
@@ -43,6 +48,21 @@
     if (![super isEqual:object]) return NO;
     DBProfileHeaderViewLayoutAttributes *otherObject = (DBProfileHeaderViewLayoutAttributes *)object;
     return self.headerStyle == otherObject.headerStyle && self.scrollEffects == otherObject.scrollEffects;
+}
+
+#pragma mark - NSCopying
+
+- (id)copyWithZone:(NSZone *)zone
+{
+    DBProfileHeaderViewLayoutAttributes *copy = [super copyWithZone:zone];
+    
+    copy.headerStyle = self.headerStyle;
+    copy.scrollEffects = self.scrollEffects;
+    copy.navigationConstraint = self.navigationConstraint;
+    copy.topLayoutGuideConstraint = self.topLayoutGuideConstraint;
+    copy.topSuperviewConstraint = self.topSuperviewConstraint;
+
+    return copy;
 }
 
 @end

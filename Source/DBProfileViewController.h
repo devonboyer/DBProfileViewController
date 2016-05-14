@@ -40,6 +40,16 @@ FOUNDATION_EXPORT NSString * const DBProfileAccessoryKindAvatar;
 FOUNDATION_EXPORT NSString * const DBProfileAccessoryKindHeader;
 
 /**
+ *  The default reference size for `DBProfileAccessoryKindAvatar`.
+ */
+FOUNDATION_EXPORT CGSize DBProfileViewControllerDefaultAvatarReferenceSize;
+
+/**
+ *  The default reference size for `DBProfileAccessoryKindHeader`.
+ */
+FOUNDATION_EXPORT CGSize DBProfileViewControllerDefaultHeaderReferenceSize;
+
+/**
  *  The `DBProfileViewController` class is a view controller that is specialized to display a profile interface.
  *
  *  This class manages and displays a collection of content controllers and customizable accessory views associated with a profile interface.
