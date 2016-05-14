@@ -352,7 +352,7 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
 - (void)addSegmentedControl {
     NSAssert(self.segmentedControlView != nil, @"segmentedControlView must be set during initialization, to add segmented control for this %@", NSStringFromClass([self class]));
     
-    UISegmentedControl *segmentedControl = [[self.segmentedControlClass alloc] init];
+    DBProfileSegmentedControl *segmentedControl = [[self.segmentedControlClass alloc] init];
     self.segmentedControlView.segmentedControl = segmentedControl;
     
     UIColor *tintColor = [UIColor colorWithRed:29/255.0 green:161/255.0 blue:242/255.0 alpha:1];
