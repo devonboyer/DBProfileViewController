@@ -7,6 +7,8 @@
 //
 
 #import "DBProfileViewController.h"
+#import "DBProfileDefines.h"
+#import "DBProfileUtilities.h"
 #import "DBProfileObserver.h"
 #import "DBProfileTitleView.h"
 #import "DBProfileSegmentedControlView.h"
@@ -19,15 +21,6 @@
 
 NSString * const DBProfileAccessoryKindAvatar = @"DBProfileAccessoryKindAvatar";
 NSString * const DBProfileAccessoryKindHeader = @"DBProfileAccessoryKindHeader";
-
-static CGFloat DBProfileViewControllerNavigationBarHeightForTraitCollection(UITraitCollection *traitCollection) {
-    switch (traitCollection.verticalSizeClass) {
-        case UIUserInterfaceSizeClassCompact:
-            return 32;
-        default:
-            return 64;
-    }
-}
 
 static const CGFloat DBProfileViewControllerOverlayAnimationDuration = 0.2;
 
@@ -704,7 +697,7 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
     
     // When the contentSize is too small to dislay the content controller, detailView, segmentedControl and accessory views, then
     // the missing height is calculated and added to the contentInset.bottom. This behaviour was adopted from apps with similar design patterns.
-    CGFloat minimumContentSizeHeight = CGRectGetHeight(scrollView.frame) - CGRectGetHeight(self.segmentedControlView.frame) - DBProfileViewControllerNavigationBarHeightForTraitCollection(self.traitCollection);
+    CGFloat minimumContentSizeHeight = CGRectGetHeight(scrollView.frame) - CGRectGetHeight(self.segmentedControlView.frame) - DBProfileDesiredNavigationBarHeightForTraitCollection(self.traitCollection);    
     
     if (scrollView.contentSize.height < minimumContentSizeHeight && ([self.contentControllers count] > 1 ||
                                                                      ([self.contentControllers count] == 1 && !self.hidesSegmentedControlForSingleContentController))) {
@@ -1279,7 +1272,7 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
     // Configure constraint-based layout attributes
     if (layoutAttributes.hasInstalledConstraints) {
         
-        layoutAttributes.navigationConstraint.constant = DBProfileViewControllerNavigationBarHeightForTraitCollection(self.traitCollection);
+        layoutAttributes.navigationConstraint.constant = DBProfileDesiredNavigationBarHeightForTraitCollection(self.traitCollection);
         
         switch (layoutAttributes.headerStyle) {
             case DBProfileHeaderStyleNavigation:

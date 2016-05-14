@@ -8,6 +8,8 @@
 
 #pragma once
 
+#import <UIKit/UIKit.h>
+
 #define DBProfileSuppressPerformSelectorWarning(PerformCall) \
 do { \
 _Pragma("clang diagnostic push") \
