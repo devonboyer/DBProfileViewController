@@ -1,6 +1,6 @@
 # DBProfileViewController
 
-[![CI Status](http://img.shields.io/travis/Devon Boyer/DBProfileViewController.svg?style=flat)](https://travis-ci.org/Devon Boyer/DBProfileViewController)
+[![Build Status](https://travis-ci.org/DevonBoyer/DBProfileViewController.svg?branch=develop)](https://travis-ci.org/DevonBoyer/DBProfileViewController)
 [![Version](https://img.shields.io/cocoapods/v/DBProfileViewController.svg?style=flat)](http://cocoapods.org/pods/DBProfileViewController)
 [![License](https://img.shields.io/cocoapods/l/DBProfileViewController.svg?style=flat)](http://cocoapods.org/pods/DBProfileViewController)
 [![Platform](https://img.shields.io/cocoapods/p/DBProfileViewController.svg?style=flat)](http://cocoapods.org/pods/DBProfileViewController)
