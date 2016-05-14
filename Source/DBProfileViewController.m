@@ -31,18 +31,8 @@ static const CGFloat DBProfileViewControllerOverlayAnimationDuration = 0.2;
 
 static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
 
-@interface DBProfileViewController (DBProfileAccessoryViewRegistration)
-- (BOOL)hasRegisteredAccessoryViewOfKind:(NSString *)accessoryViewKind;
-- (DBProfileAccessoryViewModel *)accessoryViewModelForAccessoryViewOfKind:(NSString *)accessoryViewKind;
-@end
-
 @interface DBProfileViewController (DBProfileInstallingConstraintBasedLayoutAttributes)
 - (void)addConstraintsForAccessoryViewOfKind:(NSString *)accessoryViewKind withLayoutAttributes:(__kindof DBProfileAccessoryViewLayoutAttributes *)layoutAttributes;
-@end
-
-@interface DBProfileViewController (DBProfileLayoutAttributesConfiguration)
-- (BOOL)shouldInvalidateLayoutAttributesForAccessoryViewOfKind:(NSString *)accessoryViewKind forBoundsChange:(CGRect)newBounds;
-- (void)configureLayoutAttributes:(__kindof DBProfileAccessoryViewLayoutAttributes *)layoutAttributes forAccessoryViewOfKind:(NSString *)accessoryViewKind;
 @end
 
 @interface DBProfileViewController () <DBProfileAccessoryViewDelegate, DBProfileScrollViewObserverDelegate, DBProfileAccessoryViewModelUpdating>
@@ -1205,8 +1195,6 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
 }
 
 - (void)configureLayoutAttributes:(__kindof DBProfileAccessoryViewLayoutAttributes *)layoutAttributes forAccessoryViewOfKind:(NSString *)accessoryViewKind {
-    
-    DBProfileAccessoryView *accessoryView = [self accessoryViewOfKind:accessoryViewKind];
     
     if ([accessoryViewKind isEqualToString:DBProfileAccessoryKindAvatar]) {
         [self configureAvatarViewLayoutAttributes:layoutAttributes];

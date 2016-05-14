@@ -262,6 +262,8 @@ FOUNDATION_EXPORT CGSize DBProfileViewControllerDefaultHeaderReferenceSize;
  */
 - (__kindof DBProfileAccessoryViewLayoutAttributes *)layoutAttributesForAccessoryViewOfKind:(NSString *)accessoryViewKind;
 
+- (BOOL)hasRegisteredAccessoryViewOfKind:(NSString *)accessoryViewKind;
+
 @end
 
 #pragma mark - DBProfileLayoutAttributesConfiguration
@@ -274,6 +276,9 @@ FOUNDATION_EXPORT CGSize DBProfileViewControllerDefaultHeaderReferenceSize;
  *  @param accessoryViewKind A string that identifies the type of the accessory view.
  */
 - (void)invalidateLayoutAttributesForAccessoryViewOfKind:(NSString *)accessoryViewKind;
+
+- (BOOL)shouldInvalidateLayoutAttributesForAccessoryViewOfKind:(NSString *)accessoryViewKind forBoundsChange:(CGRect)newBounds;
+- (void)configureLayoutAttributes:(__kindof DBProfileAccessoryViewLayoutAttributes *)layoutAttributes forAccessoryViewOfKind:(NSString *)accessoryViewKind;
 
 @end
 
