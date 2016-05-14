@@ -6,7 +6,7 @@
 //  Copyright © 2016 Devon Boyer. All rights reserved.
 //
 
-#import <DBProfileViewController/DBProfileViewController.h>
+#import "DBProfileViewController.h"
 
 typedef NS_ENUM(NSInteger, DBUserProfileViewControllerStyle) {
     DBUserProfileViewControllerStyle1,

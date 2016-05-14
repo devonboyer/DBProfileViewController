@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <DBProfileViewController/DBProfileContentPresenting.h>
+#import "DBProfileContentPresenting.h"
 
 @class DBProfileViewController;
 

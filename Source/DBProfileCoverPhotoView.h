@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 Devon Boyer. All rights reserved.
 //
 
-#import <DBProfileViewController/DBProfileBlurView.h>
+#import "DBProfileBlurView.h"
 
 @class DBProfileTintView;
 

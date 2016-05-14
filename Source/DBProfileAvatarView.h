@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 Devon Boyer. All rights reserved.
 //
 
-#import <DBProfileViewController/DBProfileAccessoryView.h>
+#import "DBProfileAccessoryView.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

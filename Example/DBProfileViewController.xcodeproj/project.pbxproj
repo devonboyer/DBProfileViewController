@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2D1DE5A93A47445BF2A200F8 /* Pods_DBProfileViewController_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0EC28E0C2B0D6F42C23F6987 /* Pods_DBProfileViewController_Example.framework */; };
 		6003F58E195388D20070C39A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58D195388D20070C39A /* Foundation.framework */; };
 		6003F590195388D20070C39A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58F195388D20070C39A /* CoreGraphics.framework */; };
 		6003F592195388D20070C39A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F591195388D20070C39A /* UIKit.framework */; };
@@ -30,7 +29,8 @@
 		675D5BA01C3FCB72009E44CE /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 675D5B9F1C3FCB72009E44CE /* Launch Screen.storyboard */; };
 		675D5BA21C3FDCCC009E44CE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 675D5BA11C3FDCCC009E44CE /* Main.storyboard */; };
 		67E47C941C9FB38E00635AFD /* DBUserProfileDetailView.m in Sources */ = {isa = PBXBuildFile; fileRef = 67E47C931C9FB38E00635AFD /* DBUserProfileDetailView.m */; };
-		6BF96457D33B2A1824077D1C /* Pods_DBProfileViewController_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A74FB59D2E8276FE73FD3C57 /* Pods_DBProfileViewController_Tests.framework */; };
+		ACDBC030EB0A5AB963D0063F /* Pods_DBProfileViewController_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 23C25F91662E78BED311ABF2 /* Pods_DBProfileViewController_Example.framework */; };
+		B1AD7300167EAB7BECEBCAE5 /* Pods_DBProfileViewController_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC2A1DFE10E43257407AF15A /* Pods_DBProfileViewController_Tests.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,8 +44,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		0EC28E0C2B0D6F42C23F6987 /* Pods_DBProfileViewController_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DBProfileViewController_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		345E08F4A2A5EBDF09DC3BEF /* Pods-DBProfileViewController_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DBProfileViewController_Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-DBProfileViewController_Example/Pods-DBProfileViewController_Example.debug.xcconfig"; sourceTree = "<group>"; };
+		23C25F91662E78BED311ABF2 /* Pods_DBProfileViewController_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DBProfileViewController_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		3399B78706CB170737E48BA1 /* Pods-DBProfileViewController_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DBProfileViewController_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-DBProfileViewController_Tests/Pods-DBProfileViewController_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		6003F58A195388D20070C39A /* DBProfileViewController_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DBProfileViewController_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6003F58D195388D20070C39A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		6003F58F195388D20070C39A /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -81,10 +81,10 @@
 		67E47C931C9FB38E00635AFD /* DBUserProfileDetailView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBUserProfileDetailView.m; sourceTree = "<group>"; };
 		762FB2E17229F4187C24A3D1 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		8E706C59695F1FFDD539460E /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
-		8EA72A854F72D8A6662DA9BB /* Pods-DBProfileViewController_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DBProfileViewController_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-DBProfileViewController_Tests/Pods-DBProfileViewController_Tests.release.xcconfig"; sourceTree = "<group>"; };
-		9AFF6B901E5A3EC9E7954EF8 /* Pods-DBProfileViewController_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DBProfileViewController_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-DBProfileViewController_Tests/Pods-DBProfileViewController_Tests.debug.xcconfig"; sourceTree = "<group>"; };
-		A74FB59D2E8276FE73FD3C57 /* Pods_DBProfileViewController_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DBProfileViewController_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		E485B8BC4FA62ABC8D56469B /* Pods-DBProfileViewController_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DBProfileViewController_Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-DBProfileViewController_Example/Pods-DBProfileViewController_Example.release.xcconfig"; sourceTree = "<group>"; };
+		8F1AD7933336E5E71C86DE52 /* Pods-DBProfileViewController_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DBProfileViewController_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-DBProfileViewController_Tests/Pods-DBProfileViewController_Tests.release.xcconfig"; sourceTree = "<group>"; };
+		A61D17D53DE0D1034223B6F7 /* Pods-DBProfileViewController_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DBProfileViewController_Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-DBProfileViewController_Example/Pods-DBProfileViewController_Example.debug.xcconfig"; sourceTree = "<group>"; };
+		AC2A1DFE10E43257407AF15A /* Pods_DBProfileViewController_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DBProfileViewController_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B0DD4A75CBFBE76486B8A421 /* Pods-DBProfileViewController_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DBProfileViewController_Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-DBProfileViewController_Example/Pods-DBProfileViewController_Example.release.xcconfig"; sourceTree = "<group>"; };
 		FA3E2BF1A92156AEA90692FE /* DBProfileViewController.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = DBProfileViewController.podspec; path = ../DBProfileViewController.podspec; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -96,7 +96,7 @@
 				6003F590195388D20070C39A /* CoreGraphics.framework in Frameworks */,
 				6003F592195388D20070C39A /* UIKit.framework in Frameworks */,
 				6003F58E195388D20070C39A /* Foundation.framework in Frameworks */,
-				2D1DE5A93A47445BF2A200F8 /* Pods_DBProfileViewController_Example.framework in Frameworks */,
+				ACDBC030EB0A5AB963D0063F /* Pods_DBProfileViewController_Example.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -107,7 +107,7 @@
 				6003F5B0195388D20070C39A /* XCTest.framework in Frameworks */,
 				6003F5B2195388D20070C39A /* UIKit.framework in Frameworks */,
 				6003F5B1195388D20070C39A /* Foundation.framework in Frameworks */,
-				6BF96457D33B2A1824077D1C /* Pods_DBProfileViewController_Tests.framework in Frameworks */,
+				B1AD7300167EAB7BECEBCAE5 /* Pods_DBProfileViewController_Tests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -122,7 +122,7 @@
 				6003F5B5195388D20070C39A /* Tests */,
 				6003F58C195388D20070C39A /* Frameworks */,
 				6003F58B195388D20070C39A /* Products */,
-				D3AD4117CFFC22FBB649D7E9 /* Pods */,
+				F07D6852422BDAEFE741D53E /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -142,8 +142,8 @@
 				6003F58F195388D20070C39A /* CoreGraphics.framework */,
 				6003F591195388D20070C39A /* UIKit.framework */,
 				6003F5AF195388D20070C39A /* XCTest.framework */,
-				0EC28E0C2B0D6F42C23F6987 /* Pods_DBProfileViewController_Example.framework */,
-				A74FB59D2E8276FE73FD3C57 /* Pods_DBProfileViewController_Tests.framework */,
+				23C25F91662E78BED311ABF2 /* Pods_DBProfileViewController_Example.framework */,
+				AC2A1DFE10E43257407AF15A /* Pods_DBProfileViewController_Tests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -224,13 +224,13 @@
 			name = Assets;
 			sourceTree = "<group>";
 		};
-		D3AD4117CFFC22FBB649D7E9 /* Pods */ = {
+		F07D6852422BDAEFE741D53E /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				345E08F4A2A5EBDF09DC3BEF /* Pods-DBProfileViewController_Example.debug.xcconfig */,
-				E485B8BC4FA62ABC8D56469B /* Pods-DBProfileViewController_Example.release.xcconfig */,
-				9AFF6B901E5A3EC9E7954EF8 /* Pods-DBProfileViewController_Tests.debug.xcconfig */,
-				8EA72A854F72D8A6662DA9BB /* Pods-DBProfileViewController_Tests.release.xcconfig */,
+				A61D17D53DE0D1034223B6F7 /* Pods-DBProfileViewController_Example.debug.xcconfig */,
+				B0DD4A75CBFBE76486B8A421 /* Pods-DBProfileViewController_Example.release.xcconfig */,
+				3399B78706CB170737E48BA1 /* Pods-DBProfileViewController_Tests.debug.xcconfig */,
+				8F1AD7933336E5E71C86DE52 /* Pods-DBProfileViewController_Tests.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -242,12 +242,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 6003F5BF195388D20070C39A /* Build configuration list for PBXNativeTarget "DBProfileViewController_Example" */;
 			buildPhases = (
-				DB1A6672C53AE75D10F9A0A0 /* Check Pods Manifest.lock */,
+				6EA47E490894583752A01197 /* 📦 Check Pods Manifest.lock */,
 				6003F586195388D20070C39A /* Sources */,
 				6003F587195388D20070C39A /* Frameworks */,
 				6003F588195388D20070C39A /* Resources */,
-				E7F88230BF519E960D5446FC /* Embed Pods Frameworks */,
-				2DFB111DF6F0CC4C66DF6037 /* Copy Pods Resources */,
+				7AF6C155F9C59A93B4FFD31E /* 📦 Embed Pods Frameworks */,
+				8A22CB70A0E53A4CC8BB1492 /* 📦 Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -262,12 +262,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 6003F5C2195388D20070C39A /* Build configuration list for PBXNativeTarget "DBProfileViewController_Tests" */;
 			buildPhases = (
-				3E0D8702421000EF6515D594 /* Check Pods Manifest.lock */,
+				79ED30EB10DB96F5430964D8 /* 📦 Check Pods Manifest.lock */,
 				6003F5AA195388D20070C39A /* Sources */,
 				6003F5AB195388D20070C39A /* Frameworks */,
 				6003F5AC195388D20070C39A /* Resources */,
-				B361C1603C689A0821D0E13D /* Embed Pods Frameworks */,
-				954EA4074CF889C8FB0A0156 /* Copy Pods Resources */,
+				628A313AB87C9AE085387E71 /* 📦 Embed Pods Frameworks */,
+				09925697412328D26A955CB1 /* 📦 Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -341,44 +341,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		2DFB111DF6F0CC4C66DF6037 /* Copy Pods Resources */ = {
+		09925697412328D26A955CB1 /* 📦 Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-DBProfileViewController_Example/Pods-DBProfileViewController_Example-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		3E0D8702421000EF6515D594 /* Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Check Pods Manifest.lock";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-		954EA4074CF889C8FB0A0156 /* Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Copy Pods Resources";
+			name = "📦 Copy Pods Resources";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -386,14 +356,14 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-DBProfileViewController_Tests/Pods-DBProfileViewController_Tests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		B361C1603C689A0821D0E13D /* Embed Pods Frameworks */ = {
+		628A313AB87C9AE085387E71 /* 📦 Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Embed Pods Frameworks";
+			name = "📦 Embed Pods Frameworks";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -401,14 +371,14 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-DBProfileViewController_Tests/Pods-DBProfileViewController_Tests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		DB1A6672C53AE75D10F9A0A0 /* Check Pods Manifest.lock */ = {
+		6EA47E490894583752A01197 /* 📦 Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Check Pods Manifest.lock";
+			name = "📦 Check Pods Manifest.lock";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -416,19 +386,49 @@
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
-		E7F88230BF519E960D5446FC /* Embed Pods Frameworks */ = {
+		79ED30EB10DB96F5430964D8 /* 📦 Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Embed Pods Frameworks";
+			name = "📦 Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		7AF6C155F9C59A93B4FFD31E /* 📦 Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "📦 Embed Pods Frameworks";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-DBProfileViewController_Example/Pods-DBProfileViewController_Example-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		8A22CB70A0E53A4CC8BB1492 /* 📦 Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "📦 Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-DBProfileViewController_Example/Pods-DBProfileViewController_Example-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -562,7 +562,7 @@
 		};
 		6003F5C0195388D20070C39A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 345E08F4A2A5EBDF09DC3BEF /* Pods-DBProfileViewController_Example.debug.xcconfig */;
+			baseConfigurationReference = A61D17D53DE0D1034223B6F7 /* Pods-DBProfileViewController_Example.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -582,7 +582,7 @@
 		};
 		6003F5C1195388D20070C39A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = E485B8BC4FA62ABC8D56469B /* Pods-DBProfileViewController_Example.release.xcconfig */;
+			baseConfigurationReference = B0DD4A75CBFBE76486B8A421 /* Pods-DBProfileViewController_Example.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -602,7 +602,7 @@
 		};
 		6003F5C3195388D20070C39A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9AFF6B901E5A3EC9E7954EF8 /* Pods-DBProfileViewController_Tests.debug.xcconfig */;
+			baseConfigurationReference = 3399B78706CB170737E48BA1 /* Pods-DBProfileViewController_Tests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				FRAMEWORK_SEARCH_PATHS = (
@@ -626,7 +626,7 @@
 		};
 		6003F5C4195388D20070C39A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 8EA72A854F72D8A6662DA9BB /* Pods-DBProfileViewController_Tests.release.xcconfig */;
+			baseConfigurationReference = 8F1AD7933336E5E71C86DE52 /* Pods-DBProfileViewController_Tests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				FRAMEWORK_SEARCH_PATHS = (

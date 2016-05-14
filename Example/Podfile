@@ -1,11 +1,14 @@
 source 'https://github.com/CocoaPods/Specs.git'
 use_frameworks!
 
-target 'DBProfileViewController_Example', :exclusive => true do
-  pod "DBProfileViewController", :path => "../"
-  pod "FXBlurView", "~> 1.6.4"
-end
+#inhibit_all_warnings!
 
-target 'DBProfileViewController_Tests', :exclusive => true do
-  pod "DBProfileViewController", :path => "../"
+target 'DBProfileViewController_Example' do
+    pod 'DBProfileViewController', :path => '../'
+    pod 'FXBlurView', '~> 1.6.4'
+    
+    target 'DBProfileViewController_Tests' do
+        inherit! :search_paths
+        pod 'FBSnapshotTestCase'
+    end
 end

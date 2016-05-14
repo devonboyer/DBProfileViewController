@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <DBProfileViewController/DBProfileContentPresenting.h>
+#import "DBProfileContentPresenting.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
