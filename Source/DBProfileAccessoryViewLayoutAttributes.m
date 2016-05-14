@@ -13,6 +13,8 @@
 
 + (NSArray<NSString *> *)keyPathsForBindings
 {
+    // FIXME: `transform` and `z-index` cannot be bindings since invalidating the layout attributes may change the `z-index` and `transform` which will end up causing an infinite loop.
+    // Ideally we want the layout attributes to tell the controll how to layout accessory views, not the other way around.
     return @[NSStringFromSelector(@selector(hidden)),
              NSStringFromSelector(@selector(alpha))];
 }
