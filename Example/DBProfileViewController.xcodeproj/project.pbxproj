@@ -23,6 +23,7 @@
 		670278631C9C9D6F00C5ECA3 /* demo-header.png in Resources */ = {isa = PBXBuildFile; fileRef = 670278621C9C9D6F00C5ECA3 /* demo-header.png */; };
 		6702AD221C5D8242008D014D /* demo-avatar.png in Resources */ = {isa = PBXBuildFile; fileRef = 6702AD201C5D8242008D014D /* demo-avatar.png */; };
 		6707F3BE1CE6E62C00720418 /* DBProfileViewControllerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6707F3BD1CE6E62C00720418 /* DBProfileViewControllerTests.m */; };
+		6707F3C21CE7A88B00720418 /* DBProfileAccessoryViewTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6707F3C11CE7A88B00720418 /* DBProfileAccessoryViewTests.m */; };
 		672EF5CF1C49E9B60035567E /* DBUserProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 672EF5CE1C49E9B60035567E /* DBUserProfileViewController.m */; };
 		672EF5D61C4B09AA0035567E /* DBDemoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 672EF5D51C4B09AA0035567E /* DBDemoViewController.m */; };
 		675B0F921C42A1C4000AADC6 /* DBFollowersTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 675B0F911C42A1C4000AADC6 /* DBFollowersTableViewController.m */; };
@@ -65,6 +66,7 @@
 		6702AD201C5D8242008D014D /* demo-avatar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "demo-avatar.png"; sourceTree = "<group>"; };
 		6707F3BD1CE6E62C00720418 /* DBProfileViewControllerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBProfileViewControllerTests.m; sourceTree = "<group>"; };
 		6707F3BF1CE79D4600720418 /* Pods_DBProfileViewController_Example.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Pods_DBProfileViewController_Example.framework; path = "../../../../Library/Developer/Xcode/DerivedData/DBProfileViewController-fjpxyjmweoibqeffwkdnzvudovhy/Build/Products/Debug-iphonesimulator/Pods_DBProfileViewController_Example.framework"; sourceTree = "<group>"; };
+		6707F3C11CE7A88B00720418 /* DBProfileAccessoryViewTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBProfileAccessoryViewTests.m; sourceTree = "<group>"; };
 		672EF5CD1C49E9B60035567E /* DBUserProfileViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBUserProfileViewController.h; sourceTree = "<group>"; };
 		672EF5CE1C49E9B60035567E /* DBUserProfileViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBUserProfileViewController.m; sourceTree = "<group>"; };
 		672EF5D41C4B09AA0035567E /* DBDemoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBDemoViewController.h; sourceTree = "<group>"; };
@@ -192,6 +194,7 @@
 			isa = PBXGroup;
 			children = (
 				6707F3BD1CE6E62C00720418 /* DBProfileViewControllerTests.m */,
+				6707F3C11CE7A88B00720418 /* DBProfileAccessoryViewTests.m */,
 				6003F5B6195388D20070C39A /* Supporting Files */,
 			);
 			path = Tests;
@@ -456,6 +459,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6707F3BE1CE6E62C00720418 /* DBProfileViewControllerTests.m in Sources */,
+				6707F3C21CE7A88B00720418 /* DBProfileAccessoryViewTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
