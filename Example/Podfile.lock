@@ -1,16 +1,12 @@
 PODS:
   - DBProfileViewController (2.0.3):
     - FXBlurView (~> 1.6.4)
-  - FBSnapshotTestCase (2.1.0):
-    - FBSnapshotTestCase/SwiftSupport (= 2.1.0)
   - FBSnapshotTestCase/Core (2.1.0)
-  - FBSnapshotTestCase/SwiftSupport (2.1.0):
-    - FBSnapshotTestCase/Core
   - FXBlurView (1.6.4)
 
 DEPENDENCIES:
   - DBProfileViewController (from `../`)
-  - FBSnapshotTestCase
+  - FBSnapshotTestCase/Core
   - FXBlurView (~> 1.6.4)
 
 EXTERNAL SOURCES:
@@ -22,6 +18,6 @@ SPEC CHECKSUMS:
   FBSnapshotTestCase: 366ecd378511d7716c79991cd8067d1eed23578d
   FXBlurView: db786c2561cb49a09ae98407f52460096ab8a44f
 
-PODFILE CHECKSUM: c252dbb3db847617a4a303a58e3136185512a285
+PODFILE CHECKSUM: 928fbff57f0986f279aa96a8787e104a3e98aa0a
 
 COCOAPODS: 1.0.0
