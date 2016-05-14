@@ -50,7 +50,9 @@ typedef NS_OPTIONS(NSUInteger, DBProfileHeaderScrollEffects) {
 /**
  *  The `DBProfileHeaderViewLayoutAttributes` object manages the layout-related attributes for `DBProfileAccessoryKindHeader` in a profile view controller.
  */
-@interface DBProfileHeaderViewLayoutAttributes : DBProfileAccessoryViewLayoutAttributes
+@interface DBProfileHeaderViewLayoutAttributes : DBProfileAccessoryViewLayoutAttributes <NSCopying>
+
++ (instancetype)layoutAttributes;
 
 /**
  *  The style of the associated header view.

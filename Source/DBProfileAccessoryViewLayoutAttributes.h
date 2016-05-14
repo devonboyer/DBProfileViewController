@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  *  The `DBProfileAccessoryViewLayoutAttributes` object manages the layout-related attributes for an accessory view in a profile view controller.
  */
-@interface DBProfileAccessoryViewLayoutAttributes : NSObject
+@interface DBProfileAccessoryViewLayoutAttributes : NSObject <NSCopying>
 
 + (NSArray<NSString *> *)keyPathsForBindings;
 

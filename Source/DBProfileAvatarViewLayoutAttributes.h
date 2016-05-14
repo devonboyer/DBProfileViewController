@@ -34,7 +34,9 @@ typedef NS_ENUM(NSInteger, DBProfileAvatarAlignment) {
 /**
  *  The `DBProfileAvatarViewLayoutAttributes` object manages the layout-related attributes for `DBProfileAccessoryKindAvatar` in a profile view controller.
  */
-@interface DBProfileAvatarViewLayoutAttributes : DBProfileAccessoryViewLayoutAttributes
+@interface DBProfileAvatarViewLayoutAttributes : DBProfileAccessoryViewLayoutAttributes <NSCopying>
+
++ (instancetype)layoutAttributes;
 
 /**
  *  The horizontal of the associated avatar view.

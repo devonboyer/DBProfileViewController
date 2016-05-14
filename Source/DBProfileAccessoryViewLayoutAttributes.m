@@ -29,7 +29,7 @@
 {
     self = [super init];
     if (self) {
-        _representedAccessoryKind = accessoryViewKind;
+        _representedAccessoryKind = [accessoryViewKind copy];
 
         self.hidden = NO;
         self.alpha = 1.0;
@@ -69,7 +69,33 @@
     self.alpha == otherObject.alpha &&
     self.zIndex == otherObject.zIndex &&
     self.hasInstalledConstraints == otherObject.hasInstalledConstraints;
+}
 
+#pragma mark - NSCopying
+
+- (id)copyWithZone:(NSZone *)zone
+{
+    DBProfileAccessoryViewLayoutAttributes *copy = [[[self class] allocWithZone:zone] initWithAccessoryViewKind:self.representedAccessoryKind];
+    
+    copy.transform = self.transform;
+    copy.alpha = self.alpha;
+    copy.percentTransitioned = self.percentTransitioned;
+    copy.zIndex = self.zIndex;
+    copy.hasInstalledConstraints = self.hasInstalledConstraints;
+    copy.leadingConstraint = self.leadingConstraint;
+    copy.trailingConstraint = self.trailingConstraint;
+    copy.leftConstraint = self.leftConstraint;
+    copy.rightConstraint = self.rightConstraint;
+    copy.topConstraint = self.topConstraint;
+    copy.bottomConstraint = self.bottomConstraint;
+    copy.widthConstraint = self.widthConstraint;
+    copy.heightConstraint = self.heightConstraint;
+    copy.centerXConstraint = self.centerXConstraint;
+    copy.centerYConstraint = self.centerYConstraint;
+    copy.firstBaselineConstraint = self.firstBaselineConstraint;
+    copy.lastBaselineConstraint = self.lastBaselineConstraint;
+    
+    return copy;
 }
 
 @end

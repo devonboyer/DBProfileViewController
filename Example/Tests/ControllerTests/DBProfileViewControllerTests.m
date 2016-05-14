@@ -8,7 +8,6 @@
 
 #import <XCTest/XCTest.h>
 #import <DBProfileViewController/DBProfileViewController.h>
-#import "DBUserProfileViewController.h"
 
 @interface DBProfileTestSegmentedControl : UISegmentedControl
 @end
@@ -21,7 +20,7 @@
 
 @implementation DBTestProfileViewController
 @end
-
+ 
 @interface DBProfileViewControllerTests : XCTestCase
 
 @end

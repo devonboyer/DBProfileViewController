@@ -18,6 +18,11 @@
              NSStringFromSelector(@selector(edgeInsets))];
 }
 
++ (instancetype)layoutAttributes
+{
+    return [super layoutAttributesForAccessoryViewOfKind:DBProfileAccessoryKindAvatar];
+}
+
 - (instancetype)initWithAccessoryViewKind:(NSString *)accessoryViewKind
 {
     self = [super initWithAccessoryViewKind:accessoryViewKind];
@@ -35,6 +40,18 @@
     if (![super isEqual:object]) return NO;
     DBProfileAvatarViewLayoutAttributes *otherObject = (DBProfileAvatarViewLayoutAttributes *)object;
     return UIEdgeInsetsEqualToEdgeInsets(self.edgeInsets, otherObject.edgeInsets) && self.avatarAlignment == otherObject.avatarAlignment;
+}
+
+#pragma mark - NSCopying
+
+- (id)copyWithZone:(NSZone *)zone
+{
+    DBProfileAvatarViewLayoutAttributes *copy = [super copyWithZone:zone];
+    
+    copy.avatarAlignment = self.avatarAlignment;
+    copy.edgeInsets = self.edgeInsets;
+    
+    return copy;
 }
 
 @end
