@@ -1,11 +1,9 @@
 language: objective-c
 osx_image: xcode7.3
-rvm: 1.9.3
 cache: cocoapods
 podfile: Example/Podfile
 
 before_install:
-- gem install cocoapods --no-rdoc --no-ri --no-document --quiet
 - pod install --project-directory=Example
 
 script:
