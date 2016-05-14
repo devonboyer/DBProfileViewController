@@ -57,7 +57,6 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
 
 // Updates
 @property (nonatomic) DBProfileViewControllerUpdateContext *updateContext;
-@property (nonatomic, getter=isUpdating) BOOL updating;
 
 // Data
 @property (nonatomic) DBProfileContentOffsetCache *contentOffsetCache;
@@ -593,8 +592,11 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
     }
 }
 
+- (BOOL)isUpdating {
+    return self.updateContext != nil;
+}
+
 - (void)beginUpdates {
-    self.updating = YES;
     self.updateContext = [[DBProfileViewControllerUpdateContext alloc] init];
     self.updateContext.beforeUpdatesDetailsViewHeight = CGRectGetHeight(self.detailView.frame);
     [self.view invalidateIntrinsicContentSize];
@@ -622,7 +624,7 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
         
     } completion:^(BOOL finished) {
         self.view.userInteractionEnabled = YES;
-        self.updating = NO;
+        self.updateContext = nil;
     }];
 }
 
