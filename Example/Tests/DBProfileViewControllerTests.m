@@ -48,8 +48,8 @@
     XCTAssertNil(controller.displayedContentController, @"displayedContentController should be nil");
     XCTAssertTrue([controller.segmentedControl isKindOfClass:[UISegmentedControl class]], @"segmentedControl should be kind of class %@", [UISegmentedControl class]);
 
-    XCTAssertFalse(CGSizeEqualToSize(controller.headerReferenceSize, CGSizeZero), @"headerReferenceSize should not be CGSizeZero");
-    XCTAssertFalse(CGSizeEqualToSize(controller.avatarReferenceSize, CGSizeZero), @"avatarReferenceSize should not be CGSizeZero");
+    XCTAssertTrue(CGSizeEqualToSize(controller.headerReferenceSize, DBProfileViewControllerDefaultHeaderReferenceSize), @"headerReferenceSize should be equal to DBProfileViewControllerDefaultHeaderReferenceSize");
+    XCTAssertTrue(CGSizeEqualToSize(controller.avatarReferenceSize, DBProfileViewControllerDefaultAvatarReferenceSize), @"avatarReferenceSize should be equal to DBProfileViewControllerDefaultAvatarReferenceSize");
 }
 
 - (void)testProfileViewControllerCustomSegementedControlInit {
@@ -59,7 +59,6 @@
     [controller beginAppearanceTransition:YES animated:NO];
     [controller endAppearanceTransition];
     
-    XCTAssertNotNil(controller.overlayView, @"overlayView should not be nil");
     XCTAssertTrue([controller.segmentedControl isKindOfClass:[DBProfileTestSegmentedControl class]], @"segmentedControl should be kind of class %@", [DBProfileTestSegmentedControl class]);
 }
 
@@ -80,7 +79,6 @@
 
     XCTAssertNotNil(avatarView, @"avatarView should not be nil");
     XCTAssertTrue([avatarView isKindOfClass:[DBProfileAccessoryView class]], @"avatarView should be kind of class %@", [DBProfileAccessoryView class]);
-    XCTAssertTrue(CGSizeEqualToSize(controller.avatarReferenceSize,avatarView.frame.size), @"avatarView.frame.size is not equal to avatarReferenceSize");
     
     DBProfileAccessoryViewLayoutAttributes *layoutAttributes = [controller layoutAttributesForAccessoryViewOfKind:DBProfileAccessoryKindAvatar];
     
@@ -101,7 +99,6 @@
     
     XCTAssertNotNil(headerView, @"headerView should not be nil");
     XCTAssertTrue([headerView isKindOfClass:[DBProfileAccessoryView class]], @"headerView should be kind of class %@", [DBProfileAccessoryView class]);
-    XCTAssertTrue(CGSizeEqualToSize(controller.headerReferenceSize, headerView.frame.size), @"headerView.frame.size is not equal to headerReferenceSize");
     
     DBProfileAccessoryViewLayoutAttributes *layoutAttributes = [controller layoutAttributesForAccessoryViewOfKind:DBProfileAccessoryKindHeader];
 

@@ -24,6 +24,9 @@
 NSString * const DBProfileAccessoryKindAvatar = @"DBProfileAccessoryKindAvatar";
 NSString * const DBProfileAccessoryKindHeader = @"DBProfileAccessoryKindHeader";
 
+CGSize DBProfileViewControllerDefaultAvatarReferenceSize = { .width = 0, .height = 72 };
+CGSize DBProfileViewControllerDefaultHeaderReferenceSize = { .width = 0, .height = 240 };
+
 static const CGFloat DBProfileViewControllerOverlayAnimationDuration = 0.2;
 
 static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
@@ -93,8 +96,8 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
     return self;
 }
 
-- (instancetype)initWithSegmentedControlClass:(Class<DBProfileSegmentedControl>)segmentedControlClass {
-    NSAssert([segmentedControlClass isKindOfClass:[UIControl class]], @"segmentedControlClass must inherit from `UIControl`");
+- (instancetype)initWithSegmentedControlClass:(Class)segmentedControlClass {
+    NSAssert([segmentedControlClass isSubclassOfClass:[UIControl class]], @"segmentedControlClass must inherit from %@", NSStringFromClass([UIControl class]));
     self = [super init];
     if (self) {
         [self commonInitWithSegmentedControlClass:segmentedControlClass];
@@ -113,8 +116,8 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
 - (void)commonInitWithSegmentedControlClass:(Class<DBProfileSegmentedControl>)segmentedControlClass {
     // Defaults
     _segmentedControlClass = segmentedControlClass ? segmentedControlClass : [UISegmentedControl class];
-    _headerReferenceSize = CGSizeMake(0, CGRectGetHeight([UIScreen mainScreen].bounds) * 0.18);
-    _avatarReferenceSize = CGSizeMake(0, 72);
+    _headerReferenceSize = DBProfileViewControllerDefaultHeaderReferenceSize;
+    _avatarReferenceSize = DBProfileViewControllerDefaultAvatarReferenceSize;
     _hidesSegmentedControlForSingleContentController = YES;
     _allowsPullToRefresh = YES;
     
@@ -407,7 +410,7 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
 
 - (void)updateSegmentedControlTitles {
     
-    NSInteger numberOfSegments = [self _numberOfContentControllers];
+    NSInteger numberOfSegments = [self.contentControllers count];
 
     [self.segmentedControl removeAllSegments];
     
@@ -629,7 +632,11 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
 }
 
 - (void)reloadData {
-    NSInteger numberOfSegments = [self _numberOfContentControllers];
+    NSInteger numberOfContentControllers = 0;
+    
+    if ([self.dataSource respondsToSelector:@selector(numberOfContentControllersForProfileViewController:)]) {
+        numberOfContentControllers = [self.dataSource numberOfContentControllersForProfileViewController:self];
+    }
     
     [self.scrollViewObservers removeAllObjects];
     
@@ -639,16 +646,27 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
     
     [self.contentControllers removeAllObjects];
     
-    for (NSInteger controllerIndex = 0; controllerIndex < numberOfSegments; controllerIndex++) {
-        DBProfileContentController *contentController = [self _contentControllerAtIndex:controllerIndex];
+    for (NSInteger controllerIndex = 0; controllerIndex < numberOfContentControllers; controllerIndex++) {
+        
+        DBProfileContentController *contentController;
+        
+        if ([self.dataSource respondsToSelector:@selector(profileViewController:contentControllerAtIndex:)]) {
+            contentController = [self.dataSource profileViewController:self contentControllerAtIndex:controllerIndex];
+        }
+        else {
+            @throw [NSException exceptionWithName:NSInternalInconsistencyException
+                                           reason:@"dataSource must implement `profileViewController:contentControllerAtIndex:`"
+                                         userInfo:nil];
+        }
+        
+        NSAssert(contentController, @"contentController cannot be nil");
+        
         [self.contentControllers addObject:contentController];
     }
     
     self.contentOffsetCache = [[DBProfileContentOffsetCache alloc] initWithContentControllers:self.contentControllers];
     
-    [self updateSegmentedControlTitles];
-    
-    // Display selected content view controller
+    [self updateSegmentedControlTitles];    
     [self showContentControllerAtIndex:self.indexForDisplayedContentController];
 }
 
@@ -777,35 +795,6 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
 - (CGFloat)_titleViewOffset
 {
     return (([self _headerViewOffset] - CGRectGetMaxY(self.overlayView.frame)) + CGRectGetHeight(self.segmentedControlView.frame));
-}
-
-- (NSInteger)_numberOfContentControllers
-{
-    if ([self.dataSource respondsToSelector:@selector(numberOfContentControllersForProfileViewController:)]) {
-        NSInteger numberOfContentControllers = [self.dataSource numberOfContentControllersForProfileViewController:self];
-        NSAssert(numberOfContentControllers > 0, @"numberOfContentControllers must be greater than zero");
-        return numberOfContentControllers;
-    }
-    else {
-        @throw [NSException exceptionWithName:NSInternalInconsistencyException
-                                       reason:@"dataSource must implement `numberOfContentControllersForProfileViewController:`"
-                                     userInfo:nil];
-    }
-    
-}
-
-- (DBProfileContentController *)_contentControllerAtIndex:(NSInteger)index
-{
-    if ([self.dataSource respondsToSelector:@selector(profileViewController:contentControllerAtIndex:)]) {
-        DBProfileContentController *contentController = [self.dataSource profileViewController:self contentControllerAtIndex:index];
-        NSAssert(contentController, @"contentController cannot be nil");
-        return contentController;
-    }
-    else {
-        @throw [NSException exceptionWithName:NSInternalInconsistencyException
-                                       reason:@"dataSource must implement `profileViewController:contentControllerAtIndex:`"
-                                     userInfo:nil];
-    }
 }
 
 - (NSString *)_titleForContentControllerAtIndex:(NSInteger)index
