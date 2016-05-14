@@ -6,7 +6,7 @@
 //  Copyright © 2016 Devon Boyer. All rights reserved.
 //
 
-@import DBProfileViewController;
+#import <DBProfileViewController/DBProfileViewController.h>
 
 @class DBUserProfileDetailView;
 

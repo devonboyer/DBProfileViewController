@@ -12,20 +12,20 @@
 #error "DBProfileViewController doesn't support iOS 6.x and lower. Please, change your minimum deployment target to iOS 7.0"
 #endif
 
-#import <DBProfileViewController/DBProfileSegmentedControl.h>
-#import <DBProfileViewController/DBProfileContentPresenting.h>
-#import <DBProfileViewController/DBProfileViewControllerDelegate.h>
-#import <DBProfileViewController/DBProfileViewControllerDataSource.h>
-#import <DBProfileViewController/DBProfileAccessoryViewLayoutAttributes.h>
-#import <DBProfileViewController/DBProfileHeaderViewLayoutAttributes.h>
-#import <DBProfileViewController/DBProfileAvatarViewLayoutAttributes.h>
-#import <DBProfileViewController/DBProfileAccessoryView.h>
-#import <DBProfileViewController/DBProfileAvatarView.h>
-#import <DBProfileViewController/DBProfileBlurView.h>
-#import <DBProfileViewController/DBProfileCoverPhotoView.h>
-#import <DBProfileViewController/DBProfileHeaderOverlayView.h>
-#import <DBProfileViewController/DBProfileTitleView.h>
-#import <DBProfileViewController/DBProfileTintView.h>
+#import "DBProfileSegmentedControl.h"
+#import "DBProfileContentPresenting.h"
+#import "DBProfileViewControllerDelegate.h"
+#import "DBProfileViewControllerDataSource.h"
+#import "DBProfileAccessoryViewLayoutAttributes.h"
+#import "DBProfileHeaderViewLayoutAttributes.h"
+#import "DBProfileAvatarViewLayoutAttributes.h"
+#import "DBProfileAccessoryView.h"
+#import "DBProfileAvatarView.h"
+#import "DBProfileBlurView.h"
+#import "DBProfileCoverPhotoView.h"
+#import "DBProfileHeaderOverlayView.h"
+#import "DBProfileTitleView.h"
+#import "DBProfileTintView.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
