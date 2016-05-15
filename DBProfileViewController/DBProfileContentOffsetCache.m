@@ -44,8 +44,9 @@
 
 - (NSString *)keyForContentControllerAtIndex:(NSInteger)controllerIndex {
     NSString *title = [self.contentControllers[controllerIndex] title];
-    NSMutableString *key = [[NSMutableString alloc] initWithString:title];
-    [key appendFormat:@"-%@", @(controllerIndex)];
+    NSMutableString *key = [[NSMutableString alloc] init];
+    if (title.length) [key appendFormat:@"%@-", title];
+    [key appendFormat:@"%@", @(controllerIndex)];
     return key;
 }
 
