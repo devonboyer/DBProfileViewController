@@ -261,7 +261,7 @@ FOUNDATION_EXPORT CGSize DBProfileViewControllerDefaultHeaderReferenceSize;
 
 @interface DBProfileViewController (Deprecated)
 
-@property (nonatomic, nullable) UIBarButtonItem *leftBarButtonItem; __deprecated_msg("Use overlayView.leftBarButtonItem");
+@property (nonatomic, nullable) UIBarButtonItem *leftBarButtonItem __deprecated_msg("Use overlayView.leftBarButtonItem");
 
 @property (nonatomic, copy, nullable) NSArray <UIBarButtonItem *> *leftBarButtonItems __deprecated_msg("Use overlayView.leftBarButtonItems");
 
