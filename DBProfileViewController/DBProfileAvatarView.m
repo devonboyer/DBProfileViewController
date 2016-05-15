@@ -23,13 +23,14 @@
         
         self.imageView.translatesAutoresizingMaskIntoConstraints = NO;
         self.imageView.contentMode = UIViewContentModeScaleAspectFill;
+        self.imageView.backgroundColor = [UIColor lightGrayColor];
         self.imageView.clipsToBounds = YES;
 
         [self.contentView addSubview:self.imageView];
         
         [self setUpConstraints];
         
-        self.avatarStyle = DBProfileAvatarStyleRound;
+        self.avatarStyle = DBProfileAvatarStyleRoundedRect;
     }
     return self;
 }

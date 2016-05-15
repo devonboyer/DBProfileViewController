@@ -1,6 +1,6 @@
 //
 //  DBProfileAccessoryViewModelTests.m
-//  DBProfileViewController
+//  DBProfileViewControllerTests
 //
 //  Created by Devon Boyer on 2016-05-14.
 //  Copyright © 2016 Devon Boyer. All rights reserved.
@@ -35,10 +35,9 @@
     
     XCTAssertEqualObjects(viewModel.representedAccessoryKind, @"Test", @"representedAccessoryKind should be %@", @"Test");
     XCTAssertNotNil(viewModel.bindings, @"bindings should not be nil");
-
 }
 
-- (void)testAccessoryViewModelBindings {
+- (void)testAccessoryViewModelKeyPathsForBindings {
     
     DBProfileAccessoryViewModel *headerViewModel = [[DBProfileAccessoryViewModel alloc] initWithAccessoryView:self.accessoryView layoutAttributes:[DBProfileHeaderViewLayoutAttributes layoutAttributes]];
 

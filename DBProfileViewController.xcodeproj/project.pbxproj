@@ -33,6 +33,8 @@
 		6707F3F21CE7ED0400720418 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 6707F3EF1CE7ED0400720418 /* LICENSE */; };
 		6707F3F61CE7EDC100720418 /* DBProfileViewController.podspec in Resources */ = {isa = PBXBuildFile; fileRef = 6707F3F51CE7EDC100720418 /* DBProfileViewController.podspec */; };
 		6707F3F81CE7F3DD00720418 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6003F596195388D20070C39A /* InfoPlist.strings */; };
+		6707F3FA1CE803C400720418 /* DBProfileViewControllerSnapshotTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6707F3F91CE803C400720418 /* DBProfileViewControllerSnapshotTests.m */; };
+		6707F4221CE80D2800720418 /* ReferenceImages_64 in Resources */ = {isa = PBXBuildFile; fileRef = 6707F4211CE80D2800720418 /* ReferenceImages_64 */; };
 		672EF5CF1C49E9B60035567E /* DBUserProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 672EF5CE1C49E9B60035567E /* DBUserProfileViewController.m */; };
 		672EF5D61C4B09AA0035567E /* DBDemoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 672EF5D51C4B09AA0035567E /* DBDemoViewController.m */; };
 		675B0F921C42A1C4000AADC6 /* DBFollowersTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 675B0F911C42A1C4000AADC6 /* DBFollowersTableViewController.m */; };
@@ -85,6 +87,8 @@
 		6707F3EF1CE7ED0400720418 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		6707F3F11CE7ED0400720418 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		6707F3F51CE7EDC100720418 /* DBProfileViewController.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DBProfileViewController.podspec; sourceTree = "<group>"; };
+		6707F3F91CE803C400720418 /* DBProfileViewControllerSnapshotTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBProfileViewControllerSnapshotTests.m; sourceTree = "<group>"; };
+		6707F4211CE80D2800720418 /* ReferenceImages_64 */ = {isa = PBXFileReference; lastKnownFileType = folder; path = ReferenceImages_64; sourceTree = "<group>"; };
 		672EF5CD1C49E9B60035567E /* DBUserProfileViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBUserProfileViewController.h; sourceTree = "<group>"; };
 		672EF5CE1C49E9B60035567E /* DBUserProfileViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBUserProfileViewController.m; sourceTree = "<group>"; };
 		672EF5D41C4B09AA0035567E /* DBDemoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBDemoViewController.h; sourceTree = "<group>"; };
@@ -204,6 +208,7 @@
 		6003F5B5195388D20070C39A /* DBProfileViewControllerTests */ = {
 			isa = PBXGroup;
 			children = (
+				6707F4211CE80D2800720418 /* ReferenceImages_64 */,
 				6707F3D51CE7B9AC00720418 /* ControllerTests */,
 				6707F3D71CE7B9AC00720418 /* ModelTests */,
 				6707F3DA1CE7B9AC00720418 /* ViewTests */,
@@ -246,6 +251,7 @@
 			isa = PBXGroup;
 			children = (
 				6707F3D61CE7B9AC00720418 /* DBProfileViewControllerTests.m */,
+				6707F3F91CE803C400720418 /* DBProfileViewControllerSnapshotTests.m */,
 			);
 			path = ControllerTests;
 			sourceTree = "<group>";
@@ -378,6 +384,7 @@
 			files = (
 				6003F5A9195388D20070C39A /* Images.xcassets in Resources */,
 				6003F598195388D20070C39A /* InfoPlist.strings in Resources */,
+				6707F4221CE80D2800720418 /* ReferenceImages_64 in Resources */,
 				6707F3F21CE7ED0400720418 /* LICENSE in Resources */,
 				670278631C9C9D6F00C5ECA3 /* demo-header.png in Resources */,
 				6707F3CD1CE7B80D00720418 /* Main.storyboard in Resources */,
@@ -516,6 +523,7 @@
 				6707F3E21CE7BAEA00720418 /* DBProfileViewControllerTests.m in Sources */,
 				6707F3E81CE7BB0900720418 /* DBProfileAvatarViewLayoutAttributeTests.m in Sources */,
 				6707F3EB1CE7C63100720418 /* DBProfileAccessoryViewLayoutAttributesTests.m in Sources */,
+				6707F3FA1CE803C400720418 /* DBProfileViewControllerSnapshotTests.m in Sources */,
 				6707F3E31CE7BAEA00720418 /* DBProfileAccessoryViewTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -677,6 +685,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
+					"FB_REFERENCE_IMAGE_DIR=\"\\\"$(SOURCE_ROOT)/$(PROJECT_NAME)Tests/ReferenceImages\\\"\"",
 				);
 				INFOPLIST_FILE = "DBProfileViewControllerTests/Tests-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.${PRODUCT_NAME:rfc1034identifier}";

@@ -7,110 +7,107 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		02708FEDEDBF17629D57797A4A67084B /* NSBundle+DBProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 42D2E23851A492FE9E0AF141CE43D270 /* NSBundle+DBProfileViewController.m */; };
-		06A85BE83630DC6D32E6E797BAEACC1B /* db-profile-chevron.png in Resources */ = {isa = PBXBuildFile; fileRef = 7A08491EDC12BE1C8862C93E8E39D221 /* db-profile-chevron.png */; };
-		0ADFDAE67E68C5912D7737F3F33D8FBC /* DBProfileAccessoryViewLayoutAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A626DB1AD942EDAEC7860E86053A56A /* DBProfileAccessoryViewLayoutAttributes.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		0D8F5E6F78B41515F72DC8C1B947794B /* DBProfileDefines.h in Headers */ = {isa = PBXBuildFile; fileRef = 33F1F02040B9E071C0144B60FACDB8F0 /* DBProfileDefines.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		18B933E969F4540508E8EEE67D7D735D /* DBProfileViewControllerUpdateContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 05109A952557A6EE9489A1AFBC2070C4 /* DBProfileViewControllerUpdateContext.m */; };
-		194B14E3FBBD9D02A6A337586428CBA9 /* UIBarButtonItem+DBProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 841F3B07CA4F4C20FC0D598C8FC1969C /* UIBarButtonItem+DBProfileViewController.m */; };
-		198DD0E78C92CCE0EB63AF5258F70564 /* DBProfileAvatarView.h in Headers */ = {isa = PBXBuildFile; fileRef = 00CC3951D571B2C9203DA17998ED2A9D /* DBProfileAvatarView.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1CEEDFA0E9347F890BA3733F4DE058A3 /* DBProfileHeaderOverlayView.h in Headers */ = {isa = PBXBuildFile; fileRef = 09342D87C7D90CB800D2C94BD3CE4476 /* DBProfileHeaderOverlayView.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		026F9C55BF6552ABE8CD4C20E481AA79 /* DBProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C8AB6BEC2108637170C2EC245EC050F9 /* DBProfileViewController.m */; };
+		037C2656A14947C2AC36D65483835848 /* DBProfileCoverPhotoView.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DC16197A66ECCFE255B639052D8BC7A /* DBProfileCoverPhotoView.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		03BD11BAC967549AB7A1B0F1DD0D9B30 /* DBProfileHeaderOverlayView.h in Headers */ = {isa = PBXBuildFile; fileRef = 20FD11FBB442FFE2DF9199F329CD0C58 /* DBProfileHeaderOverlayView.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		03D9EF4831A25C0855E16CC3BB8AE7E1 /* UIBarButtonItem+DBProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 16974D9B87838E58A90C55B69E391D98 /* UIBarButtonItem+DBProfileViewController.m */; };
+		045B7AC0D35A55A7601801056F40291F /* DBProfileObserver.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F72869046CCC513AEE724E47067AB46 /* DBProfileObserver.m */; };
+		06A81D9FD02E8DF46215564F8E1BB140 /* DBProfileAvatarViewLayoutAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D6AB369ED2625C6D118050AA05CC373 /* DBProfileAvatarViewLayoutAttributes.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		09AF4BF7EF6405C475542E5039B52F10 /* FXBlurView.m in Sources */ = {isa = PBXBuildFile; fileRef = 45B746F8601CC57B691664430AA0693B /* FXBlurView.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
+		10B1F6FE142085E74AD2448DB5962513 /* DBProfileBlurView.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A8CB1843A8D0C2716C73070F8C3C5FC /* DBProfileBlurView.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		17348EA812F81D72318A3E784BE30162 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 880D9568469E0E9ABEFFD88574A63064 /* Foundation.framework */; };
 		1F4EBCE5116471F4CA46319025247BF3 /* UIImage+Compare.m in Sources */ = {isa = PBXBuildFile; fileRef = E6D8A4E2F4EA379699EAAFABD29050C5 /* UIImage+Compare.m */; };
-		27A059D3DD9A487B1AA81E3C6488FA02 /* DBProfileHeaderViewLayoutAttributes_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 94F3D3A1AF6906D99D456947FFF7316A /* DBProfileHeaderViewLayoutAttributes_Private.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		2A11379D88C580BA1B6F5A99DC67F06D /* DBProfileBlurView.m in Sources */ = {isa = PBXBuildFile; fileRef = F5DCB02289499BBE509224FAC431E130 /* DBProfileBlurView.m */; };
-		2CAACB36874D20E5BE337BE54A5A6B04 /* DBProfileViewControllerDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 514DE1940B6DEF119F4948CBB606B1C8 /* DBProfileViewControllerDataSource.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		2030118A8A9F717DD315F82ACDDF7564 /* DBProfileViewController-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DB4B900A62F35E0C5CBF8601DBB6B88 /* DBProfileViewController-dummy.m */; };
+		22C2F52F2D61FF928DDAE504522708AB /* DBProfileHeaderOverlayView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F039E31A3C3CF25161F486445A63D37 /* DBProfileHeaderOverlayView.m */; };
+		267AB9B0B60435846594CD9FB1B0B444 /* UITableViewController+DBProfileContentPresenting.m in Sources */ = {isa = PBXBuildFile; fileRef = C88A2C762F83EFB9599303814D839AC0 /* UITableViewController+DBProfileContentPresenting.m */; };
+		2A5B68FCE0D33880FE80F3524C2F4BEA /* NSBundle+DBProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F4897C55C8965BD02B529929A9EAB7C /* NSBundle+DBProfileViewController.m */; };
+		2B53176F02D289646B6E677DC64166B5 /* db-profile-chevron.png in Resources */ = {isa = PBXBuildFile; fileRef = DA5EEB6D49DBFD508CF2FA3783213362 /* db-profile-chevron.png */; };
 		2E151DF5F1BED19CCA42243E553DC12B /* UIImage+Diff.m in Sources */ = {isa = PBXBuildFile; fileRef = A622D04C3AE95289326A8163CB4AE4D7 /* UIImage+Diff.m */; };
-		2EF8D23B83280784F8F14D227907965E /* DBProfileTintView.m in Sources */ = {isa = PBXBuildFile; fileRef = 829725101D82B48BCC9CB9072EAEF843 /* DBProfileTintView.m */; };
-		3377D3C843D3FA313804615370080689 /* DBProfileHeaderViewLayoutAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = FA16AED41FA53C679CCA585AF57F5A18 /* DBProfileHeaderViewLayoutAttributes.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		35246C32CC4648CBE3005EBA3CC2EBCD /* DBProfileAccessoryViewLayoutAttributes_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 984356602E5228244275B1E75A0A9A44 /* DBProfileAccessoryViewLayoutAttributes_Private.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		3F55E471C73843A72C0B42228E9984C5 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 880D9568469E0E9ABEFFD88574A63064 /* Foundation.framework */; };
-		4457EC296416EBEF1B8E23E311205188 /* DBProfileHeaderOverlayView.m in Sources */ = {isa = PBXBuildFile; fileRef = A784D42F6688C85EE4C4A85D03CC7949 /* DBProfileHeaderOverlayView.m */; };
-		44D3C4E5097D8C73124DF8BDB63C7960 /* FXBlurView-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = D9D80C6E11D49EFD594C303CA1CA05D0 /* FXBlurView-dummy.m */; };
-		471DDBF601ACB06DD977391DF04AFB38 /* db-profile-chevron@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = DFF6A082CD640DFE4CF425882CDD4321 /* db-profile-chevron@2x.png */; };
-		4B95AE6FB9618F7DE60E10EC90607331 /* DBProfileAccessoryView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4FD2DDDDDE85BC9EEBA917DADBE47F3D /* DBProfileAccessoryView.m */; };
+		2E2B6ED2B11E2851036C01FDEA651352 /* FXBlurView-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = D9D80C6E11D49EFD594C303CA1CA05D0 /* FXBlurView-dummy.m */; };
+		38C1A27CE821107F2D41F464F91439AE /* DBProfileAccessoryView.h in Headers */ = {isa = PBXBuildFile; fileRef = 74F83489BBCA09521D67FECFD4FE6C97 /* DBProfileAccessoryView.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3EEBEA034F4025873316E2992144C359 /* DBProfileObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C20DC2E83C668A13A68B4862A5C8D9 /* DBProfileObserver.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		41BDD53CE3520768F15A68087F48DC9A /* UIBarButtonItem+DBProfileViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = AE1897EA97501108657040917C39BBFD /* UIBarButtonItem+DBProfileViewController.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		476632B9F9E8E79A0D4DDCF5A7F6D4B6 /* DBProfileAccessoryViewLayoutAttributes_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 022CFE7B24FEA62B67665E51BF31AE8C /* DBProfileAccessoryViewLayoutAttributes_Private.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		48024374AC39F30FD9930C79B4425A75 /* DBProfileAccessoryViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = A183E3F8E2645BACF2A7D4C70BD1624B /* DBProfileAccessoryViewModel.m */; };
 		4D56D0CEFB5C84F31A149548340DA59A /* UIApplication+StrictKeyWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = FDCAD3271EA3B6B6372B27A40E337F73 /* UIApplication+StrictKeyWindow.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		4EF3D43D7035B907D15B9236245611F2 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 880D9568469E0E9ABEFFD88574A63064 /* Foundation.framework */; };
 		4F7B214533FEA7BE6608483749F60F7E /* FBSnapshotTestCasePlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = D64C2F8DDA59C3B4CC847093606CD873 /* FBSnapshotTestCasePlatform.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6997F094B7B12C58F5077AD49A9EE26F /* DBProfileHeaderViewLayoutAttributes.m in Sources */ = {isa = PBXBuildFile; fileRef = 9999655FF6E7DDB5C9A7D91CE32E4738 /* DBProfileHeaderViewLayoutAttributes.m */; };
-		6CC6BDBD242D08F849650805B70BF1E8 /* DBProfileContentPresenting.h in Headers */ = {isa = PBXBuildFile; fileRef = B7FBE68ACDF7775FF47D04DAD8B0E54B /* DBProfileContentPresenting.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		708A7A4C58549D6804FB53956F654E98 /* DBProfileObserver.m in Sources */ = {isa = PBXBuildFile; fileRef = C11DA4C3A87936BF0D4399079790958F /* DBProfileObserver.m */; };
-		7127353542BE401365135777E7722034 /* UIBarButtonItem+DBProfileViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = F9343F29F87289DFB08E32251E650D5A /* UIBarButtonItem+DBProfileViewController.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		716834C4E94921AA648C710AFC7D5FEE /* db-profile-chevron@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = BC2AC07C4F1F9FD2BCAA8C225283F0AE /* db-profile-chevron@3x.png */; };
-		72A3ABCA1CC019C6BB6A941657DEF62C /* FXBlurView.h in Headers */ = {isa = PBXBuildFile; fileRef = 40D96C3BE3D638E4F03958487B870B8C /* FXBlurView.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		77346D286A37BC724E1E78F01E7B21A6 /* DBProfileContentOffsetCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 3E4D8A14525A559F54BF556185B931A0 /* DBProfileContentOffsetCache.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		787004853226B6F5291FBF10C5DA1842 /* DBProfileAvatarViewLayoutAttributes.m in Sources */ = {isa = PBXBuildFile; fileRef = 44A0CE086CA990E3286475F2446D51A8 /* DBProfileAvatarViewLayoutAttributes.m */; };
+		5444BF510D28AD9602879B56C068FC78 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 32697E5307C8B3189F7E1D81A881DC82 /* QuartzCore.framework */; };
+		561F26F9B4E6469E4D352E8BD3159BEB /* DBProfileAvatarView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B63B414C62E32246D97B2290FD82B97 /* DBProfileAvatarView.m */; };
+		56E5522744EECE4AF1FBF099556D7532 /* DBProfileAccessoryView_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = B812FC9F13E360A9B56E148547897B45 /* DBProfileAccessoryView_Private.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		57299D9747043171C0936C5BF7CDE5F4 /* DBProfileHeaderViewLayoutAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = 604CAC13ACBDCF07E51B8F8A4F1D9D83 /* DBProfileHeaderViewLayoutAttributes.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		57BEBF508EA7C9586467F0EE27DFFB98 /* DBProfileViewControllerUpdateContext.h in Headers */ = {isa = PBXBuildFile; fileRef = B1C3CD799143828B8A1DBCA4706F95B1 /* DBProfileViewControllerUpdateContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		57CE57FBC12B082768670D28047A352C /* DBProfileCoverPhotoView.m in Sources */ = {isa = PBXBuildFile; fileRef = A11F618EDFB60234CBFBF7BB4E7094B7 /* DBProfileCoverPhotoView.m */; };
+		613172BB4E86AEA64DFD75472254F504 /* DBProfileAvatarViewLayoutAttributes.m in Sources */ = {isa = PBXBuildFile; fileRef = C85FA122AE5A47AA57D6EC31A35C48EC /* DBProfileAvatarViewLayoutAttributes.m */; };
+		6C7B21562F3CDEFFAD885E402FD6AD7A /* db-profile-chevron@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8683426F8E7773C72159142B703F0DDF /* db-profile-chevron@3x.png */; };
+		6EB8E730B79BA82BA6964A3D81974040 /* DBProfileTitleView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0FC64C19115F91FB87C28B35DF4723AE /* DBProfileTitleView.m */; };
+		7215732A5D462B44C1BF0D17004FC06A /* UICollectionViewController+DBProfileContentPresenting.m in Sources */ = {isa = PBXBuildFile; fileRef = 84E7BAAA59147F7A24AEC603AD513BA5 /* UICollectionViewController+DBProfileContentPresenting.m */; };
+		735C89C39A62352A418C851000662C62 /* DBProfileViewControllerDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D19069E7F68E328D42FDEF448D1642B /* DBProfileViewControllerDataSource.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		73D119320FCD6667B470D98F88B9231B /* DBProfileSegmentedControl.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B50FE0FDEBF5F0245CA6705A4CB7B2B /* DBProfileSegmentedControl.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		746A890D3B719874E7CF03D6C584078C /* DBProfileContentPresenting.h in Headers */ = {isa = PBXBuildFile; fileRef = D27F5DCB9B813840556ECC0B36018E3C /* DBProfileContentPresenting.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		78A7B8B1FA10FF19CEDC7A295AC73FAC /* UIImage+Diff.h in Headers */ = {isa = PBXBuildFile; fileRef = A4392CCEE22016E6E93081DCBE1791CE /* UIImage+Diff.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		7A09D24E0B4A6F89B93369CED9961474 /* DBProfileAvatarView.m in Sources */ = {isa = PBXBuildFile; fileRef = 60DD1D8FCB6E47FB8A8AEA7BA42FEFBC /* DBProfileAvatarView.m */; };
-		7C906F60BDA365B660100DAC1357C830 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 880D9568469E0E9ABEFFD88574A63064 /* Foundation.framework */; };
+		78D5E17551F757F8E151418279DA27B4 /* DBProfileTintView.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F613410B105C2FCFDC4E21D78E96258 /* DBProfileTintView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7F1A6647343312D825CBA7E50D563BE4 /* UIImage+Compare.h in Headers */ = {isa = PBXBuildFile; fileRef = F332A261B19974AA93B7F76FB58ABECD /* UIImage+Compare.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		7F4FE8225263DBB0763DCA17095262F8 /* DBProfileAvatarViewLayoutAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = DB3FBFB379CA15C467788A522CB5E348 /* DBProfileAvatarViewLayoutAttributes.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		7F8EBCD78C6002F78B9A1621ACA22D48 /* UICollectionViewController+DBProfileContentPresenting.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A0CB62DA1494792E4B1DF71AB6C3B81 /* UICollectionViewController+DBProfileContentPresenting.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8138645722777587AAD6D4F26D49DB6C /* DBProfileAvatarView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2626E14A67FA8D8B75A990BD09D5DFD0 /* DBProfileAvatarView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		81AE93B4297D919E73B506177EBFABE6 /* FBSnapshotTestController.m in Sources */ = {isa = PBXBuildFile; fileRef = C0C241067C11C8CDB077994486D3FD0C /* FBSnapshotTestController.m */; };
 		86009B904DC817BF7883D29BDF577D8F /* UIImage+Snapshot.m in Sources */ = {isa = PBXBuildFile; fileRef = B76B3EF6A9AE9CD4B66E0404F43B157B /* UIImage+Snapshot.m */; };
-		86D3136353B6B1AF02C7F6F922921FCE /* DBProfileSegmentedControlView.h in Headers */ = {isa = PBXBuildFile; fileRef = A60962D9A96E91E3EEFB63FD06394924 /* DBProfileSegmentedControlView.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		87D04564F3686B291A0954C17FFB6124 /* DBProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B50CC99730AEF660CDE35D766CC079D6 /* DBProfileViewController.m */; };
-		8E2AB33BCC6AEE862AC27385C8D3CA05 /* DBProfileBinding.h in Headers */ = {isa = PBXBuildFile; fileRef = 292751F03923EFC8E0C4330AC08337A0 /* DBProfileBinding.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		863E8E5A5B51E43DEF0C300A0CE7B8BF /* DBProfileUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = D4F889494A5B2B3AD034116FED3989C6 /* DBProfileUtilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		8A2FAB1AFCFB7BB77F84071B1FF5685E /* DBProfileSegmentedControlView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C09C3A3DFBB30B4E29DE21174A42C49 /* DBProfileSegmentedControlView.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		8AA3521852F44583C692BB3C42910566 /* DBProfileHeaderViewLayoutAttributes_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = CC754728F4F51A286B2CFF86C5E6C25A /* DBProfileHeaderViewLayoutAttributes_Private.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		93CAA97DFB7AE8C5F3381252B5532968 /* DBProfileAccessoryViewLayoutAttributes.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B8E87A2651416267D4C841BF758E258 /* DBProfileAccessoryViewLayoutAttributes.m */; };
 		95AC59B5D528320092BA7D304EA9649D /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 880D9568469E0E9ABEFFD88574A63064 /* Foundation.framework */; };
-		9739057299A2B2080B3A75BC737526D2 /* DBProfileObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 7303E5EF310C7CCA6D17FB55900831C6 /* DBProfileObserver.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		9D25DBCD1988FB4702C81ACEC7795D94 /* DBProfileUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E19068C3BA34554FD30FF6F12114F4C /* DBProfileUtilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		9EE096202822E04F554978C9139972DB /* DBProfileTitleView.m in Sources */ = {isa = PBXBuildFile; fileRef = B51BCBDE2CDF6378EB4D17E77F02D55B /* DBProfileTitleView.m */; };
-		9EECD771E3E0CB1A61DACC2982E3B690 /* DBProfileSegmentedControlView.m in Sources */ = {isa = PBXBuildFile; fileRef = 40C513C371CA877654FE0090AE9AED4B /* DBProfileSegmentedControlView.m */; };
-		A1F0E058208C16E4188BD9028A28FBD2 /* DBProfileAccessoryViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = D051D2DD3F7162600BE8DA0D957763E0 /* DBProfileAccessoryViewModel.m */; };
+		99CEE691ADD2B16EF90A1A2C5D2719E8 /* DBProfileContentOffsetCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 94482BCE76C7E9ABB2FCF4CBA1121F86 /* DBProfileContentOffsetCache.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		9A97CBB926F354F31CFD14BE1896DEA0 /* DBProfileAccessoryViewModel.h in Headers */ = {isa = PBXBuildFile; fileRef = 08A04D563B1F124629E6B5934E2D322C /* DBProfileAccessoryViewModel.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A2221067B81BCE2175F5D435A57EB43A /* FBSnapshotTestCasePlatform.m in Sources */ = {isa = PBXBuildFile; fileRef = 9065392D1C2BF057153BFA53B203F055 /* FBSnapshotTestCasePlatform.m */; };
-		A3C2A8E9A4D9B2F3F0350758FDA68031 /* DBProfileViewControllerDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0A78E0EE6F1DDB6D3BD331A1E900AE /* DBProfileViewControllerDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A24832AE9A3406B1631291F1FAFD9C7B /* DBProfileAccessoryView.m in Sources */ = {isa = PBXBuildFile; fileRef = 035A58820C25BD226C8EC8A30F61B7AB /* DBProfileAccessoryView.m */; };
+		A2D35E2FF7FD5D8CAB40DAB9AE54C20A /* DBProfileBinding.m in Sources */ = {isa = PBXBuildFile; fileRef = B3629D8C16DEAE0DB7CD707CEFCEF879 /* DBProfileBinding.m */; };
+		A477E521F5ADA6AD7D4B27CAFBCC4CCF /* DBProfileBlurView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0FC4EA6959BA013C950C64CA3863F035 /* DBProfileBlurView.m */; };
 		A723FC35B9A3AFE0B3410725161466A3 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DC2583C69A68151B63B8C4304244ABD /* UIKit.framework */; };
-		A7E7FA54622D5DE1C5F123257C839B5C /* DBProfileViewControllerUpdateContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 8E250D2550C9B1748FE05DF60E545ADC /* DBProfileViewControllerUpdateContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AAC957DF42D803FDA45EE844AF6681E1 /* Pods-DBProfileViewController_Example-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 10818AF73DA2353B2F5675CCBD981053 /* Pods-DBProfileViewController_Example-dummy.m */; };
-		ABA6DBB363089BA742BA416A7D3A066B /* DBProfileTintView.h in Headers */ = {isa = PBXBuildFile; fileRef = 1820CB1271C2CC62D3214E7FD63626E0 /* DBProfileTintView.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		AF47ECDE5B28616900445D6F154ABCE3 /* DBProfileViewControllerUpdateContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A6F3D5B20DD7CE6BA3201FBD9A9CA2D /* DBProfileViewControllerUpdateContext.m */; };
 		AF59FCF4A95AA68D97A4753733637C6A /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 32697E5307C8B3189F7E1D81A881DC82 /* QuartzCore.framework */; };
-		B5733B7BBC6781CD49263439408525C4 /* DBProfileSegmentedControl.h in Headers */ = {isa = PBXBuildFile; fileRef = 57F4E4D0C3323CF41129BFF847167D50 /* DBProfileSegmentedControl.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B4075395DF616F4048AB2358E68F7766 /* DBProfileViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 8BAE1B3CE1D9E9BF7C351B0E6E9702EF /* DBProfileViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B632B525C44A4724594F5DABC81D981A /* UITableViewController+DBProfileContentPresenting.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CC72796A45D80235470AF4FEEF7F094 /* UITableViewController+DBProfileContentPresenting.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B6F8CE9DCDA9B77901EF8276338D4BCD /* DBProfileTintView.m in Sources */ = {isa = PBXBuildFile; fileRef = 05E6B0FA35A75491715C78A442BE2966 /* DBProfileTintView.m */; };
 		B77A937691640AE8D43DF559FA2DCC3F /* UIApplication+StrictKeyWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B4C90376B19A49AB408D76E7633D158 /* UIApplication+StrictKeyWindow.m */; };
-		B7B39242C24AD3009158D15AD8CCC131 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 32697E5307C8B3189F7E1D81A881DC82 /* QuartzCore.framework */; };
-		B9B3A72D457DD47C17EFD02085F012C2 /* DBProfileBinding.m in Sources */ = {isa = PBXBuildFile; fileRef = ED39D436ED37118A268B1B4A558D82A4 /* DBProfileBinding.m */; };
-		BD7C6F56B65A09D8C456A80E8BEC8AB7 /* FXBlurView.m in Sources */ = {isa = PBXBuildFile; fileRef = 45B746F8601CC57B691664430AA0693B /* FXBlurView.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		BEC342EAED02FB59A5E90268D1B4448D /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 880D9568469E0E9ABEFFD88574A63064 /* Foundation.framework */; };
-		C785B1D5F31E96E179BBE5E4FF6026A3 /* DBProfileBlurView.h in Headers */ = {isa = PBXBuildFile; fileRef = A484E38B463054C3E56DFD7AE934F1DA /* DBProfileBlurView.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		C924365BCF71D494DD313F84C3951795 /* DBProfileTitleView.h in Headers */ = {isa = PBXBuildFile; fileRef = 0A33D3482F9F9DEE2C49B6D55CF283B2 /* DBProfileTitleView.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		CA77E758A6662C7C3F86A91699A1C6F8 /* DBProfileViewController-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = CAC9D16B69D59FC3F11051B064EE5DE7 /* DBProfileViewController-dummy.m */; };
+		C1D778F5D322F9B5EE00C05A3EC86117 /* DBProfileSegmentedControlView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5406909B4AA6886B30076EAF197EF4D3 /* DBProfileSegmentedControlView.m */; };
 		CA80A7BE5B216B202D72EF59FA8B438D /* FBSnapshotTestController.h in Headers */ = {isa = PBXBuildFile; fileRef = 30412AB95319D4874E9399B6586634F8 /* FBSnapshotTestController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CB9CCE6CBF004F916EAA28CD629AA14D /* FBSnapshotTestCase.h in Headers */ = {isa = PBXBuildFile; fileRef = 5814CB511CF0A99646C0DC4797EC3954 /* FBSnapshotTestCase.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		CC65814C2748FD10E5B2EEDAD71F38C0 /* DBProfileAccessoryViewLayoutAttributes.m in Sources */ = {isa = PBXBuildFile; fileRef = 853168F03702BE362E1E55ECDC1AAE1E /* DBProfileAccessoryViewLayoutAttributes.m */; };
-		D5F4C678287B468E98D3F008A9C80453 /* DBProfileContentOffsetCache.m in Sources */ = {isa = PBXBuildFile; fileRef = B6879A3E45D5399F6DEE5A54CF833BBF /* DBProfileContentOffsetCache.m */; };
+		D05917484438AE0FA75BC40686DB9143 /* DBProfileHeaderViewLayoutAttributes.m in Sources */ = {isa = PBXBuildFile; fileRef = 72AA8BBDC513B2ABCB574154CB5CE8BE /* DBProfileHeaderViewLayoutAttributes.m */; };
 		D624B472AD8D494A88B25EB352E19F76 /* FBSnapshotTestCase-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 7206961E4CD120F7D3223FE0BCCF90AF /* FBSnapshotTestCase-dummy.m */; };
 		D6CF0D8AA05CFEDA8E1FC2C0C7350809 /* UIImage+Snapshot.h in Headers */ = {isa = PBXBuildFile; fileRef = 5931E9D985B544988150F03A36948CF6 /* UIImage+Snapshot.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DC03AE1D7D23B089FA601564B7F85E11 /* DBProfileCoverPhotoView.h in Headers */ = {isa = PBXBuildFile; fileRef = 398D7B9D757A976C2A192B2E5ACDB00D /* DBProfileCoverPhotoView.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D86D15B6866F8506C4CBF1EBCE762D38 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A405C0D798B0C307E0FBADEA8BC88FDE /* Accelerate.framework */; };
+		DB2685D54EBA9A000D48E2017E64A8AC /* DBProfileContentOffsetCache.m in Sources */ = {isa = PBXBuildFile; fileRef = AFA5BD5FA87817A1385BD85C9918A1F7 /* DBProfileContentOffsetCache.m */; };
+		DBD73C85DF77753EAD2006185C86719B /* db-profile-chevron@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 58E7423B2F68E28D00D3609A2E78E9C8 /* db-profile-chevron@2x.png */; };
+		DC54D750EAAABBBB997EA3685F1BFE42 /* DBProfileDefines.h in Headers */ = {isa = PBXBuildFile; fileRef = 27CCF902CFC2292B8A0AE07E9D138D3F /* DBProfileDefines.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		DE580D17752EF20ADD2B17924E7A84A3 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 880D9568469E0E9ABEFFD88574A63064 /* Foundation.framework */; };
+		DE9E79A55F1124FD93437E86EB9B6E60 /* NSBundle+DBProfileViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 0BCEDB102BF6FC76473FEA4FCF55DA5C /* NSBundle+DBProfileViewController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DF7095664E84305F0CED29BB86214B05 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 488E356B2DA3418BC56E4101F4833DF4 /* XCTest.framework */; };
-		E0D39677563C5F86CE3DAD3FDCF524E1 /* DBProfileAccessoryViewModel.h in Headers */ = {isa = PBXBuildFile; fileRef = 3BD919AA95C9F51592E5A8668527E733 /* DBProfileAccessoryViewModel.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		E2C7138A5AAEB58DA53F6EFB74EA48C9 /* DBProfileAccessoryView_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 523A8CFDF8B5448000161E6482F84E12 /* DBProfileAccessoryView_Private.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		E86F6EFC9CF0EE8ED96D0176C2F46D6D /* NSBundle+DBProfileViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = B5F054086F222C223147F9E836F3D98A /* NSBundle+DBProfileViewController.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		E969BD7FA0A9E0480BBEAF4484036CFF /* DBProfileCoverPhotoView.m in Sources */ = {isa = PBXBuildFile; fileRef = B728E303FA35981635D8FFE573933AF4 /* DBProfileCoverPhotoView.m */; };
-		E97D099837D596AD2635BEA3C84AC004 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A405C0D798B0C307E0FBADEA8BC88FDE /* Accelerate.framework */; };
-		E9B639264CF21B537469D4F21760F7EF /* DBProfileViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = ABC97F22F0382653C3B1F86674640E30 /* DBProfileViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E946A890F833A41639F424F94EE8FC97 /* DBProfileViewControllerDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = A74B1477ABADB830AAA0FD5890236032 /* DBProfileViewControllerDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		EB25E9D7F6C9255590D64003C0AB1481 /* Pods-DBProfileViewController_Tests-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 5390F774BAA481A91BC8EA8076B35D90 /* Pods-DBProfileViewController_Tests-dummy.m */; };
-		F33B33BA907F6CDDF70D10B5FB820135 /* DBProfileUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = C35E681BE88218A21816594ED85F6E86 /* DBProfileUtilities.m */; };
-		F43795F29BE0EB8BC5F18469CFC7BD3C /* DBProfileAccessoryView.h in Headers */ = {isa = PBXBuildFile; fileRef = F1D6FDA13F321EC563B3F79F159128F2 /* DBProfileAccessoryView.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		EFB1E706A052178A77666CE9191D3A4F /* DBProfileUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 056A41C290FBCF1248DA9FFBDF7A5BD5 /* DBProfileUtilities.m */; };
+		F0485D19929F9E46A34ACC52B36E8B64 /* DBProfileBinding.h in Headers */ = {isa = PBXBuildFile; fileRef = F781CB7C48D59D990B4C0422F5214512 /* DBProfileBinding.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F3A962FA0E57092EE9EA50A410E7CD9B /* DBProfileAccessoryViewLayoutAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = A893A252E9102184E878A30944B92E94 /* DBProfileAccessoryViewLayoutAttributes.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F764A48AD4236669D14DA5512FBBE3D6 /* FXBlurView.h in Headers */ = {isa = PBXBuildFile; fileRef = 40D96C3BE3D638E4F03958487B870B8C /* FXBlurView.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F837DE8A2C9908B4E00C34F71E5B2DB4 /* DBProfileTitleView.h in Headers */ = {isa = PBXBuildFile; fileRef = 58431900B9137B4FBBD61B5A67CDA1BB /* DBProfileTitleView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		FA4211151442A550E4060F45C4026149 /* FBSnapshotTestCase.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A7A4D505A0FD86F0615BB3717A303B2 /* FBSnapshotTestCase.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		4604CEC5A02D08E9627C30B712D62F9A /* PBXContainerItemProxy */ = {
+		0FB8ABF9D8BCF1EFB22171CBFF1CBAF2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = D41D8CD98F00B204E9800998ECF8427E /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 75A4F6ED2F1EA7953F472217CAE747C3;
-			remoteInfo = FXBlurView;
-		};
-		54B3AD38AB602CFA8F651796243D2235 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = D41D8CD98F00B204E9800998ECF8427E /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 55389FF84466D27FFD0EB02DAF6F71F6;
+			remoteGlobalIDString = E823B3C1E3063647CEA9D389064D7D2B;
 			remoteInfo = "DBProfileViewController-DBProfileViewController";
 		};
 		64E816FF336FC89BD5DD98BA1A18F39F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = D41D8CD98F00B204E9800998ECF8427E /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = D0A51AB1C3E5B96B195CD99A24BD432E;
+			remoteGlobalIDString = D68C91AD6CF2FAF9C580EE264829F1D1;
 			remoteInfo = DBProfileViewController;
 		};
 		A7CA7DE486D9256D2C345BCB10C5F39F /* PBXContainerItemProxy */ = {
@@ -124,114 +121,125 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = D41D8CD98F00B204E9800998ECF8427E /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 75A4F6ED2F1EA7953F472217CAE747C3;
+			remoteGlobalIDString = F3D3985C1623874EBE69859CB8C4C898;
+			remoteInfo = FXBlurView;
+		};
+		E7FD47878E28D373E524E02503769127 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D41D8CD98F00B204E9800998ECF8427E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F3D3985C1623874EBE69859CB8C4C898;
 			remoteInfo = FXBlurView;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		00CC3951D571B2C9203DA17998ED2A9D /* DBProfileAvatarView.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = DBProfileAvatarView.h; sourceTree = "<group>"; };
-		05109A952557A6EE9489A1AFBC2070C4 /* DBProfileViewControllerUpdateContext.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = DBProfileViewControllerUpdateContext.m; sourceTree = "<group>"; };
-		09342D87C7D90CB800D2C94BD3CE4476 /* DBProfileHeaderOverlayView.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = DBProfileHeaderOverlayView.h; sourceTree = "<group>"; };
-		0A33D3482F9F9DEE2C49B6D55CF283B2 /* DBProfileTitleView.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = DBProfileTitleView.h; sourceTree = "<group>"; };
+		022CFE7B24FEA62B67665E51BF31AE8C /* DBProfileAccessoryViewLayoutAttributes_Private.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = DBProfileAccessoryViewLayoutAttributes_Private.h; sourceTree = "<group>"; };
+		035A58820C25BD226C8EC8A30F61B7AB /* DBProfileAccessoryView.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = DBProfileAccessoryView.m; sourceTree = "<group>"; };
+		056A41C290FBCF1248DA9FFBDF7A5BD5 /* DBProfileUtilities.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = DBProfileUtilities.m; sourceTree = "<group>"; };
+		05E6B0FA35A75491715C78A442BE2966 /* DBProfileTintView.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = DBProfileTintView.m; sourceTree = "<group>"; };
+		08A04D563B1F124629E6B5934E2D322C /* DBProfileAccessoryViewModel.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = DBProfileAccessoryViewModel.h; sourceTree = "<group>"; };
 		0B4C90376B19A49AB408D76E7633D158 /* UIApplication+StrictKeyWindow.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "UIApplication+StrictKeyWindow.m"; path = "FBSnapshotTestCase/Categories/UIApplication+StrictKeyWindow.m"; sourceTree = "<group>"; };
+		0BCEDB102BF6FC76473FEA4FCF55DA5C /* NSBundle+DBProfileViewController.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "NSBundle+DBProfileViewController.h"; sourceTree = "<group>"; };
 		0E01872C0A49F48329707584F0A50585 /* Pods-DBProfileViewController_Example-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-DBProfileViewController_Example-frameworks.sh"; sourceTree = "<group>"; };
-		0F0A78E0EE6F1DDB6D3BD331A1E900AE /* DBProfileViewControllerDelegate.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = DBProfileViewControllerDelegate.h; sourceTree = "<group>"; };
+		0F613410B105C2FCFDC4E21D78E96258 /* DBProfileTintView.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = DBProfileTintView.h; sourceTree = "<group>"; };
+		0FC4EA6959BA013C950C64CA3863F035 /* DBProfileBlurView.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = DBProfileBlurView.m; sourceTree = "<group>"; };
+		0FC64C19115F91FB87C28B35DF4723AE /* DBProfileTitleView.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = DBProfileTitleView.m; sourceTree = "<group>"; };
 		10818AF73DA2353B2F5675CCBD981053 /* Pods-DBProfileViewController_Example-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-DBProfileViewController_Example-dummy.m"; sourceTree = "<group>"; };
-		1820CB1271C2CC62D3214E7FD63626E0 /* DBProfileTintView.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = DBProfileTintView.h; sourceTree = "<group>"; };
+		16974D9B87838E58A90C55B69E391D98 /* UIBarButtonItem+DBProfileViewController.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "UIBarButtonItem+DBProfileViewController.m"; sourceTree = "<group>"; };
+		1B50FE0FDEBF5F0245CA6705A4CB7B2B /* DBProfileSegmentedControl.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = DBProfileSegmentedControl.h; sourceTree = "<group>"; };
+		1DB4B900A62F35E0C5CBF8601DBB6B88 /* DBProfileViewController-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "DBProfileViewController-dummy.m"; sourceTree = "<group>"; };
 		1DC2583C69A68151B63B8C4304244ABD /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.3.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
-		1E7200CD76C5F77584824874EA112E92 /* DBProfileViewController-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "DBProfileViewController-prefix.pch"; sourceTree = "<group>"; };
-		292751F03923EFC8E0C4330AC08337A0 /* DBProfileBinding.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = DBProfileBinding.h; sourceTree = "<group>"; };
+		1F039E31A3C3CF25161F486445A63D37 /* DBProfileHeaderOverlayView.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = DBProfileHeaderOverlayView.m; sourceTree = "<group>"; };
+		1F5E205E1082EDB74420C506371FA17D /* DBProfileViewController-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "DBProfileViewController-prefix.pch"; sourceTree = "<group>"; };
+		20FD11FBB442FFE2DF9199F329CD0C58 /* DBProfileHeaderOverlayView.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = DBProfileHeaderOverlayView.h; sourceTree = "<group>"; };
+		2626E14A67FA8D8B75A990BD09D5DFD0 /* DBProfileAvatarView.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = DBProfileAvatarView.h; sourceTree = "<group>"; };
+		27CCF902CFC2292B8A0AE07E9D138D3F /* DBProfileDefines.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = DBProfileDefines.h; sourceTree = "<group>"; };
+		2A0CB62DA1494792E4B1DF71AB6C3B81 /* UICollectionViewController+DBProfileContentPresenting.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "UICollectionViewController+DBProfileContentPresenting.h"; sourceTree = "<group>"; };
+		2B63B414C62E32246D97B2290FD82B97 /* DBProfileAvatarView.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = DBProfileAvatarView.m; sourceTree = "<group>"; };
 		2BB713120A0F8211199D7CEEC9DDEFA8 /* FXBlurView-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "FXBlurView-prefix.pch"; sourceTree = "<group>"; };
+		2C09C3A3DFBB30B4E29DE21174A42C49 /* DBProfileSegmentedControlView.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = DBProfileSegmentedControlView.h; sourceTree = "<group>"; };
+		2D6AB369ED2625C6D118050AA05CC373 /* DBProfileAvatarViewLayoutAttributes.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = DBProfileAvatarViewLayoutAttributes.h; sourceTree = "<group>"; };
 		30412AB95319D4874E9399B6586634F8 /* FBSnapshotTestController.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = FBSnapshotTestController.h; path = FBSnapshotTestCase/FBSnapshotTestController.h; sourceTree = "<group>"; };
 		32697E5307C8B3189F7E1D81A881DC82 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.3.sdk/System/Library/Frameworks/QuartzCore.framework; sourceTree = DEVELOPER_DIR; };
 		334DECEB6259E815F799FD06215EBA5B /* Pods-DBProfileViewController_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-DBProfileViewController_Example.debug.xcconfig"; sourceTree = "<group>"; };
-		33F1F02040B9E071C0144B60FACDB8F0 /* DBProfileDefines.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = DBProfileDefines.h; sourceTree = "<group>"; };
 		374D9D8A7F9AAF2F4599231CACA1993E /* Pods-DBProfileViewController_Example-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-DBProfileViewController_Example-acknowledgements.plist"; sourceTree = "<group>"; };
-		398D7B9D757A976C2A192B2E5ACDB00D /* DBProfileCoverPhotoView.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = DBProfileCoverPhotoView.h; sourceTree = "<group>"; };
 		3A7A4D505A0FD86F0615BB3717A303B2 /* FBSnapshotTestCase.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = FBSnapshotTestCase.m; path = FBSnapshotTestCase/FBSnapshotTestCase.m; sourceTree = "<group>"; };
-		3BD919AA95C9F51592E5A8668527E733 /* DBProfileAccessoryViewModel.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = DBProfileAccessoryViewModel.h; sourceTree = "<group>"; };
-		3E4D8A14525A559F54BF556185B931A0 /* DBProfileContentOffsetCache.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = DBProfileContentOffsetCache.h; sourceTree = "<group>"; };
-		40C513C371CA877654FE0090AE9AED4B /* DBProfileSegmentedControlView.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = DBProfileSegmentedControlView.m; sourceTree = "<group>"; };
+		3B8E87A2651416267D4C841BF758E258 /* DBProfileAccessoryViewLayoutAttributes.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = DBProfileAccessoryViewLayoutAttributes.m; sourceTree = "<group>"; };
 		40D96C3BE3D638E4F03958487B870B8C /* FXBlurView.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = FXBlurView.h; path = FXBlurView/FXBlurView.h; sourceTree = "<group>"; };
-		42D2E23851A492FE9E0AF141CE43D270 /* NSBundle+DBProfileViewController.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "NSBundle+DBProfileViewController.m"; sourceTree = "<group>"; };
-		44A0CE086CA990E3286475F2446D51A8 /* DBProfileAvatarViewLayoutAttributes.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = DBProfileAvatarViewLayoutAttributes.m; sourceTree = "<group>"; };
 		45B746F8601CC57B691664430AA0693B /* FXBlurView.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = FXBlurView.m; path = FXBlurView/FXBlurView.m; sourceTree = "<group>"; };
 		465A221D0E2D9D297CE66E8AFE0BB20F /* Pods-DBProfileViewController_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-DBProfileViewController_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		488E356B2DA3418BC56E4101F4833DF4 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.3.sdk/System/Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
-		4FD2DDDDDE85BC9EEBA917DADBE47F3D /* DBProfileAccessoryView.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = DBProfileAccessoryView.m; sourceTree = "<group>"; };
-		514DE1940B6DEF119F4948CBB606B1C8 /* DBProfileViewControllerDataSource.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = DBProfileViewControllerDataSource.h; sourceTree = "<group>"; };
-		523A8CFDF8B5448000161E6482F84E12 /* DBProfileAccessoryView_Private.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = DBProfileAccessoryView_Private.h; sourceTree = "<group>"; };
+		4DC16197A66ECCFE255B639052D8BC7A /* DBProfileCoverPhotoView.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = DBProfileCoverPhotoView.h; sourceTree = "<group>"; };
+		4F4897C55C8965BD02B529929A9EAB7C /* NSBundle+DBProfileViewController.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "NSBundle+DBProfileViewController.m"; sourceTree = "<group>"; };
 		5390F774BAA481A91BC8EA8076B35D90 /* Pods-DBProfileViewController_Tests-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-DBProfileViewController_Tests-dummy.m"; sourceTree = "<group>"; };
-		57F4E4D0C3323CF41129BFF847167D50 /* DBProfileSegmentedControl.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = DBProfileSegmentedControl.h; sourceTree = "<group>"; };
+		5406909B4AA6886B30076EAF197EF4D3 /* DBProfileSegmentedControlView.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = DBProfileSegmentedControlView.m; sourceTree = "<group>"; };
 		5814CB511CF0A99646C0DC4797EC3954 /* FBSnapshotTestCase.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = FBSnapshotTestCase.h; path = FBSnapshotTestCase/FBSnapshotTestCase.h; sourceTree = "<group>"; };
+		58431900B9137B4FBBD61B5A67CDA1BB /* DBProfileTitleView.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = DBProfileTitleView.h; sourceTree = "<group>"; };
+		58E7423B2F68E28D00D3609A2E78E9C8 /* db-profile-chevron@2x.png */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = image.png; path = "db-profile-chevron@2x.png"; sourceTree = "<group>"; };
 		5931E9D985B544988150F03A36948CF6 /* UIImage+Snapshot.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "UIImage+Snapshot.h"; path = "FBSnapshotTestCase/Categories/UIImage+Snapshot.h"; sourceTree = "<group>"; };
 		5973905DCD3C55E429C58BF0351D95DE /* Pods-DBProfileViewController_Tests-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-DBProfileViewController_Tests-acknowledgements.plist"; sourceTree = "<group>"; };
-		60DD1D8FCB6E47FB8A8AEA7BA42FEFBC /* DBProfileAvatarView.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = DBProfileAvatarView.m; sourceTree = "<group>"; };
-		6E19068C3BA34554FD30FF6F12114F4C /* DBProfileUtilities.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = DBProfileUtilities.h; sourceTree = "<group>"; };
+		5CBFE94AB874CE30B57938D083265010 /* ResourceBundle-DBProfileViewController-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "ResourceBundle-DBProfileViewController-Info.plist"; sourceTree = "<group>"; };
+		5CC72796A45D80235470AF4FEEF7F094 /* UITableViewController+DBProfileContentPresenting.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "UITableViewController+DBProfileContentPresenting.h"; sourceTree = "<group>"; };
+		604CAC13ACBDCF07E51B8F8A4F1D9D83 /* DBProfileHeaderViewLayoutAttributes.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = DBProfileHeaderViewLayoutAttributes.h; sourceTree = "<group>"; };
 		7206961E4CD120F7D3223FE0BCCF90AF /* FBSnapshotTestCase-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "FBSnapshotTestCase-dummy.m"; sourceTree = "<group>"; };
-		7303E5EF310C7CCA6D17FB55900831C6 /* DBProfileObserver.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = DBProfileObserver.h; sourceTree = "<group>"; };
+		72AA8BBDC513B2ABCB574154CB5CE8BE /* DBProfileHeaderViewLayoutAttributes.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = DBProfileHeaderViewLayoutAttributes.m; sourceTree = "<group>"; };
 		745ED1C27718919C153A344235ED575C /* FBSnapshotTestCase.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = FBSnapshotTestCase.xcconfig; sourceTree = "<group>"; };
-		7A08491EDC12BE1C8862C93E8E39D221 /* db-profile-chevron.png */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = image.png; path = "db-profile-chevron.png"; sourceTree = "<group>"; };
-		7A626DB1AD942EDAEC7860E86053A56A /* DBProfileAccessoryViewLayoutAttributes.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = DBProfileAccessoryViewLayoutAttributes.h; sourceTree = "<group>"; };
+		74F83489BBCA09521D67FECFD4FE6C97 /* DBProfileAccessoryView.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = DBProfileAccessoryView.h; sourceTree = "<group>"; };
 		7EDEDF7EA3F5C2A2C612CA2A5A11707A /* Pods-DBProfileViewController_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-DBProfileViewController_Example.release.xcconfig"; sourceTree = "<group>"; };
-		829725101D82B48BCC9CB9072EAEF843 /* DBProfileTintView.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = DBProfileTintView.m; sourceTree = "<group>"; };
-		841F3B07CA4F4C20FC0D598C8FC1969C /* UIBarButtonItem+DBProfileViewController.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "UIBarButtonItem+DBProfileViewController.m"; sourceTree = "<group>"; };
-		853168F03702BE362E1E55ECDC1AAE1E /* DBProfileAccessoryViewLayoutAttributes.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = DBProfileAccessoryViewLayoutAttributes.m; sourceTree = "<group>"; };
+		84E7BAAA59147F7A24AEC603AD513BA5 /* UICollectionViewController+DBProfileContentPresenting.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "UICollectionViewController+DBProfileContentPresenting.m"; sourceTree = "<group>"; };
+		8683426F8E7773C72159142B703F0DDF /* db-profile-chevron@3x.png */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = image.png; path = "db-profile-chevron@3x.png"; sourceTree = "<group>"; };
 		880D9568469E0E9ABEFFD88574A63064 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.3.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
-		8E250D2550C9B1748FE05DF60E545ADC /* DBProfileViewControllerUpdateContext.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = DBProfileViewControllerUpdateContext.h; sourceTree = "<group>"; };
+		8A6F3D5B20DD7CE6BA3201FBD9A9CA2D /* DBProfileViewControllerUpdateContext.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = DBProfileViewControllerUpdateContext.m; sourceTree = "<group>"; };
+		8A8CB1843A8D0C2716C73070F8C3C5FC /* DBProfileBlurView.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = DBProfileBlurView.h; sourceTree = "<group>"; };
+		8BAE1B3CE1D9E9BF7C351B0E6E9702EF /* DBProfileViewController.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = DBProfileViewController.h; sourceTree = "<group>"; };
+		8F72869046CCC513AEE724E47067AB46 /* DBProfileObserver.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = DBProfileObserver.m; sourceTree = "<group>"; };
 		9065392D1C2BF057153BFA53B203F055 /* FBSnapshotTestCasePlatform.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = FBSnapshotTestCasePlatform.m; path = FBSnapshotTestCase/FBSnapshotTestCasePlatform.m; sourceTree = "<group>"; };
 		930804DF2BAE9BC58732130495DF0831 /* Pods-DBProfileViewController_Tests-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-DBProfileViewController_Tests-frameworks.sh"; sourceTree = "<group>"; };
+		936D572677E493DE5D529124991EC991 /* DBProfileViewController.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = DBProfileViewController.xcconfig; sourceTree = "<group>"; };
 		93A4A3777CF96A4AAC1D13BA6DCCEA73 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
-		94F3D3A1AF6906D99D456947FFF7316A /* DBProfileHeaderViewLayoutAttributes_Private.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = DBProfileHeaderViewLayoutAttributes_Private.h; sourceTree = "<group>"; };
+		94482BCE76C7E9ABB2FCF4CBA1121F86 /* DBProfileContentOffsetCache.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = DBProfileContentOffsetCache.h; sourceTree = "<group>"; };
 		965CB060BEE7D9BA8F6B562FD9333DDB /* Pods-DBProfileViewController_Example-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-DBProfileViewController_Example-acknowledgements.markdown"; sourceTree = "<group>"; };
-		984356602E5228244275B1E75A0A9A44 /* DBProfileAccessoryViewLayoutAttributes_Private.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = DBProfileAccessoryViewLayoutAttributes_Private.h; sourceTree = "<group>"; };
-		9999655FF6E7DDB5C9A7D91CE32E4738 /* DBProfileHeaderViewLayoutAttributes.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = DBProfileHeaderViewLayoutAttributes.m; sourceTree = "<group>"; };
+		9D19069E7F68E328D42FDEF448D1642B /* DBProfileViewControllerDataSource.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = DBProfileViewControllerDataSource.h; sourceTree = "<group>"; };
+		A11F618EDFB60234CBFBF7BB4E7094B7 /* DBProfileCoverPhotoView.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = DBProfileCoverPhotoView.m; sourceTree = "<group>"; };
+		A183E3F8E2645BACF2A7D4C70BD1624B /* DBProfileAccessoryViewModel.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = DBProfileAccessoryViewModel.m; sourceTree = "<group>"; };
 		A405C0D798B0C307E0FBADEA8BC88FDE /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.3.sdk/System/Library/Frameworks/Accelerate.framework; sourceTree = DEVELOPER_DIR; };
 		A4392CCEE22016E6E93081DCBE1791CE /* UIImage+Diff.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "UIImage+Diff.h"; path = "FBSnapshotTestCase/Categories/UIImage+Diff.h"; sourceTree = "<group>"; };
-		A484E38B463054C3E56DFD7AE934F1DA /* DBProfileBlurView.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = DBProfileBlurView.h; sourceTree = "<group>"; };
-		A60962D9A96E91E3EEFB63FD06394924 /* DBProfileSegmentedControlView.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = DBProfileSegmentedControlView.h; sourceTree = "<group>"; };
 		A622D04C3AE95289326A8163CB4AE4D7 /* UIImage+Diff.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "UIImage+Diff.m"; path = "FBSnapshotTestCase/Categories/UIImage+Diff.m"; sourceTree = "<group>"; };
-		A784D42F6688C85EE4C4A85D03CC7949 /* DBProfileHeaderOverlayView.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = DBProfileHeaderOverlayView.m; sourceTree = "<group>"; };
+		A74B1477ABADB830AAA0FD5890236032 /* DBProfileViewControllerDelegate.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = DBProfileViewControllerDelegate.h; sourceTree = "<group>"; };
+		A893A252E9102184E878A30944B92E94 /* DBProfileAccessoryViewLayoutAttributes.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = DBProfileAccessoryViewLayoutAttributes.h; sourceTree = "<group>"; };
 		A8BE5F8DC1ADDCE1ECA38166FD6993A1 /* Pods-DBProfileViewController_Example-resources.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-DBProfileViewController_Example-resources.sh"; sourceTree = "<group>"; };
 		A9F82A9EA24D2BAE3CC9BDBA7E829BBF /* libFBSnapshotTestCase.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libFBSnapshotTestCase.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		ABC97F22F0382653C3B1F86674640E30 /* DBProfileViewController.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = DBProfileViewController.h; sourceTree = "<group>"; };
 		AD21FFDE5F07C49652DFD3C1F9FFF257 /* Pods-DBProfileViewController_Tests-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-DBProfileViewController_Tests-acknowledgements.markdown"; sourceTree = "<group>"; };
-		B50CC99730AEF660CDE35D766CC079D6 /* DBProfileViewController.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = DBProfileViewController.m; sourceTree = "<group>"; };
-		B51BCBDE2CDF6378EB4D17E77F02D55B /* DBProfileTitleView.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = DBProfileTitleView.m; sourceTree = "<group>"; };
-		B5F054086F222C223147F9E836F3D98A /* NSBundle+DBProfileViewController.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "NSBundle+DBProfileViewController.h"; sourceTree = "<group>"; };
-		B6879A3E45D5399F6DEE5A54CF833BBF /* DBProfileContentOffsetCache.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = DBProfileContentOffsetCache.m; sourceTree = "<group>"; };
-		B728E303FA35981635D8FFE573933AF4 /* DBProfileCoverPhotoView.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = DBProfileCoverPhotoView.m; sourceTree = "<group>"; };
+		AE1897EA97501108657040917C39BBFD /* UIBarButtonItem+DBProfileViewController.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "UIBarButtonItem+DBProfileViewController.h"; sourceTree = "<group>"; };
+		AFA5BD5FA87817A1385BD85C9918A1F7 /* DBProfileContentOffsetCache.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = DBProfileContentOffsetCache.m; sourceTree = "<group>"; };
+		B1C3CD799143828B8A1DBCA4706F95B1 /* DBProfileViewControllerUpdateContext.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = DBProfileViewControllerUpdateContext.h; sourceTree = "<group>"; };
+		B2C20DC2E83C668A13A68B4862A5C8D9 /* DBProfileObserver.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = DBProfileObserver.h; sourceTree = "<group>"; };
+		B3629D8C16DEAE0DB7CD707CEFCEF879 /* DBProfileBinding.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = DBProfileBinding.m; sourceTree = "<group>"; };
 		B76B3EF6A9AE9CD4B66E0404F43B157B /* UIImage+Snapshot.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "UIImage+Snapshot.m"; path = "FBSnapshotTestCase/Categories/UIImage+Snapshot.m"; sourceTree = "<group>"; };
-		B7FBE68ACDF7775FF47D04DAD8B0E54B /* DBProfileContentPresenting.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = DBProfileContentPresenting.h; sourceTree = "<group>"; };
-		BC2AC07C4F1F9FD2BCAA8C225283F0AE /* db-profile-chevron@3x.png */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = image.png; path = "db-profile-chevron@3x.png"; sourceTree = "<group>"; };
+		B812FC9F13E360A9B56E148547897B45 /* DBProfileAccessoryView_Private.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = DBProfileAccessoryView_Private.h; sourceTree = "<group>"; };
 		BFB81B763AF32CB3360A25B54804E23A /* libDBProfileViewController.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libDBProfileViewController.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		C07054FA5A1812A4E03F74513B0618EA /* Pods-DBProfileViewController_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-DBProfileViewController_Tests.release.xcconfig"; sourceTree = "<group>"; };
 		C0C241067C11C8CDB077994486D3FD0C /* FBSnapshotTestController.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = FBSnapshotTestController.m; path = FBSnapshotTestCase/FBSnapshotTestController.m; sourceTree = "<group>"; };
-		C11DA4C3A87936BF0D4399079790958F /* DBProfileObserver.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = DBProfileObserver.m; sourceTree = "<group>"; };
-		C35E681BE88218A21816594ED85F6E86 /* DBProfileUtilities.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = DBProfileUtilities.m; sourceTree = "<group>"; };
+		C85FA122AE5A47AA57D6EC31A35C48EC /* DBProfileAvatarViewLayoutAttributes.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = DBProfileAvatarViewLayoutAttributes.m; sourceTree = "<group>"; };
+		C88A2C762F83EFB9599303814D839AC0 /* UITableViewController+DBProfileContentPresenting.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "UITableViewController+DBProfileContentPresenting.m"; sourceTree = "<group>"; };
+		C8AB6BEC2108637170C2EC245EC050F9 /* DBProfileViewController.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = DBProfileViewController.m; sourceTree = "<group>"; };
 		CA514886B90FDAF66EDCB00B9954A0F8 /* libPods-DBProfileViewController_Example.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-DBProfileViewController_Example.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		CAC9D16B69D59FC3F11051B064EE5DE7 /* DBProfileViewController-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "DBProfileViewController-dummy.m"; sourceTree = "<group>"; };
-		D051D2DD3F7162600BE8DA0D957763E0 /* DBProfileAccessoryViewModel.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = DBProfileAccessoryViewModel.m; sourceTree = "<group>"; };
+		CC754728F4F51A286B2CFF86C5E6C25A /* DBProfileHeaderViewLayoutAttributes_Private.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = DBProfileHeaderViewLayoutAttributes_Private.h; sourceTree = "<group>"; };
+		D27F5DCB9B813840556ECC0B36018E3C /* DBProfileContentPresenting.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = DBProfileContentPresenting.h; sourceTree = "<group>"; };
+		D4F889494A5B2B3AD034116FED3989C6 /* DBProfileUtilities.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = DBProfileUtilities.h; sourceTree = "<group>"; };
 		D64816D6522FA2E2E1C01D7D42DFF093 /* Pods-DBProfileViewController_Tests-resources.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-DBProfileViewController_Tests-resources.sh"; sourceTree = "<group>"; };
 		D64C2F8DDA59C3B4CC847093606CD873 /* FBSnapshotTestCasePlatform.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = FBSnapshotTestCasePlatform.h; path = FBSnapshotTestCase/FBSnapshotTestCasePlatform.h; sourceTree = "<group>"; };
 		D6A3BF2EEB06985404CC5DEA0B43DDB3 /* libPods-DBProfileViewController_Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-DBProfileViewController_Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D9D80C6E11D49EFD594C303CA1CA05D0 /* FXBlurView-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "FXBlurView-dummy.m"; sourceTree = "<group>"; };
-		DB3FBFB379CA15C467788A522CB5E348 /* DBProfileAvatarViewLayoutAttributes.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = DBProfileAvatarViewLayoutAttributes.h; sourceTree = "<group>"; };
+		DA5EEB6D49DBFD508CF2FA3783213362 /* db-profile-chevron.png */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = image.png; path = "db-profile-chevron.png"; sourceTree = "<group>"; };
 		DE6EB2C4E319DEF9CC358185098EADB7 /* FXBlurView.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = FXBlurView.xcconfig; sourceTree = "<group>"; };
-		DFF6A082CD640DFE4CF425882CDD4321 /* db-profile-chevron@2x.png */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = image.png; path = "db-profile-chevron@2x.png"; sourceTree = "<group>"; };
 		E00319882F10694D4AF21A8BB536AD0C /* FBSnapshotTestCase-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "FBSnapshotTestCase-prefix.pch"; sourceTree = "<group>"; };
 		E435A2020B76EB949AC7E9CD57CD6F62 /* DBProfileViewController.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DBProfileViewController.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		E6D8A4E2F4EA379699EAAFABD29050C5 /* UIImage+Compare.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "UIImage+Compare.m"; path = "FBSnapshotTestCase/Categories/UIImage+Compare.m"; sourceTree = "<group>"; };
-		E782FFD8C86F5F03D32FFC24CFFC9789 /* ResourceBundle-DBProfileViewController-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "ResourceBundle-DBProfileViewController-Info.plist"; sourceTree = "<group>"; };
-		EB514891FA5E6873D5B4E13B349836DF /* DBProfileViewController.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = DBProfileViewController.xcconfig; sourceTree = "<group>"; };
-		ED39D436ED37118A268B1B4A558D82A4 /* DBProfileBinding.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = DBProfileBinding.m; sourceTree = "<group>"; };
 		F090680F4217A7C32FB6368C84948AFA /* libFXBlurView.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libFXBlurView.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		F1D6FDA13F321EC563B3F79F159128F2 /* DBProfileAccessoryView.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = DBProfileAccessoryView.h; sourceTree = "<group>"; };
 		F332A261B19974AA93B7F76FB58ABECD /* UIImage+Compare.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "UIImage+Compare.h"; path = "FBSnapshotTestCase/Categories/UIImage+Compare.h"; sourceTree = "<group>"; };
-		F5DCB02289499BBE509224FAC431E130 /* DBProfileBlurView.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = DBProfileBlurView.m; sourceTree = "<group>"; };
-		F9343F29F87289DFB08E32251E650D5A /* UIBarButtonItem+DBProfileViewController.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "UIBarButtonItem+DBProfileViewController.h"; sourceTree = "<group>"; };
-		FA16AED41FA53C679CCA585AF57F5A18 /* DBProfileHeaderViewLayoutAttributes.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = DBProfileHeaderViewLayoutAttributes.h; sourceTree = "<group>"; };
+		F781CB7C48D59D990B4C0422F5214512 /* DBProfileBinding.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = DBProfileBinding.h; sourceTree = "<group>"; };
 		FDCAD3271EA3B6B6372B27A40E337F73 /* UIApplication+StrictKeyWindow.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "UIApplication+StrictKeyWindow.h"; path = "FBSnapshotTestCase/Categories/UIApplication+StrictKeyWindow.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -247,16 +255,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		315CAE03E52E88C097D2992279752F44 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				E97D099837D596AD2635BEA3C84AC004 /* Accelerate.framework in Frameworks */,
-				3F55E471C73843A72C0B42228E9984C5 /* Foundation.framework in Frameworks */,
-				B7B39242C24AD3009158D15AD8CCC131 /* QuartzCore.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		384D48927B051218064A8E9FB496DD22 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -265,18 +263,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		A2AA8C028A5CEB6F3B3B7A74813FD402 /* Frameworks */ = {
+		464AF50CE9B6AA289CD861B88B9B36E0 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D86D15B6866F8506C4CBF1EBCE762D38 /* Accelerate.framework in Frameworks */,
+				DE580D17752EF20ADD2B17924E7A84A3 /* Foundation.framework in Frameworks */,
+				5444BF510D28AD9602879B56C068FC78 /* QuartzCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		D601C58BA4A5A1212C0D7CB0ACC24C4D /* Frameworks */ = {
+		A1967D62C3DC5921B80624493A2A8E43 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7C906F60BDA365B660100DAC1357C830 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -285,6 +285,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				95AC59B5D528320092BA7D304EA9649D /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F24B8FAB680EFCEC11384B87D14E2534 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				17348EA812F81D72318A3E784BE30162 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -298,17 +306,6 @@
 				FEBCCE405D3B51C6341847835D5DB774 /* FXBlurView */,
 			);
 			name = Pods;
-			sourceTree = "<group>";
-		};
-		14FAB92E4924AF28018C90123D6D8918 /* DBProfileViewController */ = {
-			isa = PBXGroup;
-			children = (
-				8AEC74C53D2D854D08671A020BE57338 /* DBProfileViewController */,
-				2CA025EDD06CF9A9C4E4AC11F8AC61E0 /* Resources */,
-				878FBB7BE426F4BE9C9D34D28D08885B /* Support Files */,
-			);
-			name = DBProfileViewController;
-			path = ..;
 			sourceTree = "<group>";
 		};
 		203CC063C1AE6DD17DB5EBC51D3ECE67 /* Support Files */ = {
@@ -351,14 +348,6 @@
 			name = Core;
 			sourceTree = "<group>";
 		};
-		2CA025EDD06CF9A9C4E4AC11F8AC61E0 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				5389E5B49112AEF1531D995E811B5EF5 /* Assets */,
-			);
-			name = Resources;
-			sourceTree = "<group>";
-		};
 		35EE0957B93EBA92D5A42E32C24325AD /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -372,14 +361,66 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		5389E5B49112AEF1531D995E811B5EF5 /* Assets */ = {
+		577C705C63697DA1822019191A777ABA /* UIKit */ = {
 			isa = PBXGroup;
 			children = (
-				7A08491EDC12BE1C8862C93E8E39D221 /* db-profile-chevron.png */,
-				DFF6A082CD640DFE4CF425882CDD4321 /* db-profile-chevron@2x.png */,
-				BC2AC07C4F1F9FD2BCAA8C225283F0AE /* db-profile-chevron@3x.png */,
+				2A0CB62DA1494792E4B1DF71AB6C3B81 /* UICollectionViewController+DBProfileContentPresenting.h */,
+				84E7BAAA59147F7A24AEC603AD513BA5 /* UICollectionViewController+DBProfileContentPresenting.m */,
+				5CC72796A45D80235470AF4FEEF7F094 /* UITableViewController+DBProfileContentPresenting.h */,
+				C88A2C762F83EFB9599303814D839AC0 /* UITableViewController+DBProfileContentPresenting.m */,
 			);
-			path = Assets;
+			path = UIKit;
+			sourceTree = "<group>";
+		};
+		58481CFA16D7C3C5E4DEA35213A76C6E /* DBProfileViewController */ = {
+			isa = PBXGroup;
+			children = (
+				70AEA1FAA68FBE46B3A855E6B68B2497 /* DBProfileViewController */,
+				88F58F63B7653B6C3F962C117DA9FF69 /* Resources */,
+				9A7767B1946602F9557CD2D5A805CF2A /* Support Files */,
+			);
+			name = DBProfileViewController;
+			path = ..;
+			sourceTree = "<group>";
+		};
+		70AEA1FAA68FBE46B3A855E6B68B2497 /* DBProfileViewController */ = {
+			isa = PBXGroup;
+			children = (
+				74F83489BBCA09521D67FECFD4FE6C97 /* DBProfileAccessoryView.h */,
+				035A58820C25BD226C8EC8A30F61B7AB /* DBProfileAccessoryView.m */,
+				A893A252E9102184E878A30944B92E94 /* DBProfileAccessoryViewLayoutAttributes.h */,
+				3B8E87A2651416267D4C841BF758E258 /* DBProfileAccessoryViewLayoutAttributes.m */,
+				08A04D563B1F124629E6B5934E2D322C /* DBProfileAccessoryViewModel.h */,
+				A183E3F8E2645BACF2A7D4C70BD1624B /* DBProfileAccessoryViewModel.m */,
+				2626E14A67FA8D8B75A990BD09D5DFD0 /* DBProfileAvatarView.h */,
+				2B63B414C62E32246D97B2290FD82B97 /* DBProfileAvatarView.m */,
+				2D6AB369ED2625C6D118050AA05CC373 /* DBProfileAvatarViewLayoutAttributes.h */,
+				C85FA122AE5A47AA57D6EC31A35C48EC /* DBProfileAvatarViewLayoutAttributes.m */,
+				F781CB7C48D59D990B4C0422F5214512 /* DBProfileBinding.h */,
+				B3629D8C16DEAE0DB7CD707CEFCEF879 /* DBProfileBinding.m */,
+				8A8CB1843A8D0C2716C73070F8C3C5FC /* DBProfileBlurView.h */,
+				0FC4EA6959BA013C950C64CA3863F035 /* DBProfileBlurView.m */,
+				94482BCE76C7E9ABB2FCF4CBA1121F86 /* DBProfileContentOffsetCache.h */,
+				AFA5BD5FA87817A1385BD85C9918A1F7 /* DBProfileContentOffsetCache.m */,
+				4DC16197A66ECCFE255B639052D8BC7A /* DBProfileCoverPhotoView.h */,
+				A11F618EDFB60234CBFBF7BB4E7094B7 /* DBProfileCoverPhotoView.m */,
+				20FD11FBB442FFE2DF9199F329CD0C58 /* DBProfileHeaderOverlayView.h */,
+				1F039E31A3C3CF25161F486445A63D37 /* DBProfileHeaderOverlayView.m */,
+				604CAC13ACBDCF07E51B8F8A4F1D9D83 /* DBProfileHeaderViewLayoutAttributes.h */,
+				72AA8BBDC513B2ABCB574154CB5CE8BE /* DBProfileHeaderViewLayoutAttributes.m */,
+				B2C20DC2E83C668A13A68B4862A5C8D9 /* DBProfileObserver.h */,
+				8F72869046CCC513AEE724E47067AB46 /* DBProfileObserver.m */,
+				0F613410B105C2FCFDC4E21D78E96258 /* DBProfileTintView.h */,
+				05E6B0FA35A75491715C78A442BE2966 /* DBProfileTintView.m */,
+				58431900B9137B4FBBD61B5A67CDA1BB /* DBProfileTitleView.h */,
+				0FC64C19115F91FB87C28B35DF4723AE /* DBProfileTitleView.m */,
+				8BAE1B3CE1D9E9BF7C351B0E6E9702EF /* DBProfileViewController.h */,
+				C8AB6BEC2108637170C2EC245EC050F9 /* DBProfileViewController.m */,
+				F25564B8543A47D48B2B67A91A404C4F /* Private */,
+				D4BBCD0CEF3E8D8B2F3D059B72BB7EFB /* Protocols */,
+				577C705C63697DA1822019191A777ABA /* UIKit */,
+			);
+			path = DBProfileViewController;
 			sourceTree = "<group>";
 		};
 		7C27D1D9B5ACFC4A9A5E92EC1E7990FE /* iOS */ = {
@@ -415,55 +456,12 @@
 			name = "Targets Support Files";
 			sourceTree = "<group>";
 		};
-		878FBB7BE426F4BE9C9D34D28D08885B /* Support Files */ = {
+		88F58F63B7653B6C3F962C117DA9FF69 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				EB514891FA5E6873D5B4E13B349836DF /* DBProfileViewController.xcconfig */,
-				CAC9D16B69D59FC3F11051B064EE5DE7 /* DBProfileViewController-dummy.m */,
-				1E7200CD76C5F77584824874EA112E92 /* DBProfileViewController-prefix.pch */,
-				E782FFD8C86F5F03D32FFC24CFFC9789 /* ResourceBundle-DBProfileViewController-Info.plist */,
+				D616693E94285BA807BA8B95AA112C77 /* Assets */,
 			);
-			name = "Support Files";
-			path = "Pods/Target Support Files/DBProfileViewController";
-			sourceTree = "<group>";
-		};
-		8AEC74C53D2D854D08671A020BE57338 /* DBProfileViewController */ = {
-			isa = PBXGroup;
-			children = (
-				F1D6FDA13F321EC563B3F79F159128F2 /* DBProfileAccessoryView.h */,
-				4FD2DDDDDE85BC9EEBA917DADBE47F3D /* DBProfileAccessoryView.m */,
-				7A626DB1AD942EDAEC7860E86053A56A /* DBProfileAccessoryViewLayoutAttributes.h */,
-				853168F03702BE362E1E55ECDC1AAE1E /* DBProfileAccessoryViewLayoutAttributes.m */,
-				3BD919AA95C9F51592E5A8668527E733 /* DBProfileAccessoryViewModel.h */,
-				D051D2DD3F7162600BE8DA0D957763E0 /* DBProfileAccessoryViewModel.m */,
-				00CC3951D571B2C9203DA17998ED2A9D /* DBProfileAvatarView.h */,
-				60DD1D8FCB6E47FB8A8AEA7BA42FEFBC /* DBProfileAvatarView.m */,
-				DB3FBFB379CA15C467788A522CB5E348 /* DBProfileAvatarViewLayoutAttributes.h */,
-				44A0CE086CA990E3286475F2446D51A8 /* DBProfileAvatarViewLayoutAttributes.m */,
-				292751F03923EFC8E0C4330AC08337A0 /* DBProfileBinding.h */,
-				ED39D436ED37118A268B1B4A558D82A4 /* DBProfileBinding.m */,
-				A484E38B463054C3E56DFD7AE934F1DA /* DBProfileBlurView.h */,
-				F5DCB02289499BBE509224FAC431E130 /* DBProfileBlurView.m */,
-				3E4D8A14525A559F54BF556185B931A0 /* DBProfileContentOffsetCache.h */,
-				B6879A3E45D5399F6DEE5A54CF833BBF /* DBProfileContentOffsetCache.m */,
-				398D7B9D757A976C2A192B2E5ACDB00D /* DBProfileCoverPhotoView.h */,
-				B728E303FA35981635D8FFE573933AF4 /* DBProfileCoverPhotoView.m */,
-				09342D87C7D90CB800D2C94BD3CE4476 /* DBProfileHeaderOverlayView.h */,
-				A784D42F6688C85EE4C4A85D03CC7949 /* DBProfileHeaderOverlayView.m */,
-				FA16AED41FA53C679CCA585AF57F5A18 /* DBProfileHeaderViewLayoutAttributes.h */,
-				9999655FF6E7DDB5C9A7D91CE32E4738 /* DBProfileHeaderViewLayoutAttributes.m */,
-				7303E5EF310C7CCA6D17FB55900831C6 /* DBProfileObserver.h */,
-				C11DA4C3A87936BF0D4399079790958F /* DBProfileObserver.m */,
-				1820CB1271C2CC62D3214E7FD63626E0 /* DBProfileTintView.h */,
-				829725101D82B48BCC9CB9072EAEF843 /* DBProfileTintView.m */,
-				0A33D3482F9F9DEE2C49B6D55CF283B2 /* DBProfileTitleView.h */,
-				B51BCBDE2CDF6378EB4D17E77F02D55B /* DBProfileTitleView.m */,
-				ABC97F22F0382653C3B1F86674640E30 /* DBProfileViewController.h */,
-				B50CC99730AEF660CDE35D766CC079D6 /* DBProfileViewController.m */,
-				CFE2CD0CEC00ED00B63CB3D3C723703A /* Private */,
-				CD1FA2C31253F083D2358102938288BE /* Protocols */,
-			);
-			path = DBProfileViewController;
+			name = Resources;
 			sourceTree = "<group>";
 		};
 		960442E2605AC0FD319209D77F5DEC58 /* Pods-DBProfileViewController_Tests */ = {
@@ -479,6 +477,18 @@
 			);
 			name = "Pods-DBProfileViewController_Tests";
 			path = "Target Support Files/Pods-DBProfileViewController_Tests";
+			sourceTree = "<group>";
+		};
+		9A7767B1946602F9557CD2D5A805CF2A /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				936D572677E493DE5D529124991EC991 /* DBProfileViewController.xcconfig */,
+				1DB4B900A62F35E0C5CBF8601DBB6B88 /* DBProfileViewController-dummy.m */,
+				1F5E205E1082EDB74420C506371FA17D /* DBProfileViewController-prefix.pch */,
+				5CBFE94AB874CE30B57938D083265010 /* ResourceBundle-DBProfileViewController-Info.plist */,
+			);
+			name = "Support Files";
+			path = "Pods/Target Support Files/DBProfileViewController";
 			sourceTree = "<group>";
 		};
 		A222AA5283A53004DC3C3B18AA329242 /* Pods-DBProfileViewController_Example */ = {
@@ -510,41 +520,30 @@
 		C9355AEC352A9A30900CB59BD50C2D6F /* Development Pods */ = {
 			isa = PBXGroup;
 			children = (
-				14FAB92E4924AF28018C90123D6D8918 /* DBProfileViewController */,
+				58481CFA16D7C3C5E4DEA35213A76C6E /* DBProfileViewController */,
 			);
 			name = "Development Pods";
 			sourceTree = "<group>";
 		};
-		CD1FA2C31253F083D2358102938288BE /* Protocols */ = {
+		D4BBCD0CEF3E8D8B2F3D059B72BB7EFB /* Protocols */ = {
 			isa = PBXGroup;
 			children = (
-				B7FBE68ACDF7775FF47D04DAD8B0E54B /* DBProfileContentPresenting.h */,
-				57F4E4D0C3323CF41129BFF847167D50 /* DBProfileSegmentedControl.h */,
-				514DE1940B6DEF119F4948CBB606B1C8 /* DBProfileViewControllerDataSource.h */,
-				0F0A78E0EE6F1DDB6D3BD331A1E900AE /* DBProfileViewControllerDelegate.h */,
+				D27F5DCB9B813840556ECC0B36018E3C /* DBProfileContentPresenting.h */,
+				1B50FE0FDEBF5F0245CA6705A4CB7B2B /* DBProfileSegmentedControl.h */,
+				9D19069E7F68E328D42FDEF448D1642B /* DBProfileViewControllerDataSource.h */,
+				A74B1477ABADB830AAA0FD5890236032 /* DBProfileViewControllerDelegate.h */,
 			);
 			path = Protocols;
 			sourceTree = "<group>";
 		};
-		CFE2CD0CEC00ED00B63CB3D3C723703A /* Private */ = {
+		D616693E94285BA807BA8B95AA112C77 /* Assets */ = {
 			isa = PBXGroup;
 			children = (
-				523A8CFDF8B5448000161E6482F84E12 /* DBProfileAccessoryView_Private.h */,
-				984356602E5228244275B1E75A0A9A44 /* DBProfileAccessoryViewLayoutAttributes_Private.h */,
-				33F1F02040B9E071C0144B60FACDB8F0 /* DBProfileDefines.h */,
-				94F3D3A1AF6906D99D456947FFF7316A /* DBProfileHeaderViewLayoutAttributes_Private.h */,
-				A60962D9A96E91E3EEFB63FD06394924 /* DBProfileSegmentedControlView.h */,
-				40C513C371CA877654FE0090AE9AED4B /* DBProfileSegmentedControlView.m */,
-				6E19068C3BA34554FD30FF6F12114F4C /* DBProfileUtilities.h */,
-				C35E681BE88218A21816594ED85F6E86 /* DBProfileUtilities.m */,
-				8E250D2550C9B1748FE05DF60E545ADC /* DBProfileViewControllerUpdateContext.h */,
-				05109A952557A6EE9489A1AFBC2070C4 /* DBProfileViewControllerUpdateContext.m */,
-				B5F054086F222C223147F9E836F3D98A /* NSBundle+DBProfileViewController.h */,
-				42D2E23851A492FE9E0AF141CE43D270 /* NSBundle+DBProfileViewController.m */,
-				F9343F29F87289DFB08E32251E650D5A /* UIBarButtonItem+DBProfileViewController.h */,
-				841F3B07CA4F4C20FC0D598C8FC1969C /* UIBarButtonItem+DBProfileViewController.m */,
+				DA5EEB6D49DBFD508CF2FA3783213362 /* db-profile-chevron.png */,
+				58E7423B2F68E28D00D3609A2E78E9C8 /* db-profile-chevron@2x.png */,
+				8683426F8E7773C72159142B703F0DDF /* db-profile-chevron@3x.png */,
 			);
-			path = Private;
+			path = Assets;
 			sourceTree = "<group>";
 		};
 		DAF77E5367ECFF5AAEE775BA5E5734B2 /* FBSnapshotTestCase */ = {
@@ -554,6 +553,27 @@
 				B8899B76ED53D5A1D70F421FF1360244 /* Support Files */,
 			);
 			path = FBSnapshotTestCase;
+			sourceTree = "<group>";
+		};
+		F25564B8543A47D48B2B67A91A404C4F /* Private */ = {
+			isa = PBXGroup;
+			children = (
+				B812FC9F13E360A9B56E148547897B45 /* DBProfileAccessoryView_Private.h */,
+				022CFE7B24FEA62B67665E51BF31AE8C /* DBProfileAccessoryViewLayoutAttributes_Private.h */,
+				27CCF902CFC2292B8A0AE07E9D138D3F /* DBProfileDefines.h */,
+				CC754728F4F51A286B2CFF86C5E6C25A /* DBProfileHeaderViewLayoutAttributes_Private.h */,
+				2C09C3A3DFBB30B4E29DE21174A42C49 /* DBProfileSegmentedControlView.h */,
+				5406909B4AA6886B30076EAF197EF4D3 /* DBProfileSegmentedControlView.m */,
+				D4F889494A5B2B3AD034116FED3989C6 /* DBProfileUtilities.h */,
+				056A41C290FBCF1248DA9FFBDF7A5BD5 /* DBProfileUtilities.m */,
+				B1C3CD799143828B8A1DBCA4706F95B1 /* DBProfileViewControllerUpdateContext.h */,
+				8A6F3D5B20DD7CE6BA3201FBD9A9CA2D /* DBProfileViewControllerUpdateContext.m */,
+				0BCEDB102BF6FC76473FEA4FCF55DA5C /* NSBundle+DBProfileViewController.h */,
+				4F4897C55C8965BD02B529929A9EAB7C /* NSBundle+DBProfileViewController.m */,
+				AE1897EA97501108657040917C39BBFD /* UIBarButtonItem+DBProfileViewController.h */,
+				16974D9B87838E58A90C55B69E391D98 /* UIBarButtonItem+DBProfileViewController.m */,
+			);
+			path = Private;
 			sourceTree = "<group>";
 		};
 		FEBCCE405D3B51C6341847835D5DB774 /* FXBlurView */ = {
@@ -569,41 +589,6 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
-		4465231A6046D30A9887B8099DCDC8A1 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				F43795F29BE0EB8BC5F18469CFC7BD3C /* DBProfileAccessoryView.h in Headers */,
-				E2C7138A5AAEB58DA53F6EFB74EA48C9 /* DBProfileAccessoryView_Private.h in Headers */,
-				0ADFDAE67E68C5912D7737F3F33D8FBC /* DBProfileAccessoryViewLayoutAttributes.h in Headers */,
-				35246C32CC4648CBE3005EBA3CC2EBCD /* DBProfileAccessoryViewLayoutAttributes_Private.h in Headers */,
-				E0D39677563C5F86CE3DAD3FDCF524E1 /* DBProfileAccessoryViewModel.h in Headers */,
-				198DD0E78C92CCE0EB63AF5258F70564 /* DBProfileAvatarView.h in Headers */,
-				7F4FE8225263DBB0763DCA17095262F8 /* DBProfileAvatarViewLayoutAttributes.h in Headers */,
-				8E2AB33BCC6AEE862AC27385C8D3CA05 /* DBProfileBinding.h in Headers */,
-				C785B1D5F31E96E179BBE5E4FF6026A3 /* DBProfileBlurView.h in Headers */,
-				77346D286A37BC724E1E78F01E7B21A6 /* DBProfileContentOffsetCache.h in Headers */,
-				6CC6BDBD242D08F849650805B70BF1E8 /* DBProfileContentPresenting.h in Headers */,
-				DC03AE1D7D23B089FA601564B7F85E11 /* DBProfileCoverPhotoView.h in Headers */,
-				0D8F5E6F78B41515F72DC8C1B947794B /* DBProfileDefines.h in Headers */,
-				1CEEDFA0E9347F890BA3733F4DE058A3 /* DBProfileHeaderOverlayView.h in Headers */,
-				3377D3C843D3FA313804615370080689 /* DBProfileHeaderViewLayoutAttributes.h in Headers */,
-				27A059D3DD9A487B1AA81E3C6488FA02 /* DBProfileHeaderViewLayoutAttributes_Private.h in Headers */,
-				9739057299A2B2080B3A75BC737526D2 /* DBProfileObserver.h in Headers */,
-				B5733B7BBC6781CD49263439408525C4 /* DBProfileSegmentedControl.h in Headers */,
-				86D3136353B6B1AF02C7F6F922921FCE /* DBProfileSegmentedControlView.h in Headers */,
-				ABA6DBB363089BA742BA416A7D3A066B /* DBProfileTintView.h in Headers */,
-				C924365BCF71D494DD313F84C3951795 /* DBProfileTitleView.h in Headers */,
-				9D25DBCD1988FB4702C81ACEC7795D94 /* DBProfileUtilities.h in Headers */,
-				E9B639264CF21B537469D4F21760F7EF /* DBProfileViewController.h in Headers */,
-				2CAACB36874D20E5BE337BE54A5A6B04 /* DBProfileViewControllerDataSource.h in Headers */,
-				A3C2A8E9A4D9B2F3F0350758FDA68031 /* DBProfileViewControllerDelegate.h in Headers */,
-				A7E7FA54622D5DE1C5F123257C839B5C /* DBProfileViewControllerUpdateContext.h in Headers */,
-				E86F6EFC9CF0EE8ED96D0176C2F46D6D /* NSBundle+DBProfileViewController.h in Headers */,
-				7127353542BE401365135777E7722034 /* UIBarButtonItem+DBProfileViewController.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		5E215A9593986AB18C0182EBC4474C6F /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -618,51 +603,54 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		7FE6D7DCD5EC089D055386BA9DD3635B /* Headers */ = {
+		5E30D656697EAC4F70D5869E9CBFA52C /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				72A3ABCA1CC019C6BB6A941657DEF62C /* FXBlurView.h in Headers */,
+				F764A48AD4236669D14DA5512FBBE3D6 /* FXBlurView.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DC3B6B540FCCD249E8E4FD89D84DF0A0 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				38C1A27CE821107F2D41F464F91439AE /* DBProfileAccessoryView.h in Headers */,
+				56E5522744EECE4AF1FBF099556D7532 /* DBProfileAccessoryView_Private.h in Headers */,
+				F3A962FA0E57092EE9EA50A410E7CD9B /* DBProfileAccessoryViewLayoutAttributes.h in Headers */,
+				476632B9F9E8E79A0D4DDCF5A7F6D4B6 /* DBProfileAccessoryViewLayoutAttributes_Private.h in Headers */,
+				9A97CBB926F354F31CFD14BE1896DEA0 /* DBProfileAccessoryViewModel.h in Headers */,
+				8138645722777587AAD6D4F26D49DB6C /* DBProfileAvatarView.h in Headers */,
+				06A81D9FD02E8DF46215564F8E1BB140 /* DBProfileAvatarViewLayoutAttributes.h in Headers */,
+				F0485D19929F9E46A34ACC52B36E8B64 /* DBProfileBinding.h in Headers */,
+				10B1F6FE142085E74AD2448DB5962513 /* DBProfileBlurView.h in Headers */,
+				99CEE691ADD2B16EF90A1A2C5D2719E8 /* DBProfileContentOffsetCache.h in Headers */,
+				746A890D3B719874E7CF03D6C584078C /* DBProfileContentPresenting.h in Headers */,
+				037C2656A14947C2AC36D65483835848 /* DBProfileCoverPhotoView.h in Headers */,
+				DC54D750EAAABBBB997EA3685F1BFE42 /* DBProfileDefines.h in Headers */,
+				03BD11BAC967549AB7A1B0F1DD0D9B30 /* DBProfileHeaderOverlayView.h in Headers */,
+				57299D9747043171C0936C5BF7CDE5F4 /* DBProfileHeaderViewLayoutAttributes.h in Headers */,
+				8AA3521852F44583C692BB3C42910566 /* DBProfileHeaderViewLayoutAttributes_Private.h in Headers */,
+				3EEBEA034F4025873316E2992144C359 /* DBProfileObserver.h in Headers */,
+				73D119320FCD6667B470D98F88B9231B /* DBProfileSegmentedControl.h in Headers */,
+				8A2FAB1AFCFB7BB77F84071B1FF5685E /* DBProfileSegmentedControlView.h in Headers */,
+				78D5E17551F757F8E151418279DA27B4 /* DBProfileTintView.h in Headers */,
+				F837DE8A2C9908B4E00C34F71E5B2DB4 /* DBProfileTitleView.h in Headers */,
+				863E8E5A5B51E43DEF0C300A0CE7B8BF /* DBProfileUtilities.h in Headers */,
+				B4075395DF616F4048AB2358E68F7766 /* DBProfileViewController.h in Headers */,
+				735C89C39A62352A418C851000662C62 /* DBProfileViewControllerDataSource.h in Headers */,
+				E946A890F833A41639F424F94EE8FC97 /* DBProfileViewControllerDelegate.h in Headers */,
+				57BEBF508EA7C9586467F0EE27DFFB98 /* DBProfileViewControllerUpdateContext.h in Headers */,
+				DE9E79A55F1124FD93437E86EB9B6E60 /* NSBundle+DBProfileViewController.h in Headers */,
+				41BDD53CE3520768F15A68087F48DC9A /* UIBarButtonItem+DBProfileViewController.h in Headers */,
+				7F8EBCD78C6002F78B9A1621ACA22D48 /* UICollectionViewController+DBProfileContentPresenting.h in Headers */,
+				B632B525C44A4724594F5DABC81D981A /* UITableViewController+DBProfileContentPresenting.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		55389FF84466D27FFD0EB02DAF6F71F6 /* DBProfileViewController-DBProfileViewController */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = EB0F4762307DA68782BBBA9F8CF58B0E /* Build configuration list for PBXNativeTarget "DBProfileViewController-DBProfileViewController" */;
-			buildPhases = (
-				75F5FB8BDEAE75B9CBB3E4D86CAB0AFA /* Sources */,
-				A2AA8C028A5CEB6F3B3B7A74813FD402 /* Frameworks */,
-				5915056AD846313A88BCF4867ABB170C /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "DBProfileViewController-DBProfileViewController";
-			productName = "DBProfileViewController-DBProfileViewController";
-			productReference = E435A2020B76EB949AC7E9CD57CD6F62 /* DBProfileViewController.bundle */;
-			productType = "com.apple.product-type.bundle";
-		};
-		75A4F6ED2F1EA7953F472217CAE747C3 /* FXBlurView */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 5DA42AFB269184472EB7E8E33F34BC75 /* Build configuration list for PBXNativeTarget "FXBlurView" */;
-			buildPhases = (
-				E56555874F7878F71F62431F8076DED6 /* Sources */,
-				315CAE03E52E88C097D2992279752F44 /* Frameworks */,
-				7FE6D7DCD5EC089D055386BA9DD3635B /* Headers */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = FXBlurView;
-			productName = FXBlurView;
-			productReference = F090680F4217A7C32FB6368C84948AFA /* libFXBlurView.a */;
-			productType = "com.apple.product-type.library.static";
-		};
 		9C5D2EF1227199DB873505D4201AC0BA /* Pods-DBProfileViewController_Example */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 63BA3F5D2407C0EFD106BC4AA9AE0D9A /* Build configuration list for PBXNativeTarget "Pods-DBProfileViewController_Example" */;
@@ -715,23 +703,57 @@
 			productReference = D6A3BF2EEB06985404CC5DEA0B43DDB3 /* libPods-DBProfileViewController_Tests.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		D0A51AB1C3E5B96B195CD99A24BD432E /* DBProfileViewController */ = {
+		D68C91AD6CF2FAF9C580EE264829F1D1 /* DBProfileViewController */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 577955E5F6C407C085E4E7DBC34BC08C /* Build configuration list for PBXNativeTarget "DBProfileViewController" */;
+			buildConfigurationList = C821287B85A65F1E5CA1671A79297B5C /* Build configuration list for PBXNativeTarget "DBProfileViewController" */;
 			buildPhases = (
-				646EA1D3185A13924E698199212A45F1 /* Sources */,
-				D601C58BA4A5A1212C0D7CB0ACC24C4D /* Frameworks */,
-				4465231A6046D30A9887B8099DCDC8A1 /* Headers */,
+				EBBA6B4C0238B5F890F15DEC5FE9B544 /* Sources */,
+				F24B8FAB680EFCEC11384B87D14E2534 /* Frameworks */,
+				DC3B6B540FCCD249E8E4FD89D84DF0A0 /* Headers */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				FAD8FC90443A9957D5E4A9F1031EA675 /* PBXTargetDependency */,
-				12D878FAB56CD166393BF96BEC89FFC1 /* PBXTargetDependency */,
+				09F88F77844C5811BD8B9E164A9CE709 /* PBXTargetDependency */,
+				50A6FFB71326AAA37B1D1D39141DC083 /* PBXTargetDependency */,
 			);
 			name = DBProfileViewController;
 			productName = DBProfileViewController;
 			productReference = BFB81B763AF32CB3360A25B54804E23A /* libDBProfileViewController.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		E823B3C1E3063647CEA9D389064D7D2B /* DBProfileViewController-DBProfileViewController */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 33B52167B3DF2E3269C417D69F1D52A5 /* Build configuration list for PBXNativeTarget "DBProfileViewController-DBProfileViewController" */;
+			buildPhases = (
+				1DDE8E3A078BD656A94E54BCE42D5F1F /* Sources */,
+				A1967D62C3DC5921B80624493A2A8E43 /* Frameworks */,
+				22604B24C8A33F307CA51ADB95E941A0 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "DBProfileViewController-DBProfileViewController";
+			productName = "DBProfileViewController-DBProfileViewController";
+			productReference = E435A2020B76EB949AC7E9CD57CD6F62 /* DBProfileViewController.bundle */;
+			productType = "com.apple.product-type.bundle";
+		};
+		F3D3985C1623874EBE69859CB8C4C898 /* FXBlurView */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8C4ECBFC881D4E7115C9381462166DBE /* Build configuration list for PBXNativeTarget "FXBlurView" */;
+			buildPhases = (
+				5EE901292FEF8ADFDE7A351A99F27176 /* Sources */,
+				464AF50CE9B6AA289CD861B88B9B36E0 /* Frameworks */,
+				5E30D656697EAC4F70D5869E9CBFA52C /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = FXBlurView;
+			productName = FXBlurView;
+			productReference = F090680F4217A7C32FB6368C84948AFA /* libFXBlurView.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -755,10 +777,10 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				D0A51AB1C3E5B96B195CD99A24BD432E /* DBProfileViewController */,
-				55389FF84466D27FFD0EB02DAF6F71F6 /* DBProfileViewController-DBProfileViewController */,
+				D68C91AD6CF2FAF9C580EE264829F1D1 /* DBProfileViewController */,
+				E823B3C1E3063647CEA9D389064D7D2B /* DBProfileViewController-DBProfileViewController */,
 				C37CEB2F607152497831CDCE3353BE8E /* FBSnapshotTestCase */,
-				75A4F6ED2F1EA7953F472217CAE747C3 /* FXBlurView */,
+				F3D3985C1623874EBE69859CB8C4C898 /* FXBlurView */,
 				9C5D2EF1227199DB873505D4201AC0BA /* Pods-DBProfileViewController_Example */,
 				CF138DCC448D34C7687D8DB1D2B50117 /* Pods-DBProfileViewController_Tests */,
 			);
@@ -766,19 +788,26 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		5915056AD846313A88BCF4867ABB170C /* Resources */ = {
+		22604B24C8A33F307CA51ADB95E941A0 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				06A85BE83630DC6D32E6E797BAEACC1B /* db-profile-chevron.png in Resources */,
-				471DDBF601ACB06DD977391DF04AFB38 /* db-profile-chevron@2x.png in Resources */,
-				716834C4E94921AA648C710AFC7D5FEE /* db-profile-chevron@3x.png in Resources */,
+				2B53176F02D289646B6E677DC64166B5 /* db-profile-chevron.png in Resources */,
+				DBD73C85DF77753EAD2006185C86719B /* db-profile-chevron@2x.png in Resources */,
+				6C7B21562F3CDEFFAD885E402FD6AD7A /* db-profile-chevron@3x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		1DDE8E3A078BD656A94E54BCE42D5F1F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		1F9FA63EC9410280B53E95B0163F1FC1 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -802,31 +831,12 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		646EA1D3185A13924E698199212A45F1 /* Sources */ = {
+		5EE901292FEF8ADFDE7A351A99F27176 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4B95AE6FB9618F7DE60E10EC90607331 /* DBProfileAccessoryView.m in Sources */,
-				CC65814C2748FD10E5B2EEDAD71F38C0 /* DBProfileAccessoryViewLayoutAttributes.m in Sources */,
-				A1F0E058208C16E4188BD9028A28FBD2 /* DBProfileAccessoryViewModel.m in Sources */,
-				7A09D24E0B4A6F89B93369CED9961474 /* DBProfileAvatarView.m in Sources */,
-				787004853226B6F5291FBF10C5DA1842 /* DBProfileAvatarViewLayoutAttributes.m in Sources */,
-				B9B3A72D457DD47C17EFD02085F012C2 /* DBProfileBinding.m in Sources */,
-				2A11379D88C580BA1B6F5A99DC67F06D /* DBProfileBlurView.m in Sources */,
-				D5F4C678287B468E98D3F008A9C80453 /* DBProfileContentOffsetCache.m in Sources */,
-				E969BD7FA0A9E0480BBEAF4484036CFF /* DBProfileCoverPhotoView.m in Sources */,
-				4457EC296416EBEF1B8E23E311205188 /* DBProfileHeaderOverlayView.m in Sources */,
-				6997F094B7B12C58F5077AD49A9EE26F /* DBProfileHeaderViewLayoutAttributes.m in Sources */,
-				708A7A4C58549D6804FB53956F654E98 /* DBProfileObserver.m in Sources */,
-				9EECD771E3E0CB1A61DACC2982E3B690 /* DBProfileSegmentedControlView.m in Sources */,
-				2EF8D23B83280784F8F14D227907965E /* DBProfileTintView.m in Sources */,
-				9EE096202822E04F554978C9139972DB /* DBProfileTitleView.m in Sources */,
-				F33B33BA907F6CDDF70D10B5FB820135 /* DBProfileUtilities.m in Sources */,
-				CA77E758A6662C7C3F86A91699A1C6F8 /* DBProfileViewController-dummy.m in Sources */,
-				87D04564F3686B291A0954C17FFB6124 /* DBProfileViewController.m in Sources */,
-				18B933E969F4540508E8EEE67D7D735D /* DBProfileViewControllerUpdateContext.m in Sources */,
-				02708FEDEDBF17629D57797A4A67084B /* NSBundle+DBProfileViewController.m in Sources */,
-				194B14E3FBBD9D02A6A337586428CBA9 /* UIBarButtonItem+DBProfileViewController.m in Sources */,
+				2E2B6ED2B11E2851036C01FDEA651352 /* FXBlurView-dummy.m in Sources */,
+				09AF4BF7EF6405C475542E5039B52F10 /* FXBlurView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -838,35 +848,55 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		75F5FB8BDEAE75B9CBB3E4D86CAB0AFA /* Sources */ = {
+		EBBA6B4C0238B5F890F15DEC5FE9B544 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		E56555874F7878F71F62431F8076DED6 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				44D3C4E5097D8C73124DF8BDB63C7960 /* FXBlurView-dummy.m in Sources */,
-				BD7C6F56B65A09D8C456A80E8BEC8AB7 /* FXBlurView.m in Sources */,
+				A24832AE9A3406B1631291F1FAFD9C7B /* DBProfileAccessoryView.m in Sources */,
+				93CAA97DFB7AE8C5F3381252B5532968 /* DBProfileAccessoryViewLayoutAttributes.m in Sources */,
+				48024374AC39F30FD9930C79B4425A75 /* DBProfileAccessoryViewModel.m in Sources */,
+				561F26F9B4E6469E4D352E8BD3159BEB /* DBProfileAvatarView.m in Sources */,
+				613172BB4E86AEA64DFD75472254F504 /* DBProfileAvatarViewLayoutAttributes.m in Sources */,
+				A2D35E2FF7FD5D8CAB40DAB9AE54C20A /* DBProfileBinding.m in Sources */,
+				A477E521F5ADA6AD7D4B27CAFBCC4CCF /* DBProfileBlurView.m in Sources */,
+				DB2685D54EBA9A000D48E2017E64A8AC /* DBProfileContentOffsetCache.m in Sources */,
+				57CE57FBC12B082768670D28047A352C /* DBProfileCoverPhotoView.m in Sources */,
+				22C2F52F2D61FF928DDAE504522708AB /* DBProfileHeaderOverlayView.m in Sources */,
+				D05917484438AE0FA75BC40686DB9143 /* DBProfileHeaderViewLayoutAttributes.m in Sources */,
+				045B7AC0D35A55A7601801056F40291F /* DBProfileObserver.m in Sources */,
+				C1D778F5D322F9B5EE00C05A3EC86117 /* DBProfileSegmentedControlView.m in Sources */,
+				B6F8CE9DCDA9B77901EF8276338D4BCD /* DBProfileTintView.m in Sources */,
+				6EB8E730B79BA82BA6964A3D81974040 /* DBProfileTitleView.m in Sources */,
+				EFB1E706A052178A77666CE9191D3A4F /* DBProfileUtilities.m in Sources */,
+				2030118A8A9F717DD315F82ACDDF7564 /* DBProfileViewController-dummy.m in Sources */,
+				026F9C55BF6552ABE8CD4C20E481AA79 /* DBProfileViewController.m in Sources */,
+				AF47ECDE5B28616900445D6F154ABCE3 /* DBProfileViewControllerUpdateContext.m in Sources */,
+				2A5B68FCE0D33880FE80F3524C2F4BEA /* NSBundle+DBProfileViewController.m in Sources */,
+				03D9EF4831A25C0855E16CC3BB8AE7E1 /* UIBarButtonItem+DBProfileViewController.m in Sources */,
+				7215732A5D462B44C1BF0D17004FC06A /* UICollectionViewController+DBProfileContentPresenting.m in Sources */,
+				267AB9B0B60435846594CD9FB1B0B444 /* UITableViewController+DBProfileContentPresenting.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		12D878FAB56CD166393BF96BEC89FFC1 /* PBXTargetDependency */ = {
+		09F88F77844C5811BD8B9E164A9CE709 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "DBProfileViewController-DBProfileViewController";
+			target = E823B3C1E3063647CEA9D389064D7D2B /* DBProfileViewController-DBProfileViewController */;
+			targetProxy = 0FB8ABF9D8BCF1EFB22171CBFF1CBAF2 /* PBXContainerItemProxy */;
+		};
+		50A6FFB71326AAA37B1D1D39141DC083 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = FXBlurView;
-			target = 75A4F6ED2F1EA7953F472217CAE747C3 /* FXBlurView */;
-			targetProxy = 4604CEC5A02D08E9627C30B712D62F9A /* PBXContainerItemProxy */;
+			target = F3D3985C1623874EBE69859CB8C4C898 /* FXBlurView */;
+			targetProxy = E7FD47878E28D373E524E02503769127 /* PBXContainerItemProxy */;
 		};
 		78B83A4696C3D566938BB4F228D4FBBE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = FXBlurView;
-			target = 75A4F6ED2F1EA7953F472217CAE747C3 /* FXBlurView */;
+			target = F3D3985C1623874EBE69859CB8C4C898 /* FXBlurView */;
 			targetProxy = B4ACF6CA6B270126AB00669D54DB4715 /* PBXContainerItemProxy */;
 		};
 		D09EB2588432B5A654E62AFD556718DA /* PBXTargetDependency */ = {
@@ -878,14 +908,8 @@
 		DA0F22A46E62B0A96E0A3B809C454CB9 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = DBProfileViewController;
-			target = D0A51AB1C3E5B96B195CD99A24BD432E /* DBProfileViewController */;
+			target = D68C91AD6CF2FAF9C580EE264829F1D1 /* DBProfileViewController */;
 			targetProxy = 64E816FF336FC89BD5DD98BA1A18F39F /* PBXContainerItemProxy */;
-		};
-		FAD8FC90443A9957D5E4A9F1031EA675 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "DBProfileViewController-DBProfileViewController";
-			target = 55389FF84466D27FFD0EB02DAF6F71F6 /* DBProfileViewController-DBProfileViewController */;
-			targetProxy = 54B3AD38AB602CFA8F651796243D2235 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -953,27 +977,6 @@
 			};
 			name = Release;
 		};
-		084496A2AA27C2416B783A35005FC148 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = DE6EB2C4E319DEF9CC358185098EADB7 /* FXBlurView.xcconfig */;
-			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_PREFIX_HEADER = "Target Support Files/FXBlurView/FXBlurView-prefix.pch";
-				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
-				MTL_ENABLE_DEBUG_INFO = YES;
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PRIVATE_HEADERS_FOLDER_PATH = "";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PUBLIC_HEADERS_FOLDER_PATH = "";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-			};
-			name = Debug;
-		};
 		0CB051E5F05675373F2D4FE848341A04 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 334DECEB6259E815F799FD06215EBA5B /* Pods-DBProfileViewController_Example.debug.xcconfig */;
@@ -995,26 +998,9 @@
 			};
 			name = Debug;
 		};
-		1754BDA65A8110E802DE0E22F7C2F189 /* Release */ = {
+		3D328A62E5D7B51DF874D0D75649EE7E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = EB514891FA5E6873D5B4E13B349836DF /* DBProfileViewController.xcconfig */;
-			buildSettings = {
-				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/DBProfileViewController";
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_NO_COMMON_BLOCKS = YES;
-				INFOPLIST_FILE = "Target Support Files/DBProfileViewController/ResourceBundle-DBProfileViewController-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
-				PRODUCT_NAME = DBProfileViewController;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				WRAPPER_EXTENSION = bundle;
-			};
-			name = Release;
-		};
-		4CA1B9CE1D9B3E2B111920260DCEFABC /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = EB514891FA5E6873D5B4E13B349836DF /* DBProfileViewController.xcconfig */;
+			baseConfigurationReference = 936D572677E493DE5D529124991EC991 /* DBProfileViewController.xcconfig */;
 			buildSettings = {
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -1033,16 +1019,33 @@
 			};
 			name = Release;
 		};
-		642D556C984C2107D0437F865B24F1C6 /* Release */ = {
+		451599ECEF74D08DFF269869865616B4 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 745ED1C27718919C153A344235ED575C /* FBSnapshotTestCase.xcconfig */;
+			baseConfigurationReference = 936D572677E493DE5D529124991EC991 /* DBProfileViewController.xcconfig */;
+			buildSettings = {
+				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/DBProfileViewController";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				INFOPLIST_FILE = "Target Support Files/DBProfileViewController/ResourceBundle-DBProfileViewController-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				PRODUCT_NAME = DBProfileViewController;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				WRAPPER_EXTENSION = bundle;
+			};
+			name = Debug;
+		};
+		463FB0CBBFBC9B05381C9A6AA382D81C /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = DE6EB2C4E319DEF9CC358185098EADB7 /* FXBlurView.xcconfig */;
 			buildSettings = {
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_PREFIX_HEADER = "Target Support Files/FBSnapshotTestCase/FBSnapshotTestCase-prefix.pch";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				GCC_PREFIX_HEADER = "Target Support Files/FXBlurView/FXBlurView-prefix.pch";
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "";
 				OTHER_LIBTOOLFLAGS = "";
@@ -1054,16 +1057,37 @@
 			};
 			name = Release;
 		};
-		8C3D77039419C5BFEEB48F68A3426D57 /* Release */ = {
+		63191245D77D1CBD0BC75D1DB8690121 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = DE6EB2C4E319DEF9CC358185098EADB7 /* FXBlurView.xcconfig */;
+			baseConfigurationReference = 936D572677E493DE5D529124991EC991 /* DBProfileViewController.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREFIX_HEADER = "Target Support Files/DBProfileViewController/DBProfileViewController-prefix.pch";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PRIVATE_HEADERS_FOLDER_PATH = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PUBLIC_HEADERS_FOLDER_PATH = "";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		642D556C984C2107D0437F865B24F1C6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 745ED1C27718919C153A344235ED575C /* FBSnapshotTestCase.xcconfig */;
 			buildSettings = {
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_PREFIX_HEADER = "Target Support Files/FXBlurView/FXBlurView-prefix.pch";
-				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				GCC_PREFIX_HEADER = "Target Support Files/FBSnapshotTestCase/FBSnapshotTestCase-prefix.pch";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "";
 				OTHER_LIBTOOLFLAGS = "";
@@ -1096,26 +1120,22 @@
 			};
 			name = Release;
 		};
-		AC344A01AC118BD769BCCBC33DBDF82F /* Debug */ = {
+		996F8B3D22335AFA56A7F98855BC978A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = EB514891FA5E6873D5B4E13B349836DF /* DBProfileViewController.xcconfig */;
+			baseConfigurationReference = 936D572677E493DE5D529124991EC991 /* DBProfileViewController.xcconfig */;
 			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEBUG_INFORMATION_FORMAT = dwarf;
+				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/DBProfileViewController";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_PREFIX_HEADER = "Target Support Files/DBProfileViewController/DBProfileViewController-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/DBProfileViewController/ResourceBundle-DBProfileViewController-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
-				MTL_ENABLE_DEBUG_INFO = YES;
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PRIVATE_HEADERS_FOLDER_PATH = "";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PUBLIC_HEADERS_FOLDER_PATH = "";
+				PRODUCT_NAME = DBProfileViewController;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				WRAPPER_EXTENSION = bundle;
 			};
-			name = Debug;
+			name = Release;
 		};
 		AD68CFAFF271468A42F5033CFF189EA2 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -1138,20 +1158,24 @@
 			};
 			name = Debug;
 		};
-		C1946A104D5C3D12ADDFEBEC1AA9B903 /* Debug */ = {
+		C1458DBA05C2784A06FCC6066F34A0A9 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = EB514891FA5E6873D5B4E13B349836DF /* DBProfileViewController.xcconfig */;
+			baseConfigurationReference = DE6EB2C4E319DEF9CC358185098EADB7 /* FXBlurView.xcconfig */;
 			buildSettings = {
-				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/DBProfileViewController";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
-				INFOPLIST_FILE = "Target Support Files/DBProfileViewController/ResourceBundle-DBProfileViewController-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
-				PRODUCT_NAME = DBProfileViewController;
+				GCC_PREFIX_HEADER = "Target Support Files/FXBlurView/FXBlurView-prefix.pch";
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PRIVATE_HEADERS_FOLDER_PATH = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PUBLIC_HEADERS_FOLDER_PATH = "";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				WRAPPER_EXTENSION = bundle;
 			};
 			name = Debug;
 		};
@@ -1226,29 +1250,20 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		33B52167B3DF2E3269C417D69F1D52A5 /* Build configuration list for PBXNativeTarget "DBProfileViewController-DBProfileViewController" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				451599ECEF74D08DFF269869865616B4 /* Debug */,
+				996F8B3D22335AFA56A7F98855BC978A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		471ADFFF9655BD9D9B0036D66293CEC8 /* Build configuration list for PBXNativeTarget "FBSnapshotTestCase" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				FDC10C533C51A32BE75C4A025E4E4452 /* Debug */,
 				642D556C984C2107D0437F865B24F1C6 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		577955E5F6C407C085E4E7DBC34BC08C /* Build configuration list for PBXNativeTarget "DBProfileViewController" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				AC344A01AC118BD769BCCBC33DBDF82F /* Debug */,
-				4CA1B9CE1D9B3E2B111920260DCEFABC /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		5DA42AFB269184472EB7E8E33F34BC75 /* Build configuration list for PBXNativeTarget "FXBlurView" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				084496A2AA27C2416B783A35005FC148 /* Debug */,
-				8C3D77039419C5BFEEB48F68A3426D57 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1262,6 +1277,15 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		8C4ECBFC881D4E7115C9381462166DBE /* Build configuration list for PBXNativeTarget "FXBlurView" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C1458DBA05C2784A06FCC6066F34A0A9 /* Debug */,
+				463FB0CBBFBC9B05381C9A6AA382D81C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		BE4B8CD8AED50EE7FC0C41D0CAAA045C /* Build configuration list for PBXNativeTarget "Pods-DBProfileViewController_Tests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -1271,11 +1295,11 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		EB0F4762307DA68782BBBA9F8CF58B0E /* Build configuration list for PBXNativeTarget "DBProfileViewController-DBProfileViewController" */ = {
+		C821287B85A65F1E5CA1671A79297B5C /* Build configuration list for PBXNativeTarget "DBProfileViewController" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				C1946A104D5C3D12ADDFEBEC1AA9B903 /* Debug */,
-				1754BDA65A8110E802DE0E22F7C2F189 /* Release */,
+				63191245D77D1CBD0BC75D1DB8690121 /* Debug */,
+				3D328A62E5D7B51DF874D0D75649EE7E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -25,7 +25,7 @@ NSString * const DBProfileAccessoryKindAvatar = @"DBProfileAccessoryKindAvatar";
 NSString * const DBProfileAccessoryKindHeader = @"DBProfileAccessoryKindHeader";
 
 CGSize DBProfileViewControllerDefaultAvatarReferenceSize = { .width = 0, .height = 72 };
-CGSize DBProfileViewControllerDefaultHeaderReferenceSize = { .width = 0, .height = 240 };
+CGSize DBProfileViewControllerDefaultHeaderReferenceSize = { .width = 0, .height = 160 };
 
 static const CGFloat DBProfileViewControllerOverlayAnimationDuration = 0.2;
 
@@ -131,6 +131,7 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    self.view.backgroundColor = [UIColor whiteColor];
     self.view.tintColor = [UIColor whiteColor];
 
     self.containerView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
@@ -358,7 +359,7 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
     
     NSUInteger controllerIndex = self.indexForDisplayedContentController;
     
-    if ([self.delegate respondsToSelector:@selector(profileViewController:titleForContentControllerAtIndex:)]) {
+    if ([self.dataSource respondsToSelector:@selector(profileViewController:titleForContentControllerAtIndex:)]) {
         overlayTitle = [self.dataSource profileViewController:self titleForContentControllerAtIndex:controllerIndex];
     }
     
@@ -368,7 +369,7 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
 
     if (self.traitCollection.verticalSizeClass != UIUserInterfaceSizeClassCompact) {
         
-        if ([self.delegate respondsToSelector:@selector(profileViewController:titleForContentControllerAtIndex:)]) {
+        if ([self.dataSource respondsToSelector:@selector(profileViewController:subtitleForContentControllerAtIndex:)]) {
             overlaySubtitle = [self.dataSource profileViewController:self subtitleForContentControllerAtIndex:controllerIndex];
         }
     }
@@ -658,6 +659,7 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
     
     [self updateSegmentedControlTitles];    
     [self showContentControllerAtIndex:self.indexForDisplayedContentController];
+    [self scrollContentControllerToTop:self.displayedContentController animated:NO];
 }
 
 - (void)startRefreshAnimations
