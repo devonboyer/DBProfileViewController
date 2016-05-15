@@ -171,11 +171,6 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
         
         [self.view setNeedsUpdateConstraints];
         
-        // Scroll displayed content controller to top
-        if ([self.contentControllers count]) {
-            [self scrollContentControllerToTop:self.displayedContentController animated:NO];
-        }
-        
         // Tempoaray fix for content inset being calculated incorrectly before view appears.
         dispatch_async(dispatch_get_main_queue(), ^{
             [self updateContentInsetForScrollView:self.displayedContentController.contentScrollView];
@@ -660,8 +655,11 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
     
     self.contentOffsetCache = [[DBProfileContentOffsetCache alloc] initWithContentControllers:self.contentControllers];
     
-    [self updateSegmentedControlTitles];    
+    [self updateSegmentedControlTitles];
+    
     [self showContentControllerAtIndex:self.indexForDisplayedContentController];
+
+    [self scrollContentControllerToTop:self.displayedContentController animated:NO];
 }
 
 - (void)startRefreshAnimations
@@ -1207,15 +1205,22 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
         [self configureHeaderViewLayoutAttributes:layoutAttributes];
     }
     
+    UIView *superview = self.displayedContentController.contentScrollView;
+    
     // Reorganize the front-to-back ordering of accessory views using the zIndex layout attribute
-    NSArray *sortedAccessoryViews = [self.accessoryViews sortedArrayUsingComparator:^NSComparisonResult(DBProfileAccessoryView *lhs, DBProfileAccessoryView *rhs) {
-        return [self layoutAttributesForAccessoryViewOfKind:lhs.representedAccessoryKind].zIndex >
-        [self layoutAttributesForAccessoryViewOfKind:rhs.representedAccessoryKind].zIndex;
+    NSArray<DBProfileAccessoryViewModel *> *sortedViewModels = [self.accessoryViewModels sortedArrayUsingComparator:^NSComparisonResult(DBProfileAccessoryViewModel *lhs, DBProfileAccessoryViewModel *rhs) {
+        return lhs.layoutAttributes.zIndex > rhs.layoutAttributes.zIndex;
     }];
     
-    [sortedAccessoryViews enumerateObjectsUsingBlock:^(DBProfileAccessoryView *accessoryView, NSUInteger idx, BOOL * _Nonnull stop) {
-        [self.displayedContentController.contentScrollView bringSubviewToFront:accessoryView];
-    }];
+    UIView *topSubview = [superview.subviews lastObject]; // scroll indicators
+    
+    for (DBProfileAccessoryViewModel *viewModel in sortedViewModels) {
+        [superview bringSubviewToFront:viewModel.accessoryView];
+    }
+    
+    if (![topSubview isKindOfClass:[DBProfileAccessoryView class]]) {
+        [superview bringSubviewToFront:topSubview];
+    }
 }
 
 - (void)configureHeaderViewLayoutAttributes:(DBProfileHeaderViewLayoutAttributes *)layoutAttributes {
