@@ -1,6 +1,6 @@
 //
 //  DBProfileHeaderViewLayoutAttributesTests.m
-//  DBProfileViewController
+//  DBProfileViewControllerTests
 //
 //  Created by Devon Boyer on 2016-05-14.
 //  Copyright © 2016 Devon Boyer. All rights reserved.
