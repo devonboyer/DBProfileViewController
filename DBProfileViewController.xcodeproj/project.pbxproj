@@ -1,0 +1,741 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		48286F96AD7D3F11D4C82114 /* libPods-DBProfileViewController_Example.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8C18EE1802F9A7B74174C9DB /* libPods-DBProfileViewController_Example.a */; };
+		501749F0322AFE3967A83D44 /* libPods-DBProfileViewController_Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F5745542D15901D63AA49D25 /* libPods-DBProfileViewController_Tests.a */; };
+		6003F58E195388D20070C39A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58D195388D20070C39A /* Foundation.framework */; };
+		6003F590195388D20070C39A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58F195388D20070C39A /* CoreGraphics.framework */; };
+		6003F592195388D20070C39A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F591195388D20070C39A /* UIKit.framework */; };
+		6003F598195388D20070C39A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6003F596195388D20070C39A /* InfoPlist.strings */; };
+		6003F59A195388D20070C39A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6003F599195388D20070C39A /* main.m */; };
+		6003F59E195388D20070C39A /* DBAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6003F59D195388D20070C39A /* DBAppDelegate.m */; };
+		6003F5A9195388D20070C39A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6003F5A8195388D20070C39A /* Images.xcassets */; };
+		6003F5B0195388D20070C39A /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F5AF195388D20070C39A /* XCTest.framework */; };
+		6003F5B1195388D20070C39A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58D195388D20070C39A /* Foundation.framework */; };
+		6003F5B2195388D20070C39A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F591195388D20070C39A /* UIKit.framework */; };
+		670278631C9C9D6F00C5ECA3 /* demo-header.png in Resources */ = {isa = PBXBuildFile; fileRef = 670278621C9C9D6F00C5ECA3 /* demo-header.png */; };
+		6702AD221C5D8242008D014D /* demo-avatar.png in Resources */ = {isa = PBXBuildFile; fileRef = 6702AD201C5D8242008D014D /* demo-avatar.png */; };
+		6707F3CC1CE7B80D00720418 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6707F3C91CE7B80D00720418 /* Launch Screen.storyboard */; };
+		6707F3CD1CE7B80D00720418 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6707F3CA1CE7B80D00720418 /* Main.storyboard */; };
+		6707F3CE1CE7B80D00720418 /* Test.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6707F3CB1CE7B80D00720418 /* Test.storyboard */; };
+		6707F3E21CE7BAEA00720418 /* DBProfileViewControllerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6707F3D61CE7B9AC00720418 /* DBProfileViewControllerTests.m */; };
+		6707F3E31CE7BAEA00720418 /* DBProfileAccessoryViewTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6707F3DB1CE7B9AC00720418 /* DBProfileAccessoryViewTests.m */; };
+		6707F3E81CE7BB0900720418 /* DBProfileAvatarViewLayoutAttributeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6707F3E41CE7BAFB00720418 /* DBProfileAvatarViewLayoutAttributeTests.m */; };
+		6707F3E91CE7BB0900720418 /* DBProfileHeaderViewLayoutAttributesTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6707F3E51CE7BAFB00720418 /* DBProfileHeaderViewLayoutAttributesTests.m */; };
+		6707F3EB1CE7C63100720418 /* DBProfileAccessoryViewLayoutAttributesTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6707F3EA1CE7C63100720418 /* DBProfileAccessoryViewLayoutAttributesTests.m */; };
+		6707F3EE1CE7CBE300720418 /* DBProfileAccessoryViewModelTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6707F3ED1CE7CBE300720418 /* DBProfileAccessoryViewModelTests.m */; };
+		6707F3F21CE7ED0400720418 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 6707F3EF1CE7ED0400720418 /* LICENSE */; };
+		6707F3F61CE7EDC100720418 /* DBProfileViewController.podspec in Resources */ = {isa = PBXBuildFile; fileRef = 6707F3F51CE7EDC100720418 /* DBProfileViewController.podspec */; };
+		6707F3F81CE7F3DD00720418 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6003F596195388D20070C39A /* InfoPlist.strings */; };
+		672EF5CF1C49E9B60035567E /* DBUserProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 672EF5CE1C49E9B60035567E /* DBUserProfileViewController.m */; };
+		672EF5D61C4B09AA0035567E /* DBDemoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 672EF5D51C4B09AA0035567E /* DBDemoViewController.m */; };
+		675B0F921C42A1C4000AADC6 /* DBFollowersTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 675B0F911C42A1C4000AADC6 /* DBFollowersTableViewController.m */; };
+		675B0F951C42A1D4000AADC6 /* DBPhotosTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 675B0F941C42A1D4000AADC6 /* DBPhotosTableViewController.m */; };
+		675B0F981C42A1E0000AADC6 /* DBLikesTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 675B0F971C42A1E0000AADC6 /* DBLikesTableViewController.m */; };
+		67E47C941C9FB38E00635AFD /* DBUserProfileDetailView.m in Sources */ = {isa = PBXBuildFile; fileRef = 67E47C931C9FB38E00635AFD /* DBUserProfileDetailView.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		6003F5B3195388D20070C39A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6003F582195388D10070C39A /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6003F589195388D20070C39A;
+			remoteInfo = DBProfileViewController;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		3399B78706CB170737E48BA1 /* Pods-DBProfileViewController_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DBProfileViewController_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-DBProfileViewController_Tests/Pods-DBProfileViewController_Tests.debug.xcconfig"; sourceTree = "<group>"; };
+		6003F58A195388D20070C39A /* DBProfileViewController_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DBProfileViewController_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		6003F58D195388D20070C39A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		6003F58F195388D20070C39A /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		6003F591195388D20070C39A /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		6003F595195388D20070C39A /* DBProfileViewController-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "DBProfileViewController-Info.plist"; sourceTree = "<group>"; };
+		6003F597195388D20070C39A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		6003F599195388D20070C39A /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		6003F59B195388D20070C39A /* DBProfileViewController-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "DBProfileViewController-Prefix.pch"; sourceTree = "<group>"; };
+		6003F59C195388D20070C39A /* DBAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DBAppDelegate.h; sourceTree = "<group>"; };
+		6003F59D195388D20070C39A /* DBAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DBAppDelegate.m; sourceTree = "<group>"; };
+		6003F5A8195388D20070C39A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		6003F5AE195388D20070C39A /* DBProfileViewController_Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DBProfileViewController_Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		6003F5AF195388D20070C39A /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		6003F5B7195388D20070C39A /* Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Tests-Info.plist"; sourceTree = "<group>"; };
+		6003F5B9195388D20070C39A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		606FC2411953D9B200FFA9A0 /* Tests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Tests-Prefix.pch"; sourceTree = "<group>"; };
+		670278621C9C9D6F00C5ECA3 /* demo-header.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "demo-header.png"; sourceTree = "<group>"; };
+		6702AD201C5D8242008D014D /* demo-avatar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "demo-avatar.png"; sourceTree = "<group>"; };
+		6707F3BF1CE79D4600720418 /* Pods_DBProfileViewController_Example.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Pods_DBProfileViewController_Example.framework; path = "../../../../Library/Developer/Xcode/DerivedData/DBProfileViewController-fjpxyjmweoibqeffwkdnzvudovhy/Build/Products/Debug-iphonesimulator/Pods_DBProfileViewController_Example.framework"; sourceTree = "<group>"; };
+		6707F3C91CE7B80D00720418 /* Launch Screen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
+		6707F3CA1CE7B80D00720418 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
+		6707F3CB1CE7B80D00720418 /* Test.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Test.storyboard; sourceTree = "<group>"; };
+		6707F3D61CE7B9AC00720418 /* DBProfileViewControllerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBProfileViewControllerTests.m; sourceTree = "<group>"; };
+		6707F3DB1CE7B9AC00720418 /* DBProfileAccessoryViewTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBProfileAccessoryViewTests.m; sourceTree = "<group>"; };
+		6707F3E41CE7BAFB00720418 /* DBProfileAvatarViewLayoutAttributeTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBProfileAvatarViewLayoutAttributeTests.m; sourceTree = "<group>"; };
+		6707F3E51CE7BAFB00720418 /* DBProfileHeaderViewLayoutAttributesTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBProfileHeaderViewLayoutAttributesTests.m; sourceTree = "<group>"; };
+		6707F3EA1CE7C63100720418 /* DBProfileAccessoryViewLayoutAttributesTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBProfileAccessoryViewLayoutAttributesTests.m; sourceTree = "<group>"; };
+		6707F3EC1CE7C79400720418 /* DBProfileAccessoryViewLayoutAttributesTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DBProfileAccessoryViewLayoutAttributesTests.h; sourceTree = "<group>"; };
+		6707F3ED1CE7CBE300720418 /* DBProfileAccessoryViewModelTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBProfileAccessoryViewModelTests.m; sourceTree = "<group>"; };
+		6707F3EF1CE7ED0400720418 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		6707F3F11CE7ED0400720418 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		6707F3F51CE7EDC100720418 /* DBProfileViewController.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DBProfileViewController.podspec; sourceTree = "<group>"; };
+		672EF5CD1C49E9B60035567E /* DBUserProfileViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBUserProfileViewController.h; sourceTree = "<group>"; };
+		672EF5CE1C49E9B60035567E /* DBUserProfileViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBUserProfileViewController.m; sourceTree = "<group>"; };
+		672EF5D41C4B09AA0035567E /* DBDemoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBDemoViewController.h; sourceTree = "<group>"; };
+		672EF5D51C4B09AA0035567E /* DBDemoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBDemoViewController.m; sourceTree = "<group>"; };
+		675B0F901C42A1C4000AADC6 /* DBFollowersTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBFollowersTableViewController.h; sourceTree = "<group>"; };
+		675B0F911C42A1C4000AADC6 /* DBFollowersTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBFollowersTableViewController.m; sourceTree = "<group>"; };
+		675B0F931C42A1D4000AADC6 /* DBPhotosTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBPhotosTableViewController.h; sourceTree = "<group>"; };
+		675B0F941C42A1D4000AADC6 /* DBPhotosTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBPhotosTableViewController.m; sourceTree = "<group>"; };
+		675B0F961C42A1E0000AADC6 /* DBLikesTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBLikesTableViewController.h; sourceTree = "<group>"; };
+		675B0F971C42A1E0000AADC6 /* DBLikesTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBLikesTableViewController.m; sourceTree = "<group>"; };
+		67E47C921C9FB38E00635AFD /* DBUserProfileDetailView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBUserProfileDetailView.h; sourceTree = "<group>"; };
+		67E47C931C9FB38E00635AFD /* DBUserProfileDetailView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBUserProfileDetailView.m; sourceTree = "<group>"; };
+		8C18EE1802F9A7B74174C9DB /* libPods-DBProfileViewController_Example.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-DBProfileViewController_Example.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		8F1AD7933336E5E71C86DE52 /* Pods-DBProfileViewController_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DBProfileViewController_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-DBProfileViewController_Tests/Pods-DBProfileViewController_Tests.release.xcconfig"; sourceTree = "<group>"; };
+		A61D17D53DE0D1034223B6F7 /* Pods-DBProfileViewController_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DBProfileViewController_Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-DBProfileViewController_Example/Pods-DBProfileViewController_Example.debug.xcconfig"; sourceTree = "<group>"; };
+		B0DD4A75CBFBE76486B8A421 /* Pods-DBProfileViewController_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DBProfileViewController_Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-DBProfileViewController_Example/Pods-DBProfileViewController_Example.release.xcconfig"; sourceTree = "<group>"; };
+		F5745542D15901D63AA49D25 /* libPods-DBProfileViewController_Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-DBProfileViewController_Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		6003F587195388D20070C39A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6003F590195388D20070C39A /* CoreGraphics.framework in Frameworks */,
+				6003F592195388D20070C39A /* UIKit.framework in Frameworks */,
+				6003F58E195388D20070C39A /* Foundation.framework in Frameworks */,
+				48286F96AD7D3F11D4C82114 /* libPods-DBProfileViewController_Example.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6003F5AB195388D20070C39A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6003F5B0195388D20070C39A /* XCTest.framework in Frameworks */,
+				6003F5B2195388D20070C39A /* UIKit.framework in Frameworks */,
+				6003F5B1195388D20070C39A /* Foundation.framework in Frameworks */,
+				501749F0322AFE3967A83D44 /* libPods-DBProfileViewController_Tests.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		6003F581195388D10070C39A = {
+			isa = PBXGroup;
+			children = (
+				60FF7A9C1954A5C5007DD14C /* Podspec Metadata */,
+				6003F593195388D20070C39A /* Example */,
+				6003F5B5195388D20070C39A /* DBProfileViewControllerTests */,
+				6003F58C195388D20070C39A /* Frameworks */,
+				6003F58B195388D20070C39A /* Products */,
+				F07D6852422BDAEFE741D53E /* Pods */,
+			);
+			sourceTree = "<group>";
+		};
+		6003F58B195388D20070C39A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				6003F58A195388D20070C39A /* DBProfileViewController_Example.app */,
+				6003F5AE195388D20070C39A /* DBProfileViewController_Tests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		6003F58C195388D20070C39A /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				6707F3BF1CE79D4600720418 /* Pods_DBProfileViewController_Example.framework */,
+				6003F58D195388D20070C39A /* Foundation.framework */,
+				6003F58F195388D20070C39A /* CoreGraphics.framework */,
+				6003F591195388D20070C39A /* UIKit.framework */,
+				6003F5AF195388D20070C39A /* XCTest.framework */,
+				8C18EE1802F9A7B74174C9DB /* libPods-DBProfileViewController_Example.a */,
+				F5745542D15901D63AA49D25 /* libPods-DBProfileViewController_Tests.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		6003F593195388D20070C39A /* Example */ = {
+			isa = PBXGroup;
+			children = (
+				6003F59C195388D20070C39A /* DBAppDelegate.h */,
+				6003F59D195388D20070C39A /* DBAppDelegate.m */,
+				67E47C921C9FB38E00635AFD /* DBUserProfileDetailView.h */,
+				67E47C931C9FB38E00635AFD /* DBUserProfileDetailView.m */,
+				672EF5D41C4B09AA0035567E /* DBDemoViewController.h */,
+				672EF5D51C4B09AA0035567E /* DBDemoViewController.m */,
+				672EF5CD1C49E9B60035567E /* DBUserProfileViewController.h */,
+				672EF5CE1C49E9B60035567E /* DBUserProfileViewController.m */,
+				675B0F901C42A1C4000AADC6 /* DBFollowersTableViewController.h */,
+				675B0F911C42A1C4000AADC6 /* DBFollowersTableViewController.m */,
+				675B0F931C42A1D4000AADC6 /* DBPhotosTableViewController.h */,
+				675B0F941C42A1D4000AADC6 /* DBPhotosTableViewController.m */,
+				675B0F961C42A1E0000AADC6 /* DBLikesTableViewController.h */,
+				675B0F971C42A1E0000AADC6 /* DBLikesTableViewController.m */,
+				6707F3C81CE7B80D00720418 /* Storyboards */,
+				672EF5D31C49EC150035567E /* Assets */,
+				6003F5A8195388D20070C39A /* Images.xcassets */,
+				6003F594195388D20070C39A /* Supporting Files */,
+			);
+			path = Example;
+			sourceTree = "<group>";
+		};
+		6003F594195388D20070C39A /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				6003F595195388D20070C39A /* DBProfileViewController-Info.plist */,
+				6003F596195388D20070C39A /* InfoPlist.strings */,
+				6003F599195388D20070C39A /* main.m */,
+				6003F59B195388D20070C39A /* DBProfileViewController-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		6003F5B5195388D20070C39A /* DBProfileViewControllerTests */ = {
+			isa = PBXGroup;
+			children = (
+				6707F3D51CE7B9AC00720418 /* ControllerTests */,
+				6707F3D71CE7B9AC00720418 /* ModelTests */,
+				6707F3DA1CE7B9AC00720418 /* ViewTests */,
+				6003F5B6195388D20070C39A /* Supporting Files */,
+			);
+			path = DBProfileViewControllerTests;
+			sourceTree = "<group>";
+		};
+		6003F5B6195388D20070C39A /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				6003F5B7195388D20070C39A /* Tests-Info.plist */,
+				6003F5B8195388D20070C39A /* InfoPlist.strings */,
+				606FC2411953D9B200FFA9A0 /* Tests-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		60FF7A9C1954A5C5007DD14C /* Podspec Metadata */ = {
+			isa = PBXGroup;
+			children = (
+				6707F3F51CE7EDC100720418 /* DBProfileViewController.podspec */,
+				6707F3F11CE7ED0400720418 /* README.md */,
+				6707F3EF1CE7ED0400720418 /* LICENSE */,
+			);
+			name = "Podspec Metadata";
+			sourceTree = "<group>";
+		};
+		6707F3C81CE7B80D00720418 /* Storyboards */ = {
+			isa = PBXGroup;
+			children = (
+				6707F3C91CE7B80D00720418 /* Launch Screen.storyboard */,
+				6707F3CA1CE7B80D00720418 /* Main.storyboard */,
+				6707F3CB1CE7B80D00720418 /* Test.storyboard */,
+			);
+			path = Storyboards;
+			sourceTree = "<group>";
+		};
+		6707F3D51CE7B9AC00720418 /* ControllerTests */ = {
+			isa = PBXGroup;
+			children = (
+				6707F3D61CE7B9AC00720418 /* DBProfileViewControllerTests.m */,
+			);
+			path = ControllerTests;
+			sourceTree = "<group>";
+		};
+		6707F3D71CE7B9AC00720418 /* ModelTests */ = {
+			isa = PBXGroup;
+			children = (
+				6707F3ED1CE7CBE300720418 /* DBProfileAccessoryViewModelTests.m */,
+				6707F3EC1CE7C79400720418 /* DBProfileAccessoryViewLayoutAttributesTests.h */,
+				6707F3EA1CE7C63100720418 /* DBProfileAccessoryViewLayoutAttributesTests.m */,
+				6707F3E41CE7BAFB00720418 /* DBProfileAvatarViewLayoutAttributeTests.m */,
+				6707F3E51CE7BAFB00720418 /* DBProfileHeaderViewLayoutAttributesTests.m */,
+			);
+			path = ModelTests;
+			sourceTree = "<group>";
+		};
+		6707F3DA1CE7B9AC00720418 /* ViewTests */ = {
+			isa = PBXGroup;
+			children = (
+				6707F3DB1CE7B9AC00720418 /* DBProfileAccessoryViewTests.m */,
+			);
+			path = ViewTests;
+			sourceTree = "<group>";
+		};
+		672EF5D31C49EC150035567E /* Assets */ = {
+			isa = PBXGroup;
+			children = (
+				670278621C9C9D6F00C5ECA3 /* demo-header.png */,
+				6702AD201C5D8242008D014D /* demo-avatar.png */,
+			);
+			name = Assets;
+			sourceTree = "<group>";
+		};
+		F07D6852422BDAEFE741D53E /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				A61D17D53DE0D1034223B6F7 /* Pods-DBProfileViewController_Example.debug.xcconfig */,
+				B0DD4A75CBFBE76486B8A421 /* Pods-DBProfileViewController_Example.release.xcconfig */,
+				3399B78706CB170737E48BA1 /* Pods-DBProfileViewController_Tests.debug.xcconfig */,
+				8F1AD7933336E5E71C86DE52 /* Pods-DBProfileViewController_Tests.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		6003F589195388D20070C39A /* DBProfileViewController_Example */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6003F5BF195388D20070C39A /* Build configuration list for PBXNativeTarget "DBProfileViewController_Example" */;
+			buildPhases = (
+				6EA47E490894583752A01197 /* 📦 Check Pods Manifest.lock */,
+				6003F586195388D20070C39A /* Sources */,
+				6003F587195388D20070C39A /* Frameworks */,
+				6003F588195388D20070C39A /* Resources */,
+				7AF6C155F9C59A93B4FFD31E /* 📦 Embed Pods Frameworks */,
+				8A22CB70A0E53A4CC8BB1492 /* 📦 Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DBProfileViewController_Example;
+			productName = DBProfileViewController;
+			productReference = 6003F58A195388D20070C39A /* DBProfileViewController_Example.app */;
+			productType = "com.apple.product-type.application";
+		};
+		6003F5AD195388D20070C39A /* DBProfileViewController_Tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6003F5C2195388D20070C39A /* Build configuration list for PBXNativeTarget "DBProfileViewController_Tests" */;
+			buildPhases = (
+				79ED30EB10DB96F5430964D8 /* 📦 Check Pods Manifest.lock */,
+				6003F5AA195388D20070C39A /* Sources */,
+				6003F5AB195388D20070C39A /* Frameworks */,
+				6003F5AC195388D20070C39A /* Resources */,
+				628A313AB87C9AE085387E71 /* 📦 Embed Pods Frameworks */,
+				09925697412328D26A955CB1 /* 📦 Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				6003F5B4195388D20070C39A /* PBXTargetDependency */,
+			);
+			name = DBProfileViewController_Tests;
+			productName = DBProfileViewControllerTests;
+			productReference = 6003F5AE195388D20070C39A /* DBProfileViewController_Tests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		6003F582195388D10070C39A /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				CLASSPREFIX = DB;
+				LastUpgradeCheck = 0730;
+				ORGANIZATIONNAME = "Devon Boyer";
+				TargetAttributes = {
+					6003F589195388D20070C39A = {
+						DevelopmentTeam = EPRY9G3W2Z;
+					};
+					6003F5AD195388D20070C39A = {
+						TestTargetID = 6003F589195388D20070C39A;
+					};
+				};
+			};
+			buildConfigurationList = 6003F585195388D10070C39A /* Build configuration list for PBXProject "DBProfileViewController" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 6003F581195388D10070C39A;
+			productRefGroup = 6003F58B195388D20070C39A /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				6003F589195388D20070C39A /* DBProfileViewController_Example */,
+				6003F5AD195388D20070C39A /* DBProfileViewController_Tests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		6003F588195388D20070C39A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6003F5A9195388D20070C39A /* Images.xcassets in Resources */,
+				6003F598195388D20070C39A /* InfoPlist.strings in Resources */,
+				6707F3F21CE7ED0400720418 /* LICENSE in Resources */,
+				670278631C9C9D6F00C5ECA3 /* demo-header.png in Resources */,
+				6707F3CD1CE7B80D00720418 /* Main.storyboard in Resources */,
+				6707F3F61CE7EDC100720418 /* DBProfileViewController.podspec in Resources */,
+				6707F3CC1CE7B80D00720418 /* Launch Screen.storyboard in Resources */,
+				6707F3CE1CE7B80D00720418 /* Test.storyboard in Resources */,
+				6702AD221C5D8242008D014D /* demo-avatar.png in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6003F5AC195388D20070C39A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6707F3F81CE7F3DD00720418 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		09925697412328D26A955CB1 /* 📦 Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "📦 Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-DBProfileViewController_Tests/Pods-DBProfileViewController_Tests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		628A313AB87C9AE085387E71 /* 📦 Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "📦 Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-DBProfileViewController_Tests/Pods-DBProfileViewController_Tests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		6EA47E490894583752A01197 /* 📦 Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "📦 Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		79ED30EB10DB96F5430964D8 /* 📦 Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "📦 Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		7AF6C155F9C59A93B4FFD31E /* 📦 Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "📦 Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-DBProfileViewController_Example/Pods-DBProfileViewController_Example-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		8A22CB70A0E53A4CC8BB1492 /* 📦 Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "📦 Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-DBProfileViewController_Example/Pods-DBProfileViewController_Example-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		6003F586195388D20070C39A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				675B0F981C42A1E0000AADC6 /* DBLikesTableViewController.m in Sources */,
+				6003F59E195388D20070C39A /* DBAppDelegate.m in Sources */,
+				675B0F921C42A1C4000AADC6 /* DBFollowersTableViewController.m in Sources */,
+				672EF5D61C4B09AA0035567E /* DBDemoViewController.m in Sources */,
+				67E47C941C9FB38E00635AFD /* DBUserProfileDetailView.m in Sources */,
+				672EF5CF1C49E9B60035567E /* DBUserProfileViewController.m in Sources */,
+				675B0F951C42A1D4000AADC6 /* DBPhotosTableViewController.m in Sources */,
+				6003F59A195388D20070C39A /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6003F5AA195388D20070C39A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6707F3E91CE7BB0900720418 /* DBProfileHeaderViewLayoutAttributesTests.m in Sources */,
+				6707F3EE1CE7CBE300720418 /* DBProfileAccessoryViewModelTests.m in Sources */,
+				6707F3E21CE7BAEA00720418 /* DBProfileViewControllerTests.m in Sources */,
+				6707F3E81CE7BB0900720418 /* DBProfileAvatarViewLayoutAttributeTests.m in Sources */,
+				6707F3EB1CE7C63100720418 /* DBProfileAccessoryViewLayoutAttributesTests.m in Sources */,
+				6707F3E31CE7BAEA00720418 /* DBProfileAccessoryViewTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		6003F5B4195388D20070C39A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6003F589195388D20070C39A /* DBProfileViewController_Example */;
+			targetProxy = 6003F5B3195388D20070C39A /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		6003F596195388D20070C39A /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				6003F597195388D20070C39A /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		6003F5B8195388D20070C39A /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				6003F5B9195388D20070C39A /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		6003F5BD195388D20070C39A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		6003F5BE195388D20070C39A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		6003F5C0195388D20070C39A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A61D17D53DE0D1034223B6F7 /* Pods-DBProfileViewController_Example.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Example/DBProfileViewController-Prefix.pch";
+				INFOPLIST_FILE = "$(SRCROOT)/Example/DBProfileViewController-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				MODULE_NAME = ExampleApp;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.devonboyer.DBProfileViewController-Example";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		6003F5C1195388D20070C39A /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B0DD4A75CBFBE76486B8A421 /* Pods-DBProfileViewController_Example.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Example/DBProfileViewController-Prefix.pch";
+				INFOPLIST_FILE = "$(SRCROOT)/Example/DBProfileViewController-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				MODULE_NAME = ExampleApp;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.devonboyer.DBProfileViewController-Example";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		6003F5C3195388D20070C39A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3399B78706CB170737E48BA1 /* Pods-DBProfileViewController_Tests.debug.xcconfig */;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "DBProfileViewControllerTests/Tests-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = "DBProfileViewControllerTests/Tests-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DBProfileViewController_Example.app/DBProfileViewController_Example";
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Debug;
+		};
+		6003F5C4195388D20070C39A /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8F1AD7933336E5E71C86DE52 /* Pods-DBProfileViewController_Tests.release.xcconfig */;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "DBProfileViewControllerTests/Tests-Prefix.pch";
+				INFOPLIST_FILE = "DBProfileViewControllerTests/Tests-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DBProfileViewController_Example.app/DBProfileViewController_Example";
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		6003F585195388D10070C39A /* Build configuration list for PBXProject "DBProfileViewController" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6003F5BD195388D20070C39A /* Debug */,
+				6003F5BE195388D20070C39A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		6003F5BF195388D20070C39A /* Build configuration list for PBXNativeTarget "DBProfileViewController_Example" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6003F5C0195388D20070C39A /* Debug */,
+				6003F5C1195388D20070C39A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		6003F5C2195388D20070C39A /* Build configuration list for PBXNativeTarget "DBProfileViewController_Tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6003F5C3195388D20070C39A /* Debug */,
+				6003F5C4195388D20070C39A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 6003F582195388D10070C39A /* Project object */;
+}
