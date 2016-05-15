@@ -156,26 +156,6 @@ FOUNDATION_EXPORT CGSize DBProfileViewControllerDefaultHeaderReferenceSize;
 @property (nonatomic, readonly, nullable) DBProfileHeaderOverlayView *overlayView;
 
 /**
- *  The left bar button item overlaying the header.
- */
-@property (nonatomic, nullable) UIBarButtonItem *leftBarButtonItem;
-
-/**
- *  The left bar button items overlaying the header.
- */
-@property (nonatomic, copy, nullable) NSArray <UIBarButtonItem *> *leftBarButtonItems;
-
-/**
- *  The right bar button item overlaying the header.
- */
-@property (nonatomic, nullable) UIBarButtonItem *rightBarButtonItem;
-
-/**
- *  The right bar button items overlaying the header.
- */
-@property (nonatomic, copy, nullable) NSArray <UIBarButtonItem *> *rightBarButtonItems;
-
-/**
  *  @name Configuring Pull-To-Refresh
  */
 
@@ -274,6 +254,20 @@ FOUNDATION_EXPORT CGSize DBProfileViewControllerDefaultHeaderReferenceSize;
  *  @param accessoryViewKind A string that identifies the type of the accessory view.
  */
 - (void)invalidateLayoutAttributesForAccessoryViewOfKind:(NSString *)accessoryViewKind;
+
+@end
+
+#pragma mark - Deprecated
+
+@interface DBProfileViewController (Deprecated)
+
+@property (nonatomic, nullable) UIBarButtonItem *leftBarButtonItem; __deprecated_msg("Use overlayView.leftBarButtonItem");
+
+@property (nonatomic, copy, nullable) NSArray <UIBarButtonItem *> *leftBarButtonItems __deprecated_msg("Use overlayView.leftBarButtonItems");
+
+@property (nonatomic, nullable) UIBarButtonItem *rightBarButtonItem __deprecated_msg("Use overlayView.rightBarButtonItem");
+
+@property (nonatomic, copy, nullable) NSArray <UIBarButtonItem *> *rightBarButtonItems __deprecated_msg("Use overlayView.rightBarButtonItems");
 
 @end
 

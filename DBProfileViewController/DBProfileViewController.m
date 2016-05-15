@@ -297,38 +297,6 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
     [self invalidateLayoutAttributesForAccessoryViewOfKind:DBProfileAccessoryKindAvatar];
 }
 
-- (UIBarButtonItem *)leftBarButtonItem {
-    return self.overlayView.leftBarButtonItem;
-}
-
-- (void)setLeftBarButtonItem:(UIBarButtonItem *)leftBarButtonItem {
-    self.overlayView.leftBarButtonItem = leftBarButtonItem;
-}
-
-- (NSArray *)leftBarButtonItems {
-    return self.overlayView.leftBarButtonItems;
-}
-
-- (void)setLeftBarButtonItems:(NSArray *)leftBarButtonItems {
-    self.overlayView.leftBarButtonItems = leftBarButtonItems;
-}
-
-- (UIBarButtonItem *)rightBarButtonItem {
-    return self.overlayView.rightBarButtonItem;
-}
-
-- (void)setRightBarButtonItem:(UIBarButtonItem *)rightBarButtonItem {
-    self.overlayView.rightBarButtonItem = rightBarButtonItem;
-}
-
-- (NSArray *)rightBarButtonItems {
-    return self.overlayView.rightBarButtonItems;
-}
-
-- (void)setRightBarButtonItems:(NSArray *)rightBarButtonItems {
-    self.overlayView.rightBarButtonItems = rightBarButtonItems;
-}
-
 - (void)addOverlayView {
     NSAssert(self.overlayView != nil, @"overlayView must be set during initialization, to provide bar button items for this %@", NSStringFromClass([self class]));
     
@@ -1335,6 +1303,44 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
     [self configureLayoutAttributes:layoutAttributes forAccessoryViewOfKind:accessoryViewKind];
     
     [[self accessoryViewOfKind:accessoryViewKind] applyLayoutAttributes:layoutAttributes];
+}
+
+@end
+
+#pragma mark - Deprecated
+
+@implementation DBProfileViewController (Deprecated)
+
+- (UIBarButtonItem *)leftBarButtonItem {
+    return self.overlayView.leftBarButtonItem;
+}
+
+- (void)setLeftBarButtonItem:(UIBarButtonItem *)leftBarButtonItem {
+    self.overlayView.leftBarButtonItem = leftBarButtonItem;
+}
+
+- (NSArray *)leftBarButtonItems {
+    return self.overlayView.leftBarButtonItems;
+}
+
+- (void)setLeftBarButtonItems:(NSArray *)leftBarButtonItems {
+    self.overlayView.leftBarButtonItems = leftBarButtonItems;
+}
+
+- (UIBarButtonItem *)rightBarButtonItem {
+    return self.overlayView.rightBarButtonItem;
+}
+
+- (void)setRightBarButtonItem:(UIBarButtonItem *)rightBarButtonItem {
+    self.overlayView.rightBarButtonItem = rightBarButtonItem;
+}
+
+- (NSArray *)rightBarButtonItems {
+    return self.overlayView.rightBarButtonItems;
+}
+
+- (void)setRightBarButtonItems:(NSArray *)rightBarButtonItems {
+    self.overlayView.rightBarButtonItems = rightBarButtonItems;
 }
 
 @end
