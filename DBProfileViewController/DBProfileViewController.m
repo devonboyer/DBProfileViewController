@@ -25,7 +25,7 @@ NSString * const DBProfileAccessoryKindAvatar = @"DBProfileAccessoryKindAvatar";
 NSString * const DBProfileAccessoryKindHeader = @"DBProfileAccessoryKindHeader";
 
 CGSize DBProfileViewControllerDefaultAvatarReferenceSize = { .width = 0, .height = 72 };
-CGSize DBProfileViewControllerDefaultHeaderReferenceSize = { .width = 0, .height = 240 };
+CGSize DBProfileViewControllerDefaultHeaderReferenceSize = { .width = 0, .height = 140 };
 
 static const CGFloat DBProfileViewControllerOverlayAnimationDuration = 0.2;
 
@@ -63,6 +63,10 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
 @property (nonatomic) DBProfileSegmentedControlView *segmentedControlView;
 @property (nonatomic) DBProfileHeaderOverlayView *overlayView;
 @property (nonatomic) NSLayoutConstraint *detailViewTopConstraint;
+
+- (BOOL)hasRegisteredAccessoryViewOfKind:(NSString *)accessoryViewKind;
+- (BOOL)shouldInvalidateLayoutAttributesForAccessoryViewOfKind:(NSString *)accessoryViewKind forBoundsChange:(CGRect)newBounds;
+- (void)configureLayoutAttributes:(__kindof DBProfileAccessoryViewLayoutAttributes *)layoutAttributes forAccessoryViewOfKind:(NSString *)accessoryViewKind;
 
 @end
 
