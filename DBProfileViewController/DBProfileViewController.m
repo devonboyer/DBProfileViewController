@@ -961,8 +961,7 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
 #pragma mark - DBProfileLayoutAttributesConfiguration
 
 - (BOOL)shouldInvalidateLayoutAttributesForAccessoryViewOfKind:(NSString *)accessoryViewKind forBoundsChange:(CGRect)newBounds {
-    return [accessoryViewKind isEqualToString:DBProfileAccessoryKindHeader] ||
-    [accessoryViewKind isEqualToString:DBProfileAccessoryKindAvatar];
+    return accessoryViewKind == DBProfileAccessoryKindHeader || accessoryViewKind == DBProfileAccessoryKindAvatar;
 }
 
 - (void)configureLayoutAttributes:(__kindof DBProfileAccessoryViewLayoutAttributes *)layoutAttributes forAccessoryViewOfKind:(NSString *)accessoryViewKind {
