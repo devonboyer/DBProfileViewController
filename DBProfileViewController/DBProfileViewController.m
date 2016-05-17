@@ -430,11 +430,7 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
     
     [self updateOverlayInformation];
     
-    // We need to invalidate the layout attributes for all accessory views after showing a content controller in order to update the constraint-based
-    // layout attributes that have been installed.
-    for (DBProfileAccessoryViewModel *viewModel in self.accessoryViewModels) {
-        [self invalidateLayoutAttributesForAccessoryViewOfKind:viewModel.representedAccessoryKind];
-    }
+    [self invalidateAllLayoutAttributes];
 }
 
 - (BOOL)shouldDisplaySegmentedControl {
@@ -767,8 +763,7 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
     }
 }
 
-- (CGSize)referenceSizeForAccessoryViewOfKind:(NSString *)accessoryViewKind
-{
+- (CGSize)referenceSizeForAccessoryViewOfKind:(NSString *)accessoryViewKind {
     CGSize referenceSize;
     
     if (accessoryViewKind == DBProfileAccessoryKindHeader) {
@@ -785,16 +780,14 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
     return referenceSize;
 }
 
-- (void)setupOverlayViewConstraints
-{
+- (void)setupOverlayViewConstraints {
     [self.view addConstraints:
     @[[NSLayoutConstraint constraintWithItem:self.overlayView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:[self topLayoutGuide] attribute:NSLayoutAttributeBottom multiplier:1 constant:0],
       [NSLayoutConstraint constraintWithItem:self.overlayView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeLeft multiplier:1 constant:0],
       [NSLayoutConstraint constraintWithItem:self.overlayView attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeRight multiplier:1 constant:0]]];
 }
 
-- (void)setupConstraintsForScrollView:(UIScrollView *)scrollView
-{
+- (void)setupConstraintsForScrollView:(UIScrollView *)scrollView {
     NSAssert(scrollView, @"scrollView cannot be nil");
     
     if (self.segmentedControlView.superview) {
@@ -808,21 +801,9 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
      @[[NSLayoutConstraint constraintWithItem:self.detailView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:scrollView attribute:NSLayoutAttributeLeft multiplier:1 constant:0],
        [NSLayoutConstraint constraintWithItem:self.detailView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:scrollView attribute:NSLayoutAttributeWidth multiplier:1 constant:0]]];
     
-    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.segmentedControlView
-                                                          attribute:NSLayoutAttributeTop
-                                                          relatedBy:NSLayoutRelationGreaterThanOrEqual
-                                                             toItem:[self topLayoutGuide]
-                                                          attribute:NSLayoutAttributeBottom
-                                                         multiplier:1
-                                                           constant:0]];
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.segmentedControlView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:[self topLayoutGuide] attribute:NSLayoutAttributeBottom multiplier:1 constant:0]];
     
-    self.detailViewTopConstraint = [NSLayoutConstraint constraintWithItem:self.detailView
-                                                                attribute:NSLayoutAttributeTop
-                                                                relatedBy:NSLayoutRelationEqual
-                                                                   toItem:scrollView
-                                                                attribute:NSLayoutAttributeTop
-                                                               multiplier:1
-                                                                 constant:0];
+    self.detailViewTopConstraint = [NSLayoutConstraint constraintWithItem:self.detailView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:scrollView attribute:NSLayoutAttributeTop multiplier:1 constant:0];
     [scrollView addConstraint:self.detailViewTopConstraint];
 }
 
@@ -915,64 +896,20 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
     
     DBProfileAccessoryView *headerView = [self accessoryViewOfKind:DBProfileAccessoryKindHeader];
     
-    layoutAttributes.leftConstraint = [NSLayoutConstraint constraintWithItem:headerView
-                                                                   attribute:NSLayoutAttributeLeft
-                                                                   relatedBy:NSLayoutRelationEqual
-                                                                      toItem:headerView.superview
-                                                                   attribute:NSLayoutAttributeLeft
-                                                                  multiplier:1
-                                                                    constant:0];
+    layoutAttributes.leftConstraint = [NSLayoutConstraint constraintWithItem:headerView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:headerView.superview attribute:NSLayoutAttributeLeft multiplier:1 constant:0];
     
-    layoutAttributes.widthConstraint = [NSLayoutConstraint constraintWithItem:headerView
-                                                                    attribute:NSLayoutAttributeWidth
-                                                                    relatedBy:NSLayoutRelationEqual
-                                                                       toItem:headerView.superview
-                                                                    attribute:NSLayoutAttributeWidth
-                                                                   multiplier:1
-                                                                     constant:0];
+    layoutAttributes.widthConstraint = [NSLayoutConstraint constraintWithItem:headerView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:headerView.superview attribute:NSLayoutAttributeWidth multiplier:1 constant:0];
     
-    layoutAttributes.heightConstraint = [NSLayoutConstraint constraintWithItem:headerView
-                                                                     attribute:NSLayoutAttributeHeight
-                                                                     relatedBy:NSLayoutRelationEqual
-                                                                        toItem:nil
-                                                                     attribute:NSLayoutAttributeNotAnAttribute
-                                                                    multiplier:1
-                                                                      constant:0];
+    layoutAttributes.heightConstraint = [NSLayoutConstraint constraintWithItem:headerView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:0];
     
-    layoutAttributes.topConstraint = [NSLayoutConstraint constraintWithItem:headerView
-                                                                  attribute:NSLayoutAttributeTop
-                                                                  relatedBy:NSLayoutRelationEqual
-                                                                     toItem:headerView.superview
-                                                                  attribute:NSLayoutAttributeTop
-                                                                 multiplier:1
-                                                                   constant:0];
-    
+    layoutAttributes.topConstraint = [NSLayoutConstraint constraintWithItem:headerView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:headerView.superview attribute:NSLayoutAttributeTop multiplier:1 constant:0];
     layoutAttributes.topConstraint.priority = UILayoutPriorityDefaultHigh;
     
-    layoutAttributes.navigationConstraint = [NSLayoutConstraint constraintWithItem:headerView
-                                                                         attribute:NSLayoutAttributeBottom
-                                                                         relatedBy:NSLayoutRelationGreaterThanOrEqual
-                                                                            toItem:self.view
-                                                                         attribute:NSLayoutAttributeTop
-                                                                        multiplier:1
-                                                                          constant:0];
+    layoutAttributes.navigationConstraint = [NSLayoutConstraint constraintWithItem:headerView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:self.view attribute:NSLayoutAttributeTop multiplier:1 constant:0];
     
-    layoutAttributes.topLayoutGuideConstraint = [NSLayoutConstraint constraintWithItem:headerView
-                                                                             attribute:NSLayoutAttributeTop
-                                                                             relatedBy:NSLayoutRelationLessThanOrEqual
-                                                                                toItem:[self topLayoutGuide]
-                                                                             attribute:NSLayoutAttributeBottom
-                                                                            multiplier:1
-                                                                              constant:0];
+    layoutAttributes.topLayoutGuideConstraint = [NSLayoutConstraint constraintWithItem:headerView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationLessThanOrEqual toItem:[self topLayoutGuide] attribute:NSLayoutAttributeBottom multiplier:1 constant:0];
     
-    layoutAttributes.topSuperviewConstraint = [NSLayoutConstraint constraintWithItem:headerView
-                                                                           attribute:NSLayoutAttributeTop
-                                                                           relatedBy:NSLayoutRelationLessThanOrEqual
-                                                                              toItem:self.view
-                                                                           attribute:NSLayoutAttributeTop
-                                                                          multiplier:1
-                                                                            constant:0];
-    
+    layoutAttributes.topSuperviewConstraint = [NSLayoutConstraint constraintWithItem:headerView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationLessThanOrEqual toItem:self.view attribute:NSLayoutAttributeTop multiplier:1 constant:0];
     layoutAttributes.topSuperviewConstraint.priority = UILayoutPriorityDefaultHigh+1;
     
     [headerView.superview addConstraints:@[layoutAttributes.leftConstraint,
@@ -984,32 +921,14 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
                                 layoutAttributes.topSuperviewConstraint,
                                 layoutAttributes.navigationConstraint]];
     
-    if ([self.contentControllers count] > 1 || !self.hidesSegmentedControlForSingleContentController) {
-        [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.segmentedControlView
-                                                              attribute:NSLayoutAttributeTop
-                                                              relatedBy:NSLayoutRelationGreaterThanOrEqual
-                                                                 toItem:headerView
-                                                              attribute:NSLayoutAttributeBottom
-                                                             multiplier:1
-                                                               constant:0]];
+    if ([self shouldDisplaySegmentedControl]) {
+        [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.segmentedControlView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:headerView attribute:NSLayoutAttributeBottom multiplier:1 constant:0]];
     }
     
     if (self.allowsPullToRefresh) {
-        
-        NSArray *activityIndicatorConstraints = @[[NSLayoutConstraint constraintWithItem:self.activityIndicator
-                                                                               attribute:NSLayoutAttributeCenterX
-                                                                               relatedBy:NSLayoutRelationEqual
-                                                                                  toItem:headerView
-                                                                               attribute:NSLayoutAttributeCenterX
-                                                                              multiplier:1
-                                                                                constant:0],
-                                                  [NSLayoutConstraint constraintWithItem:self.activityIndicator
-                                                                               attribute:NSLayoutAttributeCenterY
-                                                                               relatedBy:NSLayoutRelationEqual
-                                                                                  toItem:headerView
-                                                                               attribute:NSLayoutAttributeCenterY
-                                                                              multiplier:1
-                                                                                constant:0]];
+        NSArray *activityIndicatorConstraints =
+        @[[NSLayoutConstraint constraintWithItem:self.activityIndicator attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:headerView attribute:NSLayoutAttributeCenterX multiplier:1 constant:0],
+          [NSLayoutConstraint constraintWithItem:self.activityIndicator attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:headerView attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
         [headerView addConstraints:activityIndicatorConstraints];
     }
 }
@@ -1018,57 +937,20 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
     
     DBProfileAccessoryView *avatarView = [self accessoryViewOfKind:DBProfileAccessoryKindAvatar];
     
-    layoutAttributes.heightConstraint = [NSLayoutConstraint constraintWithItem:avatarView
-                                                                     attribute:NSLayoutAttributeHeight
-                                                                     relatedBy:NSLayoutRelationEqual
-                                                                        toItem:avatarView
-                                                                     attribute:NSLayoutAttributeWidth
-                                                                    multiplier:1
-                                                                      constant:0];
+    layoutAttributes.heightConstraint = [NSLayoutConstraint constraintWithItem:avatarView  attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:avatarView attribute:NSLayoutAttributeWidth multiplier:1 constant:0];
     
-    layoutAttributes.widthConstraint = [NSLayoutConstraint constraintWithItem:avatarView
-                                                                    attribute:NSLayoutAttributeWidth
-                                                                    relatedBy:NSLayoutRelationEqual
-                                                                       toItem:nil
-                                                                    attribute:NSLayoutAttributeNotAnAttribute
-                                                                   multiplier:1
-                                                                     constant:100];
+    layoutAttributes.widthConstraint = [NSLayoutConstraint constraintWithItem:avatarView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:100];
     
-    layoutAttributes.leftConstraint = [NSLayoutConstraint constraintWithItem:avatarView
-                                                                   attribute:NSLayoutAttributeLeft
-                                                                   relatedBy:NSLayoutRelationEqual
-                                                                      toItem:avatarView.superview
-                                                                   attribute:NSLayoutAttributeLeftMargin
-                                                                  multiplier:1
-                                                                    constant:0];
+    layoutAttributes.leftConstraint = [NSLayoutConstraint constraintWithItem:avatarView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:avatarView.superview attribute:NSLayoutAttributeLeftMargin multiplier:1 constant:0];
     layoutAttributes.leftConstraint.priority = UILayoutPriorityDefaultLow;
     
-    layoutAttributes.rightConstraint = [NSLayoutConstraint constraintWithItem:avatarView
-                                                                    attribute:NSLayoutAttributeRight
-                                                                    relatedBy:NSLayoutRelationEqual
-                                                                       toItem:avatarView.superview
-                                                                    attribute:NSLayoutAttributeRightMargin
-                                                                   multiplier:1
-                                                                     constant:0];
-    
+    layoutAttributes.rightConstraint = [NSLayoutConstraint constraintWithItem:avatarView attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:avatarView.superview attribute:NSLayoutAttributeRightMargin multiplier:1 constant:0];
     layoutAttributes.rightConstraint.priority = UILayoutPriorityDefaultLow;
     
-    layoutAttributes.centerXConstraint = [NSLayoutConstraint constraintWithItem:avatarView
-                                                                      attribute:NSLayoutAttributeCenterX
-                                                                      relatedBy:NSLayoutRelationEqual
-                                                                         toItem:avatarView.superview
-                                                                      attribute:NSLayoutAttributeCenterX
-                                                                     multiplier:1
-                                                                       constant:0];
+    layoutAttributes.centerXConstraint = [NSLayoutConstraint constraintWithItem:avatarView attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:avatarView.superview attribute:NSLayoutAttributeCenterX multiplier:1 constant:0];
     layoutAttributes.centerXConstraint.priority = UILayoutPriorityDefaultLow;
     
-    layoutAttributes.topConstraint = [NSLayoutConstraint constraintWithItem:avatarView
-                                                                  attribute:NSLayoutAttributeTop
-                                                                  relatedBy:NSLayoutRelationEqual
-                                                                     toItem:self.detailView
-                                                                  attribute:NSLayoutAttributeTop
-                                                                 multiplier:1
-                                                                   constant:0];
+    layoutAttributes.topConstraint = [NSLayoutConstraint constraintWithItem:avatarView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.detailView attribute:NSLayoutAttributeTop multiplier:1 constant:0];
     
     [avatarView.superview addConstraints:@[layoutAttributes.heightConstraint,
                                            layoutAttributes.widthConstraint,
@@ -1226,6 +1108,12 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
     [[self accessoryViewOfKind:accessoryViewKind] applyLayoutAttributes:layoutAttributes];
 }
 
+- (void)invalidateAllLayoutAttributes {
+    for (DBProfileAccessoryViewModel *viewModel in self.accessoryViewModels) {
+        [self invalidateLayoutAttributesForAccessoryViewOfKind:viewModel.representedAccessoryKind];
+    }
+}
+
 #pragma mark - DBProfileScrollViewObserverDelegate
 
 - (void)observedScrollViewDidScroll:(UIScrollView *)scrollView {
@@ -1279,12 +1167,8 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
 
 #pragma mark - DBProfileAccessoryViewModelUpdating
 
-- (void)updateLayoutAttributeFromValue:(id)fromValue toValue:(id)toValue forAccessoryViewModel:(DBProfileAccessoryViewModel *)viewModel
-{
-    // We don't want to try to invalidate layout attributes until the view has appeared.
+- (void)updateLayoutAttributeFromValue:(id)fromValue toValue:(id)toValue forAccessoryViewModel:(DBProfileAccessoryViewModel *)viewModel {
     if (self.viewHasAppeared) {
-        // FIXME: Ideally we only need to invalidate the specific attribute that was updated
-        // Considering using an invalidation context to specify which atttributes need updating
         [self invalidateLayoutAttributesForAccessoryViewOfKind:viewModel.representedAccessoryKind];
     }
 }
