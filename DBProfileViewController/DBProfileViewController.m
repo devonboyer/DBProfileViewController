@@ -31,10 +31,6 @@ static const CGFloat DBProfileViewControllerOverlayAnimationDuration = 0.2;
 
 static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
 
-@interface DBProfileViewController (DBProfileInstallingConstraintBasedLayoutAttributes)
-- (void)addConstraintsForAccessoryViewOfKind:(NSString *)accessoryViewKind withLayoutAttributes:(__kindof DBProfileAccessoryViewLayoutAttributes *)layoutAttributes;
-@end
-
 @interface DBProfileViewController () <DBProfileAccessoryViewDelegate, DBProfileScrollViewObserverDelegate, DBProfileAccessoryViewModelUpdating>
 {
     BOOL _shouldScrollToTop; // Used for content offset caching
