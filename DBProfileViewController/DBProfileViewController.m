@@ -64,10 +64,6 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
 @property (nonatomic) DBProfileHeaderOverlayView *overlayView;
 @property (nonatomic) NSLayoutConstraint *detailViewTopConstraint;
 
-- (BOOL)hasRegisteredAccessoryViewOfKind:(NSString *)accessoryViewKind;
-- (BOOL)shouldInvalidateLayoutAttributesForAccessoryViewOfKind:(NSString *)accessoryViewKind forBoundsChange:(CGRect)newBounds;
-- (void)configureLayoutAttributes:(__kindof DBProfileAccessoryViewLayoutAttributes *)layoutAttributes forAccessoryViewOfKind:(NSString *)accessoryViewKind;
-
 @end
 
 @implementation DBProfileViewController
@@ -108,7 +104,6 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
 }
 
 - (void)commonInitWithSegmentedControlClass:(Class<DBProfileSegmentedControl>)segmentedControlClass {
-    // Defaults
     _segmentedControlClass = segmentedControlClass ? segmentedControlClass : [UISegmentedControl class];
     _headerReferenceSize = DBProfileViewControllerDefaultHeaderReferenceSize;
     _avatarReferenceSize = DBProfileViewControllerDefaultAvatarReferenceSize;
@@ -228,6 +223,26 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
     scrollView.contentOffset = contentOffset;
     
     [self updateOverlayInformation];
+}
+
+#pragma mark - Actions
+
+- (void)backButtonTapped:(id)sender {
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
+- (void)didChangeContentController:(id)sender {
+    NSInteger selectedSegmentIndex = [self.segmentedControl selectedSegmentIndex];
+    
+    if ([self.delegate respondsToSelector:@selector(profileViewController:willShowContentControllerAtIndex:)]) {
+        [self.delegate profileViewController:self willShowContentControllerAtIndex:selectedSegmentIndex];
+    }
+    
+    [self showContentControllerAtIndex:selectedSegmentIndex];
+    
+    if ([self.delegate respondsToSelector:@selector(profileViewController:didShowContentControllerAtIndex:)]) {
+        [self.delegate profileViewController:self didShowContentControllerAtIndex:selectedSegmentIndex];
+    }
 }
 
 #pragma mark - DBProfileViewController
@@ -379,24 +394,6 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
     }
 }
 
-- (void)backButtonTapped:(id)sender {
-    [self.navigationController popViewControllerAnimated:YES];
-}
-
-- (void)didChangeContentController:(id)sender {
-    NSInteger selectedSegmentIndex = [self.segmentedControl selectedSegmentIndex];
-    
-    if ([self.delegate respondsToSelector:@selector(profileViewController:willShowContentControllerAtIndex:)]) {
-        [self.delegate profileViewController:self willShowContentControllerAtIndex:selectedSegmentIndex];
-    }
-    
-    [self showContentControllerAtIndex:selectedSegmentIndex];
-        
-    if ([self.delegate respondsToSelector:@selector(profileViewController:didShowContentControllerAtIndex:)]) {
-        [self.delegate profileViewController:self didShowContentControllerAtIndex:selectedSegmentIndex];
-    }
-}
-
 - (void)showContentControllerAtIndex:(NSInteger)controllerIndex {
     if (![self.contentControllers count]) return;
     
@@ -440,13 +437,13 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
     }
 }
 
-- (CGRect)frameForContentController {
-    return self.containerView.frame;
-}
-
 - (BOOL)shouldDisplaySegmentedControl {
     if ([self.contentControllers count] > 1) return YES;
     return !self.hidesSegmentedControlForSingleContentController;
+}
+
+- (CGRect)frameForContentController {
+    return self.containerView.frame;
 }
 
 - (void)addContentController:(DBProfileContentController *)controller {
@@ -720,8 +717,7 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
     self.activityIndicator.alpha = (contentOffset.y > 0) ? 1 - contentOffset.y / 20 : 1;
 }
 
-- (void)updateTitleViewWithContentOffset:(CGPoint)contentOffset
-{
+- (void)updateTitleViewWithContentOffset:(CGPoint)contentOffset {
     DBProfileAccessoryView *avatarView = [self accessoryViewOfKind:DBProfileAccessoryKindAvatar];
 
     DBProfileHeaderViewLayoutAttributes *headerViewLayoutAttributes = [self layoutAttributesForAccessoryViewOfKind:DBProfileAccessoryKindHeader];
@@ -830,74 +826,7 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
     [scrollView addConstraint:self.detailViewTopConstraint];
 }
 
-#pragma mark - DBProfileScrollViewObserverDelegate
-
-- (void)observedScrollViewDidScroll:(UIScrollView *)scrollView {
-    
-    CGPoint contentOffset = scrollView.contentOffset;
-    contentOffset.y += scrollView.contentInset.top;
-    self.contentOffsetForDisplayedContentController = contentOffset;
-    
-    for (DBProfileAccessoryViewModel *viewModel in self.accessoryViewModels) {
-        if ([self shouldInvalidateLayoutAttributesForAccessoryViewOfKind:viewModel.representedAccessoryKind forBoundsChange:scrollView.bounds]) {
-            [self invalidateLayoutAttributesForAccessoryViewOfKind:viewModel.representedAccessoryKind];
-        }
-    }
-
-    [self updateTitleViewWithContentOffset:contentOffset];
-    [self handlePullToRefreshWithScrollView:scrollView];
-}
-
-#pragma mark - DBProfileAccessoryViewDelegate
-
-- (BOOL)accessoryViewShouldHighlight:(DBProfileAccessoryView *)accessoryView {
-    if ([self.delegate respondsToSelector:@selector(profileViewController:shouldHighlightAccessoryView:ofKind:)]) {
-        return [self.delegate profileViewController:self shouldHighlightAccessoryView:accessoryView ofKind:accessoryView.representedAccessoryKind];
-    }
-    return YES;
-}
-
-- (void)accessoryViewDidHighlight:(DBProfileAccessoryView *)accessoryView {
-    if ([self.delegate respondsToSelector:@selector(profileViewController:didHighlightAccessoryView:ofKind:)]) {
-        [self.delegate profileViewController:self didHighlightAccessoryView:accessoryView ofKind:accessoryView.representedAccessoryKind];
-    }
-}
-
-- (void)accessoryViewDidUnhighlight:(DBProfileAccessoryView *)accessoryView {
-    if ([self.delegate respondsToSelector:@selector(profileViewController:didUnhighlightAccessoryView:ofKind:)]) {
-        [self.delegate profileViewController:self didUnhighlightAccessoryView:accessoryView ofKind:accessoryView.representedAccessoryKind];
-    }
-}
-
-- (void)accessoryViewWasTapped:(DBProfileAccessoryView *)accessoryView {
-    if ([self.delegate respondsToSelector:@selector(profileViewController:didTapAccessoryView:ofKind:)]) {
-        [self.delegate profileViewController:self didTapAccessoryView:accessoryView ofKind:accessoryView.representedAccessoryKind];
-    }
-}
-
-- (void)accessoryViewWasLongPressed:(DBProfileAccessoryView *)accessoryView {
-    if ([self.delegate respondsToSelector:@selector(profileViewController:didLongPressAccessoryView:ofKind:)]) {
-        [self.delegate profileViewController:self didLongPressAccessoryView:accessoryView ofKind:accessoryView.representedAccessoryKind];
-    }
-}
-
-#pragma mark - DBProfileAccessoryViewModelUpdating
-
-- (void)updateLayoutAttributeFromValue:(id)fromValue toValue:(id)toValue forAccessoryViewModel:(DBProfileAccessoryViewModel *)viewModel
-{
-    // We don't want to try to invalidate layout attributes until the view has appeared.
-    if (self.viewHasAppeared) {
-        // FIXME: Ideally we only need to invalidate the specific attribute that was updated
-        // Considering using an invalidation context to specify which atttributes need updating
-        [self invalidateLayoutAttributesForAccessoryViewOfKind:viewModel.representedAccessoryKind];
-    }
-}
-
-@end
-
 #pragma mark - DBProfileAccessoryViewRegistration
-
-@implementation DBProfileViewController (DBProfileAccessoryViewRegistration)
 
 + (Class)layoutAttributesClassForAccessoryViewOfKind:(NSString *)accessoryViewKind {
     if ([accessoryViewKind isEqualToString:DBProfileAccessoryKindHeader]) {
@@ -961,11 +890,7 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
     return [self accessoryViewModelForAccessoryViewOfKind:accessoryViewKind].layoutAttributes;
 }
 
-@end
-
 #pragma mark - DBProfileInstallingConstraintBasedLayoutAttributes
-
-@implementation DBProfileViewController (DBProfileInstallingConstraintBasedLayoutAttributes)
 
 - (void)addConstraintsForAccessoryViewOfKind:(NSString *)accessoryViewKind withLayoutAttributes:(__kindof DBProfileAccessoryViewLayoutAttributes *)layoutAttributes {
     
@@ -1153,11 +1078,7 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
                                            layoutAttributes.topConstraint]];
 }
 
-@end
-
 #pragma mark - DBProfileLayoutAttributesConfiguration
-
-@implementation DBProfileViewController (DBProfileLayoutAttributesConfiguration)
 
 - (BOOL)shouldInvalidateLayoutAttributesForAccessoryViewOfKind:(NSString *)accessoryViewKind forBoundsChange:(CGRect)newBounds {
     return [accessoryViewKind isEqualToString:DBProfileAccessoryKindHeader] ||
@@ -1303,6 +1224,69 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
     [self configureLayoutAttributes:layoutAttributes forAccessoryViewOfKind:accessoryViewKind];
     
     [[self accessoryViewOfKind:accessoryViewKind] applyLayoutAttributes:layoutAttributes];
+}
+
+#pragma mark - DBProfileScrollViewObserverDelegate
+
+- (void)observedScrollViewDidScroll:(UIScrollView *)scrollView {
+    
+    CGPoint contentOffset = scrollView.contentOffset;
+    contentOffset.y += scrollView.contentInset.top;
+    self.contentOffsetForDisplayedContentController = contentOffset;
+    
+    for (DBProfileAccessoryViewModel *viewModel in self.accessoryViewModels) {
+        if ([self shouldInvalidateLayoutAttributesForAccessoryViewOfKind:viewModel.representedAccessoryKind forBoundsChange:scrollView.bounds]) {
+            [self invalidateLayoutAttributesForAccessoryViewOfKind:viewModel.representedAccessoryKind];
+        }
+    }
+    
+    [self updateTitleViewWithContentOffset:contentOffset];
+    [self handlePullToRefreshWithScrollView:scrollView];
+}
+
+#pragma mark - DBProfileAccessoryViewDelegate
+
+- (BOOL)accessoryViewShouldHighlight:(DBProfileAccessoryView *)accessoryView {
+    if ([self.delegate respondsToSelector:@selector(profileViewController:shouldHighlightAccessoryView:ofKind:)]) {
+        return [self.delegate profileViewController:self shouldHighlightAccessoryView:accessoryView ofKind:accessoryView.representedAccessoryKind];
+    }
+    return YES;
+}
+
+- (void)accessoryViewDidHighlight:(DBProfileAccessoryView *)accessoryView {
+    if ([self.delegate respondsToSelector:@selector(profileViewController:didHighlightAccessoryView:ofKind:)]) {
+        [self.delegate profileViewController:self didHighlightAccessoryView:accessoryView ofKind:accessoryView.representedAccessoryKind];
+    }
+}
+
+- (void)accessoryViewDidUnhighlight:(DBProfileAccessoryView *)accessoryView {
+    if ([self.delegate respondsToSelector:@selector(profileViewController:didUnhighlightAccessoryView:ofKind:)]) {
+        [self.delegate profileViewController:self didUnhighlightAccessoryView:accessoryView ofKind:accessoryView.representedAccessoryKind];
+    }
+}
+
+- (void)accessoryViewWasTapped:(DBProfileAccessoryView *)accessoryView {
+    if ([self.delegate respondsToSelector:@selector(profileViewController:didTapAccessoryView:ofKind:)]) {
+        [self.delegate profileViewController:self didTapAccessoryView:accessoryView ofKind:accessoryView.representedAccessoryKind];
+    }
+}
+
+- (void)accessoryViewWasLongPressed:(DBProfileAccessoryView *)accessoryView {
+    if ([self.delegate respondsToSelector:@selector(profileViewController:didLongPressAccessoryView:ofKind:)]) {
+        [self.delegate profileViewController:self didLongPressAccessoryView:accessoryView ofKind:accessoryView.representedAccessoryKind];
+    }
+}
+
+#pragma mark - DBProfileAccessoryViewModelUpdating
+
+- (void)updateLayoutAttributeFromValue:(id)fromValue toValue:(id)toValue forAccessoryViewModel:(DBProfileAccessoryViewModel *)viewModel
+{
+    // We don't want to try to invalidate layout attributes until the view has appeared.
+    if (self.viewHasAppeared) {
+        // FIXME: Ideally we only need to invalidate the specific attribute that was updated
+        // Considering using an invalidation context to specify which atttributes need updating
+        [self invalidateLayoutAttributesForAccessoryViewOfKind:viewModel.representedAccessoryKind];
+    }
 }
 
 @end
