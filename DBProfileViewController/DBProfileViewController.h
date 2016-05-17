@@ -150,7 +150,7 @@ FOUNDATION_EXPORT CGSize DBProfileViewControllerDefaultHeaderReferenceSize;
  *
  *  @return The accessory view for the specified accessory view kind.
  */
-- (__kindof DBProfileAccessoryView *)accessoryViewOfKind:(NSString *)accessoryViewKind;
+- (__kindof DBProfileAccessoryView * _Nullable )accessoryViewOfKind:(NSString *)accessoryViewKind;
 
 /**
  *  Returns the layout attributes for the specified accessory view kind.
@@ -159,7 +159,7 @@ FOUNDATION_EXPORT CGSize DBProfileViewControllerDefaultHeaderReferenceSize;
  *
  *  @return The layout attributes for the specified accessory view kind.
  */
-- (__kindof DBProfileAccessoryViewLayoutAttributes *)layoutAttributesForAccessoryViewOfKind:(NSString *)accessoryViewKind;
+- (__kindof DBProfileAccessoryViewLayoutAttributes * _Nullable)layoutAttributesForAccessoryViewOfKind:(NSString *)accessoryViewKind;
 
 /**
  *  Invalidates the current layout attributes and triggers a layout update.

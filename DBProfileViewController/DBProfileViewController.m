@@ -862,12 +862,10 @@ static const CGFloat DBProfileViewControllerPullToRefreshTriggerDistance = 80.0;
 }
 
 - (DBProfileAccessoryView *)accessoryViewOfKind:(NSString *)accessoryViewKind {
-    //NSAssert([self hasRegisteredAccessoryViewOfKind:accessoryViewKind], @"no accessory view has been registered for accessory kind '%@'", accessoryViewKind);
     return [self accessoryViewModelForAccessoryViewOfKind:accessoryViewKind].accessoryView;
 }
 
 - (DBProfileAccessoryViewLayoutAttributes *)layoutAttributesForAccessoryViewOfKind:(NSString *)accessoryViewKind {
-    //NSAssert([self hasRegisteredAccessoryViewOfKind:accessoryViewKind], @"no accessory view has been registered for accessory kind '%@'", accessoryViewKind);
     return [self accessoryViewModelForAccessoryViewOfKind:accessoryViewKind].layoutAttributes;
 }
 
